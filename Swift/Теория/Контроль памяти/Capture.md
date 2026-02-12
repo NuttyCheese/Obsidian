@@ -1,3 +1,4 @@
+#swift #closure #capture_list #memory_management #reference #value_type #strong_reference #weak_reference #unowned_reference #ios
 # Захват (Capture) в замыканиях [[Swift]] и [[ARC]]
 
 **Захват** (capture) — это механизм, с помощью которого **замыкание** получает доступ к переменным/константам из внешней области видимости и сохраняет их для использования даже после выхода из этой области.

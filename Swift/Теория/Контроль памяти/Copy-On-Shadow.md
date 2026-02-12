@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #copy_on_write #memory_optimization #value_type #performance #struct #array #string #lazy_copy #ios #efficient_memory
 # Copy-On-Shadow (COS) в Swift
 
 **Copy-On-Shadow** — это техника **ленивой оптимизации памяти**, похожая на [[Copy-On-Write]] (COW), но с более мягким подходом к копированию.

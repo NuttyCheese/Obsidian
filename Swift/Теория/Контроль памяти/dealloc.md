@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#objective_c #ios #memory_management #dealloc #object_lifecycle #retain_release #destructor #heap #cleanup #automatic_reference_counting
 # Освобождение памяти в Swift: deinit
 
 В Swift вместо метода `dealloc` из [[Objective-C]] используется **деинициализатор** — блок `deinit`.

@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #ios #arc #automatic_reference_counting #memory_management #retain_release #reference_count #heap #object_lifecycle
 # Automatic Reference Counting (ARC) в [[Swift]]
 
 **ARC** — это **механизм автоматического управления памятью на этапе компиляции**.  

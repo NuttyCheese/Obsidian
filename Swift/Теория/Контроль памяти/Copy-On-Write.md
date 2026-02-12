@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #copy_on_write #cow #memory_optimization #value_type #struct #array #string #performance #lazy_copy #ios
 # Copy-On-Write (COW) в Swift
 
 **Copy-On-Write** — техника, при которой коллекции **делят один буфер памяти** до момента изменения. Копия создаётся **только при первой мутации**.

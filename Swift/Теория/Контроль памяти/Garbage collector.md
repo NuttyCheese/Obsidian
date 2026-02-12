@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#memory_management #garbage_collector #automatic_memory #heap #reference_counting #cleanup #object_lifecycle #runtime #ios #swift
 # Управление памятью в Swift: ARC и циклы ссылок
 
 [[Swift]] **не использует сборщик мусора** (Garbage Collector), как Java, C# или Go.  

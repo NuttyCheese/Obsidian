@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#objective_c #swift #ios #memory_management #autoreleasepool #temporary_objects #scope_based_memory #performance #heap #object_lifecycle
 **Autorelease Pool** — механизм отложенного освобождения объектов, унаследованный от [[Objective-C]].
 
 С появлением **[[ARC]]** в 2011 году он стал использоваться редко, но всё ещё важен в специфических случаях.

@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#data_structures #heap #priority_queue #memory #tree #binary_heap #algorithm #allocation #ios #swift
 **Куча (Heap)** — это область динамической памяти, где хранятся объекты с **непредсказуемым временем жизни** и **размером**, который может изменяться во время выполнения программы.
 
 ### Основные характеристики кучи

@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#viper #architecture #ios #swift #view_interactor_presenter_entity_router #modular #separation_of_concerns #testable #scalable #design_pattern
 
 **VIPER — это акроним, где каждая буква обозначает отдельный компонент с четко определенной зоной ответственности: View, Interactor, Presenter, Entity, Router.** Это архитектура для построения сложных, масштабируемых и легко тестируемых приложений, следующая принципам Чистой Архитектуры (Clean Architecture).
 

@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#data_structures #filo #stack #first_in_last_out #ordering #collection #algorithm #sequence #ios #memory_management
 **FILO** (First-In-Last-Out) / **LIFO** (Last-In-First-Out) — принцип «последним пришёл — первым ушёл».  
 Элементы добавляются в **вершину** стека (`push`), извлекаются с **вершины** (`pop`).
 
