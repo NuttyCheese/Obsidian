@@ -1,17 +1,15 @@
-Вот **полное, подробное и максимально актуальное** (на 2026 год) руководство по **`DispatchQueue.global`** в Swift и Grand Central Dispatch (GCD).
-
 ### 1. Что такое DispatchQueue.global (реальность 2026 года)
 
 `DispatchQueue.global(qos:)` — это **статический метод**, который возвращает одну из **системных глобальных конкурентных очередей**.
 
-Это **самый часто используемый** способ запустить фоновую задачу в GCD.
+Это **самый часто используемый** способ запустить фоновую задачу в [[GCD]].
 
 **Ключевые факты 2026 года**:
 
 - Все глобальные очереди — **конкурентные** (parallel)  
 - Они используют **общий системный пул потоков** (4–64+ потоков в зависимости от устройства)  
 - Порядок выполнения задач **не гарантируется**  
-- Количество одновременно работающих задач зависит от **QoS**, загруженности CPU и политики iOS  
+- Количество одновременно работающих задач зависит от **[[QoS]]**, загруженности CPU и политики [[iOS]]  
 - В Swift 6+ и строгой проверке concurrency — передача mutable данных в глобальные очереди часто вызывает предупреждения/ошибки
 
 ### 2. Доступные QoS (приоритеты) в 2026 году
@@ -107,14 +105,14 @@ actor ResultStore {
 
 ### 4. DispatchQueue.global vs Swift Concurrency (честное сравнение 2026)
 
-| Характеристика                     | DispatchQueue.global(qos:)             | Swift Concurrency (Task, actor)        | Что выбрать в 2026 году |
-|------------------------------------|-----------------------------------------|----------------------------------------|--------------------------|
-| Потокобезопасность                 | Нужно вручную (lock, barrier)           | Встроенная (actor, Sendable)           | Swift Concurrency        |
-| Приоритеты                         | QoS (.userInitiated, .background…)      | Task priority (.userInitiated, .background) | Оба хороши, Task проще |
-| Отмена задач                       | DispatchWorkItem (сложно)               | Нативная (Task.cancel())               | Swift Concurrency        |
-| UI-обновления                      | DispatchQueue.main.async                | @MainActor / await MainActor.run       | @MainActor лучше         |
-| Читаемость                         | Старый стиль, много boilerplate         | Современный, меньше кода               | Swift Concurrency        |
-| Совместимость с legacy             | Отличная                                | Требует адаптации                      | GCD для старого кода     |
+| Характеристика         | DispatchQueue.global(qos:)             | Swift Concurrency (Task, actor)             | Что выбрать в 2026 году |
+| ---------------------- | -------------------------------------- | ------------------------------------------- | ----------------------- |
+| Потокобезопасность     | Нужно вручную (lock, barrier)          | Встроенная ([[actor]], [[Sendable]])        | Swift Concurrency       |
+| Приоритеты             | [[QoS]] (.userInitiated, .background…) | Task priority (.userInitiated, .background) | Оба хороши, Task проще  |
+| Отмена задач           | DispatchWorkItem (сложно)              | Нативная (Task.cancel())                    | Swift Concurrency       |
+| UI-обновления          | DispatchQueue.main.async               | [[@MainActor]] / await MainActor.run        | @MainActor лучше        |
+| Читаемость             | Старый стиль, много boilerplate        | Современный, меньше кода                    | Swift Concurrency       |
+| Совместимость с legacy | Отличная                               | Требует адаптации                           | GCD для старого кода    |
 
 **Вывод 2026**:
 - **Новый код** → **Swift Concurrency** (`Task`, `actor`, `TaskGroup`, `@MainActor`)  
@@ -123,13 +121,13 @@ actor ResultStore {
 
 ### 5. Типичные ошибки с DispatchQueue.global в 2026
 
-| Ошибка                                      | Последствия                              | Как избежать |
-|---------------------------------------------|------------------------------------------|--------------|
-| `sync` на глобальной очереди из главного потока | Deadlock или сильное замедление          | Никогда не использовать `sync` на global из main |
-| Перегруженная очередь `.userInitiated`      | Priority Starvation фоновых задач        | Использовать правильные QoS |
-| Обновление UI без `.main.async`             | Main Thread Violation                    | Всегда `@MainActor` или `DispatchQueue.main.async` |
-| Передача mutable данных между задачами      | Data Race                                | Использовать actor / Sendable |
-| Создание тысяч задач без ограничения        | Thread Explosion                         | TaskGroup с лимитом concurrency |
+| Ошибка                                          | Последствия                           | Как избежать                                       |
+| ----------------------------------------------- | ------------------------------------- | -------------------------------------------------- |
+| `sync` на глобальной очереди из главного потока | Deadlock или сильное замедление       | Никогда не использовать `sync` на global из main   |
+| Перегруженная очередь `.userInitiated`          | [[Priority Starvation]] фоновых задач | Использовать правильные QoS                        |
+| Обновление UI без `.main.async`                 | [[Main Thread Violation]]             | Всегда `@MainActor` или `DispatchQueue.main.async` |
+| Передача mutable данных между задачами          | [[Data Race]]                         | Использовать actor / Sendable                      |
+| Создание тысяч задач без ограничения            | [[Thread Explosion]]                  | TaskGroup с лимитом concurrency                    |
 
 ### 6. Лучшие практики 2026 года
 
@@ -146,5 +144,3 @@ actor ResultStore {
 > В 2026 году это уже legacy-инструмент.  
 > Новый стандарт — Task, actor, @MainActor, TaskGroup.  
 > Используй GCD только для поддержки старого кода.»
-
-Удачи с быстрым, безопасным и современным многопоточным кодом в Swift! 🚀

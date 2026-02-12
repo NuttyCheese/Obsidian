@@ -119,10 +119,10 @@ func migrateDatabaseIfNeeded(completion: @escaping () -> Void) {
 | `sync` на текущей очереди                       | [[Deadlock]]                  | Никогда не делать `.sync` внутри той же очереди            |
 | `sync` на сериальной очереди из главного потока | Deadlock / зависание UI       | Только `async` или `@MainActor`                            |
 | Перегруженная сериальная очередь                | Задержка всех задач           | Разделять очереди по смыслу (database, network, analytics) |
-| Забыть указать QoS                              | Низкий приоритет по умолчанию | Всегда задавать `.userInitiated`, `.utility` и т.д.        |
+| Забыть указать [[QoS]]                          | Низкий приоритет по умолчанию | Всегда задавать `.userInitiated`, `.utility` и т.д.        |
 | Передача mutable данных без синхронизации       | [[Data Race]]                 | Всё mutable состояние — только через очередь / [[actor]]   |
 
-### 6. DispatchQueue (serial) vs Swift Concurrency (2026 сравнение)
+### 6. DispatchQueue ([[serial]]) vs Swift Concurrency (2026 сравнение)
 
 | Характеристика                     | DispatchQueue (serial)                  | actor / Task                            | Что выбрать в 2026 |
 |------------------------------------|-----------------------------------------|-----------------------------------------|---------------------|
@@ -154,5 +154,3 @@ func migrateDatabaseIfNeeded(completion: @escaping () -> Void) {
 > В 2026 году это уже legacy-инструмент.  
 > Новый стандарт — actor + Task + @MainActor + strict concurrency.  
 > Если ты всё ещё пишешь DispatchQueue в новом коде — спроси себя: «А точно ли это нужно?»»
-
-Удачи с чистым, безопасным и современным многопоточным кодом в Swift! 🚀
