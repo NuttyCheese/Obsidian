@@ -1,4 +1,4 @@
-#ios #architecture #Swift #architectural_approaches
+#coordinator #ios #architecture #navigation #flow_management #viewcontroller #modular #separation_of_concerns #routing
 ## 📘 Определение
 
 **Coordinator** — паттерн в [[iOS]]-разработке, предназначенный для управления навигацией между экранами.  

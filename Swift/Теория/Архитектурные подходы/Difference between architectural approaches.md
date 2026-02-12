@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#architecture #software_design #patterns #mvc #mvvm #vip #clean_architecture #scalability #modularity #comparison
 Вот краткое сравнение основных архитектурных подходов в [[iOS]] разработке с примерами применения и особенностями выбора:
 
 ---

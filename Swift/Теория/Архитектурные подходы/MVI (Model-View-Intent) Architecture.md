@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#mvi #architecture #ios #swift #model_view_intent #unidirectional_data_flow #state_management #reactive #design_pattern #ui
 
 **Архитектурный паттерн с однонаправленным потоком данных, основанный на циклической модели: Пользовательское намерение (Intent) -> Модель (State) -> Отображение (View).** Его ключевые принципы — **неизменяемое состояние (Immutable State)** и **реактивная обработка всех событий**. Идеально сочетается с [[SwiftUI]] и [[Combine]].
 

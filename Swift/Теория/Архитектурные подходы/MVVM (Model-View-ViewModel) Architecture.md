@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#mvvm #architecture #ios #swift #model_view_viewmodel #data_binding #reactive #separation_of_concerns #ui #design_pattern
 
 **Паттерн представления данных, который отделяет логику интерфейса (View) от бизнес-логики и данных (Model) через посредника — ViewModel.** Ключевая концепция — **привязка данных (data binding)**, которая автоматически обновляет View при изменении состояния в ViewModel.
 

@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#mvc #architecture #ios #swift #model_view_controller #separation_of_concerns #ui #data_flow #design_pattern
 
 **Стандартный архитектурный шаблон, который Apple рекомендует и на котором построены [[UIKit]] и AppKit.** Он разделяет логику приложения на три основных компонента: **Model** (данные), **View** (отображение) и **Controller** (посредник). В [[iOS]]-разработке его часто называют "Massive View Controller" из-за распространенной проблемы, когда Controller берет на себя слишком много ответственности.
 

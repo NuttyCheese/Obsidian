@@ -1,4 +1,4 @@
-#ios #architecture 
+#react_native #cross_platform #mobile_development #javascript #ios #android #ui #react #framework #hybrid_apps
 React Native - это фреймворк для разработки мобильных приложений, разработанный компанией Facebook, который позволяет создавать кроссплатформенные приложения с использованием языка JavaScript и React. С помощью React Native разработчики могут создавать мобильные приложения, которые работают как на [[iOS]], так и на Android, используя общий код на JavaScript.
 
 Основные черты React Native:
