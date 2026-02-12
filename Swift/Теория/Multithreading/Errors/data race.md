@@ -1,31 +1,18 @@
-Вот **полное, подробное и максимально насыщенное** руководство по **Data Race** (гонке данных) в Swift и iOS-разработке — актуально на февраль 2026 года.
-
-Я включил:
-
-- всю теорию и механизмы возникновения  
-- сравнительные таблицы (опасные vs безопасные конструкции)  
-- огромное количество примеров кода (от классических гонок до современных ошибок Swift 6)  
-- реальные сценарии из iOS-приложений  
-- все симптомы и как их обнаружить  
-- все современные способы защиты (actor, Sendable, @MainActor, @globalActor, locks, queues, atomic и т.д.)  
-- лучшие практики и инструменты для поиска и предотвращения  
-- связь с Swift Concurrency, strict concurrency checking и Thread Sanitizer
-
 ### 1. Что такое Data Race (гонка данных)
 
 **Data Race** — это ситуация, когда **два или более потока одновременно обращаются к одной и той же области памяти**, и хотя бы один из них **пишет** в неё, **без какой-либо синхронизации**.
 
-Согласно стандарту C++11 / C11 (и аналогично в Swift):
+Согласно стандарту C++11 / C11 (и аналогично в [[Swift]]):
 
 > Data Race возникает, если хотя бы один поток выполняет **запись**, а другой — **чтение или запись** в ту же память без упорядочивания (synchronizes-with).
 
-**Последствия Data Race** (по убыванию частоты в iOS-приложениях 2026):
+**Последствия Data Race** (по убыванию частоты в [[iOS]]-приложениях 2026):
 
 1. Неправильные / случайные значения переменных  
 2. Краш с `EXC_BAD_ACCESS` / `SIGSEGV` / `SIGBUS`  
 3. Повреждение кучи / стека (heap corruption)  
 4. Неконсистентное состояние UI  
-5. Повреждение базы данных / Core Data / Realm  
+5. Повреждение базы данных / [[Core Data]] / [[Realm]]  
 6. Утечки памяти / use-after-free  
 7. Случайные краши только на реальных устройствах (Thread Sanitizer не всегда ловит в симуляторе)
 
@@ -76,7 +63,7 @@ Task.detached {
 
 **Последствия**: массив может содержать nil, повреждённые объекты, краш при доступе, дубликаты, пропуски.
 
-#### Пример 3 — Гонка в @Published / ObservableObject (SwiftUI)
+#### Пример 3 — Гонка в @Published / ObservableObject ([[SwiftUI]])
 
 ```swift
 @MainActor
@@ -170,29 +157,27 @@ struct ImageLoader: Sendable {
 
 ### 5. Как найти Data Race в 2026
 
-| Инструмент / Способ               | Что ловит                              | Где включается                  | Эффективность |
-|-----------------------------------|----------------------------------------|----------------------------------|---------------|
-| **Thread Sanitizer**              | Data Races, race conditions            | Xcode → Scheme → Diagnostics     | ★★★★★         |
-| **Swift 6 Strict Concurrency Checking** | Передача mutable данных между акторами | Build Settings → Swift Compiler  | ★★★★★         |
-| **Address Sanitizer**             | Use-after-free, buffer overflow        | Xcode → Diagnostics              | ★★★★☆         |
-| **Instruments → Thread Sanitizer**| Data Races в runtime                  | Instruments                      | ★★★★☆         |
-| **Xcode Previews + @MainActor**   | UI-гонки                               | SwiftUI Previews                 | ★★★☆☆         |
+| Инструмент / Способ                     | Что ловит                              | Где включается                  | Эффективность |
+| --------------------------------------- | -------------------------------------- | ------------------------------- | ------------- |
+| **Thread Sanitizer**                    | Data Races, race conditions            | Xcode → Scheme → Diagnostics    | ★★★★★         |
+| **Swift 6 Strict Concurrency Checking** | Передача mutable данных между акторами | Build Settings → Swift Compiler | ★★★★★         |
+| **Address Sanitizer**                   | Use-after-free, buffer overflow        | Xcode → Diagnostics             | ★★★★☆         |
+| **Instruments → Thread Sanitizer**      | Data Races в [[runtime]]               | Instruments                     | ★★★★☆         |
+| **Xcode Previews + @MainActor**         | UI-гонки                               | SwiftUI Previews                | ★★★☆☆         |
 
 ### 6. Лучшие практики 2026 (Swift 6+)
 
 - **Переходите на Swift 6** — strict concurrency checking ловит большинство гонок на этапе компиляции  
-- **actor** — основной способ хранения изменяемого состояния  
-- **@MainActor** — всё, что связано с UI и SwiftUI  
-- **Sendable** — всё, что передаётся между акторами (структуры, final-классы)  
-- **Value types + immutability** — используйте `let`, `struct`, копирование  
-- **Избегайте глобальных var** — даже с синхронизацией  
+- **[[actor]]** — основной способ хранения изменяемого состояния  
+- **[[@MainActor]]** — всё, что связано с UI и [[SwiftUI]]  
+- **[[Sendable]]** — всё, что передаётся между акторами (структуры, [[final]]-классы)  
+- **[[Value type]] + immutability** — используйте [[let]], [[struct]], копирование  
+- **Избегайте глобальных [[var]]** — даже с синхронизацией  
 - **Для коллекций** — используйте `actor`, `CurrentValueSubject`, `@Published` с @MainActor  
-- **Для тестов** — используйте `actor` + `XCTest` с `await`  
+- **Для тестов** — используйте [[actor]] + [[XCTest]] с [[await]]  
 - **Для legacy-кода** — оборачивайте в `actor` или серийную очередь
 
 **Короткий девиз 2026**:
 > «Data Race — это когда несколько рук тянутся к одной памяти одновременно.  
 > В 2026 году ответ один: actor + @MainActor + Sendable + strict concurrency.  
 > Всё остальное — это костыли или legacy.»
-
-Удачи с потокобезопасным и надёжным кодом в Swift! 🛡️
