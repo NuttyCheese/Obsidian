@@ -4,7 +4,7 @@
 
 > «отправка», «диспетчеризация», «планирование», «распределение» задачи на выполнение
 
-В GCD dispatch — это **процесс помещения задачи** (блока кода, замыкания) в очередь (`DispatchQueue`), чтобы система сама решила:
+В [[GCD]] dispatch — это **процесс помещения задачи** (блока кода, замыкания) в очередь ([[DispatchQueue]]), чтобы система сама решила:
 
 - когда именно её выполнить  
 - на каком потоке  
@@ -16,14 +16,14 @@
 
 ### 2. Основные сущности, где используется dispatch (2026 актуально)
 
-| Сущность                          | Что это                                      | Как dispatch связан                              | Самый частый метод dispatch |
-|-----------------------------------|----------------------------------------------|---------------------------------------------------|-----------------------------|
-| DispatchQueue                     | Очередь задач (serial / concurrent / main / global) | Основной объект, куда отправляют (dispatch) задачи | `async`, `sync`, `asyncAfter` |
-| DispatchQueue.main                | Главная очередь (main thread)                | dispatch → UI-обновления                          | `main.async { ... }`        |
-| DispatchQueue.global(qos:)        | Системные конкурентные очереди               | dispatch → фоновая работа                         | `global(qos:).async { ... }` |
-| DispatchWorkItem                  | Объект-задача с возможностью отмены          | dispatch → управляемая, отменяемая задача         | `queue.async(execute: workItem)` |
-| DispatchGroup                     | Группа задач для ожидания завершения         | dispatch → отслеживание нескольких задач          | `group.enter()`, `group.leave()` |
-| DispatchBarrier                   | Барьерная задача в конкурентной очереди     | dispatch → безопасная запись при параллельном чтении | `async(flags: .barrier)`    |
+| Сущность                 | Что это                                                     | Как dispatch связан                                  | Самый частый метод dispatch      |
+| ------------------------ | ----------------------------------------------------------- | ---------------------------------------------------- | -------------------------------- |
+| [[DispatchQueue]]        | Очередь задач ([[serial]] / [[concurrent]] / main / global) | Основной объект, куда отправляют (dispatch) задачи   | `async`, `sync`, `asyncAfter`    |
+| [[DispatchQueue.main]]   | Главная очередь (main thread)                               | dispatch → UI-обновления                             | `main.async { ... }`             |
+| [[DispatchQueue.global]] | Системные конкурентные очереди                              | dispatch → фоновая работа                            | `global(qos:).async { ... }`     |
+| [[DispatchWorkItem]]     | Объект-задача с возможностью отмены                         | dispatch → управляемая, отменяемая задача            | `queue.async(execute: workItem)` |
+| [[DispatchGroup]]        | Группа задач для ожидания завершения                        | dispatch → отслеживание нескольких задач             | `group.enter()`, `group.leave()` |
+| [[DispatchBarrier]]      | Барьерная задача в конкурентной очереди                     | dispatch → безопасная запись при параллельном чтении | `async(flags: .barrier)`         |
 
 ### 3. Основные способы dispatch (отправки) задач
 
@@ -93,14 +93,14 @@ actor Cache {
 
 ### 5. DispatchQueue vs Swift Concurrency (честное сравнение 2026)
 
-| Характеристика                     | DispatchQueue / GCD                     | Swift Concurrency (Task, actor)          | Что выбрать в 2026 году |
-|------------------------------------|------------------------------------------|-------------------------------------------|--------------------------|
-| Потокобезопасность                 | Нужно вручную (lock, barrier)            | Встроенная (actor, Sendable)              | Swift Concurrency        |
-| Приоритеты                         | QoS                                      | Task priority                             | Оба хороши, Task проще   |
-| Отмена задач                       | DispatchWorkItem (сложно)                | Нативная (Task.cancel)                    | Swift Concurrency        |
-| UI-обновления                      | DispatchQueue.main.async                 | @MainActor / await MainActor.run          | @MainActor лучше         |
-| Читаемость                         | Старый стиль                             | Современный, меньше кода                  | Swift Concurrency        |
-| Совместимость с legacy             | Отличная                                 | Требует адаптации                         | GCD для старого кода     |
+| Характеристика         | DispatchQueue / GCD           | Swift Concurrency (Task, actor)  | Что выбрать в 2026 году |
+| ---------------------- | ----------------------------- | -------------------------------- | ----------------------- |
+| Потокобезопасность     | Нужно вручную (lock, barrier) | Встроенная (actor, Sendable)     | Swift Concurrency       |
+| Приоритеты             | [[QoS]]                       | Task priority                    | Оба хороши, Task проще  |
+| Отмена задач           | DispatchWorkItem (сложно)     | Нативная (Task.cancel)           | Swift Concurrency       |
+| UI-обновления          | DispatchQueue.main.async      | @MainActor / await MainActor.run | @MainActor лучше        |
+| Читаемость             | Старый стиль                  | Современный, меньше кода         | Swift Concurrency       |
+| Совместимость с legacy | Отличная                      | Требует адаптации                | GCD для старого кода    |
 
 **Вывод 2026**:
 - **Новый код** → **Swift Concurrency** (`Task`, `actor`, `TaskGroup`, `@MainActor`)  
@@ -122,5 +122,3 @@ actor Cache {
 > В 2026 году это уже legacy-слово.  
 > Новый стандарт — Task, actor, @MainActor, TaskGroup.  
 > Если ты всё ещё пишешь dispatch в новом коде — спроси себя: «А точно ли это нужно?»»
-
-Удачи с быстрым, безопасным и современным многопоточным кодом в Swift! 🚀
