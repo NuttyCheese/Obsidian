@@ -1,4 +1,4 @@
-#standart_library #Swift 
+#data_structure #tree #hierarchy #nodes #root #child #binary_tree #traversal #graph
 # Деревья (Tree) в [[Swift]]
 
 **Дерево** — иерархическая структура данных, состоящая из **узлов** (nodes), связанных **рёбрами** (edges). У каждого узла (кроме корня) есть **ровно один родитель**, а у узла может быть **произвольное количество детей**.

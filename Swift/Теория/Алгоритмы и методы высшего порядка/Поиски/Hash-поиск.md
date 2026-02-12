@@ -1,4 +1,4 @@
-#algoritms #Swift #search
+#algorithm #hash_search #hash_table #dictionary #lookup #key_value #constant_time #optimization
 # Хэш-поиск (Hash-based Search) в [[Swift]]
 
 **Хэш-поиск** — это метод поиска элемента по ключу с использованием **хэш-таблицы**. В Swift это основной способ достижения **амортизированной сложности O(1)** для операций поиска, вставки и удаления.
