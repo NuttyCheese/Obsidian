@@ -5,15 +5,15 @@
 
 ### Самые частые причины Runtime Error в [[iOS]]/Swift (2026)
 
-| №   | Ошибка                                              | Типичное сообщение в Xcode                              | Как избежать / исправить                                |
-| --- | --------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
-| 1   | **Force unwrap [[nil]]** (`!`)                      | `unexpectedly found nil while unwrapping an Optional`   | Используй [[if let]], [[guard let]], `??`               |
-| 2   | **Index out of range**                              | `Index out of range`                                    | Проверяй `indices.contains(index)` или `safe subscript` |
-| 3   | **Division by zero**                                | `Fatal error: Division by zero`                         | Проверяй делитель перед операцией                       |
-| 4   | **Invalid type cast** (`as!`)                       | `Could not cast value of type '…' to '…'`               | Используй `as?` + `if let`                              |
-| 5   | **Fatal error / preconditionFailure**               | Сообщение из `fatalError` или `precondition`            | Используй `guard` / `assert` в debug                    |
-| 6   | **Threading violation** (UI с background)           | `EXC_BAD_ACCESS` или `NSInternalInconsistencyException` | Все UI-обновления — на main thread                      |
-| 7   | **[[Array]] / [[Dictionary]] [[Swift/Теория/Ошибки и варнинги/Рантайм ошибки/force unwrap]]** | `unexpectedly found nil`                                | `if let value = dict[key]`                              |
+| №   | Ошибка                                          | Типичное сообщение в Xcode                              | Как избежать / исправить                                |
+| --- | ----------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| 1   | **Force unwrap [[nil]]** (`!`)                  | `unexpectedly found nil while unwrapping an Optional`   | Используй [[if let]], [[guard let]], `??`               |
+| 2   | **Index out of range**                          | `Index out of range`                                    | Проверяй `indices.contains(index)` или `safe subscript` |
+| 3   | **Division by zero**                            | `Fatal error: Division by zero`                         | Проверяй делитель перед операцией                       |
+| 4   | **Invalid type cast** (`as!`)                   | `Could not cast value of type '…' to '…'`               | Используй `as?` + `if let`                              |
+| 5   | **Fatal error / preconditionFailure**           | Сообщение из `fatalError` или `precondition`            | Используй `guard` / `assert` в debug                    |
+| 6   | **Threading violation** (UI с background)       | `EXC_BAD_ACCESS` или `NSInternalInconsistencyException` | Все UI-обновления — на main thread                      |
+| 7   | **[[Array]] / [[Dictionary]] [[force unwrap]]** | `unexpectedly found nil`                                | `if let value = dict[key]`                              |
 
 ### Примеры и безопасные альтернативы
 
