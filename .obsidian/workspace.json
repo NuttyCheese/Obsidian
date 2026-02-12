@@ -157,16 +157,27 @@
               "icon": "lucide-list",
               "title": "Структура"
             }
+          },
+          {
+            "id": "0e84593ad95cbd93",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 486.5
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-git:Open Git source control": false,
       "switcher:Меню быстрого перехода": false,
       "graph:Граф": false,
       "canvas:Создать новый холст": false,
@@ -176,6 +187,6 @@
       "bases:Создать новую базу": false
     }
   },
-  "active": "bc00050c3c580ca2",
+  "active": "27569b4d260ebcce",
   "lastOpenFiles": []
 }
