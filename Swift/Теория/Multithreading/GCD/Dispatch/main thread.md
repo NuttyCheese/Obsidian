@@ -6,8 +6,8 @@
 
 - **только** в ней можно безопасно обновлять пользовательский интерфейс ([[UIKit]], [[SwiftUI]], [[AppKit]])  
 - все операции с UI (изменение текста, цвета, перезагрузка таблиц, анимации, present, push и т.д.) **должны** выполняться именно здесь  
-- очередь **сериальная** (serial) — задачи выполняются строго по порядку добавления  
-- она **никогда не блокируется** самой системой (кроме случаев [[deadlock]] от неправильного sync)
+- очередь **сериальная** ([[serial]]) — задачи выполняются строго по порядку добавления  
+- она **никогда не блокируется** самой системой (кроме случаев [[deadlock]] от неправильного [[sync]])
 
 **Ключевые факты 2026 года**:
 
@@ -18,15 +18,15 @@
 
 ### 2. Когда и зачем использовать DispatchQueue.main
 
-| Сценарий                                      | Почему нужен DispatchQueue.main              | Альтернатива в 2026 году (рекомендуемая) |
-|-----------------------------------------------|-----------------------------------------------|------------------------------------------|
-| Обновление UILabel.text / UIButton.setTitle   | UIKit не потокобезопасен                     | @MainActor / await MainActor.run         |
-| tableView.reloadData() / collectionView.reloadData() | То же самое                                   | @MainActor                               |
-| UIView.animate / CAAnimation                  | Анимации привязаны к main run loop           | @MainActor                               |
-| present(_:animated:completion:)              | Модальные окна только в main                 | @MainActor                               |
-| UINavigationController.pushViewController     | Навигация только в main                      | @MainActor                               |
-| Изменение @Published / @State в SwiftUI       | SwiftUI требует main thread                  | @MainActor                               |
-| Обработка уведомлений NotificationCenter      | Часто приходят из фона                       | DispatchQueue.main.async или @MainActor  |
+| Сценарий                                             | Почему нужен DispatchQueue.main    | Альтернатива в 2026 году (рекомендуемая) |
+| ---------------------------------------------------- | ---------------------------------- | ---------------------------------------- |
+| Обновление [[UILabel]].text / [[UIButton]].setTitle  | UIKit не потокобезопасен           | @MainActor / await MainActor.run         |
+| tableView.reloadData() / collectionView.reloadData() | То же самое                        | @MainActor                               |
+| [[UIView]].animate / CAAnimation                     | Анимации привязаны к main run loop | @MainActor                               |
+| present(_:animated:completion:)                      | Модальные окна только в main       | @MainActor                               |
+| [[UINavigationController]].pushViewController        | Навигация только в main            | @MainActor                               |
+| Изменение @Published / @State в [[SwiftUI]]          | SwiftUI требует main thread        | @MainActor                               |
+| Обработка уведомлений [[NotificationCenter]]         | Часто приходят из фона             | DispatchQueue.main.async или @MainActor  |
 
 ### 3. Самые частые и правильные шаблоны использования в 2026
 
@@ -72,7 +72,7 @@ func load() async {
 }
 ```
 
-#### Шаблон 3 — Обработка уведомлений / callback из C API
+#### Шаблон 3 — Обработка уведомлений / [[callback]] из C [[API]]
 
 ```swift
 NotificationCenter.default.addObserver(forName: .userDidLogin, object: nil, queue: .main) { notification in
@@ -91,15 +91,15 @@ NotificationCenter.default.addObserver(forName: .userDidLogin, object: nil, queu
 | Синхронный вызов сети / I/O на main         | UI freeze (ANR)                          | Всегда в `.global` или `Task` |
 | Забыть перейти на main после фона           | Main Thread Violation                    | Всегда проверять: `DispatchQueue.main.async` или `@MainActor` |
 
-### 5. DispatchQueue.main vs Swift Concurrency (честное сравнение 2026)
+### 5. [[DispatchQueue.main]] vs Swift Concurrency (честное сравнение 2026)
 
-| Характеристика                     | DispatchQueue.main                     | Swift Concurrency (@MainActor / MainActor.run) | Что выбрать в 2026 году |
-|------------------------------------|----------------------------------------|------------------------------------------------|--------------------------|
-| Потокобезопасность UI              | Ручная (async/sync)                    | Встроенная                                     | @MainActor               |
-| Читаемость                         | Старый стиль                           | Современный, декларативный                     | @MainActor               |
-| Отмена задач                       | Нет                                    | Нативная (Task.cancel)                         | Swift Concurrency        |
-| Strict Concurrency Checking        | Частично (может молчать)               | Полностью (ошибки компиляции)                  | Swift Concurrency        |
-| Совместимость с legacy             | Отличная                               | Требует адаптации                              | @MainActor для нового кода |
+| Характеристика              | DispatchQueue.main          | Swift Concurrency (@MainActor / MainActor.run) | Что выбрать в 2026 году    |
+| --------------------------- | --------------------------- | ---------------------------------------------- | -------------------------- |
+| Потокобезопасность UI       | Ручная ([[async]]/[[sync]]) | Встроенная                                     | @MainActor                 |
+| Читаемость                  | Старый стиль                | Современный, декларативный                     | @MainActor                 |
+| Отмена задач                | Нет                         | Нативная (Task.cancel)                         | Swift Concurrency          |
+| Strict Concurrency Checking | Частично (может молчать)    | Полностью (ошибки компиляции)                  | Swift Concurrency          |
+| Совместимость с legacy      | Отличная                    | Требует адаптации                              | @MainActor для нового кода |
 
 **Вывод 2026**:
 - **Новый код** → **@MainActor** / `await MainActor.run` / `Task { @MainActor in ... }`  
@@ -108,7 +108,7 @@ NotificationCenter.default.addObserver(forName: .userDidLogin, object: nil, queu
 
 ### 6. Лучшие практики 2026 года
 
-- **Переходите на Swift 6** — strict concurrency checking ловит почти все Main Thread Violation  
+- **Переходите на [[Swift]] 6** — strict concurrency checking ловит почти все Main Thread Violation  
 - **@MainActor** — всё, что касается UI, SwiftUI, ViewModel, UIViewController  
 - **actor** — для бизнес-логики и данных  
 - **Sendable** — всё, что передаётся между акторами / потоками  
@@ -124,5 +124,3 @@ NotificationCenter.default.addObserver(forName: .userDidLogin, object: nil, queu
 > В 2026 году это уже legacy-инструмент.  
 > Новый стандарт — @MainActor + await MainActor.run + Swift 6 strict concurrency.  
 > Если ты всё ещё пишешь .main.async в новом коде — спроси себя: «А точно ли это нужно?»»
-
-Удачи с отзывчивым, безопасным и современным UI в Swift! 🖼️
