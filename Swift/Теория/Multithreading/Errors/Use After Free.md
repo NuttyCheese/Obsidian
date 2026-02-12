@@ -1,14 +1,12 @@
-Вот **полное, подробное и максимально насыщенное** руководство по **Use After Free** (использование после освобождения) в Swift и iOS-разработке — актуально на февраль 2026 года.
-
 ### 1. Что такое Use After Free
 
 **Use After Free** (UAF) — это **критическая ошибка управления памятью**, при которой программа **обращается к объекту или области памяти после того, как она была освобождена** (deallocated).
 
-В Swift такое случается **гораздо реже**, чем в C/C++/Objective-C, благодаря **ARC** (Automatic Reference Counting), но **всё равно возможно** в следующих случаях:
+В [[Swift]] такое случается **гораздо реже**, чем в C/C++/[[Objective-C]], благодаря **[[ARC]]** (Automatic Reference Counting), но **всё равно возможно** в следующих случаях:
 
 - Использование `unowned` ссылок, когда объект уже уничтожен  
 - Работа с **Unsafe**-указателями (`UnsafePointer`, `UnsafeMutablePointer`, `UnsafeRawPointer`)  
-- Взаимодействие с **C API** или низкоуровневыми фреймворками (Core Foundation, Metal, Core Audio, Accelerate и т.д.)  
+- Взаимодействие с **C [[API]]** или низкоуровневыми фреймворками (Core Foundation, Metal, Core Audio, Accelerate и т.д.)  
 - Неправильное использование `Unmanaged` или ручное управление retain/release  
 - Ошибки в **unsafe bit casting** или **memory layout**  
 - Редко — баги в ARC или компиляторе (крайне редко в 2026 году)
@@ -23,15 +21,15 @@
 
 ### 2. Самые частые сценарии Use After Free в Swift 2026
 
-| №  | Сценарий                                      | Как проявляется                              | Частота |
-|----|-----------------------------------------------|----------------------------------------------|---------|
-| 1  | `unowned` ссылка после deinit владельца       | Краш при обращении к `unowned` свойству      | ★★★★★   |
-| 2  | UnsafeMutablePointer после deallocate()       | EXC_BAD_ACCESS при pointee / pointee =       | ★★★★☆   |
-| 3  | Core Foundation объект после CFRelease        | Краш при вызове метода CF-объекта            | ★★★★☆   |
-| 4  | Metal buffer / texture после release          | GPU краш или артефакты на экране             | ★★★☆☆   |
-| 5  | Accelerate / vDSP буфер после free            | Мусорные результаты вычислений               | ★★★☆☆   |
-| 6  | Unmanaged.passUnretained после release        | Краш при использовании объекта               | ★★★☆☆   |
-| 7  | Ошибка в unsafe bit cast / memory layout      | Неопределённое поведение, краш               | ★★☆☆☆   |
+| №   | Сценарий                                      | Как проявляется                         | Частота |
+| --- | --------------------------------------------- | --------------------------------------- | ------- |
+| 1   | [[unowned]] ссылка после [[deinit]] владельца | Краш при обращении к `unowned` свойству | ★★★★★   |
+| 2   | UnsafeMutablePointer после deallocate()       | EXC_BAD_ACCESS при pointee / pointee =  | ★★★★☆   |
+| 3   | Core Foundation объект после CFRelease        | Краш при вызове метода CF-объекта       | ★★★★☆   |
+| 4   | Metal buffer / texture после release          | GPU краш или артефакты на экране        | ★★★☆☆   |
+| 5   | Accelerate / vDSP буфер после free            | Мусорные результаты вычислений          | ★★★☆☆   |
+| 6   | Unmanaged.passUnretained после release        | Краш при использовании объекта          | ★★★☆☆   |
+| 7   | Ошибка в unsafe bit cast / memory layout      | Неопределённое поведение, краш          | ★★☆☆☆   |
 
 ### 3. Классические примеры Use After Free (и как они крашатся)
 
@@ -65,7 +63,7 @@ owner = nil  // Owner и Child deinit
 owner?.child?.sayHello()  // ← EXC_BAD_ACCESS! Use After Free
 ```
 
-**Почему краш**: `unowned` не увеличивает retain count → когда `owner` освобождается, ссылка в `child` становится dangling pointer.
+**Почему краш**: `unowned` не увеличивает [[retain count]] → когда `owner` освобождается, ссылка в `child` становится dangling pointer.
 
 #### Пример 2 — UnsafeMutablePointer после deallocate
 
