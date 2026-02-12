@@ -1,148 +1,137 @@
-## 1. Что такое `@preconcurrency`
+Вот **полное, подробное и максимально насыщенное** руководство по атрибуту **`@preconcurrency`** в Swift — актуально на 2026 год (Swift 6.0+ и выше).
 
-👉 `@preconcurrency` — это **атрибут для аннотаций типов и протоколов**, который говорит компилятору:
+### 1. Что такое @preconcurrency и зачем он нужен
 
-> "Этот код был написан **до появления Concurrency** в [[Swift]]. Считай его _безопасным_ (или хотя бы не мешай компиляцией), даже если он не использует акторов и изоляцию".
+**`@preconcurrency`** — это **атрибут**, который говорит компилятору:
 
-Другими словами:
+> «Этот тип / протокол / расширение / декларация написаны **до появления строгой модели конкурентности** в Swift (до Swift 5.5–5.7).  
+> Не применяй к ним самые жёсткие правила проверки изоляции и Sendable в новых версиях Swift.»
 
-- Он помогает **мигрировать старые API** (особенно из Objective-C или C-библиотек) в мир Swift Concurrency.
-    
-- Убирает лишние `Sendable`/`@MainActor`/actor-изоляцию ошибки при работе с таким кодом.
-    
+Иными словами — это **официальный способ** сказать компилятору:
 
----
+«Да, я знаю, что этот код не соответствует современным требованиям конкурентности (не Sendable, не actor-isolated и т.д.), но **это legacy-код / сторонняя библиотека / Objective-C API**, и я пока не могу / не хочу его переписывать.  
+Покажи только предупреждения, но не ошибки.»
 
-## 2. Где используется
+**Самые частые места, где Apple использует @preconcurrency** (2026):
 
-1. В стандартной библиотеке Swift (`Foundation`, `Dispatch`, `UIKit`).
-    
-2. В ваших [[API]], если вы пишете **библиотеку, совместимую со Swift 5.5+**, но часть кода ещё не concurrency-safe.
-    
+- `NotificationCenter`, `URLSession`, `FileManager`, `UserDefaults`  
+- большинство старых API в `Foundation`, `UIKit`, `AppKit`  
+- `NSNotification.Name`, `Selector`, `NSKeyValueObserving`  
+- Objective-C протоколы и классы, импортируемые в Swift
 
----
+### 2. Как именно @preconcurrency ослабляет проверку
 
-## 3. Пример из Foundation
+| Проверка                          | Без @preconcurrency (Swift 6 strict) | С @preconcurrency                              | Что это даёт |
+|-----------------------------------|---------------------------------------|------------------------------------------------|--------------|
+| Sendable-протоколы                | Обязательны                           | Не требуются                                   | Можно использовать старые протоколы |
+| Передача actor-isolated значений  | Запрещено без await                   | Разрешено (с предупреждением)                  | Легче мигрировать старый код |
+| Доступ к non-Sendable типам       | Ошибка                                | Предупреждение (или игнорируется)              | Не ломается импорт Obj-C |
+| `@MainActor` / actor изоляция     | Требуется явно                        | Не обязательно (с предупреждением)             | Старые API не требуют await |
+| Передача значений между актёрами  | Требуется Sendable                    | Разрешено без Sendable                         | Легче работать с legacy |
 
-В `Foundation` есть, например, `NotificationCenter`. Его API появилось задолго до Swift Concurrency.
+**Важно**:  
+`@preconcurrency` **не отключает** проверку полностью — оно лишь **ослабляет** её до уровня Swift 5.5–5.9 (pre-strict concurrency).
 
-Без `@preconcurrency` компилятор мог бы жаловаться:
+### 3. Самые популярные сценарии использования в 2026
 
-```swift
-let center = NotificationCenter.default
-Task {
-    // ❌ warning: reference to non-Sendable type 'Notification.Name' in a concurrency context
-    center.addObserver(forName: .NSSystemClockDidChange, object: nil, queue: nil) { _ in
-        print("Clock changed")
-    }
-}
-```
-
-Но Apple пометила [[NotificationCenter]] и часть его [[API]] как `@preconcurrency`.  
-Это значит: «Да, этот код старый, мы разрешаем использовать его в новых concurrency-контекстах».
-
----
-
-## 4. Ваши примеры
-
-### Пример 1. Старый протокол
+#### Сценарий 1 — Работа со старыми NotificationCenter API
 
 ```swift
-@preconcurrency protocol LegacyDelegate: AnyObject {
-    func didUpdate()
-}
-```
+@preconcurrency import Foundation
 
-👉 Теперь этот протокол можно использовать в actor или [[Task]], даже если он не `Sendable`.
-
----
-
-### Пример 2. Класс, не готовый к Concurrency
-
-```swift
-@preconcurrency class LegacyManager {
-    func doWork() { print("Работаю по старинке") }
-}
-```
-
----
-
-### Пример 3. Использование в actor
-
-```swift
-actor Worker {
-    let manager = LegacyManager()
-
-    func run() {
-        manager.doWork() // ✅ не требует Sendable
-    }
-}
-```
-
----
-
-### Пример 4. С протоколом без `Sendable`
-
-```swift
-@preconcurrency protocol LegacyProtocol {
-    func process(data: Data)
-}
-
-actor Processor {
-    var delegate: LegacyProtocol?
-
-    func start() {
-        delegate?.process(data: Data())
-    }
-}
-```
-
-👉 Без `@preconcurrency` компилятор мог бы ругаться, что протокол не `Sendable`.
-
----
-
-### Пример 5. Для старого API библиотеки
-
-```swift
-@preconcurrency class OldNetworkClient {
-    func fetch(_ url: String, completion: @escaping (String) -> Void) {
-        completion("Result from \(url)")
-    }
-}
-
-actor Service {
-    let client = OldNetworkClient()
-
-    func load() async {
-        client.fetch("http://example.com") { result in
-            print("Загружено:", result)
+class Observer {
+    func setup() {
+        NotificationCenter.default.addObserver(
+            forName: .NSSystemClockDidChange,
+            object: nil,
+            queue: nil
+        ) { notification in
+            // В Swift 6 без @preconcurrency здесь был бы warning или ошибка
+            print("Часы изменились")
         }
     }
 }
 ```
 
----
+#### Сценарий 2 — Импорт старого Objective-C протокола
 
-## 5. Когда использовать `@preconcurrency`
+```swift
+@preconcurrency protocol LegacyDelegate: AnyObject {
+    func didFinishLoading()
+}
 
-- Если у вас есть **старый код (или сторонняя библиотека)**, написанный до [[Swift]] Concurrency, и компилятор начинает требовать `Sendable`/`@MainActor` там, где вы этого не можете добавить.
-    
-- При написании **framework’ов или SDK**, чтобы сохранить обратную совместимость.
-    
-- Когда вы хотите временно подавить concurrency-ошибки, но **позже планируете переписать API с нормальной поддержкой actor/Sendable**.
-    
+class MyClass: LegacyDelegate {
+    func didFinishLoading() {
+        print("Загрузка завершена")
+    }
+}
+```
 
----
+Без `@preconcurrency` компилятор в Swift 6 ругался бы, что протокол не `Sendable`.
 
-## 6. Итоги
+#### Сценарий 3 — Подавление предупреждений в legacy-классе
 
-- `@preconcurrency` = "этот код написан до concurrency, не ругайся сильно".
+```swift
+@preconcurrency
+class OldNetworkClient {
+    var completion: ((Data?, Error?) -> Void)?
     
-- Помогает **обходить строгие правила Swift Concurrency** для старого кода.
-    
-- Используется в стандартной библиотеке ([[UIKit]], Foundation).
-    
-- В своём проекте применять стоит **только если нужно поддерживать legacy API**, а не как замену нормальной изоляции.
-    
+    func fetch(url: URL) {
+        // старый callback-style
+        completion?(Data(), nil)
+    }
+}
+```
 
----
+#### Сценарий 4 — Работа с UserDefaults / FileManager
+
+```swift
+@preconcurrency
+extension UserDefaults {
+    func saveLegacy(data: Data, key: String) {
+        set(data, forKey: key)
+    }
+}
+```
+
+### 4. Типичные ошибки и ловушки 2026 года
+
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Думать, что @preconcurrency делает код безопасным | Гонка данных, краши в runtime            | Это только подавляет предупреждения — безопасность на вас |
+| Использовать @preconcurrency в новом коде   | Код становится менее строгим и менее читаемым | Писать новый код concurrency-safe |
+| Забыть убрать @preconcurrency после рефакторинга | Остаются скрытые проблемы                | Периодически проверять и убирать атрибут |
+| Применять к своему новому протоколу         | Усложняет будущую миграцию               | Только для действительно legacy API |
+| Использовать в библиотеке без необходимости | Пользователи библиотеки получают меньше проверок | Применять только к действительно старым частям API |
+
+### 5. @preconcurrency vs другие механизмы (2026 сравнение)
+
+| Механизм                  | Подавляет Sendable-проверку | Подавляет actor-изоляцию | Официальный | Рекомендация 2026 | Когда использовать |
+|---------------------------|------------------------------|---------------------------|-------------|-------------------|---------------------|
+| `@preconcurrency`         | Да                           | Да                        | Да          | Только для legacy | Импорт старых API, миграция |
+| `@unchecked Sendable`     | Да (только Sendable)         | Нет                       | Да          | Для unsafe типов  | Когда точно знаешь, что безопасно |
+| `nonisolated(unsafe)`     | Нет                          | Да (отключает изоляцию)   | Да          | Для unsafe блоков | Редкие низкоуровневые случаи |
+| Обычный код без атрибутов | Нет                          | Нет                       | —           | Новый код         | Всё, что пишешь сейчас |
+
+**Вывод 2026**:
+- `@preconcurrency` — это **официальный способ** сказать: «это старый код, не ломай его строгими правилами Swift 6»  
+- Это **временная мера** для миграции и поддержки legacy  
+- В идеальном проекте 2026 года `@preconcurrency` должен встречаться **только** на импортируемых старых API
+
+### 6. Лучшие практики 2026 года
+
+- **Используйте @preconcurrency** только для:
+  - импорта старых фреймворков  
+  - поддержки legacy-кода в своей библиотеке  
+  - переходного периода миграции
+- **Не добавляйте** его в новый код — пишите concurrency-safe с самого начала  
+- **Периодически убирайте** атрибут после рефакторинга (когда API стал Sendable / actor-safe)  
+- **Включайте strict concurrency checking** — оно помогает находить места, где @preconcurrency больше не нужен  
+- **Документируйте** — пишите комментарий «@preconcurrency — legacy API, планируется миграция»  
+- **Тестируйте** — проверяйте, что после отмены @preconcurrency ничего не ломается
+
+**Короткий девиз 2026**:
+> «@preconcurrency — это официальный способ сказать компилятору: «да, я знаю, что этот код старый и не concurrency-safe — пока не ругайся».  
+> Это костыль для миграции, а не стиль написания нового кода.»
+
+Удачи с постепенной миграцией legacy и чистым concurrency-кодом в Swift! 🧹
