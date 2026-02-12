@@ -1,4 +1,4 @@
-#memory_control #Swift #error 
+#memory_management #retain_cycle #reference_cycle #arc #ios #swift #objective_c #strong_reference #memory_leak #object_lifecycle
 **Цикл сильных ссылок** (retain cycle) — ситуация, когда два или более объекта **сильно** ([[strong]]) ссылаются друг на друга (или образуют замкнутую цепочку), из-за чего их **счётчик удержания** ([[retain count]]) никогда не становится равным нулю.  
 В результате [[ARC]] **не может освободить** эти объекты → **утечка памяти**.
 

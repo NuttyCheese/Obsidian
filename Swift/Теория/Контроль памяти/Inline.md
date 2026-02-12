@@ -1,3 +1,4 @@
+#swift #ios #performance #inline #compiler_optimization #function #code_injection #execution_speed #method #efficiency
 # Inline-хранение в [[Swift]]
 
 **Inline** (встроенное хранение) — когда данные хранятся **не по указателю** в отдельном объекте на куче, а **непосредственно внутри** другой структуры, объекта или контейнера.

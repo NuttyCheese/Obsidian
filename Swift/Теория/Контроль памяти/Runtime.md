@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#ios #swift #objective_c #runtime #dynamic_behavior #method_dispatch #reflection #object_lifecycle #class_inspection #message_sending
 **Swift Runtime** — это низкоуровневая часть стандартной библиотеки [[Swift]], которая отвечает за **динамическое поведение языка** во время выполнения программы.
 
 Она обеспечивает:

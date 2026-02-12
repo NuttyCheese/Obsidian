@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#data_structures #stack #filo #last_in_first_out #collection #sequence #memory #algorithm #ios #swift
 **Стек** — это область памяти для **локальных переменных**, параметров функций и временных данных.  
 Управляется **автоматически** системой — выделение и освобождение происходят по принципу **LIFO**/**[[FILO]]** (Last In, First Out).
 

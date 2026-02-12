@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#objective_c #ios #sidetable #runtime #objc_runtime #associated_objects #dynamic_storage #memory_management #class_extension #objc
 ## 📘 Определение
 **Side Table** — это **вспомогательная структура**, которую [[Objective-C]] [[Runtime]] создаёт для объекта **только при необходимости** хранить дополнительную информацию, которая не помещается в основной объект (или требует отдельной логики).
 

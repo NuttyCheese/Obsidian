@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#objective_c #ios #memory_management #retain #retain_release #arc #object_lifecycle #heap #manual_memory_management
 В **[[Swift]]** ключевое слово **`retain`** **не существует** и **никогда не используется**.  
 Управление памятью полностью автоматическое благодаря **[[ARC]]** (Automatic Reference Counting).
 

@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#objective_c #ios #memory_management #release #retain_release #arc #object_lifecycle #heap #manual_memory_management
 В **[[Swift]]** ключевое слово **`release`** **не используется** и **не существует** в языке.  
 Управление памятью полностью автоматическое благодаря **[[ARC]]** (Automatic Reference Counting).
 

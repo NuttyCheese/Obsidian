@@ -1,4 +1,4 @@
-#memory_control #Swift #error 
+#memory_management #reference_cycle #retain_cycle #arc #ios #swift #objective_c #strong_reference #memory_leak #object_lifecycle
 # Циклы ссылок (Retain Cycles) в [[Swift]]
 
 **Цикл ссылок** — ситуация, когда два или более объекта **сильно** ([[strong]]) ссылаются друг на друга (или образуют замкнутую цепочку), из-за чего их **[[retain count]]** никогда не становится равным нулю.  

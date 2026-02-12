@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #reference_type #class #heap #memory_management #arc #object #mutable #ios #object_lifecycle
 # Ссылочные типы (Reference Types) в [[Swift]]
 
 **Ссылочный тип** — это тип данных, экземпляры которого передаются **по ссылке**, а не по значению.  

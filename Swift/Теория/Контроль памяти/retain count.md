@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#objective_c #ios #memory_management #retain_count #retain_release #arc #object_lifecycle #heap #reference_counting
 **Счётчик удержания** (retain count) — это внутренний счётчик, который отслеживает количество **сильных ссылок** (strong references) на объект.  
 Когда счётчик достигает **0**, объект освобождается из памяти.
 

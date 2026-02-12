@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #ios #method_overloading #function_overloading #polymorphism #parameters #compile_time #type_signature #code_reuse #object_oriented
 # Перегрузка методов (Method Overloading) в [[Swift]]
 
 **Перегрузка методов** — это механизм, позволяющий объявлять **несколько методов с одинаковым именем**, но с **разными сигнатурами** (количеством, типами или внешними/внутренними именами параметров).  

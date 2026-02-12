@@ -1,4 +1,4 @@
-#memory_control #Swift #error 
+#ios #swift #runtime_error #exception #crash #debugging #bug #programming_error #execution_failure #error_handling
 ## 📘 Определение
 **Runtime Error** — это ошибка, которая возникает **во время выполнения программы** (run-time), а не на этапе компиляции.  
 Компилятор [[Swift]] не может её предсказать, поэтому программа падает (crash) с сообщением в консоли и стек-трейсом.

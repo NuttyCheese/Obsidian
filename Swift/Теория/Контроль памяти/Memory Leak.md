@@ -1,4 +1,4 @@
-#memory_control #Swift #error
+#memory_management #memory_leak #ios #swift #objective_c #retain_cycle #arc #debugging #performance #heap
 # Утечки памяти (Memory Leaks) в [[Swift]] / [[iOS]]
 
 **Утечка памяти** — ситуация, когда объект остаётся в памяти, хотя больше **не нужен** и на него **нет активных ссылок**, которые могли бы его использовать.  
