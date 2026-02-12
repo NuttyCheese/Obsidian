@@ -1,4 +1,4 @@
-#algoritms #swift #higher-order_func
+#swift #standard_library #higher_order_function #functional_programming #optional #collection #map #nil_filtering
 `compactMap` — один из самых полезных и часто используемых методов в стандартной библиотеке [[Swift]]. Он одновременно **преобразует** элементы коллекции и **фильтрует** [[nil]]-значения.
 
 Метод появился в **Swift 4.1** (2018 год) и практически сразу стал предпочтительным способом замены старого паттерна с [[map]] + [[filter]] или старого [[flatMap]], когда требовалось получить массив без `nil`.
