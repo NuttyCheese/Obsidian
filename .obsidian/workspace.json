@@ -196,6 +196,14 @@
   },
   "active": "e407b43c27bfa155",
   "lastOpenFiles": [
+    "Swift/Теория/Swift/vtable.md",
+    "Swift/Теория/Swift/unsafeBitCast.md",
+    "Swift/Теория/Swift/TouchID.md",
+    "Swift/Теория/Swift/sandbox.md",
+    "Swift/Теория/Swift/LocalAuthentication.md",
+    "Swift/Теория/Swift/fallback.md",
+    "Swift/Теория/Swift/FaceID.md",
+    "Swift/Теория/Swift",
     "Swift/Расширения/UIView.md",
     "Swift/Расширения/UITableView.md",
     "Swift/Расширения/UIColor.md",
@@ -218,19 +226,11 @@
     "URLSessionTaskDelegate.md",
     "URLSessionDownloadDelegate.md",
     "URLSessionDataDelegate.md",
-    "URLSessionConfiguration.md",
-    "UIStackView.md",
-    "UIGraphicsPDFRenderer.md",
-    "UIGraphicsImageRenderer.md",
-    "tombstone.md",
-    "super.init.md",
-    "some.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Serial and Concurrent",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods",
     "Swift/Теория/Ошибки и варнинги/Варнинги/Синтаксис и стиль",
     "Swift/Теория/Ошибки и варнинги/Варнинги/Сборка проекта",
     "Swift/Теория/Ошибки и варнинги/Варнинги/Потенциальные рантайм-проблемы",
-    "Swift/Теория/Ошибки и варнинги/Варнинги/Линковка и ресурсы",
-    "Swift/Теория/Ошибки и варнинги/Варнинги/ios sdk, api"
+    "Swift/Теория/Ошибки и варнинги/Варнинги/Линковка и ресурсы"
   ]
 }
