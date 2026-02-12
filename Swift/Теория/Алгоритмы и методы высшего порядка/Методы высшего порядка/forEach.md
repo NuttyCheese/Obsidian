@@ -1,4 +1,4 @@
-#algoritms #Swift #higher-order_func 
+#swift #standard_library #collection #sequence #higher_order_function #closure #iteration #functional_programming
 `forEach` — это метод протокола [[Sequence]], который позволяет выполнить указанное действие (замыкание) **для каждого элемента** коллекции или последовательности. Это самый простой и декларативный способ выразить «сделай что-то с каждым элементом, но не создавай новый результат».
 
 ## Основные сигнатуры

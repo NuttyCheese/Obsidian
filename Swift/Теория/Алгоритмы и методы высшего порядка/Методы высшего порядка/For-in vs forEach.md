@@ -1,4 +1,4 @@
-#algoritms #higher-order_func #Swift 
+#swift #loop #for_in #forEach #control_flow #closure #iteration #performance #readability
 В [[Swift]] существуют два основных способа итерации по элементам коллекции (массивы, множества, словари, строки, диапазоны и любые типы, реализующие [[Sequence]] или [[Collection]]):
 
 - **Цикл `for-in`** — классический императивный цикл с полным контролем над потоком выполнения.

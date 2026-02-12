@@ -1,4 +1,4 @@
-#algoritms #swift #higher-order_func
+#swift #standard_library #collection #sequence #optional #element_access #search #lazy_evaluation
 # first и first(where:) в Swift
 
 В [[Swift]] методы семейства `first` — это одни из самых часто используемых инструментов для поиска **первого подходящего элемента** в коллекции или последовательности. Они чрезвычайно важны, потому что:

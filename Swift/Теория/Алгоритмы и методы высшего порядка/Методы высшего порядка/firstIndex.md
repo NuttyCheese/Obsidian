@@ -1,4 +1,4 @@
-#algoritms #swift #higher-order_func
+#swift #standard_library #collection #sequence #index #search #optional #element_lookup
 # firstIndex, firstIndex(of:) и firstIndex(where:) в Swift
 
 Методы семейства `firstIndex` позволяют найти **индекс первого элемента**, который либо равен заданному значению, либо удовлетворяет заданному условию. Это один из самых часто используемых инструментов при работе с упорядоченными коллекциями в [[Swift]].

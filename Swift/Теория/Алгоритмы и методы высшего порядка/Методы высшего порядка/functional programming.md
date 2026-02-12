@@ -1,4 +1,4 @@
-#algoritms #higher-order_func #Swift 
+#swift #functional_programming #higher_order_functions #immutability #closures #map #filter #reduce #composition #pure_functions
 # Функциональное программирование в Swift: Основные функции высшего порядка
 
 Функции высшего порядка (Higher-Order Functions) — это функции, которые принимают другие функции (замыкания) в качестве аргументов и/или возвращают функции как результат. В [[Swift]] они являются фундаментом функционального стиля программирования и используются практически в каждом реальном проекте.

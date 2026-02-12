@@ -1,4 +1,4 @@
-#algoritms #Swift #higher-order_func 
+#swift #standard_library #string #collection #sequence #parsing #substring #text_processing
 # split(separator:maxSplits:omittingEmptySubsequences:) в [[Swift]]
 
 Метод `split` — один из самых удобных и часто используемых способов разбить строку на подстроки по разделителю (или по условию).
