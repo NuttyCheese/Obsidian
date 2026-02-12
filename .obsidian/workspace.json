@@ -11,10 +11,14 @@
             "id": "cc5afe785023bd8e",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "any Protocol.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Новая вкладка"
+              "title": "any Protocol"
             }
           }
         ]
@@ -90,6 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "any Protocol.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -99,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Обратные ссылки"
+              "title": "Обратные ссылки для any Protocol"
             }
           },
           {
@@ -108,11 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "any Protocol.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Исходящие ссылки"
+              "title": "Исходящие ссылки из any Protocol"
             }
           },
           {
@@ -150,12 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "any Protocol.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура"
+              "title": "Структура any Protocol"
             }
           },
           {
@@ -187,8 +194,18 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "c2edb47d47520656",
+  "active": "e407b43c27bfa155",
   "lastOpenFiles": [
+    "Swift/Расширения/UIView.md",
+    "Swift/Расширения/UITableView.md",
+    "Swift/Расширения/UIColor.md",
+    "Swift/Расширения/UICollectionView.md",
+    "Swift/Расширения/Collection.md",
+    "Swift/Расширения/Bool.md",
+    "Swift/Расширения/Array.md",
+    "Swift/Расширения",
+    "Swift/Теория",
+    "Swift",
     "wrapper.md",
     "viewWillDisappear.md",
     "viewWillAppear.md",
@@ -208,22 +225,12 @@
     "tombstone.md",
     "super.init.md",
     "some.md",
-    "some Protocol.md",
-    "Sendable.md",
-    "required init.md",
-    "reference semantic.md",
-    "public.md",
-    "protocol type.md",
-    "PostgreSQL.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Serial and Concurrent",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods",
     "Swift/Теория/Ошибки и варнинги/Варнинги/Синтаксис и стиль",
     "Swift/Теория/Ошибки и варнинги/Варнинги/Сборка проекта",
     "Swift/Теория/Ошибки и варнинги/Варнинги/Потенциальные рантайм-проблемы",
     "Swift/Теория/Ошибки и варнинги/Варнинги/Линковка и ресурсы",
-    "Swift/Теория/Ошибки и варнинги/Варнинги/ios sdk, api",
-    "Swift/Теория/Ошибки и варнинги/Варнинги/Swift, Obj-C",
-    "Swift/Теория/Swift/UIKit/UIGestureRecognizer",
-    "Swift/Теория/Swift/UIKit/TableView"
+    "Swift/Теория/Ошибки и варнинги/Варнинги/ios sdk, api"
   ]
 }
