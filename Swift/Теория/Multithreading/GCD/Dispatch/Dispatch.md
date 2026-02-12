@@ -1,5 +1,3 @@
-Вот **полное, подробное и максимально актуальное** (на февраль 2026 года) руководство по термину **dispatch** в контексте **Grand Central Dispatch (GCD)** в Swift.
-
 ### 1. Что значит «dispatch» в GCD
 
 Слово **dispatch** в Grand Central Dispatch буквально означает:
