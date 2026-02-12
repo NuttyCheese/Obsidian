@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #value_type #struct #enum #stack #copy_on_write #immutability #memory_management #ios #performance
 В [[Swift]] все типы делятся на две большие группы по семантике и поведению при копировании/присваивании:
 
 | Группа              | Ключевые типы                                  | Семантика копирования | Где хранится (обычно)       | Поддерживает наследование? | Поддерживает `weak`/`unowned`? | Примеры                                                                                  |

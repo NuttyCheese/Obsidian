@@ -1,4 +1,4 @@
-#dependency_manager #Swift 
+#spm #swift_package_manager #dependency_manager #ios #swift #package_management #modularization #build_system #third_party_libraries #xcframework
 Swift Package Manager (SPM) - это официальный менеджер зависимостей и инструмент сборки для [[Swift]], предоставляемый Apple. Он встроен в язык программирования [[Swift]] и обеспечивает нативное управление зависимостями для проектов, написанных на [[Swift]]. SPM предназначен для упрощения процесса добавления, управления и обновления библиотек и фреймворков в ваших [[Swift]]-проектах.
 
 Вот основные шаги по использованию Swift Package Manager:

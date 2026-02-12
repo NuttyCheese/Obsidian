@@ -1,4 +1,4 @@
-#dependency_manager #Swift 
+#dependency_manager #cocoapods #carthage #spm #swift_package_manager #ios #package_management #build_system #third_party_libraries #comparison
 [[CocoaPods]], [[Carthage]] и Swift Package Manager ([[SPM]]) - это три различных инструмента для управления зависимостями в проектах, написанных на [[Swift]] и [[Objective-C]]. Каждый из них имеет свои преимущества и недостатки, и выбор зависит от конкретных потребностей проекта и предпочтений разработчика.
 
 ### [[CocoaPods]]:

@@ -1,4 +1,4 @@
-#dependency_manager #Swift 
+#cocoapods #dependency_manager #ios #swift #pods #third_party_libraries #build_system #modularization #package_management #ruby
 CocoaPods - это менеджер зависимостей для проектов, разрабатываемых на языках программирования [[Swift]] и [[Objective-C]] в экосистеме Apple. Он упрощает процесс установки, управления и обновления внешних библиотек и фреймворков в ваших проектах. CocoaPods также автоматически разрешает зависимости, обеспечивая удобный способ интеграции сторонних библиотек в ваши приложения.
 
 Вот базовые шаги по использованию CocoaPods:

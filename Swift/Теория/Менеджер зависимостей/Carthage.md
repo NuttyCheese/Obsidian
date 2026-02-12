@@ -1,4 +1,4 @@
-#dependency_manager #Swift 
+#carthage #dependency_manager #ios #swift #frameworks #build_system #xcframework #modularization #third_party_libraries #package_management
 Carthage - это еще один менеджер зависимостей для проектов, разрабатываемых на языке программирования [[Swift]]. В отличие от [[CocoaPods]], Carthage сосредотачивается на сборке библиотек и фреймворков, не изменяя структуру проекта. Он не создает единый файл проекта, как [[CocoaPods]], что может быть полезным для проектов, где вы предпочли бы больше контроля над процессом интеграции зависимостей.
 
 Вот основные шаги по использованию Carthage:

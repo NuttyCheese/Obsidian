@@ -1,4 +1,4 @@
-#dependency_manager #Swift 
+#dependency_manager #package_management #ios #swift #third_party_libraries #modularization #build_system #spm #cocoapods #carthage
 Dependency Manager (менеджер зависимостей) в контексте [[Swift]] - это инструмент, предназначенный для управления внешними зависимостями в проектах, написанных на языке [[Swift]]. Dependency Manager облегчает процесс добавления, управления и обновления библиотек и фреймворков, необходимых для разработки приложений.
 
 В Swift два основных менеджера зависимостей - это [[CocoaPods]] и [[Carthage]]. Вот краткое описание каждого из них:

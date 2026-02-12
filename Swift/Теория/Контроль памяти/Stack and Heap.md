@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#memory_management #stack #heap #ios #swift #allocation #value_type #reference_type #performance #object_lifecycle
 # Стек ([[Stack]]) и Куча ([[Heap]]) в [[Swift]]
 
 **Стек** и **куча** — две основные области памяти, используемые в Swift (и почти во всех современных языках).

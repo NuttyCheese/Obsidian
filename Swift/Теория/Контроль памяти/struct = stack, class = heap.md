@@ -1,3 +1,4 @@
+#swift #ios #struct #class #stack #heap #value_type #reference_type #memory_management #object_lifecycle
 # Когда [[struct]] ведёт себя как [[reference type]]
 
 **Короткий ответ:**  

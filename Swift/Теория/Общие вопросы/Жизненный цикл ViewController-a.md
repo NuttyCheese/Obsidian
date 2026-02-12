@@ -1,4 +1,4 @@
-#general_theory #Swift
+#ios #swift #uikit #viewcontroller #lifecycle #view_did_load #view_will_appear #view_did_appear #view_will_disappear #view_did_disappear
 ### Жизненный цикл (Life cycle) UIViewController (полный порядок)
 
 1. **`init(coder:)`**  

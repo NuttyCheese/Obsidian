@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #value_type #reference_type #struct #class #stack #heap #memory_management #copy_vs_reference #ios #performance
 Отличия между [[Value Type]] (типы значений) и [[Reference Type]] (типы ссылок) в [[Swift]] касаются того, как они хранятся в памяти и как происходит их передача.
 
 ### Value Types (Типы Значений):

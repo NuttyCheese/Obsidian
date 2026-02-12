@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#objective_c #ios #tagged_pointer #memory_optimization #runtime #heap #stack #pointer_encoding #performance #objc_runtime
 **Tagged Pointer** (тегированный указатель) — это **оптимизация времени выполнения**, при которой **маленькие значения** (в основном [[Int]], [[NSNumber]], некоторые [[NSString]]) хранятся **непосредственно внутри указателя**, а не в отдельном объекте на куче.
 
 Это позволяет:
