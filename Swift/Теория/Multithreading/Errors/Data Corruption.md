@@ -164,10 +164,10 @@ struct ImageLoader: Sendable {
 
 | Инструмент / Способ                     | Что ловит                              | Где включается                   | Эффективность |
 | --------------------------------------- | -------------------------------------- | -------------------------------- | ------------- |
-| **Thread Sanitizer**                    | [[Race condition]], [[data races]]     | [[Xcode]] → Scheme → Diagnostics | ★★★★★         |
+| **Thread Sanitizer**                    | [[Race condition]], [[data race]]     | [[Xcode]] → Scheme → Diagnostics | ★★★★★         |
 | **Swift 6 Strict Concurrency Checking** | Передача mutable данных между акторами | Build Settings → Swift Compiler  | ★★★★★         |
 | **Address Sanitizer**                   | Use-after-free, buffer overflow        | Xcode → Diagnostics              | ★★★★☆         |
-| **Instruments → Thread Sanitizer**      | Race conditions в runtime              | Instruments                      | ★★★★☆         |
+| **Instruments → Thread Sanitizer**      | Race conditions в [[runtime]]          | Instruments                      | ★★★★☆         |
 | **Xcode Previews + @MainActor**         | UI-гонки                               | SwiftUI Previews                 | ★★★☆☆         |
 
 ### 7. Лучшие практики 2026 (Swift 6+)
@@ -175,8 +175,8 @@ struct ImageLoader: Sendable {
 - **Переходите на Swift 6** — strict concurrency checking ловит большинство гонок на этапе компиляции  
 - **actor** — основной способ хранения изменяемого состояния  
 - **@MainActor** — всё, что связано с UI и SwiftUI  
-- **Sendable** — всё, что передаётся между акторами (структуры, final-классы)  
-- **Value types + immutability** — используйте `let`, `struct`, копирование  
+- **Sendable** — всё, что передаётся между акторами (структуры, [[final]]-классы)  
+- **Value types + immutability** — используйте [[let]], [[struct]], копирование  
 - **Избегайте глобальных var** — даже с синхронизацией  
 - **Для коллекций** — используйте `actor`, `CurrentValueSubject`, `@Published` с @MainActor  
 - **Для тестов** — используйте `actor` + `XCTest` с `await`  
@@ -186,5 +186,3 @@ struct ImageLoader: Sendable {
 > «Data Corruption — это когда несколько рук тянутся к одной памяти одновременно.  
 > В 2026 году ответ один: actor + @MainActor + Sendable + strict concurrency.  
 > Всё остальное — это костыли или legacy.»
-
-Удачи с потокобезопасным и надёжным кодом в Swift! 🛡️
