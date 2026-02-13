@@ -196,10 +196,13 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/System Design/1. Основы проектирования систем/Архитектуры/Микросервисы.md",
+    "Swift/Теория/Testing/iOSSnapshotTestCase.md",
+    "Swift/Теория/Testing/Advantages and disadvantages of unit test.md",
+    "Swift/Теория/Patterns/NSObject Scheme.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing/XCTest.md",
-    "Swift/Теория/Patterns/NSObject Scheme.md",
     "Swift/Теория/Testing/Unit-test.md",
     "Swift/Теория/Testing/UI-test.md",
     "Swift/Теория/Testing/Three main unit test blocks.md",
@@ -207,8 +210,6 @@
     "Swift/Теория/Testing/TDD.md",
     "Swift/Теория/Testing/Stub.md",
     "Swift/Теория/Testing/Mock.md",
-    "Swift/Теория/Testing/iOSSnapshotTestCase.md",
-    "Swift/Теория/Testing/Advantages and disadvantages of unit test.md",
     "Swift/Теория/Patterns/YAGNI.md",
     "Swift/Теория/Patterns/What patterns are used in iOS.md",
     "Swift/Теория/Patterns/Strategy.md",
@@ -230,7 +231,6 @@
     "Swift/Теория/System Design/9. Тестирование и качество/Нагрузочное тестирование",
     "Swift/Теория/System Design/3. Офлайн-режим и кэширование/Синхронизация данных",
     "Swift/Теория/System Design/3. Офлайн-режим и кэширование/Локальное хранение",
-    "Swift/Теория/System Design/3. Офлайн-режим и кэширование/Кэширование",
-    "Swift/Теория/System Design/8. Масштабирование и интеграции/Серверные интеграции"
+    "Swift/Теория/System Design/3. Офлайн-режим и кэширование/Кэширование"
   ]
 }
