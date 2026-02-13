@@ -145,5 +145,3 @@ print(nsString.length)  // безопасно
 > «Use After Free — это когда ты обращаешься к могиле после похорон.  
 > В 2026 году ответ один: weak вместо unowned + actor + strict concurrency + Address Sanitizer.  
 > Unsafe, unowned, ручное управление памятью — это уже legacy. Забудьте про них в новом коде.»
-
-Удачи с безопасной и надёжной памятью в Swift! 🛡️
