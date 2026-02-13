@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/NSOperation/isAsynchronous.md",
+                "file": "Swift/Теория/Multithreading/NSOperation/queuePriority.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "isAsynchronous"
+              "title": "queuePriority"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Multithreading/NSOperation/isAsynchronous.md",
+                "file": "Swift/Теория/Multithreading/NSOperation/queuePriority.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура isAsynchronous"
+              "title": "Структура queuePriority"
             }
           },
           {
@@ -196,6 +196,11 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Multithreading/NSOperation/OperationQueue.md",
+    "Swift/Теория/Multithreading/NSOperation/Operation.md",
+    "Swift/Теория/Multithreading/NSOperation/maxConcurrentOperationCount.md",
+    "Swift/Теория/Multithreading/NSOperation/isCancelled.md",
+    "Swift/Теория/Multithreading/NSOperation/isAsynchronous.md",
     "Swift/Теория/Multithreading/NSOperation/completionBlock.md",
     "Swift/Теория/Multithreading/NSOperation/BlockOperation.md",
     "Swift/Теория/Multithreading/NSOperation/addDependency.md",
@@ -217,11 +222,6 @@
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/Priority DispatchQueue.global.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/asyncAfter.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.global.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.serial.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.concurrent.md",
-    "mutable.md",
-    "withTaskCancellation.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",
