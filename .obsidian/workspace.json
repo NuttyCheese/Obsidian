@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/Errors/Use After Free.md",
+                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Use After Free"
+              "title": "DispatchQueue"
             }
           }
         ]
@@ -196,8 +196,11 @@
   },
   "active": "45dc91f314f83303",
   "lastOpenFiles": [
-    "memory layout.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchGroup.md",
+    "Swift/Теория/Multithreading/NSOperation/OperationQueue.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.concurrent.md",
     "Swift/Теория/Multithreading/Errors/Use After Free.md",
+    "memory layout.md",
     "AppKit.md",
     "CADisplayLink.md",
     "Core Foundation.md",
@@ -214,14 +217,11 @@
     "Swift/Теория/Multithreading/Errors/data race.md",
     "Swift/Теория/Multithreading/Errors/Data Corruption.md",
     "Swift/Теория/Monads/Writer Monad.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchGroup.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch.md",
     "Swift/Теория/Multithreading/Swift Concurrency/@_inheritActorContext.md",
     "Swift/Теория/Multithreading/Atomic Operation.md",
     "Swift/Теория/Monads/Applicative functors.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Нотация сложности алгоритмов.md",
-    "README.md",
-    "any Protocol.md",
     "Swift/Теория/Testing",
     "Swift/Теория/System Design/1. Основы проектирования систем/Архитектуры",
     "Swift/Теория/System Design/1. Основы проектирования систем/Ключевые концепции",
