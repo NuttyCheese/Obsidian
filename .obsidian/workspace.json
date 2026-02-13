@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch.md",
+                "file": "Swift/Теория/Multithreading/GCD/Dispatch/DispatchSemaphore.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Dispatch"
+              "title": "DispatchSemaphore"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch.md",
+                "file": "Swift/Теория/Multithreading/GCD/Dispatch/DispatchSemaphore.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура Dispatch"
+              "title": "Структура DispatchSemaphore"
             }
           },
           {
@@ -196,9 +196,10 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
-    "Swift/Теория/Multithreading/GCD/Dispatch/DispatchGroups.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/DispatchBarrier.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch Tasks.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/DispatchGroups.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Serial and Concurrent/serial.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Serial and Concurrent/concurrent.md",
@@ -221,7 +222,6 @@
     "Swift/Теория/UIKit/UIButton.Configuration.md",
     "Swift/Теория/UIKit/UIBackgroundExtensionView.md",
     "Swift/Теория/UIKit/UIPickerView.md",
-    "Swift/Теория/UIKit/UISearchBar.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",

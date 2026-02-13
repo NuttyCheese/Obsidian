@@ -93,14 +93,14 @@ actor Cache {
 
 ### 5. DispatchQueue vs Swift Concurrency (честное сравнение 2026)
 
-| Характеристика         | DispatchQueue / GCD                                            | Swift Concurrency (Task, actor)  | Что выбрать в 2026 году |
-| ---------------------- | -------------------------------------------------------------- | -------------------------------- | ----------------------- |
-| Потокобезопасность     | Нужно вручную ([[NSLock\|lock]], [[DispatchBarrier\|barrier]]) | Встроенная (actor, Sendable)     | Swift Concurrency       |
-| Приоритеты             | [[QoS]]                                                        | Task priority                    | Оба хороши, Task проще  |
-| Отмена задач           | [[DispatchWorkItem]] (сложно)                                  | Нативная (Task.cancel)           | Swift Concurrency       |
-| UI-обновления          | DispatchQueue.main.async                                       | @MainActor / await MainActor.run | @MainActor лучше        |
-| Читаемость             | Старый стиль                                                   | Современный, меньше кода         | Swift Concurrency       |
-| Совместимость с legacy | Отличная                                                       | Требует адаптации                | GCD для старого кода    |
+| Характеристика         | DispatchQueue / GCD                                            | Swift Concurrency (Task, actor)      | Что выбрать в 2026 году |
+| ---------------------- | -------------------------------------------------------------- | ------------------------------------ | ----------------------- |
+| Потокобезопасность     | Нужно вручную ([[NSLock\|lock]], [[DispatchBarrier\|barrier]]) | Встроенная (actor, Sendable)         | Swift Concurrency       |
+| Приоритеты             | [[QoS]]                                                        | Task priority                        | Оба хороши, Task проще  |
+| Отмена задач           | [[DispatchWorkItem]] (сложно)                                  | Нативная (Task.cancel)               | Swift Concurrency       |
+| UI-обновления          | [[DispatchQueue]].[[main]].[[async]]                           | [[@MainActor]] / await MainActor.run | @MainActor лучше        |
+| Читаемость             | Старый стиль                                                   | Современный, меньше кода             | Swift Concurrency       |
+| Совместимость с legacy | Отличная                                                       | Требует адаптации                    | GCD для старого кода    |
 
 **Вывод 2026**:
 - **Новый код** → **Swift Concurrency** (`Task`, `actor`, `TaskGroup`, `@MainActor`)  
@@ -115,12 +115,10 @@ actor Cache {
 - **Для UI** — только `@MainActor` / `MainActor.run` / `DispatchQueue.main.async`  
 - **Для тестов** — используйте `XCTestExpectation` + `queue.async` или `Task`  
 - **Мониторинг** — добавляйте `os_signpost` для отслеживания длительности задач в Instruments  
-- **Swift 6 strict concurrency** — часто подсвечивает небезопасное использование GCD
+- **Swift 6 strict concurrency** — часто подсвечивает небезопасное использование [[GCD]]
 
 **Короткий девиз 2026**:
 > «dispatch — это когда ты говоришь системе: «Возьми эту задачу и сделай её когда-нибудь».  
 > В 2026 году это уже legacy-слово.  
 > Новый стандарт — Task, actor, @MainActor, TaskGroup.  
 > Если ты всё ещё пишешь dispatch в новом коде — спроси себя: «А точно ли это нужно?»»
-
-Удачи с быстрым, безопасным и современным многопоточным кодом в Swift! 🚀
