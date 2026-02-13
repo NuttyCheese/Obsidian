@@ -1,10 +1,6 @@
-Вот **полное, подробное и максимально актуальное** (на 2026 год) руководство по **`DispatchQueue`** в Swift и Grand Central Dispatch (GCD).
-
-Я включил всё, что действительно важно знать разработчику в 2026 году: от базовых принципов до современных лучших практик, ловушек Swift Concurrency и сравнения с `Task` / `actor`.
-
 ### 1. Что такое DispatchQueue (коротко и честно)
 
-`DispatchQueue` — это **очередь задач** в системе Grand Central Dispatch (GCD).
+`DispatchQueue` — это **очередь задач** в системе Grand Central Dispatch ([[GCD]]).
 
 Она решает три главные задачи:
 
@@ -14,12 +10,12 @@
 
 Типы очередей в 2026 году:
 
-| Тип очереди                  | Параллелизм          | Порядок выполнения | Основное назначение в 2026 году                     | Пример создания |
-|------------------------------|----------------------|---------------------|------------------------------------------------------|-----------------|
-| **Сериальная** (serial)      | Один поток           | Строго по очереди   | Защита mutable состояния, последовательные операции  | `DispatchQueue(label: "com.my.serial")` |
-| **Конкурентная** (concurrent)| Пул потоков (4–64+)  | Произвольный        | Параллельные независимые задачи                      | `DispatchQueue.global(qos: .userInitiated)` |
-| **Глобальная** (global)      | Конкурентная         | Произвольный        | Быстрый доступ к системным пулам                     | `DispatchQueue.global(qos: .background)` |
-| **Главная** (main)           | Главный поток        | Строго по очереди   | Всё, что связано с UI и SwiftUI                      | `DispatchQueue.main` |
+| Тип очереди                       | Параллелизм         | Порядок выполнения | Основное назначение в 2026 году                     | Пример создания                             |
+| --------------------------------- | ------------------- | ------------------ | --------------------------------------------------- | ------------------------------------------- |
+| **Сериальная** ([[serial]])       | Один поток          | Строго по очереди  | Защита mutable состояния, последовательные операции | `DispatchQueue(label: "com.my.serial")`     |
+| **Конкурентная** ([[concurrent]]) | Пул потоков (4–64+) | Произвольный       | Параллельные независимые задачи                     | `DispatchQueue.global(qos: .userInitiated)` |
+| **Глобальная** ([[global]])       | Конкурентная        | Произвольный       | Быстрый доступ к системным пулам                    | `DispatchQueue.global(qos: .background)`    |
+| **Главная** (main)                | Главный поток       | Строго по очереди  | Всё, что связано с UI и [[SwiftUI]]                 | `DispatchQueue.main`                        |
 
 ### 2. Основные методы DispatchQueue (самые используемые в 2026)
 
@@ -67,7 +63,7 @@ func readItems() -> [String] {
 }
 ```
 
-#### Шаблон 3 — Ожидание нескольких задач (альтернатива DispatchGroup)
+#### Шаблон 3 — Ожидание нескольких задач (альтернатива [[DispatchGroup]])
 
 ```swift
 let queue = DispatchQueue.global(qos: .utility)
@@ -88,15 +84,15 @@ group.notify(queue: .main) {
 
 ### 4. DispatchQueue vs Swift Concurrency (сравнение 2026)
 
-| Характеристика                     | DispatchQueue / GCD                     | Swift Concurrency (Task, actor)          | Что выбрать в 2026 году |
-|------------------------------------|------------------------------------------|-------------------------------------------|--------------------------|
-| Потокобезопасность                 | Нужно вручную (lock, queue)              | Встроенная (actor, Sendable)              | Swift Concurrency        |
-| Приоритеты                         | QoS (.userInteractive, .background…)     | Task priority (.userInitiated, .background) | Оба хороши, но Task проще |
-| Ожидание завершения                | DispatchGroup / wait                     | TaskGroup / async let / withTaskGroup     | TaskGroup лучше          |
-| Отмена задач                       | Сложно (DispatchWorkItem)                | Нативная (Task.cancel(), withTaskCancellation) | Swift Concurrency        |
-| UI-обновления                      | DispatchQueue.main.async                 | @MainActor / await MainActor.run          | @MainActor лучше         |
-| Читаемость и современность         | Старый стиль, много boilerplate          | Современный, меньше кода                  | Swift Concurrency        |
-| Совместимость с legacy             | Отличная                                 | Требует адаптации                         | GCD для старого кода     |
+| Характеристика             | DispatchQueue / GCD                      | Swift Concurrency (Task, actor)                    | Что выбрать в 2026 году       |
+| -------------------------- | ---------------------------------------- | -------------------------------------------------- | ----------------------------- |
+| Потокобезопасность         | Нужно вручную (lock, queue)              | Встроенная ([[actor]], [[Sendable]])               | Swift Concurrency             |
+| Приоритеты                 | [[QoS]] (.userInteractive, .background…) | Task priority (.userInitiated, .background)        | Оба хороши, но [[Task]] проще |
+| Ожидание завершения        | DispatchGroup / wait                     | TaskGroup / [[async let]] / withTaskGroup          | [[TaskGroup]] лучше           |
+| Отмена задач               | Сложно ([[DispatchWorkItem]])            | Нативная (Task.cancel(), [[withTaskCancellation]]) | [[Swift Concurrency]]         |
+| UI-обновления              | DispatchQueue.main.async                 | @MainActor / await MainActor.run                   | [[@MainActor]] лучше          |
+| Читаемость и современность | Старый стиль, много boilerplate          | Современный, меньше кода                           | Swift Concurrency             |
+| Совместимость с legacy     | Отличная                                 | Требует адаптации                                  | GCD для старого кода          |
 
 **Вывод 2026 года**:
 - **Новый код** → **Swift Concurrency** (`Task`, `actor`, `TaskGroup`, `@MainActor`)  
@@ -105,14 +101,14 @@ group.notify(queue: .main) {
 
 ### 5. Типичные ошибки с DispatchQueue в 2026
 
-| Ошибка                                      | Последствия                              | Как избежать |
-|---------------------------------------------|------------------------------------------|--------------|
-| `sync` на текущей очереди                   | Deadlock                                 | Никогда не делать `.sync` на своей очереди |
-| `sync` на `.main` из главного потока        | Deadlock / зависание UI                  | Только `async` на main |
-| Перегруженная глобальная очередь            | Priority Starvation                      | Создавать свои очереди с нужным QoS |
-| Забыть `enter()` / `leave()` в DispatchGroup | `notify` никогда не сработает           | Использовать `defer { leave() }` |
-| Использование `sync` в production           | UI freeze, ANR                           | Только `async` + `@MainActor` / `MainActor.run` |
-| Передача mutable данных между задачами      | Data Race                                | Использовать actor / Sendable |
+| Ошибка                                       | Последствия                   | Как избежать                                    |
+| -------------------------------------------- | ----------------------------- | ----------------------------------------------- |
+| `sync` на текущей очереди                    | Deadlock                      | Никогда не делать `.sync` на своей очереди      |
+| `sync` на `.main` из главного потока         | Deadlock / зависание UI       | Только `async` на main                          |
+| Перегруженная глобальная очередь             | Priority Starvation           | Создавать свои очереди с нужным QoS             |
+| Забыть `enter()` / `leave()` в DispatchGroup | `notify` никогда не сработает | Использовать `defer { leave() }`                |
+| Использование `sync` в production            | UI freeze, ANR                | Только `async` + `@MainActor` / `MainActor.run` |
+| Передача [[mutable]] данных между задачами   | [[Data Race]]                 | Использовать actor / Sendable                   |
 
 ### 6. Лучшие практики 2026 года
 
@@ -131,5 +127,3 @@ group.notify(queue: .main) {
 > В 2026 году это уже legacy-инструмент.  
 > Новый стандарт — Task, actor, @MainActor, TaskGroup.  
 > Используй GCD только для поддержки старого кода.»
-
-Удачи с быстрым, безопасным и современным многопоточным кодом в Swift! 🚀

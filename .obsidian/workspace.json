@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift Concurrency.md",
+                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.global.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Swift Concurrency"
+              "title": "DispatchQueue.global"
             }
           }
         ]
@@ -196,8 +196,15 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.serial.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.concurrent.md",
+    "mutable.md",
+    "withTaskCancellation.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchGroup.md",
-    "Swift Concurrency.md",
+    "withThrowingTaskGroup.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/Swift Concurrency.md",
     "Swift/Теория/UIKit/UIAction.md",
     "Swift/Теория/UIKit/NSObject Scheme.md",
     "Swift/Теория/UIKit/UIViewController.Transition.md",
@@ -215,13 +222,6 @@
     "Swift/Теория/UIKit/UITableViewController.md",
     "Swift/Теория/UIKit/UIPageViewController.md",
     "Swift/Теория/UIKit/UICollectionViewController.md",
-    "Swift/Теория/UIKit/UIAlertController.md",
-    "Swift/Теория/UIKit/UIActivityViewController.md",
-    "Swift/Теория/UIKit/UIImagePickerController.md",
-    "Swift/Теория/UIKit/UIColorPickerViewController.md",
-    "Swift/Теория/UIKit/UIFontPickerViewController.md",
-    "Swift/Теория/UIKit/UIDocumentPickerViewController.md",
-    "Swift/Теория/UIKit/UIHostingController.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",
