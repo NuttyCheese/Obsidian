@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/NSOperation/queuePriority.md",
+                "file": "Swift/Теория/Multithreading/Swift Concurrency/@globalActor.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "queuePriority"
+              "title": "@globalActor"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Multithreading/NSOperation/queuePriority.md",
+                "file": "Swift/Теория/Multithreading/Swift Concurrency/@globalActor.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура queuePriority"
+              "title": "Структура @globalActor"
             }
           },
           {
@@ -196,6 +196,8 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Multithreading/Swift Concurrency/@_inheritActorContext.md",
+    "Swift/Теория/Multithreading/NSOperation/queuePriority.md",
     "Swift/Теория/Multithreading/NSOperation/OperationQueue.md",
     "Swift/Теория/Multithreading/NSOperation/Operation.md",
     "Swift/Теория/Multithreading/NSOperation/maxConcurrentOperationCount.md",
@@ -220,8 +222,6 @@
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/main.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/Priority DispatchQueue.global.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/asyncAfter.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",
