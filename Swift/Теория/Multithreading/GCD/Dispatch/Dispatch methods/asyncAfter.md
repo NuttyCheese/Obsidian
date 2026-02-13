@@ -1,5 +1,3 @@
-Вот **полное, подробное и максимально актуальное** (на 2026 год) руководство по методу **`DispatchQueue.main.asyncAfter`** в Swift и Grand Central Dispatch (GCD).
-
 ### 1. Что делает asyncAfter и зачем он нужен
 
 `DispatchQueue.main.asyncAfter(deadline:execute:)` — это метод, который **планирует выполнение замыкания**:
