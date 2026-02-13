@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/Swift Concurrency/Global Executor.md",
+                "file": "Swift/Теория/Multithreading/Swift Concurrency/sync.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Global Executor"
+              "title": "sync"
             }
           }
         ]
@@ -196,6 +196,13 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Multithreading/Swift Concurrency/sending.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/Sendable (Protocol).md",
+    "Swift/Теория/Multithreading/Swift Concurrency/nonisolated.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/isolation (expression macro).md",
+    "Swift/Теория/Multithreading/Swift Concurrency/isolation (concept).md",
+    "Swift/Теория/Multithreading/Swift Concurrency/isolated.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/Global Executor.md",
     "Swift/Теория/Multithreading/Swift Concurrency/for-await.md",
     "Swift/Теория/Multithreading/Swift Concurrency/Executor.md",
     "Swift/Теория/Multithreading/Swift Concurrency/Continuations.md",
@@ -215,13 +222,6 @@
     "Swift/Теория/Multithreading/NSOperation/isCancelled.md",
     "Swift/Теория/Multithreading/NSOperation/addDependency.md",
     "Swift/Теория/Multithreading/NSOperation/queuePriority.md",
-    "Swift/Теория/Multithreading/NSOperation/Operation.md",
-    "Swift/Теория/Multithreading/NSOperation/maxConcurrentOperationCount.md",
-    "Swift/Теория/Multithreading/NSOperation/isAsynchronous.md",
-    "Swift/Теория/Multithreading/NSOperation/completionBlock.md",
-    "Swift/Теория/Multithreading/NSOperation/BlockOperation.md",
-    "Swift/Теория/Multithreading/NSOperation/OperationQueue.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/thread.md",
     "Swift/Теория/Testing",
     "Swift/Теория/System Design/1. Основы проектирования систем/Архитектуры",
     "Swift/Теория/System Design/1. Основы проектирования систем/Ключевые концепции",

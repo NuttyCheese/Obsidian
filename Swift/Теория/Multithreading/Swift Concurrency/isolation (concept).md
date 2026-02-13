@@ -1,218 +1,152 @@
-## 1. Что такое Isolation
+Вот **полное, подробное и максимально актуальное** (на февраль 2026 года) руководство по понятию **Isolation** (изоляция) в Swift Concurrency.
 
-**Isolation** (изоляция) — это принцип, который гарантирует, что **данные, принадлежащие конкретному контексту (например, [[actor]]), могут быть безопасно изменены только из этого контекста**.
+### 1. Что такое Isolation (изоляция) простыми словами
 
-- [[Swift]] Concurrency реализует **актерную модель (actor model)**, где каждый actor — это отдельный изолированный контекст.
-    
-- Все свойства и методы actor по умолчанию **изолированы**, и доступ к ним снаружи требует [[await]].
-    
-- Это предотвращает гонки данных и делает многопоточность безопасной.
-    
+**Isolation** — это **гарантия языка**, что **данные, принадлежащие конкретному контексту** (актёру, MainActor, изолированному параметру), **могут быть изменены только из этого контекста** и **только одним потоком одновременно**.
 
-> Проще говоря: isolation = «данные принадлежат только одному [[Executor]]’у и нельзя менять их снаружи напрямую».
+Swift Concurrency использует **актёрную модель** (actor model), где каждый `actor` — это отдельный изолированный «мир» со своими данными.
 
----
+**Главное обещание изоляции**:
+> «Если ты хочешь прочитать или изменить моё состояние — ты должен быть внутри моего мира.  
+> Никто другой не может трогать мои данные одновременно со мной».
 
-## 2. Виды изоляции
+Это **полностью исключает** большинство **гонок данных** (data races) на этапе компиляции.
 
-1. **Actor isolation**
-    
-    - Каждый `actor` имеет **собственный executor**.
-        
-    - Доступ к его данным снаружи → через `await`.
-        
-2. **MainActor isolation**
-    
-    - Все свойства и методы помеченные [[@MainActor]] → выполняются на **главном потоке**.
-        
-    - Гарантирует безопасное обновление UI.
-        
-3. **[[Global Executor]] / Detached task**
-    
-    - Нет специфической изоляции → работа с общими данными требует синхронизации.
-        
-4. **Parameter isolation (`isolated`)**
-    
-    - Аргументы функции могут быть помечены как `isolated`, если они **уже находятся в безопасном контексте**.
-        
+### 2. Виды изоляции в Swift (2026 актуальные)
 
----
+| Вид изоляции                      | Что изолирует                              | Как получить доступ извне          | Поток выполнения                     | Самый частый use-case 2026 |
+|-----------------------------------|--------------------------------------------|-------------------------------------|--------------------------------------|-----------------------------|
+| **Actor isolation**               | Всё состояние конкретного `actor`          | Только через `await`                | Собственный executor актёра          | Любое изменяемое состояние (кэш, БД, счётчики) |
+| **@MainActor isolation**          | Всё состояние класса / метода / свойства   | Через `await` или прямой вызов      | Только главный поток (main thread)   | UI, ViewModel, SwiftUI      |
+| **isolated(any) parameter**       | Конкретный переданный актёр                | Прямой доступ внутри функции        | Executor переданного актёра          | Универсальные функции для актёров |
+| **isolated self**                 | `self` внутри замыкания / функции          | Прямой доступ внутри замыкания      | Executor текущего актёра             | Замыкания внутри актёра     |
+| **nonisolated**                   | Отключает изоляцию для метода / свойства   | Прямой доступ без `await`           | Любой поток                          | Утилитарные методы, константы |
+| **Global Executor (по умолчанию)**| Нет изоляции                               | Прямой доступ                       | Любой поток из глобального пула      | Фоновые вычисления без состояния |
 
-## 3. Основные правила
+### 3. Основные правила изоляции (2026)
 
-1. **Доступ к изолированным данным actor снаружи требует await**
-    
+| Правило                                   | Что происходит                                   | Пример правильного / неправильного кода |
+|-------------------------------------------|--------------------------------------------------|------------------------------------------|
+| Доступ к изолированному свойству актёра извне → **только через await** | Компилятор заставит                              | `actor.value` → ошибка<br>`await actor.value` → ок |
+| Внутри актёра к своим свойствам → **без await** | Ты уже в изоляции                                | `value += 1` внутри метода актёра — безопасно |
+| Доступ к `@MainActor`-свойству извне → **await или уже на MainActor** | Компилятор проверяет                             | `await vm.text` или внутри `@MainActor` |
+| `isolated(any) Actor` параметр → **прямой доступ** внутри функции | Функция наследует изоляцию от параметра         | `func f(a: isolated(any) Actor) { a.value += 1 }` |
+| `isolated self` в замыкании → **прямой доступ к self** | Замыкание наследует изоляцию актёра             | `Task { [isolated self] in self.value += 1 }` |
+| `nonisolated` метод → **доступ без await** | Метод не трогает изолированное состояние        | `nonisolated func version() -> String { "1.0" }` |
+
+### 4. Самые популярные шаблоны изоляции 2026 года
+
+#### Шаблон 1 — Actor isolation (классика)
 
 ```swift
 actor Counter {
-    var value = 0
-}
-
-let counter = Counter()
-Task {
-    await counter.value // доступ к изолированным данным через await
-}
-```
-
-2. **Внутри actor await не нужен**
-    
-
-```swift
-actor Counter {
-    var value = 0
+    private var value = 0
     
     func increment() {
-        value += 1 // безопасно, т.к. мы уже в executor
+        value += 1          // внутри актёра — без await
     }
-}
-```
-
-3. **Параметры `isolated` позволяют работать с данными безопасно вне await**
     
-
-```swift
-actor Counter {
-    var value = 0
-    
-    func add(delta: isolated Int) {
-        value += delta
-    }
-}
-```
-
-4. **MainActor обеспечивает изоляцию на главном потоке**
-    
-
-```swift
-@MainActor
-func updateUI() {
-    // безопасное изменение UI
-}
-```
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Actor isolation
-
-```swift
-actor Counter {
-    var value = 0
-    
-    func increment() {
-        value += 1
+    func currentValue() -> Int {
+        value
     }
 }
 
 let counter = Counter()
 
 Task {
-    await counter.increment() // переключение на executor Counter
+    await counter.increment()      // переключаемся на executor Counter
+    let v = await counter.currentValue()
+    print(v)
 }
 ```
 
----
-
-### Пример 2. MainActor isolation
+#### Шаблон 2 — @MainActor isolation (UI)
 
 ```swift
 @MainActor
-func updateLabel() {
-    print("Изменение UI на главном потоке")
-}
-
-Task {
-    await updateLabel()
+class ProfileViewModel: ObservableObject {
+    @Published var name = "Загрузка..."
+    
+    func load() async {
+        let fetched = try? await api.fetchName()
+        name = fetched ?? "Ошибка"  // безопасно — мы на MainActor
+    }
 }
 ```
 
----
-
-### Пример 3. Parameter isolation
+#### Шаблон 3 — isolated(any) параметр (универсальная функция)
 
 ```swift
-actor Counter {
-    var value = 0
-    
-    func add(delta: isolated Int) {
-        value += delta
-    }
+func clearItems<S: Actor>(_ storage: isolated(any) S) where S: Storage {
+    storage.items.removeAll()       // прямой доступ без await
+    storage.lastCleared = Date()
 }
 
-Task {
-    let counter = Counter()
-    await counter.add(delta: 5)
+actor UserStorage: Storage {
+    var items: [String] = []
+    var lastCleared: Date?
 }
+
+let storage = UserStorage()
+await clearItems(storage)           // функция работает внутри executor storage
 ```
 
----
-
-### Пример 4. Closure с isolated
-
-```swift
-actor Counter {
-    var value = 0
-    
-    func incrementWithClosure(_ closure: @Sendable (isolated Int) -> Int) {
-        value += closure(value)
-    }
-}
-
-Task {
-    let counter = Counter()
-    await counter.incrementWithClosure { isolatedValue in
-        return isolatedValue + 10
-    }
-}
-```
-
----
-
-### Пример 5. [[AsyncSequence]] с actor isolation
+#### Шаблон 4 — isolated self в замыкании
 
 ```swift
 actor Logger {
-    var messages: [String] = []
-
-    func addMessage(_ message: String) {
-        messages.append(message)
-    }
-
-    func stream() -> AsyncStream<String> {
-        AsyncStream { continuation in
-            Task {
-                for msg in await messages {
-                    continuation.yield(msg)
-                }
-                continuation.finish()
-            }
+    private var messages: [String] = []
+    
+    func log(_ message: String) {
+        Task { [isolated self] in
+            self.messages.append(message)  // безопасно без await
+            print("Logged:", message)
         }
-    }
-}
-
-let logger = Logger()
-Task {
-    await logger.addMessage("Сообщение 1")
-    for await msg in await logger.stream() {
-        print(msg)
     }
 }
 ```
 
----
+### 5. Типичные ошибки и ловушки 2026 года
 
-## 5. Итог
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Доступ к actor-свойству без `await` извне   | Ошибка компиляции                        | Всегда `await actor.property` |
+| Вызов actor-метода без `await`              | Ошибка компиляции                        | Компилятор напомнит |
+| Забыть `[isolated self]` в замыкании внутри actor | Ошибка изоляции                          | Явно захватывать `[isolated self]` |
+| Долгая синхронная работа внутри `@MainActor` | UI freeze (ANR)                          | Тяжёлое — в `Task.detached` или обычный `actor` |
+| Использовать `isolated` с non-Actor типом   | Ошибка компиляции                        | Только с Actor-типами |
+| Думать, что `isolated` отключает все проверки | Нет — только разрешает прямой доступ     | Компилятор всё равно проверяет |
 
-- **Isolation = изоляция данных для безопасности в многопоточности**
-    
-- Actor = изолированный executor, MainActor = главный поток, isolated параметры = безопасный доступ
-    
-- Для доступа к изолированным данным извне → `await`
-    
-- Внутри изолированного контекста → await не нужен
-    
-- Позволяет избежать гонок данных и блокировок
-    
+### 6. Isolation vs другие механизмы защиты (2026 сравнение)
 
----
+| Механизм                  | Уровень изоляции       | Требуется await | Потокобезопасность | Рекомендация 2026 |
+|---------------------------|-------------------------|-----------------|---------------------|-------------------|
+| `actor` isolation         | Полная (собственный executor) | Да (извне)      | Полная              | Основной выбор для состояния |
+| `@MainActor` isolation    | Полная (главный поток)  | Нет (если уже на main) | Полная (main)       | UI и ViewModel    |
+| `isolated(any)` параметр  | От параметра            | Нет внутри функции | Полная              | Универсальные функции |
+| `nonisolated`             | Отключает изоляцию      | Нет             | Отсутствует          | Утилитарные методы |
+| `DispatchQueue` (serial)  | Ручная                  | Нет             | Ручная              | Legacy-код        |
+| `NSLock` / `os_unfair_lock` | Ручная                | Нет             | Ручная              | Только если нет альтернативы |
+
+**Вывод 2026**:
+- **actor isolation** — основной способ защиты изменяемого состояния  
+- **@MainActor isolation** — единственный правильный способ для UI  
+- **`isolated(any)`** — самый современный способ писать универсальные функции для актёров  
+- **`nonisolated`** — для выхода из изоляции (константы, утилиты)
+
+### 7. Лучшие практики 2026 года
+
+- **actor** — для любого **изменяемого состояния** в многопотоке  
+- **@MainActor** — для **всех** ViewModel, контроллеров, UI-логики  
+- **isolated(any)** — для функций, которые работают с состоянием переданного актёра  
+- **isolated self** — стандарт для безопасного захвата в замыканиях внутри актёра  
+- **nonisolated** — только для методов без доступа к состоянию  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит почти все ошибки изоляции  
+- **Тестирование** — создавай экземпляры actor и вызывай через `await`  
+- **Мониторинг** — Instruments → Swift Tasks — смотри переключения контекста
+
+**Короткий девиз 2026**:
+> «Isolation — это когда Swift говорит: «это моё состояние, и никто не может его трогать одновременно со мной».  
+> В 2026 году почти всё изменяемое состояние должно быть изолировано в actor или @MainActor.»
+
+Удачи с чистой изоляцией и безопасным многопоточным кодом в Swift! 🛡️

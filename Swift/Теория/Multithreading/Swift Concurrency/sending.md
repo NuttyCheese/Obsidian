@@ -1,163 +1,134 @@
-## 1. Что такое sending
+Вот **полное, подробное и максимально актуальное** (на февраль 2026 года) руководство по концепции **`sending`** в Swift Concurrency — с акцентом на то, как это работает в Swift 6 и почему это стало одним из самых важных механизмов безопасности.
 
-**Sending** — это процесс **передачи значения или объекта между различными execution context ([[Executor]]’ами)**.
+### 1. Что такое sending простыми словами
 
-- В [[Swift]] Concurrency задачи (tasks) могут выполняться на разных executor’ах: actor executor, MainActor, [[Global Executor]] или detached task.
-    
-- Чтобы безопасно передавать данные между этими задачами, тип должен быть **`Sendable`**.
-    
-- Sending гарантирует, что **данные не будут модифицироваться одновременно из разных потоков**, предотвращая гонки данных.
-    
+**Sending** — это процесс **безопасной передачи значения** (или ссылки на объект) между **разными изолированными контекстами** (разными executor’ами, задачами, актёрами).
 
-> Проще говоря: sending = «передача данных между задачами безопасно для многопоточности».
+В Swift Concurrency:
 
----
+- каждая асинхронная задача (`Task`) или актёр (`actor`) выполняется в своём **контексте изоляции**  
+- когда значение передаётся из одного контекста в другой — это и есть **sending**  
+- чтобы передача была безопасной (без гонок данных), тип **обязательно** должен быть `Sendable`
 
-## 2. Связь с Sendable
+**Ключевые моменты 2026 года**:
 
-- Любой объект, который передаётся между executor’ами, должен соответствовать `Sendable`.
-    
-- Если тип не `Sendable`, компилятор выдаст ошибку при попытке передачи его в другой task.
-    
+- `sending` — это **не атрибут** и **не ключевое слово** (в отличие от `borrowing`, `consuming`, `sending` в ownership-модели)  
+- это **концепция и термин**, который описывает **момент передачи** значения между изолированными контекстами  
+- в Swift 6 компилятор **очень строго** проверяет sending — почти любое перемещение значения между задачами требует `Sendable`  
+- если тип **не** `Sendable` → ошибка компиляции при попытке sending
+
+**Коротко**:
+> sending = «я передаю этот объект / значение в другую задачу / актёр».  
+> Чтобы это было безопасно → тип должен быть `Sendable`.
+
+### 2. Когда происходит sending (самые частые случаи 2026)
+
+| Ситуация                                      | Происходит ли sending? | Требуется Sendable? | Пример |
+|-----------------------------------------------|------------------------|----------------------|--------|
+| Передача аргумента в `Task { ... }`           | Да                     | Да                   | `Task { print(user) }` |
+| Передача в `Task.detached { ... }`            | Да                     | Да (строго)          | `Task.detached { use(config) }` |
+| Передача в `async let`                        | Да                     | Да                   | `async let u = fetchUser(user)` |
+| Передача аргумента в метод другого актёра     | Да                     | Да                   | `await otherActor.save(user)` |
+| Передача значения между `@MainActor` и обычным `Task` | Да                     | Да                   | `await vm.update(with: data)` |
+| Захват переменной в `@Sendable` замыкании     | Да                     | Да                   | `Task { [user] in ... }` |
+| Возврат значения из `async` функции           | Нет (если внутри одного контекста) | Нет                  | `return user` внутри актёра |
+| Передача `actor` самого по себе               | Да                     | Автоматически (actor Sendable) | `await repo.save(user)` |
+
+### 3. Самые популярные шаблоны sending 2026 года
+
+#### Шаблон 1 — Передача модели в detached задачу
 
 ```swift
-struct MyData: Sendable {
-    let value: Int
+struct User: Sendable {
+    let id: UUID
+    let name: String
+}
+
+let currentUser = User(id: UUID(), name: "Alex")
+
+Task.detached(priority: .utility) {
+    // sending currentUser в detached task
+    await processUser(currentUser)  // безопасно
 }
 ```
 
-- `MyData` можно безопасно **send** между задачами.
-    
-
----
-
-## 3. Примеры от простого к сложному
-
-### Пример 1. Простая отправка [[Value Type]]
+#### Шаблон 2 — Sending конфигурации в ViewModel
 
 ```swift
-struct Point: Sendable {
-    let x: Int
-    let y: Int
+final class AppConfig: Sendable {
+    let apiKey: String
+    let baseURL: URL
 }
 
-Task.detached {
-    let p = Point(x: 1, y: 2) // sending в detached task
-    print(p)
+@MainActor
+class ProfileViewModel: ObservableObject {
+    let config: AppConfig
+    
+    init(config: AppConfig) {
+        self.config = config  // sending при инициализации
+    }
+    
+    func load() async {
+        // config уже внутри @MainActor — безопасно
+        let url = config.baseURL.appending(path: "profile")
+        // ...
+    }
 }
 ```
 
-- `Point` безопасно отправлен в другой executor.
-    
-
----
-
-### Пример 2. Sending с actor
+#### Шаблон 3 — Sending между актёрами
 
 ```swift
-actor Logger {
-    func log(_ message: String) { print(message) }
+actor UserRepository {
+    private var users: [UUID: User] = [:]
+    
+    func save(_ user: User) {  // user — Sendable
+        users[user.id] = user
+    }
 }
 
-Task.detached {
-    let logger = Logger() // actor автоматически Sendable
-    await logger.log("Привет с detached task") // безопасный sending
+actor AnalyticsService {
+    func trackUser(_ user: User) async {  // sending user между актёрами
+        await repo.save(user)  // безопасно
+        // аналитика...
+    }
 }
 ```
 
-- Actor можно безопасно передавать между задачами благодаря internal isolation.
-    
+### 4. Типичные ошибки и ловушки 2026 года
 
----
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Передача non-Sendable класса в `Task.detached` | Ошибка компиляции в Swift 6              | Сделать `@unchecked Sendable` или использовать `actor` |
+| Захват `var` в `@Sendable` замыкании        | Ошибка: «Capture of mutable var»         | Использовать `let` или захват через `actor` |
+| Думать, что `actor` не требует Sendable     | Нет — actor сам Sendable, но его свойства должны быть Sendable при передаче | Проверять поля |
+| Передача mutable shared класса без синхронизации | Гонка данных в runtime                   | Всё mutable состояние → в `actor` |
+| Использовать `@unchecked Sendable` без внутренней синхронизации | Скрытые data race                        | Lock / serial queue / actor внутри класса |
 
-### Пример 3. Sending с классом через @unchecked Sendable
+### 5. Sending vs другие механизмы передачи данных (2026 сравнение)
 
-```swift
-class Counter {
-    var value = 0
-}
+| Механизм                  | Требуется Sendable? | Проверка компилятором | Потокобезопасность | Рекомендация 2026 | Когда использовать |
+|---------------------------|----------------------|------------------------|---------------------|-------------------|---------------------|
+| Обычный `Task { ... }`    | Да (если захват)     | Полная                 | Зависит от типа     | Основной          | Фоновые задачи     |
+| `Task.detached { ... }`   | Да (строго)          | Полная                 | Зависит от типа     | Для тяжёлых вычислений | Максимальный параллелизм |
+| `async let`               | Да                   | Полная                 | Зависит от типа     | Параллельные вызовы | 2–6 независимых задач |
+| Передача в `actor` метод  | Да                   | Полная                 | Полная (изоляция)   | Для состояния     | Изменяемые данные  |
+| `@MainActor` → обычный Task | Да                 | Полная                 | Полная (main)       | UI → фон          | Обновление UI → обработка |
+| `class` без Sendable      | Нет (ошибка)         | Запрещено              | Отсутствует          | Legacy            | Только с `@unchecked` |
 
-extension Counter: @unchecked Sendable {}
+### 6. Лучшие практики 2026 года
 
-Task.detached {
-    let counter = Counter() // sending через @unchecked Sendable
-    print(counter.value)
-}
-```
+- **Все модели / DTO** — делай `Sendable` (struct с `let`)  
+- **final class без var** — просто `: Sendable`  
+- **final class с var** — `@unchecked Sendable` + обязательная синхронизация (lock / actor / serial queue)  
+- **actor** — используй для **всего изменяемого состояния** — они автоматически Sendable  
+- **Замыкания** — всегда `@Sendable` в `Task`, `async let`, callback  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит почти все проблемы с sending  
+- **Тестирование** — Thread Sanitizer + Instruments на гонки данных  
+- **Документируй** — пиши комментарий «Sendable — неизменяемый / синхронизирован через X»
 
-- Нужно быть осторожным: компилятор доверяет программисту, что класс используется безопасно.
-    
+**Короткий девиз 2026**:
+> «sending — это когда ты передаёшь значение в другую задачу / актёр.  
+> В Swift 6 почти всё, что передаётся между задачами, **обязательно** должно быть Sendable — иначе код просто не скомпилируется.»
 
----
-
-### Пример 4. Sending массива и [[tuple]]
-
-```swift
-Task.detached {
-    let numbers: [Int] = [1, 2, 3] // безопасный sending
-    let point: (Int, Int) = (10, 20) // tuple тоже безопасный
-    print(numbers, point)
-}
-```
-
-- Все элементы должны быть Sendable, иначе компилятор выдаст ошибку.
-    
-
----
-
-### Пример 5. Sending с [[closure]]
-
-```swift
-Task.detached {
-    let value = 42
-    let closure: @Sendable () -> Int = { value } // closure безопасна для sending
-    print(closure())
-}
-```
-
-- Замыкания, которые используются в detached tasks или async closures, должны быть `@Sendable`.
-    
-
----
-
-## 4. Особенности sending
-
-1. **Обязателен для detached tasks и async closures**
-    
-    - Любой объект, который передаётся в другой executor, должен быть Sendable.
-        
-2. **Value types проще всего send**
-    
-    - Структуры, [[enum]], tuple → безопасны автоматически.
-        
-3. **Reference types требуют осторожности**
-    
-    - Классы нужно делать immutable или помечать `@unchecked Sendable`.
-        
-4. **Actor безопасны по умолчанию**
-    
-    - Из-за internal executor и изоляции состояния.
-        
-5. **Используется для гарантии потокобезопасности**
-    
-    - Без sending могут возникнуть гонки данных и неопределённое поведение.
-        
-
----
-
-## 5. Итог
-
-- **Sending = безопасная передача данных между задачами (tasks) и executor’ами**
-    
-- Требует, чтобы тип соответствовал `Sendable`
-    
-- [[Value Type]] → автоматически безопасны
-    
-- [[Reference Type]] → @unchecked Sendable или полностью потокобезопасные
-    
-- Actor → безопасны по умолчанию
-    
-- Важен для detached tasks, async closures, параллельных вычислений
-    
-
----
+Удачи с безопасной передачей данных и чистым многопоточным кодом в Swift! 🔄
