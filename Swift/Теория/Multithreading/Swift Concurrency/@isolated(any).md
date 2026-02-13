@@ -1,204 +1,164 @@
-## 1. Что такое `@isolated(any)`
+Вот **полное, подробное и максимально насыщенное** руководство по атрибуту **`@isolated(any)`** в Swift — актуально на 2026 год (Swift 6.0+ и выше).
 
-`@isolated(any)` — это **атрибут параметра функции**, который говорит компилятору:
+### 1. Что такое @isolated(any) и зачем он нужен
 
-👉 _"Эта функция может выполняться в изоляции того [[actor]], экземпляр которого будет передан в этот параметр"_.
+**`@isolated(any)`** — это **атрибут параметра функции**, который говорит компилятору:
 
-То есть мы **не указываем конкретный actor**, а разрешаем функции использовать _любой actor_, который придёт в аргументе.
+> «Этот параметр — актёр (actor), и **вся функция должна выполняться в изоляции именно этого актёра**».
 
----
+Другими словами:
 
-## 2. Как это работает
+- функция **наследует изоляцию** от переданного экземпляра actor  
+- внутри функции можно **прямо** обращаться к изолированным свойствам и методам этого actor-а **без `await`**  
+- компилятор **гарантирует**, что тело функции будет выполняться **внутри контекста переданного актёра**
 
-- Обычно если метод принимает actor, мы не можем внутри метода напрямую обращаться к его изолированным данным — нужно писать `await actor.method()`.
-    
-- С `@isolated(any)` мы говорим:
-    
-    - "Эта функция **сама будет выполняться внутри actor**, переданного как аргумент".
-        
-    - Это позволяет безопасно вызывать actor-методы **без [[await]]** и работать с его состоянием напрямую.
-        
+Это один из самых мощных и современных инструментов работы с изоляцией в Swift Concurrency (введён в Swift 5.7–5.9, значительно улучшен в Swift 6).
 
-Можно думать так: параметр с `@isolated(any)` **переносит контекст изоляции** в функцию.
+**Коротко**:
+- без `@isolated(any)` → нужно `await actor.method()`  
+- с `@isolated(any)` → можно `actor.method()` напрямую, как будто мы уже внутри actor
 
----
-
-## 3. Простой пример
-
-Без `@isolated(any)`:
+### 2. Синтаксис и обязательные условия
 
 ```swift
-actor Counter {
-    var value = 0
-    func increment() { value += 1 }
-}
-
-func doSomething(with counter: Counter) {
-    // ❌ ошибка: 'counter' изолирован, нужен await
-    // counter.increment()
+func doSomething(with actor: isolated(any) SomeActor) {
+    // внутри функции можно обращаться к actor.value напрямую
+    actor.value += 1
+    actor.someMethod()  // без await!
 }
 ```
 
-С `@isolated(any)`:
+**Обязательные условия (2026)**:
+
+- параметр **должен быть типа actor** (или протокола, который наследуется от `Actor`)  
+- атрибут `@isolated(any)` ставится **только перед типом параметра**  
+- функция **не может быть** помечена `@MainActor` или другим глобальным актёром одновременно (конфликт изоляции)  
+- если функция асинхронная (`async`), то вызов всё равно будет **синхронным** внутри изоляции (но сам вызов функции может требовать `await`)
+
+### 3. Самые популярные и правильные шаблоны использования в 2026
+
+#### Шаблон 1 — Универсальная функция для работы с любым actor
 
 ```swift
-func doSomething(with counter: isolated(any) Counter) {
-    // ✅ теперь можно обращаться напрямую
-    counter.increment()
-}
-```
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Чтение/запись из actor
-
-```swift
-actor Storage {
-    var items: [String] = []
-
-    func add(_ item: String) { items.append(item) }
-}
-
-func reset(storage: isolated(any) Storage) {
-    // Мы уже внутри контекста этого storage
+func clearStorage<S: Actor>(_ storage: isolated(any) S) where S: StorageProtocol {
     storage.items.removeAll()
+    storage.lastCleared = Date()
 }
+
+actor UserStorage: StorageProtocol {
+    var items: [String] = []
+    var lastCleared: Date?
+}
+
+actor OrderStorage: StorageProtocol {
+    var items: [String] = []
+    var lastCleared: Date?
+}
+
+let userStorage = UserStorage()
+await clearStorage(userStorage)  // работает без await внутри
+
+let orderStorage = OrderStorage()
+await clearStorage(orderStorage)
 ```
 
----
-
-### Пример 2. Вызов без `await`
+#### Шаблон 2 — Работа с состоянием без await
 
 ```swift
-actor Logger {
-    func log(_ message: String) {
-        print("LOG:", message)
-    }
-}
-
-func debug(logger: isolated(any) Logger) {
-    logger.log("Отладка!") // ✅ без await
-}
-```
-
----
-
-### Пример 3. Универсальная функция
-
-```swift
-func withActor<T, A: Actor>(
-    _ actor: isolated(any) A,
-    perform work: (isolated(any) A) -> T
-) -> T {
-    return work(actor)
-}
-
 actor Counter {
     var value = 0
     func increment() { value += 1 }
+}
+
+func batchIncrement(_ counter: isolated(any) Counter, times: Int) {
+    for _ in 0..<times {
+        counter.increment()     // без await!
+        counter.value += 1      // прямой доступ
+    }
 }
 
 let counter = Counter()
-
 Task {
-    await withActor(counter) { counter in
-        counter.increment()
-        print("Value:", counter.value)
-    }
+    await batchIncrement(counter, times: 1000)
 }
 ```
 
----
-
-### Пример 4. Работа с несколькими actor’ами
+#### Шаблон 3 — Универсальная обработка ошибок внутри actor
 
 ```swift
-actor UserStorage {
+protocol SafeActor: Actor {
+    associatedtype Value
+    var value: Value { get set }
+}
+
+func safeUpdate<A: SafeActor>(_ actor: isolated(any) A, _ transform: (inout A.Value) throws -> Void) rethrows {
+    try transform(&actor.value)
+}
+
+actor SafeInt: SafeActor {
+    var value = 0
+}
+
+let safe = SafeInt()
+try await safeUpdate(safe) { $0 += 42 }
+```
+
+#### Шаблон 4 — Работа с несколькими actor одновременно (с осторожностью)
+
+```swift
+actor UserDB {
     var users: [String] = []
-    func add(_ user: String) { users.append(user) }
 }
 
-actor OrderStorage {
+actor OrderDB {
     var orders: [String] = []
-    func add(_ order: String) { orders.append(order) }
 }
 
-func clearUsers(storage: isolated(any) UserStorage) {
-    storage.users.removeAll()
-}
-
-func clearOrders(storage: isolated(any) OrderStorage) {
-    storage.orders.removeAll()
+func migrateUsers(to orderDB: isolated(any) OrderDB, from userDB: isolated(any) UserDB) {
+    // Оба actor доступны без await
+    let users = userDB.users
+    orderDB.orders.append(contentsOf: users)
 }
 ```
 
-👉 Здесь мы явно указываем разные actor, но используем одну и ту же концепцию.
+**Внимание**: вызов `migrateUsers` требует `await`, но внутри функции **нет await** — всё происходит в изоляции переданных актёров.
 
----
+### 4. Типичные ошибки и ловушки 2026 года
 
-### Пример 5. Передача изоляции в цепочке вызовов
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Поставить `@isolated(any)` на не-actor параметр | Ошибка компиляции                        | Параметр должен быть actor-типа |
+| Вызывать функцию без `await` извне          | Ошибка компиляции                        | Функция с `@isolated(any)` требует `await` при вызове |
+| Думать, что функция не требует `await`      | Ошибка компиляции при вызове             | Вызов всегда через `await` |
+| Использовать с `@MainActor` одновременно    | Конфликт изоляции                        | Нельзя комбинировать `@MainActor` и `@isolated(any)` |
+| Передавать mutable значение без Sendable    | Ошибка strict concurrency                | Всё передаваемое должно быть Sendable |
 
-```swift
-actor Database {
-    var data: [String] = []
+### 5. @isolated(any) vs другие механизмы изоляции (2026 сравнение)
 
-    func add(_ item: String) { data.append(item) }
-}
+| Механизм                  | Изоляция наследуется от параметра | Требуется await при вызове | Сложность | Рекомендация 2026 | Когда использовать |
+|---------------------------|------------------------------------|-----------------------------|-----------|-------------------|---------------------|
+| `@isolated(any)`          | Да                                 | Да                          | Средняя   | Современный       | Универсальные функции для actor-ов |
+| `@MainActor`              | Нет (глобальный)                   | Нет (если уже на main)      | Низкая    | Для UI            | Всё, что связано с UI |
+| обычный `actor`           | Да (экземплярный)                  | Да                          | Низкая    | Основной выбор    | Локальное состояние |
+| `@_inheritActorContext`   | Да (внутренний)                    | Нет                         | Высокая   | Legacy / обходной | Только если нет альтернативы |
 
-func addDefaultData(db: isolated(any) Database) {
-    db.add("Default record")
-    logData(db: db)
-}
+**Вывод 2026**:
+- `@isolated(any)` — **самый современный и рекомендуемый** способ писать универсальные функции, работающие внутри произвольного actor-а  
+- Он **значительно чище** и **безопаснее**, чем `@_inheritActorContext`  
+- В 95% случаев заменяет старые костыли и делает код декларативным
 
-func logData(db: isolated(any) Database) {
-    print("DB:", db.data)
-}
-```
+### 6. Лучшие практики 2026 года
 
-👉 Оба метода работают **в изоляции одного и того же actor**.
+- **Используйте `@isolated(any)`** для всех универсальных функций, которые работают с actor-ами  
+- **Всегда помечать** параметр как `isolated(any) ActorType`  
+- **Вызов** такой функции **всегда** через `await`  
+- **Не комбинировать** с `@MainActor` на одной функции  
+- **Для UI** — предпочитайте `@MainActor`  
+- **Тестирование** — легко мокать через протоколы и `isolated(any)`  
+- **Swift 6 strict concurrency** — полностью поддерживается и очень полезен
 
----
+**Короткий девиз 2026**:
+> «@isolated(any) — это когда ты хочешь сказать функции: «работай внутри того actor-а, который мне передали».  
+> Это один из самых красивых и мощных инструментов Swift Concurrency 2025–2026 годов.»
 
-### Пример 6. Сравнение `@isolated(any)` и [[@MainActor]]
-
-```swift
-@MainActor
-func updateUI() {
-    print("UI обновлён")
-}
-
-actor Service {
-    func run(ui: isolated(any) @MainActor) {
-        // Мы в контексте MainActor
-        ui.updateUI()
-    }
-}
-```
-
----
-
-## 5. Когда использовать `@isolated(any)`
-
-- Когда функция должна работать **внутри переданного actor** (но actor может быть любым).
-    
-- Чтобы писать универсальные утилиты, которые можно применять к разным actor.
-    
-- Чтобы не писать кучу `await`, если мы гарантированно уже "внутри" actor.
-    
-
----
-
-## 6. Выводы
-
-- `@isolated(any)` — это способ **унаследовать изоляцию от аргумента-actor**.
-    
-- Позволяет вызывать его методы и свойства **без `await`**.
-    
-- Полезно для универсальных функций и снижения количества `await`.
-    
-- Это более современный способ работать с actor-изоляцией, чем костыли типа `@_inheritActorContext`.
-    
-
----
+Удачи с чистой изоляцией и элегантным кодом в Swift! 🧑‍💻
