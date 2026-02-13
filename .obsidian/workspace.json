@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Patterns/SOLID/Single Responsibility Principle.md",
+                "file": "Swift/Теория/Patterns/Strategy.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Single Responsibility Principle"
+              "title": "Strategy"
             }
           }
         ]
@@ -196,6 +196,15 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Patterns/Singleton.md",
+    "Swift/Теория/Patterns/Observer.md",
+    "Swift/Теория/Patterns/KISS.md",
+    "Swift/Теория/Patterns/GoF.md",
+    "Swift/Теория/Patterns/DRY.md",
+    "Swift/Теория/Patterns/Decorator.md",
+    "Swift/Теория/Patterns/Builder.md",
+    "Swift/Теория/Patterns/SOLID/SOLID.md",
+    "Swift/Теория/Patterns/SOLID/Single Responsibility Principle.md",
     "Swift/Теория/Patterns/SOLID/Open-Closed Principle.md",
     "Swift/Теория/Patterns/SOLID/Liskov Substitution Principle.md",
     "Swift/Теория/Patterns/SOLID/Interface Segregation Principle.md",
@@ -213,15 +222,6 @@
     "Swift/Теория/Multithreading/Swift Concurrency/Task.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/sync.md",
     "Swift/Теория/Multithreading/Swift Concurrency/sending.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Sendable (Protocol).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/nonisolated.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/isolation (expression macro).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/isolation (concept).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/isolated.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Global Executor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/for-await.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Executor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Continuations.md",
     "Swift/Теория/Testing",
     "Swift/Теория/System Design/1. Основы проектирования систем/Архитектуры",
     "Swift/Теория/System Design/1. Основы проектирования систем/Ключевые концепции",
