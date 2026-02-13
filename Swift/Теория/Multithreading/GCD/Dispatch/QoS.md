@@ -98,14 +98,14 @@ Task(priority: .background) {
 
 ### 6. QoS в DispatchQueue vs Swift Concurrency (честное сравнение 2026)
 
-| Характеристика         | DispatchQueue.global(qos:)                                     | [[Swift Concurrency]] (Task(priority:)) | Что выбрать в 2026     |
-| ---------------------- | -------------------------------------------------------------- | --------------------------------------- | ---------------------- |
-| Потокобезопасность     | Нужно вручную ([[NSLock\|lock]], [[DispatchBarrier\|barrier]]) | Встроенная ([[actor]], [[Sendable]])    | Swift Concurrency      |
-| Приоритеты             | QoS                                                            | Task priority                           | Оба хороши, Task проще |
-| Отмена задач           | [[DispatchWorkItem]] (сложно)                                  | Нативная (Task.cancel())                | Swift Concurrency      |
-| UI-обновления          | [[DispatchQueue]].[[main]].[[async]]                           | @MainActor / await MainActor.run        | @MainActor лучше       |
-| Читаемость             | Старый стиль                                                   | Современный, меньше кода                | Swift Concurrency      |
-| Совместимость с legacy | Отличная                                                       | Требует адаптации                       | GCD для старого кода   |
+| Характеристика         | DispatchQueue.global(qos:)                                     | [[Swift Concurrency]] (Task(priority:))  | Что выбрать в 2026       |
+| ---------------------- | -------------------------------------------------------------- | ---------------------------------------- | ------------------------ |
+| Потокобезопасность     | Нужно вручную ([[NSLock\|lock]], [[DispatchBarrier\|barrier]]) | Встроенная ([[actor]], [[Sendable]])     | Swift Concurrency        |
+| Приоритеты             | QoS                                                            | Task priority                            | Оба хороши, Task проще   |
+| Отмена задач           | [[DispatchWorkItem]] (сложно)                                  | Нативная ([[Task]].cancel())             | Swift Concurrency        |
+| UI-обновления          | [[DispatchQueue]].[[main]].[[async]]                           | [[@MainActor]] / [[await]] MainActor.run | @MainActor лучше         |
+| Читаемость             | Старый стиль                                                   | Современный, меньше кода                 | Swift Concurrency        |
+| Совместимость с legacy | Отличная                                                       | Требует адаптации                        | [[GCD]] для старого кода |
 
 ### 7. Лучшие практики 2026 года
 
@@ -122,5 +122,3 @@ Task(priority: .background) {
 > В 2026 году это уже legacy-механизм в GCD.  
 > Новый стандарт — Task(priority:) + actor + @MainActor.  
 > Используй GCD только для поддержки старого кода.»
-
-Удачи с быстрым, безопасным и энергоэффективным многопоточным кодом в Swift! ⚡
