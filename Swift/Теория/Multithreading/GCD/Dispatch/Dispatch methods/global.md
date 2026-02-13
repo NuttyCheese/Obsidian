@@ -1,59 +1,81 @@
-**Global queues** в **GCD** (Grand Central Dispatch) — это системные **конкурентные** (concurrent) очереди, которые Apple предоставляет "из коробки" для всех приложений. Они глобальные (shared), не нужно их создавать вручную, и они оптимизированы под [[QoS]] (Quality of Service).
+**Global GCD** (или **global dispatch queues**) — это набор предопределённых очередей в **Grand Central Dispatch** ([[GCD]]), которые Apple предоставляет «из коробки» и которые используются почти в каждом iOS/macOS-приложении.
 
-На 2026 год ([[iOS]] 19/26, [[Swift]] 6+, Dispatch framework) ничего кардинально не изменилось в базовой модели global queues, но:
+Вот актуальное и полное состояние global queues на 2026 год ([[Swift]] 6 / [[iOS]] 18+ / macOS 15+).
 
-- QoS теперь ещё сильнее влияет на приоритет и энергопотребление (особенно на Apple Silicon и будущих чипах)
-- Рекомендуется **избегать** частого использования `DispatchQueue.global()` без QoS для длительных задач (может привести к thread explosion и замедлению)
-- Лучше использовать **явный QoS** или кастомные очереди с target queue hierarchy
+### 1. Список всех глобальных очередей ([[QoS]])
 
-### Основные global queues (DispatchQueue.global(qos: ...))
+| Очередь                          | QoS-параметр              | Приоритет (относительный) | Когда использовать (2026 рекомендации)                     | Современная альтернатива в Swift Concurrency |
+|----------------------------------|----------------------------|----------------------------|-------------------------------------------------------------|-----------------------------------------------|
+| `.global(qos: .userInteractive)` | User Interactive           | ★★★★★ (самый высокий)      | Анимации, скролл, жесты, реакция на касания                | `Task(priority: .userInteractive)`            |
+| `.global(qos: .userInitiated)`   | User Initiated             | ★★★★☆                      | Запуск после нажатия кнопки, загрузка данных по действию   | `Task(priority: .userInitiated)`              |
+| `.global()` / `.global(qos: .default)` | Default              | ★★★☆☆                      | Большинство фоновых задач без явного приоритета             | `Task {}` (по умолчанию)                      |
+| `.global(qos: .utility)`         | Utility                    | ★★☆☆☆                      | Долгие операции: обработка фото, индексация, загрузка файлов | `Task(priority: .utility)`                    |
+| `.global(qos: .background)`      | Background                 | ★☆☆☆☆ (самый низкий)       | Фоновые задачи: синхронизация, аналитика, чистка кэша      | `Task(priority: .background)`                 |
 
-| QoS уровень              | Когда использовать                                      | Приоритет | Примеры задач                                      | Код (Swift) пример                                      |
-|--------------------------|----------------------------------------------------------|-----------|----------------------------------------------------|---------------------------------------------------------|
-| `.userInteractive`       | Всё, что влияет на отзывчивость UI прямо сейчас         | Очень высокий | Анимации, скролл, обработка тапов, touch events   | `DispatchQueue.global(qos: .userInteractive).async { ... }` |
-| `.userInitiated`         | Задачи, инициированные пользователем, ждём результат быстро | Высокий   | Загрузка данных после нажатия кнопки, поиск, открытие экрана | `DispatchQueue.global(qos: .userInitiated).async { ... }` |
-| `.utility` (default в Swift 3+) | Долгие задачи, где пользователю можно показать прогресс | Средний   | Скачивание файлов, обработка изображений, индексация | `DispatchQueue.global(qos: .utility).async { ... }`     |
-| `.background`            | Задачи, которые не видны пользователю и не срочные      | Низкий    | Бэкап, синхронизация в фоне, аналитика, очистка кэша | `DispatchQueue.global(qos: .background).async { ... }`  |
-| `.default`               | Старый стиль (до QoS), сейчас ≈ .utility                | Средний   | Совместимость со старым кодом                     | `DispatchQueue.global().async { ... }`                  |
+### 2. Как правильно использовать global queues в 2026 году
 
-**Важно**: `DispatchQueue.global()` без параметра QoS эквивалентно `.default` (≈ `.utility`).
-
-### Лучшие практики на 2026 год
-
-- **Не злоупотребляй `DispatchQueue.global()`** для длительных задач — это может привести к созданию лишних потоков и замедлению всего приложения ([[GCD]] под капотом управляет thread pool'ом глобально).
-- Предпочитай:
-  - Кастомные **serial queues** для защиты mutable state (actor-like поведение без actors)
-  - Кастомные **concurrent queues** с target = global queue нужного QoS
-  - **[[Swift Concurrency]]** ([[async]]/[[await]], [[Task]], [[actor]]) для нового кода — GCD остаётся для низкоуровневого контроля или legacy
-- Для UI всегда возвращайся на main queue:
+#### Рекомендуемый стиль (современный + безопасный)
 
 ```swift
-DispatchQueue.global(qos: .userInitiated).async {
-    // Тяжёлая работа: сеть, обработка фото и т.д.
-    let result = heavyComputation()
-    
-    DispatchQueue.main.async {
-        // Обновление UIKit/UI
-        self.label.text = result
-        self.tableView.reloadData()
-    }
-}
-```
-
-Или современный вариант (Swift 5.5+):
-
-```swift
-Task {
-    let result = await heavyAsyncWork()  // или с GCD внутри
+// Самый частый и рекомендуемый паттерн 2026
+Task(priority: .userInitiated) {
+    let data = await heavyNetworkCall()
     
     await MainActor.run {
-        self.label.text = result
+        self.tableView.reloadData(with: data)
+    }
+}
+
+// Или более явный вариант с QoS
+DispatchQueue.global(qos: .userInitiated).async {
+    let data = heavyComputation()
+    
+    DispatchQueue.main.async {
+        self.updateUI(with: data)
     }
 }
 ```
 
-### Краткий вывод
+#### Правила хорошего тона 2026
 
-**Global queues в GCD** — это быстрый способ запустить задачу в фоне без создания своей очереди.  
-Самые частые: `.userInitiated` (для "почти UI") и `.utility` / `.background` (для настоящего фона).  
-`DispatchQueue.global()` без QoS — ок для мелких быстрых задач, но для всего остального лучше указывать QoS явно.
+- **Всегда указывай QoS явно** — `.default` почти никогда не нужен  
+- **Не используй .sync на global-очередях** — это бессмысленно и опасно  
+- **Не делай тяжёлую работу на .main** — только UI-обновления  
+- **Переходи на Task { } / Task(priority:) вместо DispatchQueue.global()**  
+  → Task автоматически наследует приоритет и контекст изоляции  
+  → Лучше читается и меньше boilerplate
+
+### 3. Сравнение DispatchQueue.global vs Task (2026)
+
+| Критерий                                 | DispatchQueue.global(qos:)             | Task(priority:)                   | Победитель 2026 |
+| ---------------------------------------- | -------------------------------------- | --------------------------------- | --------------- |
+| Читаемость                               | ★★★☆☆                                  | ★★★★★                             | Task            |
+| Поддержка [[async]]/[[await]]            | Только через completion / continuation | Нативная                          | Task            |
+| Автоматическое переключение на MainActor | Нет                                    | Да (если родитель [[@MainActor]]) | Task            |
+| Наследование приоритета                  | Нет                                    | Да                                | Task            |
+| Отмена задачи                            | Нет встроенной                         | `task.cancel()`                   | Task            |
+| Strict Concurrency (Swift 6)             | Требует ручной проверки                | Полная поддержка                  | Task            |
+| Производительность                       | Чуть выше в горячих петлях             | Почти идентична                   | Ничья           |
+
+**Вывод**:  
+В 2026 году **DispatchQueue.global()** используют только в двух случаях:
+
+1. Нужна **очень тонкая настройка QoS** в горячих петлях (редко)  
+2. Поддержка старого кода / библиотек, которые ещё не мигрированы на async/await
+
+Во всех остальных ситуациях → **Task { } / Task(priority:)**
+
+### 4. Лучшие практики работы с global GCD в 2026
+
+- **Переходи на Task** — это уже стандарт  
+- **QoS указывай всегда** — `.userInitiated` для большинства пользовательских действий  
+- **Не используй .sync на global-очередях** — это бессмысленно и опасно  
+- **Для UI** — только `@MainActor` / `MainActor.run` / `await MainActor.run`  
+- **Для фоновых вычислений** — `Task.detached(priority: .utility)`  
+- **Для CPU-интенсивных задач** — `Task.detached(priority: .background)` + `actor`  
+- **Swift 6 strict concurrency** — избегай захвата [[self]] в global-замыканиях без `[weak self]`
+
+**Короткий девиз 2026**:
+> «Global GCD в 2026 году — это как дискета в 2025: работает, но почти никто не использует.  
+> Основной инструмент — Task { } / Task(priority:).  
+> DispatchQueue.global() оставь только для очень специфических случаев и поддержки legacy-кода.»

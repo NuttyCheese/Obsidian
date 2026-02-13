@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
+                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "global"
+              "title": "Dispatch"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
+                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура global"
+              "title": "Структура Dispatch"
             }
           },
           {
@@ -196,10 +196,13 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Multithreading/GCD/Dispatch/DispatchGroups.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/DispatchBarrier.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Serial and Concurrent/serial.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Serial and Concurrent/concurrent.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/main.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/Priority DispatchQueue.global.md",
@@ -219,9 +222,6 @@
     "Swift/Теория/UIKit/UIBackgroundExtensionView.md",
     "Swift/Теория/UIKit/UIPickerView.md",
     "Swift/Теория/UIKit/UISearchBar.md",
-    "Swift/Теория/UIKit/UIActivityIndicatorView.md",
-    "Swift/Теория/UIKit/UIProgressView.md",
-    "Swift/Теория/UIKit/UIVisualEffectView.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",
