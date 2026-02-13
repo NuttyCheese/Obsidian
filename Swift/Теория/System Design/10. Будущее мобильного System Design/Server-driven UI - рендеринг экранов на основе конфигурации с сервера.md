@@ -34,7 +34,7 @@
 }
 ```
 
-4. iOS-приложение интерпретирует [[JSON]] и строит **[[Swift/Теория/Swift/UIKit/UIView]] или [[SwiftUI]] View**.
+4. iOS-приложение интерпретирует [[JSON]] и строит **[[Swift/Теория/UIKit/UIView]] или [[SwiftUI]] View**.
     
 
 ---

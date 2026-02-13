@@ -51,7 +51,7 @@ print(alice2 === alice1)      // true — одна и та же сущность
 
 ### Реальные сценарии в iOS (2026)
 
-- **[[UIViewController]]**, **[[UIView]]**, **[[NSObject]]**-подклассы — всегда reference types
+- **[[UIViewController]]**, **[[Swift/Расширения/UIView]]**, **[[NSObject]]**-подклассы — всегда reference types
 - Делегаты / datasource / observers — обычно `weak var`
 - Замыкания, захватывающие `self` — **всегда** `[weak self]`
 - Кэши изображений / данных — [[NSCache]] или [[Dictionary]] с reference types

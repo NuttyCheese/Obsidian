@@ -14,7 +14,7 @@
 
 ## 1. Принцип работы
 
-1. Генерируется **snapshot** текущего состояния [[Swift/Теория/Swift/UIKit/UIView]]/[[UIViewController]].
+1. Генерируется **snapshot** текущего состояния [[Swift/Теория/UIKit/UIView]]/[[UIViewController]].
     
 2. Snapshot сохраняется как эталонный в проекте (Reference Image).
     
