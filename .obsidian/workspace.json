@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Testing/XCTest.md",
+                "file": "Swift/Теория/Patterns/Без названия.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "XCTest"
+              "title": "Без названия"
             }
           }
         ]
@@ -196,6 +196,8 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Testing/XCTest.md",
+    "Swift/Теория/Patterns/Без названия.md",
     "Swift/Теория/Testing/Unit-test.md",
     "Swift/Теория/Testing/UI-test.md",
     "Swift/Теория/Testing/Three main unit test blocks.md",
@@ -220,8 +222,6 @@
     "Swift/Теория/Patterns/SOLID/Open-Closed Principle.md",
     "Swift/Теория/Patterns/SOLID/Liskov Substitution Principle.md",
     "Swift/Теория/Patterns/SOLID/Interface Segregation Principle.md",
-    "Swift/Теория/Patterns/SOLID/Dependency Inversion Principle.md",
-    "Swift/Теория/Multithreading/NSLock.md",
     "Swift/Теория/Testing",
     "Swift/Теория/System Design/1. Основы проектирования систем/Архитектуры",
     "Swift/Теория/System Design/1. Основы проектирования систем/Ключевые концепции",
