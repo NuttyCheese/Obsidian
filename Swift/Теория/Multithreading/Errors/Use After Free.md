@@ -6,9 +6,9 @@
 
 - Использование `unowned` ссылок, когда объект уже уничтожен  
 - Работа с **Unsafe**-указателями (`UnsafePointer`, `UnsafeMutablePointer`, `UnsafeRawPointer`)  
-- Взаимодействие с **C API** или низкоуровневыми фреймворками ([[Core Foundation]], [[Metal]], [[Core Audio]], [[Accelerate]] и т.д.)  
+- Взаимодействие с **C [[API]]** или низкоуровневыми фреймворками ([[Core Foundation]], [[Metal]], [[Core Audio]], [[Accelerate]] и т.д.)  
 - Неправильное использование `Unmanaged` или ручное управление retain/release  
-- Ошибки в **unsafe bit casting** или **memory layout**  
+- Ошибки в **[[unsafebitcast]] или **[[memory layout]]**  
 - Редко — баги в ARC или компиляторе (крайне редко в 2026 году)
 
 **Самые частые последствия UAF в iOS-приложении**:
@@ -21,15 +21,15 @@
 
 ### 2. Самые частые сценарии Use After Free в Swift 2026
 
-| №  | Сценарий                                      | Как проявляется                              | Частота |
-|----|-----------------------------------------------|----------------------------------------------|---------|
-| 1  | `unowned` ссылка после deinit владельца       | Краш при обращении к `unowned` свойству      | ★★★★★   |
-| 2  | UnsafeMutablePointer после deallocate()       | EXC_BAD_ACCESS при pointee / pointee =       | ★★★★☆   |
-| 3  | Core Foundation объект после CFRelease        | Краш при вызове метода CF-объекта            | ★★★★☆   |
-| 4  | Metal buffer / texture после release          | GPU краш или артефакты на экране             | ★★★☆☆   |
-| 5  | Accelerate / vDSP буфер после free            | Мусорные результаты вычислений               | ★★★☆☆   |
-| 6  | Unmanaged.passUnretained после release        | Краш при использовании объекта               | ★★★☆☆   |
-| 7  | Ошибка в unsafe bit cast / memory layout      | Неопределённое поведение, краш               | ★★☆☆☆   |
+| №   | Сценарий                                      | Как проявляется                         | Частота |
+| --- | --------------------------------------------- | --------------------------------------- | ------- |
+| 1   | [[unowned]] ссылка после [[deinit]] владельца | Краш при обращении к `unowned` свойству | ★★★★★   |
+| 2   | UnsafeMutablePointer после deallocate()       | EXC_BAD_ACCESS при pointee / pointee =  | ★★★★☆   |
+| 3   | Core Foundation объект после CFRelease        | Краш при вызове метода CF-объекта       | ★★★★☆   |
+| 4   | Metal buffer / texture после release          | GPU краш или артефакты на экране        | ★★★☆☆   |
+| 5   | Accelerate / vDSP буфер после free            | Мусорные результаты вычислений          | ★★★☆☆   |
+| 6   | Unmanaged.passUnretained после release        | Краш при использовании объекта          | ★★★☆☆   |
+| 7   | Ошибка в unsafe bit cast / memory layout      | Неопределённое поведение, краш          | ★★☆☆☆   |
 
 ### 3. Классические примеры Use After Free (и как они крашатся)
 
@@ -106,26 +106,26 @@ print(nsString.length)  // безопасно
 
 ### 4. Все современные способы защиты от Use After Free (2026)
 
-| Способ защиты                     | Защита от UAF | Сложность | Рекомендация 2026 | Примечание |
-|-----------------------------------|----------------|-----------|-------------------|------------|
-| **weak вместо unowned**           | ★★★★★          | ★★☆☆☆     | Всегда            | Стандарт для ссылок на owner |
-| **ARC + автоматическое управление** | ★★★★★        | ★☆☆☆☆     | Всегда            | Главный защитник в Swift |
-| **defer { release / deallocate }** | ★★★★★       | ★★☆☆☆     | При Unsafe        | Спасает от забытого освобождения |
-| **actor**                         | ★★★★★          | ★★★☆☆     | Для состояния     | Нет прямого доступа → нет UAF |
-| **Sendable + strict concurrency** | ★★★★★          | ★★★★☆     | Swift 6 проекты   | Ловит dangling pointer на этапе компиляции |
-| **Unsafe API с осторожностью**    | ★★★★☆          | ★★★★☆     | Только при необходимости | Использовать только когда нет альтернативы |
-| **Unmanaged.passRetained / takeRetained** | ★★★★☆   | ★★★★☆     | CF-объекты        | Контроль retain/release |
+| Способ защиты                              | Защита от UAF | Сложность | Рекомендация 2026        | Примечание                                 |
+| ------------------------------------------ | ------------- | --------- | ------------------------ | ------------------------------------------ |
+| **[[weak]] вместо [[unowned]]**            | ★★★★★         | ★★☆☆☆     | Всегда                   | Стандарт для ссылок на owner               |
+| **ARC + автоматическое управление**        | ★★★★★         | ★☆☆☆☆     | Всегда                   | Главный защитник в Swift                   |
+| **[[defer]] { [[release]] / deallocate }** | ★★★★★         | ★★☆☆☆     | При Unsafe               | Спасает от забытого освобождения           |
+| **[[actor]]**                              | ★★★★★         | ★★★☆☆     | Для состояния            | Нет прямого доступа → нет UAF              |
+| **Sendable + strict concurrency**          | ★★★★★         | ★★★★☆     | Swift 6 проекты          | Ловит dangling pointer на этапе компиляции |
+| **Unsafe API с осторожностью**             | ★★★★☆         | ★★★★☆     | Только при необходимости | Использовать только когда нет альтернативы |
+| **Unmanaged.passRetained / takeRetained**  | ★★★★☆         | ★★★★☆     | CF-объекты               | Контроль retain/release                    |
 
 ### 5. Как найти Use After Free в 2026
 
-| Инструмент / Способ               | Что ловит                              | Где включается                  | Эффективность |
-|-----------------------------------|----------------------------------------|----------------------------------|---------------|
-| **Address Sanitizer**             | Use After Free, Use After Scope, buffer overflow | Xcode → Scheme → Diagnostics     | ★★★★★         |
-| **Thread Sanitizer**              | Data Race (косвенно помогает)          | Xcode → Diagnostics              | ★★★★☆         |
-| **Zombies** (NSZombies)           | Use After Free в Objective-C объектах  | Xcode → Diagnostics → Enable Zombie Objects | ★★★★☆         |
-| **Instruments → Zombies**         | UAF в runtime                          | Instruments → Zombies            | ★★★★★         |
-| **Swift 6 Strict Concurrency**    | Dangling pointer / unsafe передача     | Build Settings → Swift Compiler  | ★★★★★         |
-| **Xcode Memory Graph Debugger**   | Подозрительные retain cycles + UAF    | Debug navigator → Memory Graph   | ★★★★☆         |
+| Инструмент / Способ             | Что ловит                                        | Где включается                              | Эффективность |
+| ------------------------------- | ------------------------------------------------ | ------------------------------------------- | ------------- |
+| **Address Sanitizer**           | Use After Free, Use After Scope, buffer overflow | [[Xcode]] → Scheme → Diagnostics            | ★★★★★         |
+| **Thread Sanitizer**            | Data Race (косвенно помогает)                    | Xcode → Diagnostics                         | ★★★★☆         |
+| **Zombies** (NSZombies)         | Use After Free в Objective-C объектах            | Xcode → Diagnostics → Enable Zombie Objects | ★★★★☆         |
+| **Instruments → Zombies**       | UAF в runtime                                    | Instruments → Zombies                       | ★★★★★         |
+| **Swift 6 Strict Concurrency**  | Dangling pointer / unsafe передача               | Build Settings → [[Swift]] Compiler         | ★★★★★         |
+| **Xcode Memory Graph Debugger** | Подозрительные retain cycles + UAF               | Debug navigator → Memory Graph              | ★★★★☆         |
 
 ### 6. Лучшие практики 2026 (Swift 6+)
 
