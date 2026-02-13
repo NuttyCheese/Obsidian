@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/main.md",
+                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "main"
+              "title": "global"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "any Protocol.md",
+                "file": "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура any Protocol"
+              "title": "Структура global"
             }
           },
           {
@@ -176,7 +176,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
@@ -196,10 +196,12 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Multithreading/GCD/Dispatch/Serial and Concurrent/serial.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Serial and Concurrent/concurrent.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/main.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/global.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.md",
-    "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/main.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/Priority DispatchQueue.global.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/asyncAfter.md",
     "Swift/Теория/Multithreading/GCD/Dispatch/Dispatch methods/DispatchQueue.global.md",
@@ -220,8 +222,6 @@
     "Swift/Теория/UIKit/UIActivityIndicatorView.md",
     "Swift/Теория/UIKit/UIProgressView.md",
     "Swift/Теория/UIKit/UIVisualEffectView.md",
-    "Swift/Теория/UIKit/UIPageControl.md",
-    "Swift/Теория/UIKit/UIMenu.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",
