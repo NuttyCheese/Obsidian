@@ -1,54 +1,180 @@
-`DispatchWorkItem` - это объект, который представляет отдельную задачу или блок кода, который может быть выполнен в параллельном потоке с помощью Grand Central Dispatch ([[GCD]]). Он предоставляет более гибкий способ управления задачами, чем просто отправка блока кода в очередь диспетчера, поскольку позволяет контролировать выполнение, отмену и завершение задачи. Вот более подробное объяснение:
+Вот **полное, подробное и максимально насыщенное** руководство по **`DispatchWorkItem`** в Swift и Grand Central Dispatch (GCD) — актуально на февраль 2026 года.
 
-1. **Создание DispatchWorkItem**:
-   - Вы можете создать объект DispatchWorkItem, передавая в него замыкание ([[closure]]), которое представляет задачу для выполнения.
-   - Замыкание может содержать любой код, который вы хотите выполнить в параллельном потоке.
+### 1. Что такое DispatchWorkItem и зачем он нужен
 
-2. **Выполнение DispatchWorkItem**:
-   - DispatchWorkItem может быть выполнен в любой очереди диспетчера с помощью метода `perform()`.
-   - Вы можете указать, в какой очереди должно быть выполнено замыкание, или просто использовать текущую очередь, вызвав метод `perform()` без аргументов.
-   
-3. **Отмена DispatchWorkItem**:
-   - Вы можете отменить выполнение DispatchWorkItem, вызвав метод `cancel()`.
-   - Отмена задачи не означает, что она немедленно прекратится; это просто указание, что задачу нужно прекратить выполнение, когда это станет возможным.
-   
-4. **Проверка статуса задачи**:
-   - Вы можете проверить статус DispatchWorkItem, вызвав свойство `isCancelled`, чтобы определить, была ли задача отменена.
-   - Также есть возможность получить текущий статус DispatchWorkItem с помощью свойства `isExecuting`, чтобы определить, выполняется ли задача в данный момент.
+**DispatchWorkItem** — это **объект-задача**, который:
 
-5. **Завершение задачи**:
-   - После выполнения DispatchWorkItem или после его отмены вы можете выполнить определенные действия с помощью замыкания, переданного в метод `notify(queue:execute:)`.
-   - Это замыкание выполнится после завершения или отмены задачи.
+- инкапсулирует блок кода (closure)  
+- может быть **отменён** до или во время выполнения  
+- может иметь **зависимости** и **уведомления** о завершении  
+- позволяет **контролировать** выполнение задачи в GCD более гибко, чем просто `async { ... }`
 
-Пример использования DispatchWorkItem:
+Главные преимущества над обычным замыканием в 2026 году:
+
+- **Отмена** задачи (`cancel()`) — самая востребованная фича  
+- Возможность **проверять статус** (`isCancelled`, `isExecuting`)  
+- Уведомление о завершении/отмене (`notify`)  
+- Поддержка **кастомного QoS** и **флагов**  
+- Интеграция с **DispatchGroup**, **OperationQueue** и **Swift Concurrency**
+
+**Самые частые сценарии использования в iOS-приложениях 2026**:
+
+- Отмена долгих операций при уходе с экрана  
+- Дебонсинг / throttle ввода пользователя  
+- Защита от множественных нажатий кнопки  
+- Ограничение частоты запросов к API  
+- Тестирование асинхронного кода с таймаутами  
+- Переходные сценарии при миграции GCD → Swift Concurrency
+
+### 2. Основные свойства и методы DispatchWorkItem
+
+| Свойство / Метод                     | Что делает                                                                 | Тип возвращаемого значения | Самый частый use-case |
+|--------------------------------------|-----------------------------------------------------------------------------|-----------------------------|-----------------------|
+| `init(qos:flags:block:)`             | Создаёт WorkItem с приоритетом и флагами                                   | DispatchWorkItem            | Всегда с `.userInitiated` / `.utility` |
+| `cancel()`                           | Помечает задачу как отменённую                                             | Void                        | Отмена при уходе с экрана |
+| `isCancelled`                        | true, если задача отменена                                                  | Bool                        | Проверка внутри замыкания |
+| `isExecuting`                        | true, если задача уже начала выполняться                                    | Bool                        | Редко                     |
+| `notify(queue:execute:)`             | Выполняет замыкание после завершения/отмены задачи                          | Void                        | Обновление UI после задачи |
+| `perform()`                          | Немедленно выполняет задачу в текущем потоке                                | Void                        | Редко                     |
+
+### 3. Самые популярные и правильные шаблоны использования в 2026
+
+#### Шаблон 1 — Отмена задачи при уходе с экрана (самый частый)
 
 ```swift
-let workItem = DispatchWorkItem {
-    // Код, который нужно выполнить в параллельном потоке
-    print("WorkItem started")
-    Thread.sleep(forTimeInterval: 2)
-    print("WorkItem finished")
-}
-
-// Выполнение DispatchWorkItem в главной очереди
-DispatchQueue.main.async(execute: workItem)
-
-// Проверка статуса выполнения задачи и отмена
-DispatchQueue.global().async {
-    if !workItem.isCancelled {
-        print("WorkItem is executing")
-    } else {
-        print("WorkItem is cancelled")
+class ProfileViewController: UIViewController {
+    private var profileTask: DispatchWorkItem?
+    
+    func loadProfile() {
+        profileTask?.cancel()
+        
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            
+            if workItem.isCancelled { return }
+            
+            let profile = fetchProfileSync() // тяжёлая работа
+            
+            DispatchQueue.main.async {
+                if workItem.isCancelled { return }
+                self.nameLabel.text = profile.name
+                self.avatarImageView.image = profile.avatar
+            }
+        }
+        
+        profileTask = workItem
+        
+        DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        profileTask?.cancel()
     }
 }
-
-// Действия после завершения или отмены задачи
-workItem.notify(queue: .main) {
-    print("WorkItem completed or cancelled")
-}
-
-// Отмена задачи
-workItem.cancel()
 ```
 
-DispatchWorkItem предоставляет более гибкий и управляемый способ выполнения задач в многопоточных приложениях, что делает его полезным инструментом для создания отзывчивых и эффективных приложений.
+#### Шаблон 2 — Дебонсинг поиска (очень актуально)
+
+```swift
+class SearchViewController: UIViewController {
+    private var searchWorkItem: DispatchWorkItem?
+    
+    @IBOutlet weak var searchBar: UISearchBar!
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchWorkItem?.cancel()
+        
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            
+            let results = searchSync(query: searchText)
+            
+            DispatchQueue.main.async {
+                self.tableView.reloadData(with: results)
+            }
+        }
+        
+        searchWorkItem = workItem
+        
+        DispatchQueue.global(qos: .userInitiated).asyncAfter(
+            deadline: .now() + 0.4,
+            execute: workItem
+        )
+    }
+}
+```
+
+#### Шаблон 3 — Защита от спама нажатий кнопки
+
+```swift
+@IBAction func submitButtonTapped() {
+    submitButton.isEnabled = false
+    
+    let workItem = DispatchWorkItem { [weak self] in
+        guard let self else { return }
+        
+        let success = submitFormSync()
+        
+        DispatchQueue.main.async {
+            self.submitButton.isEnabled = true
+            
+            if success {
+                self.showSuccessAlert()
+            } else {
+                self.showErrorAlert()
+            }
+        }
+    }
+    
+    DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
+    
+    // Через 1.5 секунды кнопка снова активна, даже если задача не закончилась
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        if !workItem.isFinished {
+            self.submitButton.isEnabled = true
+        }
+    }
+}
+```
+
+### 4. DispatchWorkItem vs современные альтернативы (2026 сравнение)
+
+| Механизм                  | Отмена задачи | Точность задержки | Интеграция с async/await | Рекомендация 2026 | Когда всё ещё использовать |
+|---------------------------|---------------|--------------------|---------------------------|-------------------|-----------------------------|
+| DispatchWorkItem          | Да            | ±10–50 мс          | Плохо                     | Legacy            | Поддержка старого кода      |
+| Task + Task.sleep         | Да (cancel)   | ±5–20 мс           | Отлично                   | Основной выбор    | Новый код                   |
+| Timer.scheduledTimer      | Да            | ±50 мс             | Плохо                     | Редко             | Повторяющиеся таймеры       |
+| async let + Task.sleep    | Да            | ±5–20 мс           | Отлично                   | Параллельные задержки | Современные сценарии        |
+
+**Вывод 2026**:  
+`DispatchWorkItem` — это **уже legacy-инструмент**.  
+В новом коде почти всегда лучше использовать **`Task { try await Task.sleep(...) }`** + **`cancel()`**.
+
+### 5. Типичные ошибки и ловушки 2026 года
+
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Забыть отменить при уходе с экрана          | Накопление задач → утечки / задержки     | Всегда `cancel()` в `viewWillDisappear` / `deinit` |
+| Множество `asyncAfter` без отмены           | Накопление задач → задержки / утечки     | Использовать `Task` с `cancel()` |
+| `sync` внутри `DispatchWorkItem` на main    | Deadlock                                 | Никогда не использовать `sync` на main |
+| Задержка > 5–10 секунд без индикатора       | Пользователь думает, что приложение зависло | Показывать прогресс / отмену |
+| Использование в тестах без таймаута         | Тест зависает                            | Использовать `XCTestExpectation` |
+
+### 6. Лучшие практики 2026 года
+
+- **Переходите на Swift Concurrency** — `Task.sleep` почти всегда лучше `asyncAfter`  
+- **Отмена** — всегда добавляйте возможность отмены задачи (`cancel()`)  
+- **Точность** — для анимаций используйте кадры, а не секунды  
+- **Таймауты** — избегайте задержек > 1–2 секунд без индикатора прогресса  
+- **Тесты** — используйте `XCTestExpectation` + `waitForExpectations` или `async` тесты  
+- **Swift 6 strict concurrency** — часто подсвечивает небезопасные задержки вне `@MainActor`  
+- **Мониторинг** — используйте `os_signpost` для отслеживания реального времени задержки в Instruments
+
+**Короткий девиз 2026**:
+> «DispatchWorkItem — это когда нужно отложить задачу и иметь возможность её отменить.  
+> В 2026 году это уже legacy-инструмент.  
+> Новый стандарт — Task { try await Task.sleep(...) } + cancel().  
+> Если ты всё ещё пишешь DispatchWorkItem в новом коде — спроси себя: «А точно ли это нужно?»»
+
+Удачи с отзывчивым, отменяемым и современным кодом задержек в Swift! ⏳
