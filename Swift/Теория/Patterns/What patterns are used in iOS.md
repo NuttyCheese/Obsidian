@@ -2,17 +2,17 @@
 
 ### Топ-9 самых живых паттернов в iOS 2026 году
 
-| № | Паттерн                  | Категория GoF | Актуальность 2026 | Основные места использования в iOS | Современная идиоматичная реализация | Рекомендация |
-|---|--------------------------|---------------|---------------------|-------------------------------------|--------------------------------------|--------------|
-| 1 | **MVC**                  | Архитектура   | ★★★★★               | UIKit (UIViewController)            | UIView + ViewModel + Model           | Базовый, везде |
-| 2 | **MVVM**                 | Архитектура   | ★★★★★               | SwiftUI + UIKit                     | @Observable / @Published + ViewModel | Основной в новом коде |
-| 3 | **Delegate**             | Поведенческий | ★★★★★               | UITableView, UITextField, URLSession и т.д. | протокол + weak ссылка              | Классика iOS |
-| 4 | **Strategy**             | Поведенческий | ★★★★★               | Сортировка, валидация, оплата, анимации | enum + switch / протокол + реализации | Очень часто |
-| 5 | **Decorator**            | Структурный   | ★★★★★               | Сетевые запросы (лог, retry, cache) | Функциональные обёртки / extension   | Очень часто |
-| 6 | **Adapter**              | Структурный   | ★★★★★               | Интеграция старых SDK, разные API   | extension + протокол                 | Очень часто |
-| 7 | **Builder**              | Порождающий   | ★★★★★               | Сложные модели, запросы, конфиги    | Fluent chain / Result Builder        | Очень часто |
-| 8 | **Observer**             | Поведенческий | ★★★★★               | SwiftUI, Combine, NotificationCenter | @Observable / @Published / AsyncSequence | Встроено в язык |
-| 9 | **Facade**               | Структурный   | ★★★★☆               | Обёртка над сложными SDK (Firebase, Amplitude) | Отдельный сервис-класс               | Часто |
+| №   | Паттерн                                                | Категория [[GoF]] | Актуальность 2026 | Основные места использования в [[iOS]]                  | Современная идиоматичная реализация      | Рекомендация          |
+| --- | ------------------------------------------------------ | ----------------- | ----------------- | ------------------------------------------------------- | ---------------------------------------- | --------------------- |
+| 1   | **[[MVC (Model-View-Controller) Architecture\|MVC]]**  | Архитектура       | ★★★★★             | [[UIKit]] ([[UIViewController]])                        | UIView + ViewModel + Model               | Базовый, везде        |
+| 2   | **[[MVVM (Model-View-ViewModel) Architecture\|MVVM]]** | Архитектура       | ★★★★★             | [[SwiftUI]] + UIKit                                     | @Observable / @Published + ViewModel     | Основной в новом коде |
+| 3   | **[[Delegate]]**                                       | Поведенческий     | ★★★★★             | [[UITableView]], [[UITextField]], [[URLSession]] и т.д. | [[protocol]] + [[weak]] ссылка           | Классика iOS          |
+| 4   | **[[Strategy]]**                                       | Поведенческий     | ★★★★★             | Сортировка, валидация, оплата, анимации                 | enum + switch / протокол + реализации    | Очень часто           |
+| 5   | **[[Decorator]]**                                      | Структурный       | ★★★★★             | Сетевые запросы (лог, retry, cache)                     | Функциональные обёртки / extension       | Очень часто           |
+| 6   | **Adapter**                                            | Структурный       | ★★★★★             | Интеграция старых SDK, разные [[API]]                   | extension + протокол                     | Очень часто           |
+| 7   | **[[Builder]]**                                        | Порождающий       | ★★★★★             | Сложные модели, запросы, конфиги                        | Fluent chain / Result Builder            | Очень часто           |
+| 8   | **[[Observer]]**                                       | Поведенческий     | ★★★★★             | SwiftUI, [[Combine]], [[NotificationCenter]]            | @Observable / @Published / AsyncSequence | Встроено в язык       |
+| 9   | **Facade**                                             | Структурный       | ★★★★☆             | Обёртка над сложными SDK ([[Firebase]], Amplitude)      | Отдельный сервис-класс                   | Часто                 |
 
 ### Подробно по каждому паттерну (с примерами 2026 года)
 
@@ -50,7 +50,7 @@ class UsersViewController: UIViewController, UITableViewDataSource {
 
 **2026 статус**:  
 - UIKit → MVC всё ещё основной  
-- SwiftUI → MVVM / MVI / TCA полностью вытеснили классический MVC  
+- SwiftUI → MVVM / [[MVI (Model-View-Intent) Architecture|MVI]] / [[TCA]] полностью вытеснили классический MVC  
 - **Массивный ViewController** → антипаттерн (Massive View Controller)
 
 #### 2. MVVM (Model-View-ViewModel) — основной паттерн 2026 года
@@ -99,7 +99,7 @@ struct UsersView: View {
 **2026 тренд**:  
 `@Observable` (Swift 5.9+) почти полностью вытеснил `@ObservableObject` + `objectWillChange`
 
-#### 3. Delegate — классика iOS, никуда не делась
+#### 3. [[Delegate]] — классика iOS, никуда не делась
 
 ```swift
 protocol UserSelectionDelegate: AnyObject {
@@ -174,11 +174,11 @@ actor AnalyticsFacade {
 
 ### 6. Топ-5 самых используемых паттернов в iOS 2026
 
-1. **MVVM + @Observable** — основной для SwiftUI/UIKit  
-2. **Delegate + closure** — классика UIKit  
-3. **Strategy** — валидация, сортировка, оплата, обработка ошибок  
-4. **Decorator** — сетевые middleware (лог, retry, cache)  
-5. **Builder** — сложные модели, конфиги, запросы
+1. **MVVM + @Observable** — основной для [[SwiftUI]]/[[UIKit]]  
+2. **[[Delegate]] + [[closure]]** — классика [[UIKit]]  
+3. **[[Strategy]]** — валидация, сортировка, оплата, обработка ошибок  
+4. **[[Decorator]]** — сетевые middleware (лог, retry, cache)  
+5. **[[Builder]]** — сложные модели, конфиги, запросы
 
 ### 7. Лучшие практики паттернов в Swift 2026
 
@@ -194,5 +194,3 @@ actor AnalyticsFacade {
 **Короткий девиз 2026**:
 > «В 2026 году лучшие iOS-приложения строятся на **MVVM + @Observable + Strategy + Decorator + Builder + DI**.  
 > Классические GoF-паттерны живы, но выглядят по-новому — через протоколы, actor, extension и async/await.»
-
-Удачи с чистой, современной и тестируемой архитектурой в Swift! 🧩

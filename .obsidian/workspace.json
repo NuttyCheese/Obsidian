@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Patterns/DRY.md",
+                "file": "Swift/Теория/Testing/Testing tools.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DRY"
+              "title": "Testing tools"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Patterns/DRY.md",
+                "file": "Swift/Теория/Testing/Testing tools.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура DRY"
+              "title": "Структура Testing tools"
             }
           },
           {
@@ -196,6 +196,21 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Testing/TDD.md",
+    "Swift/Теория/Testing/Stub.md",
+    "Swift/Теория/Testing/Mock.md",
+    "Swift/Теория/Testing/iOSSnapshotTestCase.md",
+    "Swift/Теория/Testing/Advantages and disadvantages of unit test.md",
+    "Swift/Теория/Patterns/Принципы/YAGNI.md",
+    "Swift/Теория/Patterns/Принципы",
+    "Swift/Теория/Patterns/What patterns are used in iOS.md",
+    "Swift/Теория/Patterns/GoF.md",
+    "Swift/Теория/Patterns/Strategy.md",
+    "Swift/Теория/Swift/Standart Library/class.md",
+    "Swift/Теория/Patterns/Singleton.md",
+    "Swift/Теория/Patterns/Observer.md",
+    "Swift/Теория/Patterns/Принципы/KISS.md",
+    "Swift/Теория/Patterns/Принципы/DRY.md",
     "Swift/Теория/Patterns/Decorator.md",
     "Swift/Теория/Patterns/Builder.md",
     "Swift/Теория/Patterns/SOLID/SOLID.md",
@@ -208,20 +223,6 @@
     "Swift/Теория/Хранение данных/Realm.md",
     "Swift/Теория/Multithreading/os_unfair_lock.md",
     "Swift/Теория/Multithreading/NSLock.md",
-    "Swift/Теория/Multithreading/mutex.md",
-    "Swift/Теория/Multithreading/GCD.md",
-    "Swift/Теория/Multithreading/Atomic Operation.md",
-    "Pointer.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/throws.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/TaskLocal.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/TaskGroup.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Task.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Swift Concurrency.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/sending.md",
-    "Sendable.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Sendable (Protocol).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/nonisolated.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/isolation (expression macro).md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",
@@ -230,7 +231,6 @@
     "Swift/Теория/System Design/9. Тестирование и качество/Тесты",
     "Swift/Теория/System Design/9. Тестирование и качество/Нагрузочное тестирование",
     "Swift/Теория/System Design/3. Офлайн-режим и кэширование/Синхронизация данных",
-    "Swift/Теория/System Design/3. Офлайн-режим и кэширование/Локальное хранение",
-    "Swift/Теория/System Design/3. Офлайн-режим и кэширование/Кэширование"
+    "Swift/Теория/System Design/3. Офлайн-режим и кэширование/Локальное хранение"
   ]
 }
