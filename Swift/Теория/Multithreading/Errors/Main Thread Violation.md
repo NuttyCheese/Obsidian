@@ -22,15 +22,15 @@
 
 ### 2. Самые частые сценарии Main Thread Violation в 2026
 
-| №  | Сценарий                                      | Как проявляется                              | Частота |
-|----|-----------------------------------------------|----------------------------------------------|---------|
-| 1  | Сетевой запрос → обновление UI из completion  | Текст не появляется, таблица не перезагружается | ★★★★★   |
-| 2  | DispatchQueue.global().async → UI             | Баги только в релизе, симулятор может работать | ★★★★★   |
-| 3  | Task.detached {} → UI без @MainActor          | Swift 6 выдаёт ошибку, Swift 5 — молча ломается | ★★★★☆   |
-| 4  | Core Data / Realm save → UI update            | Краш или визуальные артефакты                | ★★★★☆   |
-| 5  | NotificationCenter → UI update                | Случайные баги при быстром переключении экранов | ★★★☆☆   |
-| 6  | Timer / CADisplayLink → UI без Dispatch.main  | Пропадают кадры, UI «дергается»              | ★★★☆☆   |
-| 7  | Closure из сторонней библиотеки → UI          | Библиотека вызывает closure в фоне            | ★★★☆☆   |
+| №   | Сценарий                                             | Как проявляется                                     | Частота |
+| --- | ---------------------------------------------------- | --------------------------------------------------- | ------- |
+| 1   | Сетевой запрос → обновление UI из completion         | Текст не появляется, таблица не перезагружается     | ★★★★★   |
+| 2   | DispatchQueue.global().async → UI                    | Баги только в релизе, симулятор может работать      | ★★★★★   |
+| 3   | Task.detached {} → UI без @MainActor                 | Swift 6 выдаёт ошибку, [[Swift]] 5 — молча ломается | ★★★★☆   |
+| 4   | [[Core Data]] / [[Realm]] save → UI update           | Краш или визуальные артефакты                       | ★★★★☆   |
+| 5   | [[NotificationCenter]] → UI update                   | Случайные баги при быстром переключении экранов     | ★★★☆☆   |
+| 6   | [[Timer]] / [[CADisplayLink]] → UI без Dispatch.main | Пропадают кадры, UI «дергается»                     | ★★★☆☆   |
+| 7   | [[Closure]] из сторонней библиотеки → UI             | Библиотека вызывает closure в фоне                  | ★★★☆☆   |
 
 ### 3. Классические примеры нарушений (и как они выглядят)
 
@@ -75,14 +75,15 @@ NotificationCenter.default.addObserver(forName: .userDidLogin, object: nil, queu
 
 ### 4. Все современные способы исправления (2026 стандарт)
 
-| Способ                              | Уровень безопасности | Сложность | Когда использовать в 2026 | Примечание |
-|-------------------------------------|------------------------|-----------|----------------------------|------------|
-| **DispatchQueue.main.async**        | ★★★★★                  | ★★☆☆☆     | Legacy-код, GCD            | Классика   |
-| **@MainActor**                      | ★★★★★                  | ★★☆☆☆     | SwiftUI, ViewModel, UI     | Рекомендуется Apple |
-| **await MainActor.run**             | ★★★★★                  | ★★★☆☆     | Внутри non-MainActor       | Для async кода |
-| **Task { @MainActor in ... }**      | ★★★★★                  | ★★☆☆☆     | Запуск UI-обновлений       | Удобно     |
-| **@globalActor** (например, @UIActor) | ★★★★★                | ★★★★☆     | Глобальные UI-сервисы      | Редко      |
-| **RunLoop.main.perform**            | ★★★★☆                  | ★★★☆☆     | Очень старый код           | Legacy     |
+| Способ                                | Уровень безопасности | Сложность | Когда использовать в 2026  | Примечание          |
+| ------------------------------------- | -------------------- | --------- | -------------------------- | ------------------- |
+| **DispatchQueue.main.async**          | ★★★★★                | ★★☆☆☆     | Legacy-код, [[GCD]]        | Классика            |
+| **@MainActor**                        | ★★★★★                | ★★☆☆☆     | [[SwiftUI]], ViewModel, UI | Рекомендуется Apple |
+| **await MainActor.run**               | ★★★★★                | ★★★☆☆     | Внутри non-MainActor       | Для async кода      |
+| **Task { @MainActor in ... }**        | ★★★★★                | ★★☆☆☆     | Запуск UI-обновлений       | Удобно              |
+| **@globalActor** (например, @UIActor) | ★★★★★                | ★★★★☆     | Глобальные UI-сервисы      | Редко               |
+| **RunLoop.main.perform**              | ★★★★☆                | ★★★☆☆     | Очень старый код           | Legacy              |
+
 
 ### 5. Самые безопасные конструкции 2026 (рекомендуемые Apple)
 
@@ -137,13 +138,13 @@ func updateUI(text: String) {
 
 ### 6. Как найти Main Thread Violation в 2026
 
-| Инструмент / Способ               | Что ловит                              | Где включается                  | Эффективность |
-|-----------------------------------|----------------------------------------|----------------------------------|---------------|
-| **Main Thread Checker**           | UIKit/SwiftUI вызовы не из main        | Xcode → Scheme → Diagnostics     | ★★★★★         |
-| **Swift 6 Strict Concurrency**    | Передача UI-элементов между потоками   | Build Settings → Swift Compiler  | ★★★★★         |
-| **Thread Sanitizer**              | Data Race + некоторые UI-violations    | Xcode → Diagnostics              | ★★★★☆         |
-| **Instruments → Main Thread Checker** | UI-вызовы из фона                  | Instruments                      | ★★★★☆         |
-| **Xcode Runtime Issues**          | Нарушения в runtime                    | Debug navigator → Runtime Issues | ★★★★☆         |
+| Инструмент / Способ                   | Что ловит                               | Где включается                   | Эффективность |
+| ------------------------------------- | --------------------------------------- | -------------------------------- | ------------- |
+| **Main Thread Checker**               | [[UIKit]]/[[SwiftUI]] вызовы не из main | [[Xcode]] → Scheme → Diagnostics | ★★★★★         |
+| **Swift 6 Strict Concurrency**        | Передача UI-элементов между потоками    | Build Settings → Swift Compiler  | ★★★★★         |
+| **Thread Sanitizer**                  | [[Data Race]] + некоторые UI-violations | Xcode → Diagnostics              | ★★★★☆         |
+| **Instruments → Main Thread Checker** | UI-вызовы из фона                       | Instruments                      | ★★★★☆         |
+| **Xcode Runtime Issues**              | Нарушения в [[runtime]]                 | Debug navigator → Runtime Issues | ★★★★☆         |
 
 ### 7. Лучшие практики 2026 (Swift 6+)
 
@@ -161,5 +162,3 @@ func updateUI(text: String) {
 > «Main Thread Violation — это когда ты трогаешь UI не из главного потока.  
 > В 2026 году ответ один: @MainActor + Swift 6 strict concurrency.  
 > DispatchQueue.main.async — это уже legacy. Забудьте про него в новом коде.»
-
-Удачи с отзывчивым, безопасным и современным UI в Swift! 🖼️
