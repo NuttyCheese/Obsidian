@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #methods #dispatch #runtime #ios_development
 **Диспетчеризация** (method dispatch) — это процесс определения, **какой именно** реализацией метода (или функции) будет выполнен вызов.  
 В [[Swift]] диспетчеризация бывает **трёх основных видов**:
 

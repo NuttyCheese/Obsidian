@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/FIFO.md",
+                "file": "Swift/Теория/Контроль памяти/method overloading.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "FIFO"
+              "title": "method overloading"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/FIFO.md",
+                "file": "Swift/Теория/Контроль памяти/method overloading.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура FIFO"
+              "title": "Структура method overloading"
             }
           },
           {
@@ -196,6 +196,13 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/method dispatch.md",
+    "Swift/Теория/Контроль памяти/Memory Leak.md",
+    "Swift/Теория/Контроль памяти/Inline.md",
+    "Swift/Теория/Контроль памяти/Heap.md",
+    "Swift/Теория/Контроль памяти/Garbage collector.md",
+    "Swift/Теория/Контроль памяти/FILO.md",
+    "Swift/Теория/Контроль памяти/FIFO.md",
     "Swift/Теория/Контроль памяти/dispatch table.md",
     "Swift/Теория/Контроль памяти/dealloc.md",
     "Swift/Теория/Контроль памяти/Copy-On-Write.md",
@@ -215,13 +222,6 @@
     "Swift/Теория/Архитектурные подходы/MVP (Model-View-Presenter) Architecture.md",
     "Swift/Теория/Архитектурные подходы/MVI (Model-View-Intent) Architecture.md",
     "Swift/Теория/Архитектурные подходы/MVC (Model-View-Controller) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/Flux.md",
-    "Swift/Теория/Архитектурные подходы/Domain-Driven Design.md",
-    "Swift/Теория/Архитектурные подходы/Difference between architectural approaches.md",
-    "Swift/Теория/Архитектурные подходы/Coordinator.md",
-    "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
-    "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/Методологии разработки/Методология Waterfall.md",
     "Swift/Теория/Patterns/Принципы",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",

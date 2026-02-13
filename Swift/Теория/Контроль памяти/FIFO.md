@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#data_structures #fifo #queue #algorithm #ordering
 **FIFO** (First-In-First-Out) — принцип «первым пришёл — первым ушёл».  
 Элементы добавляются в **конец** очереди (`enqueue`), извлекаются с **начала** (`dequeue`).
 
