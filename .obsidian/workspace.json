@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/Swift Concurrency/isolated.md",
+                "file": "Swift/Теория/Архитектурные подходы/TCA.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "isolated"
+              "title": "TCA"
             }
           }
         ]
@@ -53,10 +53,10 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "Sendable",
                 "matchingCase": false,
                 "explainSearch": false,
-                "collapseAll": false,
+                "collapseAll": true,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
               },
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Multithreading/Swift Concurrency/isolated.md",
+                "file": "Swift/Теория/Архитектурные подходы/TCA.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура isolated"
+              "title": "Структура TCA"
             }
           },
           {
@@ -196,32 +196,32 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Patterns/SOLID/Dependency Inversion Principle.md",
+    "Swift/Теория/Архитектурные подходы/TCA.md",
+    "Swift/Теория/Хранение данных/Realm.md",
+    "Swift/Теория/Multithreading/os_unfair_lock.md",
+    "Swift/Теория/Multithreading/NSLock.md",
+    "Swift/Теория/Multithreading/mutex.md",
+    "Swift/Теория/Multithreading/GCD.md",
+    "Swift/Теория/Multithreading/Atomic Operation.md",
+    "Pointer.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/throws.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/TaskLocal.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/TaskGroup.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/Task.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/Swift Concurrency.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/sending.md",
+    "Sendable.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/Sendable (Protocol).md",
+    "Swift/Теория/Multithreading/Swift Concurrency/nonisolated.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/isolation (expression macro).md",
+    "Swift/Теория/Multithreading/Swift Concurrency/isolation (concept).md",
+    "Swift/Теория/Multithreading/Swift Concurrency/isolated.md",
     "Swift/Теория/Multithreading/Swift Concurrency/Global Executor.md",
     "Swift/Теория/Multithreading/Swift Concurrency/for-await.md",
     "Swift/Теория/Multithreading/Swift Concurrency/Executor.md",
     "Swift/Теория/Multithreading/Swift Concurrency/Continuations.md",
     "throw.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/await.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/AsyncSequence.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/async let.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/async.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Actor vs. Class.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/actor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@unchecked.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@Sendable (Attribute).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@preconcurrency.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@MainActor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@isolated(any).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@globalActor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@_inheritActorContext.md",
-    "Swift/Теория/Multithreading/NSOperation/queuePriority.md",
-    "Swift/Теория/Multithreading/NSOperation/OperationQueue.md",
-    "Swift/Теория/Multithreading/NSOperation/Operation.md",
-    "Swift/Теория/Multithreading/NSOperation/maxConcurrentOperationCount.md",
-    "Swift/Теория/Multithreading/NSOperation/isCancelled.md",
-    "Swift/Теория/Multithreading/NSOperation/isAsynchronous.md",
-    "Swift/Теория/Multithreading/NSOperation/completionBlock.md",
-    "Swift/Теория/Multithreading/NSOperation/BlockOperation.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",
