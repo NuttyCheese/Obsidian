@@ -1,76 +1,119 @@
 #multithreading #Swift 
-## 📘 Определение
+Вот **полное, подробное и максимально актуальное** (на 2026 год) руководство по **Grand Central Dispatch (GCD)** в Swift.
 
-**GCD (Grand Central Dispatch)** — фреймворк Apple для **управления многопоточностью и асинхронным выполнением задач**.  
-Позволяет распределять работу по **потокам (queues)** и выполнять задачи **параллельно или последовательно**, управляя приоритетами и синхронизацией.  
-В [[Swift]] используется через **[[DispatchQueue]]**, **[[DispatchGroup]]**, **[[DispatchSemaphore]]** и другие [[API]].
+### 1. GCD в 2026 году — актуальный статус
 
----
+GCD остаётся **одним из самых важных** и **самых часто используемых** механизмов многопоточности в iOS/macOS-приложениях, но его роль сильно изменилась.
 
-## 🔹 Примеры кода
+| Период          | Роль GCD                                   | Рекомендация Apple в 2026 году |
+|-----------------|--------------------------------------------|---------------------------------|
+| 2009–2020       | Основной инструмент многопоточности        | —                               |
+| 2021–2024       | Основной → параллельно со Swift Concurrency | Переходный период               |
+| 2025–2026       | Legacy + очень частый инструмент           | **Swift Concurrency — основной**, GCD — для совместимости и специфических задач |
 
-### 1. Простое выполнение задачи в фоновом потоке
+**Ключевой вывод 2026**:
+> В новом коде GCD используют **только там**, где Swift Concurrency пока не может полностью заменить (или неудобно):
+> - работа с очень старыми callback-API  
+> - тонкая настройка QoS и приоритетов  
+> - барьерные операции в concurrent-очередях  
+> - интеграция с низкоуровневыми C-библиотеками  
+> - максимальная производительность в горячих участках
+
+### 2. Основные сущности GCD в 2026 году (таблица)
+
+| Сущность                           | Что это                                      | Актуальность в 2026 | Лучшая альтернатива в Swift Concurrency |
+|------------------------------------|----------------------------------------------|----------------------|------------------------------------------|
+| `DispatchQueue.main`               | Главная очередь (UI)                         | ★★★★★                | `@MainActor` / `MainActor.run`           |
+| `DispatchQueue.global(qos:)`       | Глобальные очереди по приоритету             | ★★★★☆                | `Task(priority:)`                        |
+| `DispatchQueue(label:)`            | Пользовательская очередь                     | ★★★★☆                | `actor` или сериальный `DispatchQueue`   |
+| `async` / `sync`                   | Асинхронный / синхронный dispatch            | ★★★★☆                | `await` / почти никогда `sync`           |
+| `asyncAfter`                       | Отложенный dispatch                          | ★★★☆☆                | `Task.sleep()`                           |
+| `DispatchGroup`                    | Ожидание группы задач                        | ★★★☆☆                | `withTaskGroup` / `async let`            |
+| `DispatchSemaphore`                | Семафор                                      | ★★☆☆☆                | `actor` + `withTaskGroup`                |
+| `DispatchWorkItem`                 | Отменяемая задача                            | ★★☆☆☆                | `Task` + `cancel()`                      |
+| `Barrier` (`.barrier`)             | Барьерная операция в concurrent-очереди      | ★★★★☆                | `actor` (самый частый переход)           |
+
+### 3. Самые актуальные и рекомендуемые паттерны GCD в 2026 году
+
+#### Паттерн 1 — Фон → UI (самый частый шаблон)
 
 ```swift
-import Foundation
-
-DispatchQueue.global().async {
-    print("Выполняем в фоне")
+// 2026 — всё ещё очень часто встречается
+func loadUser() {
+    DispatchQueue.global(qos: .userInitiated).async {
+        let user = fetchUserFromNetwork()
+        
+        DispatchQueue.main.async {
+            self.nameLabel.text = user.name
+            self.tableView.reloadData()
+        }
+    }
 }
-print("Главный поток")
 ```
 
----
-
-### 2. Выполнение на главной очереди
+**Современный эквивалент** (рекомендуется):
 
 ```swift
-DispatchQueue.main.async {
-    print("Обновление UI на главной очереди")
+@MainActor
+class UserViewModel: ObservableObject {
+    @Published var name = ""
+    
+    func load() async {
+        let user = await fetchUser()
+        name = user.name  // безопасно — @MainActor
+    }
 }
 ```
 
----
-
-### 3. Задержка выполнения
+#### Паттерн 2 — Барьерная запись (последний оплот GCD)
 
 ```swift
-DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
-    print("Выполнено через 2 секунды")
+// 2026 — один из немногих случаев, где GCD всё ещё часто предпочтительнее
+let queue = DispatchQueue(label: "cache", attributes: .concurrent)
+var cache: [String: Data] = [:]
+
+func saveToCache(_ data: Data, key: String) {
+    queue.async(flags: .barrier) {
+        cache[key] = data
+    }
+}
+
+func getFromCache(_ key: String) -> Data? {
+    queue.sync { cache[key] }
 }
 ```
 
----
-
-### 4. Создание последовательной и параллельной очереди
+**Современный эквивалент** (почти всегда лучше):
 
 ```swift
-let serialQueue = DispatchQueue(label: "com.example.serial")
-let concurrentQueue = DispatchQueue(label: "com.example.concurrent", attributes: .concurrent)
-
-serialQueue.async { print("Последовательно 1") }
-serialQueue.async { print("Последовательно 2") }
-
-concurrentQueue.async { print("Параллельно 1") }
-concurrentQueue.async { print("Параллельно 2") }
+actor Cache {
+    private var storage: [String: Data] = [:]
+    
+    func save(_ data: Data, key: String) {
+        storage[key] = data
+    }
+    
+    func get(_ key: String) -> Data? {
+        storage[key]
+    }
+}
 ```
 
----
-
-### 5. Использование DispatchGroup для синхронизации
+#### Паттерн 3 — DispatchGroup → замена на TaskGroup
 
 ```swift
+// Старый GCD-стиль (всё ещё встречается)
 let group = DispatchGroup()
 
 group.enter()
 DispatchQueue.global().async {
-    print("Задача 1")
+    // задача 1
     group.leave()
 }
 
 group.enter()
 DispatchQueue.global().async {
-    print("Задача 2")
+    // задача 2
     group.leave()
 }
 
@@ -79,23 +122,52 @@ group.notify(queue: .main) {
 }
 ```
 
----
-
-### 6. Использование DispatchSemaphore для ограничения доступа
+**Современный стиль** (рекомендуется):
 
 ```swift
-let semaphore = DispatchSemaphore(value: 1)
-
-DispatchQueue.global().async {
-    semaphore.wait()
-    print("Начало критической секции 1")
-    sleep(1)
-    semaphore.signal()
-}
-
-DispatchQueue.global().async {
-    semaphore.wait()
-    print("Начало критической секции 2")
-    semaphore.signal()
+await withTaskGroup(of: Void.self) { group in
+    group.addTask {
+        await task1()
+    }
+    
+    group.addTask {
+        await task2()
+    }
+    
+    await group.waitForAll()
+    
+    await MainActor.run {
+        print("Все задачи завершены")
+    }
 }
 ```
+
+### 4. Когда GCD всё ещё побеждает в 2026 году
+
+| Сценарий                                      | Почему GCD пока выигрывает                  | Альтернатива Swift Concurrency |
+|-----------------------------------------------|---------------------------------------------|--------------------------------|
+| Барьерная запись в concurrent-очереди         | Очень высокая производительность            | `actor` (обычно достаточно)    |
+| Тонкая настройка QoS и приоритетов            | Максимальный контроль                       | `Task(priority:)`              |
+| Интеграция с очень старыми C-API              | Прямой доступ к dispatch_* функции          | `withCheckedContinuation`      |
+| Максимальная производительность в горячих петлях | Минимальные накладные расходы               | `Atomic` + `actor`             |
+| Поддержка iOS 12–14 (редко)                   | Совместимость                               | —                              |
+
+### 5. Лучшие практики GCD в 2026 году
+
+- **Переходите на Swift Concurrency** — GCD уже legacy  
+- **Никогда** не используйте `sync` на `.main` из главного потока — **deadlock**  
+- **Никогда** не используйте `sync` внутри той же очереди — **deadlock**  
+- **QoS** — всегда указывайте явно (`.userInitiated`, `.utility`, `.background`)  
+- **Барьер** — используйте только если actor не подходит (очень редкие случаи)  
+- **Для UI** — только `@MainActor` / `MainActor.run`  
+- **Для тестов** — используйте `await` и `XCTestExpectation`  
+- **Мониторинг** — добавляйте `os_signpost` для отслеживания длительности задач в Instruments  
+- **Swift 6 strict concurrency** — часто подсвечивает небезопасное использование GCD
+
+**Короткий девиз 2026**:
+> «GCD — это когда тебе нужен максимальный контроль и минимальные накладные расходы.  
+> В 2026 году это уже **legacy-инструмент**.  
+> Новый стандарт — `Task`, `actor`, `@MainActor`, `TaskGroup`, `async let`.  
+> Используй GCD только там, где Concurrency пока не закрывает задачу на 100% или для поддержки очень старого кода.»
+
+Удачи с быстрым, безопасным и современным многопоточным кодом в Swift! 🚀
