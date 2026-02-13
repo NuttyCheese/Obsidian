@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Patterns/SOLID/Interface Segregation Principle.md",
+                "file": "Swift/Теория/Patterns/SOLID/Single Responsibility Principle.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Interface Segregation Principle"
+              "title": "Single Responsibility Principle"
             }
           }
         ]
@@ -196,6 +196,9 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Patterns/SOLID/Open-Closed Principle.md",
+    "Swift/Теория/Patterns/SOLID/Liskov Substitution Principle.md",
+    "Swift/Теория/Patterns/SOLID/Interface Segregation Principle.md",
     "Swift/Теория/Patterns/SOLID/Dependency Inversion Principle.md",
     "Swift/Теория/Patterns/What patterns are used in iOS.md",
     "Swift/Теория/Multithreading/NSLock.md",
@@ -219,9 +222,6 @@
     "Swift/Теория/Multithreading/Swift Concurrency/for-await.md",
     "Swift/Теория/Multithreading/Swift Concurrency/Executor.md",
     "Swift/Теория/Multithreading/Swift Concurrency/Continuations.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/await.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/AsyncSequence.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/async let.md",
     "Swift/Теория/Testing",
     "Swift/Теория/System Design/1. Основы проектирования систем/Архитектуры",
     "Swift/Теория/System Design/1. Основы проектирования систем/Ключевые концепции",
