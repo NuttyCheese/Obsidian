@@ -1,3 +1,4 @@
+#architecture #tca #ios_development #state_management #swift
 **TCA** (The Composable Architecture) — это современная архитектура для приложений на Swift, разработанная компанией Point-Free.
 
 К 2026 году это **самая популярная и рекомендуемая** архитектура для новых [[iOS]]-приложений на [[SwiftUI]] + [[Swift Concurrency]].

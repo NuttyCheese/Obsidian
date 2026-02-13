@@ -1,4 +1,4 @@
-#algoritms #Swift #higher-order_func 
+#swift #higher_order_function #functional_programming #collections #optional
 # flatMap в Swift
 
 `flatMap` — один из самых мощных, но при этом один из самых **часто неправильно понимаемых** методов в стандартной библиотеке [[Swift]].

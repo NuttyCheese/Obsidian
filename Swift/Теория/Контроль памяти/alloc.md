@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #memory_management #objective_c #allocation #ios_development
 # Выделение памяти в Swift
 
 В Swift **нет прямого аналога** метода `+alloc` из [[Objective-C]].  

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AnyClass.md",
+                "file": "Swift/Теория/Контроль памяти/FIFO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "AnyClass"
+              "title": "FIFO"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "AnyClass.md",
+                "file": "Swift/Теория/Контроль памяти/FIFO.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура AnyClass"
+              "title": "Структура FIFO"
             }
           },
           {
@@ -196,33 +196,33 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
-    "Accelerate.md",
-    "any Protocol.md",
-    "APNs.md",
-    "AnyClass.md",
-    "Swift/Теория/Testing/XCTest.md",
-    "Swift/Теория/Testing/Unit-test.md",
-    "Swift/Теория/Testing/UI-test.md",
-    "Swift/Теория/Testing/Three main unit test blocks.md",
-    "Swift/Теория/Testing/Testing tools.md",
-    "Swift/Теория/Testing/TDD.md",
-    "Swift/Теория/Testing/Stub.md",
-    "Swift/Теория/Testing/Mock.md",
-    "Swift/Теория/Testing/iOSSnapshotTestCase.md",
-    "Swift/Теория/Testing/Advantages and disadvantages of unit test.md",
-    "Swift/Теория/Patterns/Принципы/YAGNI.md",
+    "Swift/Теория/Контроль памяти/dispatch table.md",
+    "Swift/Теория/Контроль памяти/dealloc.md",
+    "Swift/Теория/Контроль памяти/Copy-On-Write.md",
+    "Swift/Теория/Контроль памяти/Copy-On-Shadow.md",
+    "Swift/Теория/Контроль памяти/Capture.md",
+    "Swift/Теория/Контроль памяти/autoreleasepool.md",
+    "Swift/Теория/Контроль памяти/autorelease.md",
+    "Swift/Теория/Контроль памяти/ARC.md",
+    "Swift/Теория/Контроль памяти/alloc.md",
+    "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
+    "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
+    "Swift/Теория/Архитектурные подходы/TCA.md",
+    "Swift/Теория/Архитектурные подходы/RIBs.md",
+    "Swift/Теория/Архитектурные подходы/Redux Architecture.md",
+    "Swift/Теория/Архитектурные подходы/React Native.md",
+    "Swift/Теория/Архитектурные подходы/MVVM (Model-View-ViewModel) Architecture.md",
+    "Swift/Теория/Архитектурные подходы/MVP (Model-View-Presenter) Architecture.md",
+    "Swift/Теория/Архитектурные подходы/MVI (Model-View-Intent) Architecture.md",
+    "Swift/Теория/Архитектурные подходы/MVC (Model-View-Controller) Architecture.md",
+    "Swift/Теория/Архитектурные подходы/Flux.md",
+    "Swift/Теория/Архитектурные подходы/Domain-Driven Design.md",
+    "Swift/Теория/Архитектурные подходы/Difference between architectural approaches.md",
+    "Swift/Теория/Архитектурные подходы/Coordinator.md",
+    "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
+    "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
+    "Swift/Теория/Архитектурные подходы/Методологии разработки/Методология Waterfall.md",
     "Swift/Теория/Patterns/Принципы",
-    "Swift/Теория/Patterns/What patterns are used in iOS.md",
-    "Swift/Теория/Patterns/GoF.md",
-    "Swift/Теория/Patterns/Strategy.md",
-    "Swift/Теория/Swift/Standart Library/class.md",
-    "Swift/Теория/Patterns/Singleton.md",
-    "Swift/Теория/Patterns/Observer.md",
-    "Swift/Теория/Patterns/Принципы/KISS.md",
-    "Swift/Теория/Patterns/Принципы/DRY.md",
-    "Swift/Теория/Patterns/Decorator.md",
-    "Swift/Теория/Patterns/Builder.md",
-    "Swift/Теория/Patterns/SOLID/SOLID.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",

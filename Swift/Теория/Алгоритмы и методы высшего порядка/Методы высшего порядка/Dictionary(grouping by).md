@@ -1,4 +1,4 @@
-#algoritms #Swift #higher-order_func
+#swift #dictionary #collections #higher_order_function #data_transformation
 # Dictionary(grouping:by:) в Swift
 
 `Dictionary(grouping:by:)` — это один из самых элегантных и часто используемых инициализаторов словаря в современном [[Swift]] (добавлен в Swift 4).

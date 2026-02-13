@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#swift #architecture #clean_swift #vip #ios_development
 
 **Чистая Архитектура (Clean Architecture) от Роберта Мартина, адаптированная Рэймондом Ло для [[iOS]]-разработки.** Ее часто называют **VIP-циклом** (View-Interactor-Presenter) или **VIPER без Router и Entity**. Основная цель — разделение ответственности, тестируемость и независимость от фреймворков (особенно [[UIKit]]).
 

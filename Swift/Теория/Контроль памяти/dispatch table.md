@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #concurrency #dispatch_table #performance #ios_development
 **Dispatch Table** — это структура данных (обычно словарь или массив), которая сопоставляет **ключи** (или индексы) с **замыканиями** / **функциями** для динамического вызова без `if-else` / [[switch]].
 
 ### Зачем нужна

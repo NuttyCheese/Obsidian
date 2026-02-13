@@ -1,4 +1,4 @@
-#obj-c #memory_control 
+#swift #memory_management #objective_c #autorelease #ios_development
 **Autorelease** — механизм из эпохи **Manual Retain-Release (MRR)**, который откладывал вызов `release` до конца текущего **autorelease pool**.
 
 С появлением **[[ARC]]** (Automatic Reference Counting) в 2011 году явное использование `autorelease` и `NSAutoreleasePool` стало почти ненужным, но понимание механизма важно для:

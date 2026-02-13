@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #types #value_type #reference_type #memory_management
 # Типы значений ([[Value Type]]) и типы ссылок ([[Reference Type]]) в [[Swift]]
 
 В Swift все типы делятся на две большие группы по способу хранения и передачи:

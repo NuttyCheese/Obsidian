@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#architecture #ribs #ios_development #modular #navigation
 RIBs (Router, Interactor, Builder, and View) - это архитектурный паттерн, разработанный компанией Uber Technologies для создания масштабируемых и поддерживаемых мобильных приложений на платформе [[iOS]] с использованием языка [[Swift]]. RIBs является расширением паттерна [[VIPER Architecture]] (View, Interactor, Presenter, Entity, and Routing), который предлагает более гибкий и простой способ организации кода.
 
 Каждый элемент архитектуры RIBs имеет свою специфическую роль:

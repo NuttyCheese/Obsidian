@@ -1,4 +1,4 @@
-#algoritms #Swift #higher-order_func 
+#swift #higher_order_function #functional_programming #collections #aggregation
 `reduce` — один из самых мощных и универсальных методов в стандартной библиотеке Swift. Он позволяет **свести** (reduce / fold) всю коллекцию к **одному значению** путём последовательного применения операции.
 
 Существует **две основные версии**:

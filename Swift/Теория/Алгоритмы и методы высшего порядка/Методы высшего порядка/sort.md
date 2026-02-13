@@ -1,4 +1,4 @@
-#algoritms #higher-order_func #Swift 
+#swift #collections #sorting #algorithm #comparable
 # sort() и sorted() в Swift
 
 Методы `sort()` и `sorted()` — это два самых часто используемых инструмента для сортировки коллекций в [[Swift]].

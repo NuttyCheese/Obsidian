@@ -1,4 +1,4 @@
-#algoritms #Swift #higher-order_func 
+#swift #collections #sequence #iteration #enumeration
 # sequence(…) — ленивые последовательности без написания итератора
 
 Функции `sequence` — это **фабричные методы** из стандартной библиотеки [[Swift]], которые позволяют создать **ленивую последовательность** ([[lazy]] sequence) всего за одно замыкание, без необходимости писать собственные типы `Sequence` и `IteratorProtocol`.

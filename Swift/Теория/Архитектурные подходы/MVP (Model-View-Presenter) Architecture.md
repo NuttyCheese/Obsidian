@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#architecture #mvp #ios_development #design_pattern #ui_structure
 
 **Архитектурный паттерн, являющийся эволюцией классического [[MVC (Model-View-Controller) Architecture]]. Его ключевая цель — разгрузить Massive View Controller путем вынесения всей логики обновления интерфейса в отдельный класс — Presenter.** View становится пассивным и делегирует все действия Presenter'у.
 

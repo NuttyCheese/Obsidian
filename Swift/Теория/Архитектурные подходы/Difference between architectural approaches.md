@@ -1,4 +1,4 @@
-#ios #architecture #Swift 
+#architecture #software_development #design_patterns #comparison #ios_development
 Вот краткое сравнение основных архитектурных подходов в [[iOS]] разработке с примерами применения и особенностями выбора:
 
 ---
