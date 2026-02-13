@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Архитектурные подходы/TCA.md",
+                "file": "Swift/Теория/Patterns/DRY.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TCA"
+              "title": "DRY"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Архитектурные подходы/TCA.md",
+                "file": "Swift/Теория/Patterns/DRY.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура TCA"
+              "title": "Структура DRY"
             }
           },
           {
@@ -196,6 +196,13 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Patterns/Decorator.md",
+    "Swift/Теория/Patterns/Builder.md",
+    "Swift/Теория/Patterns/SOLID/SOLID.md",
+    "Swift/Теория/Patterns/SOLID/Single Responsibility Principle.md",
+    "Swift/Теория/Patterns/SOLID/Open-Closed Principle.md",
+    "Swift/Теория/Patterns/SOLID/Liskov Substitution Principle.md",
+    "Swift/Теория/Patterns/SOLID/Interface Segregation Principle.md",
     "Swift/Теория/Patterns/SOLID/Dependency Inversion Principle.md",
     "Swift/Теория/Архитектурные подходы/TCA.md",
     "Swift/Теория/Хранение данных/Realm.md",
@@ -215,13 +222,6 @@
     "Swift/Теория/Multithreading/Swift Concurrency/Sendable (Protocol).md",
     "Swift/Теория/Multithreading/Swift Concurrency/nonisolated.md",
     "Swift/Теория/Multithreading/Swift Concurrency/isolation (expression macro).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/isolation (concept).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/isolated.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Global Executor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/for-await.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Executor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/Continuations.md",
-    "throw.md",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
     "Swift/Теория/Testing",

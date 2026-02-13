@@ -5,17 +5,17 @@
 
 **SOLID** — это акроним пяти принципов объектно-ориентированного дизайна, предложенных Робертом Мартином (Uncle Bob) в начале 2000-х:
 
-- **S** — Single Responsibility Principle  
-- **O** — Open-Closed Principle  
-- **L** — Liskov Substitution Principle  
-- **I** — Interface Segregation Principle  
-- **D** — Dependency Inversion Principle  
+- **[[Single Responsibility Principle|S]]** — [[Single Responsibility Principle]] Принцип единственной ответственности
+- **[[Open-Closed Principle|O]]** — [[Open-Closed Principle]] Принцип открытости/закрытости
+- **[[Liskov Substitution Principle|L]]** — [[Liskov Substitution Principle]] Принцип подстановки Барбары Лисков
+- **[[Interface Segregation Principle|I]]** — [[Interface Segregation Principle]] Принцип разделения интерфейса
+- **[[Dependency Inversion Principle|D]]** — [[Dependency Inversion Principle]] Принцип инверсии зависимостей
 
 В 2026 году SOLID **не устарел** — наоборот, он стал **ещё важнее** благодаря:
 
-- **Swift 6 strict concurrency** — без SOLID легко получить data race  
-- **TCA / Composable Architecture** — требует строгого соблюдения SOLID  
-- **Clean Swift / VIPER / MVVM-C** — SOLID лежит в основе  
+- **[[Swift]] 6 strict concurrency** — без SOLID легко получить data race  
+- **[[TCA]] / Composable Architecture** — требует строгого соблюдения SOLID  
+- **[[Clean Swift (VIP) Architecture|Clean Swift]] / [[VIPER Architecture|VIPER]] / [[MVVM (Model-View-ViewModel) Architecture|MVVM]]-[[Coordinator]]** — SOLID лежит в основе  
 - **Долгоживущие проекты** (5–10+ лет) — без SOLID код становится неподдерживаемым  
 - **Команды > 5 человек** — SOLID минимизирует конфликты merge и регрессии
 
@@ -142,17 +142,17 @@ class ViewModel {
 
 ```mermaid
 flowchart TD
-    SOLID[SOLID Principles] --> S["S — Single Responsibility<br>Один класс — одна ответственность"]
-    SOLID --> O["O — Open-Closed<br>Открыт для расширения, закрыт для модификации"]
-    SOLID --> L["L — Liskov Substitution<br>Подтипы взаимозаменяемы"]
-    SOLID --> I["I — Interface Segregation<br>Маленькие, узкие протоколы"]
-    SOLID --> D["D — Dependency Inversion<br>Зависеть от абстракций"]
-
-    S --> "Маленькие классы + протоколы"
-    O --> "Протоколы + композиция"
-    L --> "Узкие протоколы + композиция"
-    I --> "Протоколы по 2–5 методов"
-    D --> "Dependency Injection через протоколы"
+    SOLID[SOLID Principles] --> S["S — Single Responsibility<br/>Один класс — одна ответственность"]
+    SOLID --> O["O — Open-Closed<br/>Открыт для расширения, закрыт для модификации"]
+    SOLID --> L["L — Liskov Substitution<br/>Подтипы взаимозаменяемы"]
+    SOLID --> I["I — Interface Segregation<br/>Маленькие, узкие протоколы"]
+    SOLID --> D["D — Dependency Inversion<br/>Зависеть от абстракций"]
+    
+    S --> S1["Маленькие классы + протоколы"]
+    O --> O1["Протоколы + композиция"]
+    L --> L1["Узкие протоколы + композиция"]
+    I --> I1["Протоколы по 2–5 методов"]
+    D --> D1["Dependency Injection через протоколы"]
 ```
 
 ### 5. Лучшие практики SOLID в Swift 2026
@@ -170,5 +170,3 @@ flowchart TD
 **Короткий девиз 2026**:
 > «SOLID в 2026 году — это когда ты пишешь код так, чтобы через 5 лет его мог поддерживать новый разработчик без боли.  
 > Без SOLID в Swift 6+ писать долгоживущее, тестируемое и масштабируемое приложение уже считается плохим тоном.»
-
-Удачи с чистой, современной и поддерживаемой архитектурой в Swift! 🏛️
