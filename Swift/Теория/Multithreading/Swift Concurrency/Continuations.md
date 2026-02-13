@@ -1,12 +1,10 @@
-Вот **полное, подробное и максимально насыщенное** руководство по **`Continuation`** (в частности `CheckedContinuation` и `CheckedThrowingContinuation`) в Swift — актуально на 2026 год (Swift 6+ и выше).
-
 ### 1. Что такое Continuation и зачем он нужен
 
-**Continuation** — это **объект-мост**, который позволяет **превратить старый callback-based API** в современный `async/await`.
+**Continuation** — это **объект-мост**, который позволяет **превратить старый [[callback]]-based [[API]]** в современный `async/await`.
 
 Проблема:
-- До Swift Concurrency (2019–2021) почти все асинхронные API работали через **completion handler** (замыкание, вызываемое позже).
-- Swift Concurrency не может «ждать» такие замыкания напрямую.
+- До [[Swift]] Concurrency (2019–2021) почти все асинхронные API работали через **completion handler** (замыкание, вызываемое позже).
+- [[Swift Concurrency]] не может «ждать» такие замыкания напрямую.
 
 Решение:
 - `withCheckedContinuation` / `withCheckedThrowingContinuation` **приостанавливает** текущую задачу (`suspend`)  
@@ -34,7 +32,7 @@
 
 ### 3. Самые популярные шаблоны 2026 года
 
-#### Шаблон 1 — Классический Result → async throws
+#### Шаблон 1 — Классический Result → [[async]] [[throws]]
 
 ```swift
 func oldFetch(completion: @escaping (Result<String, Error>) -> Void) {
@@ -145,24 +143,24 @@ Task {
 
 ### 4. Типичные ошибки и ловушки 2026 года
 
-| Ошибка                                      | Последствия                              | Как избежать |
-|---------------------------------------------|------------------------------------------|--------------|
-| Забыть вызвать resume                       | Задача висит вечно (deadlock)            | Всегда resume (return / throw) |
-| Вызвать resume дважды                       | Runtime crash (fatal error)              | CheckedContinuation ловит в debug, но лучше один раз |
-| Не отменять вложенные задачи                | Задача продолжает работать после отмены Task | Использовать `continuation.onCancellation { ... }` |
-| Использовать UnsafeContinuation без причины | Нет проверки → скрытые ошибки            | Всегда Checked, если не критично |
-| Забыть `try` в `withCheckedThrowingContinuation` | Ошибка компиляции                        | `try await` всегда |
-| Делать тяжёлую работу до resume             | Блокирует весь актёр                     | Тяжёлое — в отдельный Task |
+| Ошибка                                           | Последствия                                      | Как избежать                                         |
+| ------------------------------------------------ | ------------------------------------------------ | ---------------------------------------------------- |
+| Забыть вызвать resume                            | Задача висит вечно ([[deadlock]])                | Всегда resume ([[return]] / [[throw]])               |
+| Вызвать resume дважды                            | [[Runtime crash]] (fatal error)                  | CheckedContinuation ловит в debug, но лучше один раз |
+| Не отменять вложенные задачи                     | Задача продолжает работать после отмены [[Task]] | Использовать `continuation.onCancellation { ... }`   |
+| Использовать UnsafeContinuation без причины      | Нет проверки → скрытые ошибки                    | Всегда Checked, если не критично                     |
+| Забыть `try` в `withCheckedThrowingContinuation` | Ошибка компиляции                                | `try await` всегда                                   |
+| Делать тяжёлую работу до resume                  | Блокирует весь актёр                             | Тяжёлое — в отдельный Task                           |
 
 ### 5. Continuation vs другие способы интеграции legacy (2026 сравнение)
 
-| Механизм                  | Простота | Поддержка ошибок | Отмена вложенных задач | Проверка resume | Рекомендация 2026 |
-|---------------------------|----------|-------------------|--------------------------|------------------|-------------------|
-| `withCheckedThrowingContinuation` | Высокая  | Да                | Да (onCancellation)      | Да               | Основной выбор    |
-| `withCheckedContinuation` | Высокая  | Нет               | Да                       | Да               | Без ошибок        |
-| `withUnsafeThrowingContinuation`  | Средняя  | Да                | Да                       | Нет              | Только производительность |
-| AsyncStream / AsyncThrowingStream | Высокая  | Да                | Да                       | Да               | Для потоков данных |
-| Combine → AsyncPublisher          | Средняя  | Да                | Да                       | Да               | Legacy-проекты с Combine |
+| Механизм                          | Простота | Поддержка ошибок | Отмена вложенных задач | Проверка resume | Рекомендация 2026         |
+| --------------------------------- | -------- | ---------------- | ---------------------- | --------------- | ------------------------- |
+| `withCheckedThrowingContinuation` | Высокая  | Да               | Да (onCancellation)    | Да              | Основной выбор            |
+| `withCheckedContinuation`         | Высокая  | Нет              | Да                     | Да              | Без ошибок                |
+| `withUnsafeThrowingContinuation`  | Средняя  | Да               | Да                     | Нет             | Только производительность |
+| AsyncStream / AsyncThrowingStream | Высокая  | Да               | Да                     | Да              | Для потоков данных        |
+| [[Combine]] → AsyncPublisher      | Средняя  | Да               | Да                     | Да              | Legacy-проекты с Combine  |
 
 **Вывод 2026**:
 - `withCheckedThrowingContinuation` — **золотой стандарт** для обёртки любого callback-API  
@@ -182,5 +180,3 @@ Task {
 **Короткий девиз 2026**:
 > «Continuation — это мост между старым callback-миром и новым async/await.  
 > В 2026 году почти любой legacy API оборачивается именно через withCheckedThrowingContinuation.»
-
-Удачи с красивым и безопасным переходом от callback к async/await в Swift! 🌉
