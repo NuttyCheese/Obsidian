@@ -1,242 +1,180 @@
-## 1. Что такое `throws`
+Вот **полное, подробное и максимально актуальное** (на февраль 2026 года) руководство по ключевому слову **`throws`** в Swift — включая все нюансы Swift 6 и строгой конкурентности.
 
-**`throws`** — это ключевое слово, которое указывает, что **функция или метод может выбросить ошибку**.
+### 1. Что такое `throws` и зачем оно нужно
 
-- В [[Swift]] ошибки представляют собой типы, соответствующие протоколу **[[Error]]**.
-    
-- Функция с `throws` может завершиться либо **успешно** (return), либо **с ошибкой** (throw).
-    
-- Для вызова такой функции нужно использовать [[try]] (или `try?`, `try!`).
-    
+**`throws`** — это ключевое слово, которое **помечает функцию** (или метод, инициализатор, замыкание), что она **может выбросить ошибку** во время выполнения.
 
-> Проще говоря: `throws` = «эта функция может не сработать и выдать ошибку, её нужно ловить».
+Функция с `throws` имеет **два возможных исхода**:
 
----
+- **успешное завершение** → возвращает значение (или `Void`)  
+- **выброс ошибки** → передаёт управление в ближайший `catch` или крашит задачу
 
-## 2. Основные термины
+**Главные цели `throws`** (2026):
 
-| Термин       | Описание                                                           |
-| ------------ | ------------------------------------------------------------------ |
-| `throws`     | Функция может выбросить ошибку                                     |
-| `throw`      | Ключевое слово для генерации ошибки внутри функции                 |
-| `try`        | Используется при вызове функции с `throws`                         |
-| `try?`       | Превращает результат в Optional, игнорируя ошибку (возвращает nil) |
-| `try!`       | Принудительный вызов, ошибка приведёт к краху приложения           |
-| [[do-catch]] | Блок для отлова и обработки ошибок                                 |
+- явно указывать в сигнатуре, что функция **не гарантирует** успешного результата  
+- заставлять вызывающий код **обрабатывать ошибки** (через `try`, `do-catch`, `try?`, `try!`)  
+- делать ошибки **частью типа** функции — компилятор **не даст** их игнорировать  
+- поддерживать **чистый и предсказуемый** контроль ошибок вместо возврата `nil` / `Optional` / специальных кодов
 
----
+**Коротко**:
+> `throws` = «эта функция может сломаться — будь готов поймать ошибку».
 
-## 3. Создание функции с throws
+### 2. Основные варианты использования throws (таблица 2026)
 
-```swift
-enum MyError: Error {
-    case somethingWentWrong
-}
+| Вариант                                   | Синтаксис                              | Когда использовать                          | Как вызывать                     |
+|-------------------------------------------|----------------------------------------|---------------------------------------------|-----------------------------------|
+| `throws`                                  | `func f() throws -> T`                 | Функция может выбросить ошибку              | `try f()`                         |
+| `async throws`                            | `func f() async throws -> T`           | Асинхронная функция с ошибками              | `try await f()`                   |
+| `rethrows`                                | `func f(_ closure: () throws -> Void) rethrows` | Функция выбрасывает ошибку только если closure выбросил | `try f { ... }`                   |
+| `throws` в замыкании                      | `@escaping (Result<T, Error>) -> Void` → `throws` внутри | Legacy → modern bridge                      | `try await withCheckedThrowingContinuation` |
+| `throws` + `never` (редко)                | `func f() throws -> Never`             | Функция всегда выбрасывает ошибку           | `try f()` → никогда не возвращает |
 
-func riskyFunction() throws -> String {
-    if Bool.random() {
-        return "Success"
-    } else {
-        throw MyError.somethingWentWrong
-    }
-}
-```
+### 3. Самые популярные шаблоны throws 2026 года
 
----
-
-## 4. Вызов функции с throws
-
-### Вариант 1. try + do-catch
-
-```swift
-do {
-    let result = try riskyFunction()
-    print("Result:", result)
-} catch {
-    print("Error:", error)
-}
-```
-
-- Ошибки ловятся в `catch`
-    
-- Можно использовать разные catch для разных типов ошибок
-    
-
-```swift
-do {
-    let result = try riskyFunction()
-} catch MyError.somethingWentWrong {
-    print("Specific error")
-} catch {
-    print("Other error")
-}
-```
-
----
-
-### Вариант 2. try? → [[Optional]]
-
-```swift
-let result = try? riskyFunction()
-print(result) // Optional("Success") или nil
-```
-
-- Ошибка превращается в [[nil]]
-    
-- Не выбрасывает runtime exception
-    
-
----
-
-### Вариант 3. try! → принудительно
-
-```swift
-let result = try! riskyFunction() 
-// Если функция выбросит ошибку → приложение упадёт
-```
-
-- Используется, когда вы **абсолютно уверены**, что ошибки не будет
-    
-
----
-
-## 5. Примеры от простого к сложному
-
-### Пример 1. Простая функция с throws
-
-```swift
-enum FileError: Error {
-    case fileNotFound
-}
-
-func readFile(name: String) throws -> String {
-    guard name == "exists.txt" else {
-        throw FileError.fileNotFound
-    }
-    return "File content"
-}
-
-do {
-    let content = try readFile(name: "exists.txt")
-    print(content)
-} catch {
-    print("Error reading file")
-}
-```
-
----
-
-### Пример 2. Несколько ошибок
+#### Шаблон 1 — Классический do-try-catch (самый надёжный)
 
 ```swift
 enum NetworkError: Error {
     case offline
     case timeout
+    case badResponse(Int)
 }
 
-func fetchData() throws {
-    if Bool.random() {
-        throw NetworkError.offline
-    } else {
-        throw NetworkError.timeout
-    }
+func fetchProfile() throws -> Profile {
+    // ... симуляция сети ...
+    if Bool.random() { throw NetworkError.offline }
+    if Bool.random() { throw NetworkError.timeout }
+    return Profile(name: "Alex")
 }
 
 do {
-    try fetchData()
+    let profile = try fetchProfile()
+    print("Профиль:", profile.name)
 } catch NetworkError.offline {
-    print("Offline")
+    print("Нет интернета")
 } catch NetworkError.timeout {
-    print("Timeout")
+    print("Таймаут")
+} catch NetworkError.badResponse(let code) {
+    print("Ошибка сервера:", code)
+} catch {
+    print("Неизвестная ошибка:", error)
 }
 ```
 
----
-
-### Пример 3. Использование try? для безопасного вызова
+#### Шаблон 2 — try? — безопасный Optional (очень частый)
 
 ```swift
-let result = try? fetchData() 
-// result = nil, если выброшена ошибка
+let profile = try? fetchProfile()
+if let profile {
+    print("Успех:", profile.name)
+} else {
+    print("Не удалось загрузить профиль")
+}
 ```
 
----
-
-### Пример 4. throws в async функции
+#### Шаблон 3 — try! — когда уверен на 100% (опасно, но иногда оправдано)
 
 ```swift
-func asyncFetch() async throws -> String {
-    if Bool.random() {
-        return "Async data"
-    } else {
-        throw NetworkError.timeout
+let config = try! loadConfigFromDisk()  // если файл точно есть
+print(config.apiKey)
+```
+
+**Внимание**: `try!` → **краш приложения** при любой ошибке. Используй **только** когда ошибка невозможна.
+
+#### Шаблон 4 — async throws + try await (самый частый в 2026)
+
+```swift
+func fetchUser(id: Int) async throws -> User {
+    let url = URL(string: "https://api.com/users/\(id)")!
+    let (data, response) = try await URLSession.shared.data(from: url)
+    
+    guard let httpResponse = response as? HTTPURLResponse,
+          (200...299).contains(httpResponse.statusCode) else {
+        throw URLError(.badServerResponse)
     }
+    
+    return try JSONDecoder().decode(User.self, from: data)
 }
 
 Task {
     do {
-        let data = try await asyncFetch()
-        print(data)
+        let user = try await fetchUser(id: 42)
+        await MainActor.run {
+            nameLabel.text = user.name
+        }
     } catch {
-        print("Error in async fetch")
+        await MainActor.run {
+            errorLabel.text = "Ошибка: \(error.localizedDescription)"
+        }
     }
 }
 ```
 
-- Для `async throws` нужно использовать **`try await`**
-    
-
----
-
-### Пример 5. rethrow
+#### Шаблон 5 — rethrows (передача ошибки из замыкания)
 
 ```swift
-func performTask(task: () throws -> Void) rethrows {
-    try task()
+func withRetry<T>(_ operation: () throws -> T, maxAttempts: Int = 3) rethrows -> T {
+    var lastError: Error?
+    
+    for attempt in 1...maxAttempts {
+        do {
+            return try operation()
+        } catch {
+            lastError = error
+            print("Попытка \(attempt) провалилась")
+        }
+    }
+    
+    throw lastError ?? NSError(domain: "Unknown", code: -1)
 }
 
-do {
-    try performTask {
-        throw MyError.somethingWentWrong
-    }
-} catch {
-    print("Caught error")
+// Использование
+try withRetry {
+    try riskyOperation()
 }
 ```
 
-- `rethrows` позволяет функции **выбрасывать ошибку только если переданный [[closure]] выбросит**
-    
+### 4. Типичные ошибки и ловушки throws 2026 года
 
----
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Забыть `try` перед вызовом throws-функции   | Ошибка компиляции                        | Компилятор напомнит |
+| Использовать `try?` и не проверять Optional | Игнорирование ошибок → silent failure    | Всегда проверять `if let` / `guard let` |
+| `try!` в production-коде                    | Краш приложения при любой ошибке         | Только в тестах / когда ошибка невозможна |
+| Не обрабатывать конкретные ошибки           | Общая обработка → плохой UX              | Используй `catch SpecificError { ... }` |
+| throws в методе, который не должен падать   | Неожиданные краши                        | Верни `Result` / Optional вместо throws |
+| throws + async без try await                | Ошибка компиляции                        | Всегда `try await` для `async throws` |
 
-## 6. Особенности throws
+### 5. throws vs другие способы обработки ошибок (2026 сравнение)
 
-1. **Используется с Error-conforming типами**
-    
-2. **Обязателен `try` при вызове**
-    
-3. **Можно комбинировать с async** → `async throws`
-    
-4. **Можно безопасно превращать в Optional** → `try?`
-    
-5. **Можно принудительно вызвать** → `try!`
-    
-6. **Rethrow** позволяет передавать ошибки от closure
-    
+| Механизм                  | Проверка компилятором | Читаемость | Обработка ошибок | Рекомендация 2026 | Когда использовать |
+|---------------------------|------------------------|------------|-------------------|-------------------|---------------------|
+| `throws` / `try` / `do-catch` | Полная                 | Высокая    | Полная            | Основной выбор    | Почти всё           |
+| `Result<T, Error>`        | Нет                    | Средняя    | Ручная            | Legacy / Combine  | Старые API          |
+| `Optional` + `try?`       | Частично               | Высокая    | Частичная         | Простые случаи    | Когда ошибка не критична |
+| `fatalError` / `preconditionFailure` | Нет              | Низкая     | Нет               | Отладка           | Невозможные случаи  |
+| `Never` (как тип возврата)| Полная                 | Высокая    | Нет               | Редко             | Функции, которые всегда крашат |
 
----
+**Вывод 2026**:
+- **`throws` + `try` / `do-catch`** — **основной и рекомендуемый** способ обработки ошибок в Swift  
+- `Result` — только для legacy / Combine / старых API  
+- `Optional` — для случаев, когда ошибка **не критична**  
+- В Swift 6 с полной проверкой конкурентности `throws` стал **ещё строже** и **ещё полезнее**
 
-## 7. Итог
+### 6. Лучшие практики 2026 года
 
-- `throws` = функция может выбросить ошибку
-    
-- Вызов через `try`, обработка через `do-catch`
-    
-- Для async используется `try await`
-    
-- Есть безопасные и принудительные варианты: `try?` и `try!`
-    
-- Rethrow позволяет безопасно передавать ошибки от closure
-    
+- **Всегда** используй конкретные типы ошибок (`enum MyError: Error`)  
+- **Обрабатывай** конкретные ошибки через `catch SpecificError { ... }`  
+- **Используй `try?`** только когда ошибка **не критична** и результат — Optional  
+- **Никогда** не используй `try!` в production-коде  
+- **Для async** — всегда `try await`  
+- **Rethrows** — используй для функций-обёрток над замыканиями  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит забытые `try`  
+- **Тестирование** — пиши тесты на каждый `catch`-случай  
+- **Документируй** — пиши в документации все возможные `throws`
 
----
+**Короткий девиз 2026**:
+> «throws — это когда ты честно говоришь: «я могу сломаться, будь готов».  
+> В 2026 году это **основной** способ работы с ошибками в Swift — чистый, проверяемый и безопасный.»
+
+Удачи с надёжным, читаемым и современным обработчиком ошибок в Swift! 🛡️

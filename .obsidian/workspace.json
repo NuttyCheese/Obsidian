@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Multithreading/Swift Concurrency/sync.md",
+                "file": "Swift/Теория/Multithreading/Atomic Operation.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "sync"
+              "title": "Atomic Operation"
             }
           }
         ]
@@ -196,6 +196,12 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "Swift/Теория/Multithreading/Swift Concurrency/throws.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/TaskLocal.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/TaskGroup.md",
+    "Swift/Теория/Multithreading/semaphore.md",
+    "Swift/Теория/Multithreading/Swift Concurrency/Task.md",
+    "Swift/Теория/Multithreading/GCD/Dispatch/sync.md",
     "Swift/Теория/Multithreading/Swift Concurrency/sending.md",
     "Swift/Теория/Multithreading/Swift Concurrency/Sendable (Protocol).md",
     "Swift/Теория/Multithreading/Swift Concurrency/nonisolated.md",
@@ -216,12 +222,6 @@
     "Swift/Теория/Multithreading/Swift Concurrency/@Sendable (Attribute).md",
     "Swift/Теория/Multithreading/Swift Concurrency/@preconcurrency.md",
     "Swift/Теория/Multithreading/Swift Concurrency/@MainActor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@isolated(any).md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@globalActor.md",
-    "Swift/Теория/Multithreading/Swift Concurrency/@_inheritActorContext.md",
-    "Swift/Теория/Multithreading/NSOperation/isCancelled.md",
-    "Swift/Теория/Multithreading/NSOperation/addDependency.md",
-    "Swift/Теория/Multithreading/NSOperation/queuePriority.md",
     "Swift/Теория/Testing",
     "Swift/Теория/System Design/1. Основы проектирования систем/Архитектуры",
     "Swift/Теория/System Design/1. Основы проектирования систем/Ключевые концепции",

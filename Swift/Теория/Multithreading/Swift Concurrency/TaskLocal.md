@@ -1,183 +1,174 @@
-## 1. Что такое `TaskLocal`
+Вот **полное, подробное и максимально актуальное** (на февраль 2026 года) руководство по **`TaskLocal`** в Swift Concurrency — с акцентом на то, как это работает в Swift 6 и почему это один из самых недооценённых, но мощных инструментов.
 
-**`TaskLocal`** — это механизм, который позволяет:
+### 1. Что такое TaskLocal простыми словами
 
-- Хранить данные, **уникальные для каждой задачи ([[Task]])**
-    
-- Передавать эти данные между вызовами [[async]] функций **без явного аргумента**
-    
-- Данные автоматически наследуются дочерними задачами, если не переопределены
-    
+**`TaskLocal`** — это **локальная переменная, уникальная для каждой асинхронной задачи** (`Task`) и её дочерних задач.
 
-> Проще говоря: TaskLocal = «переменная, видимая только внутри текущей Task и её потомков».
+Она позволяет:
 
----
+- хранить данные (контекст), которые **видны только внутри текущей задачи и её потомков**  
+- передавать эти данные **между вызовами async-функций без явных параметров**  
+- автоматически **наследовать** значение дочерними задачами  
+- **переопределять** значение в дочерней задаче без влияния на родительскую
 
-## 2. Основные свойства
+**Коротко**:
+> TaskLocal = «невидимый рюкзак», который каждая задача несёт с собой.  
+> Дочерние задачи получают копию рюкзака родителя, но могут положить туда своё.
 
-1. **Локальность** — каждая Task имеет свою копию переменной
-    
-2. **Наследование** — дочерние задачи получают значение из родителя, пока оно не переопределено
-    
-3. **Immutable внутри задачи** — значение можно изменять только через `withValue`
-    
+Это **самый чистый способ** передавать контекст (user ID, request ID, trace ID, locale, auth token и т.д.) по всей цепочке асинхронных вызовов.
 
----
+### 2. Основные правила TaskLocal (2026)
 
-## 3. Создание TaskLocal
+| Правило                                   | Что происходит                                   | Пример |
+|-------------------------------------------|--------------------------------------------------|--------|
+| Доступ только внутри `Task`               | Вне асинхронного контекста — `nil` или default   | `TaskLocal.currentUser.currentValue` → nil вне Task |
+| Наследование дочерними задачами           | Дочерняя задача получает значение родителя       | `Task { Task { print(TaskLocal.x.currentValue) } }` — видит значение |
+| Переопределение в дочерней задаче         | Не влияет на родительскую задачу                 | `withValue("child") { ... }` — родитель видит старое значение |
+| Изменение только через `withValue`        | Прямое присваивание запрещено                    | `TaskLocal.x = "new"` → ошибка компиляции |
+| Потокобезопасность                        | Полностью встроенная                             | Можно использовать из любого потока внутри Task |
+| Можно использовать в `actor`              | Да, но нужно `await` для доступа к состоянию     | `await TaskLocal.x.currentValue` внутри actor |
+| Default-значение                          | Можно задать через `@TaskLocal(default: ...)`    | `@TaskLocal(default: "guest") static var user` |
 
-```swift
-@TaskLocal
-static var currentUser: String?
-```
+### 3. Самые популярные шаблоны TaskLocal 2026 года
 
-- Можно использовать как глобальную переменную, доступную только внутри Task.
-    
-
----
-
-## 4. Основной синтаксис использования
-
-```swift
-TaskLocal.currentUser.withValue("Alice") {
-    // внутри этого блока currentUser = "Alice"
-}
-```
-
-- Внутри блока значение TaskLocal доступно через `.currentValue`
-    
-
-```swift
-print(TaskLocal.currentUser.currentValue) // "Alice"
-```
-
-- Вне блока значение может быть [[nil]] или значение по умолчанию
-    
-
----
-
-## 5. Примеры от простого к сложному
-
-### Пример 1. Простейший TaskLocal
-
-```swift
-@TaskLocal
-static var currentUser: String?
-
-Task {
-    await TaskLocal.currentUser.withValue("Alice") {
-        print(TaskLocal.currentUser.currentValue ?? "No user") 
-        // Output: Alice
-    }
-}
-```
-
----
-
-### Пример 2. Наследование значения в дочерней задаче
+#### Шаблон 1 — Request ID / Trace ID (самый частый в backend / API)
 
 ```swift
 @TaskLocal
 static var requestID: String?
 
+func handleRequest() async {
+    await TaskLocal.requestID.withValue(UUID().uuidString) {
+        await processRequest()     // requestID виден во всех вложенных вызовах
+        await logMetrics()         // тоже видит requestID
+    }
+}
+
+func logMetrics() async {
+    let rid = TaskLocal.requestID.currentValue ?? "unknown"
+    print("Метрики для request \(rid)")
+    // отправка в аналитику, Sentry, etc.
+}
+```
+
+#### Шаблон 2 — Текущий пользователь / Auth Token
+
+```swift
+@TaskLocal
+static var currentUserID: UUID?
+
+@MainActor
+class AuthViewModel: ObservableObject {
+    func login(userID: UUID) async {
+        await TaskLocal.currentUserID.withValue(userID) {
+            await loadProfile()      // видит userID
+            await loadFriends()      // тоже видит
+        }
+    }
+}
+
+func loadProfile() async {
+    let userID = TaskLocal.currentUserID.currentValue
+    // загрузка профиля по userID
+}
+```
+
+#### Шаблон 3 — Переопределение в дочерней задаче
+
+```swift
+@TaskLocal
+static var transactionID: String?
+
 Task {
-    await TaskLocal.requestID.withValue("req123") {
+    await TaskLocal.transactionID.withValue("main-tx") {
         Task {
-            print(TaskLocal.requestID.currentValue ?? "No request") 
-            // Output: req123 (унаследовано)
+            // дочерняя задача видит "main-tx"
+            print(TaskLocal.transactionID.currentValue)  // main-tx
+            
+            await TaskLocal.transactionID.withValue("sub-tx") {
+                // переопределение только внутри этой подзадачи
+                print(TaskLocal.transactionID.currentValue)  // sub-tx
+            }
+            
+            // здесь снова "main-tx"
+            print(TaskLocal.transactionID.currentValue)  // main-tx
         }
     }
 }
 ```
 
-- Дочерняя Task видит значение родителя.
-    
-
----
-
-### Пример 3. Переопределение значения в дочерней задаче
+#### Шаблон 4 — TaskLocal + AsyncSequence / Stream
 
 ```swift
-Task {
-    await TaskLocal.requestID.withValue("parent") {
+@TaskLocal
+static var sessionID: String?
+
+func streamLogs() -> AsyncStream<String> {
+    AsyncStream { continuation in
         Task {
-            await TaskLocal.requestID.withValue("child") {
-                print(TaskLocal.requestID.currentValue) 
-                // Output: child
+            for i in 1...5 {
+                let msg = "Log \(i) from session \(TaskLocal.sessionID.currentValue ?? "none")"
+                continuation.yield(msg)
+                try? await Task.sleep(for: .milliseconds(300))
             }
-            print(TaskLocal.requestID.currentValue) 
-            // Output: parent (значение родителя)
+            continuation.finish()
+        }
+    }
+}
+
+Task {
+    await TaskLocal.sessionID.withValue("sess-abc123") {
+        for await log in streamLogs() {
+            print(log)  // все строки содержат sess-abc123
         }
     }
 }
 ```
 
----
+### 4. Типичные ошибки и ловушки 2026 года
 
-### Пример 4. Использование в async функции
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Прямое присваивание `TaskLocal.x = value`   | Ошибка компиляции                        | Только `withValue { ... }` |
+| Доступ к `TaskLocal.x.currentValue` вне Task | `nil` или default                        | Использовать только внутри async-контекста |
+| Забыть `withValue` и ожидать значение       | `nil` / default вместо ожидаемого        | Всегда оборачивать в `withValue` |
+| Думать, что изменение в дочерней задаче влияет на родительскую | Нет — значения независимы                | Помнить про копирование при наследовании |
+| Использовать TaskLocal для глобального состояния | Нарушение принципа изоляции              | Для глобального — `@globalActor` или singleton actor |
+| Не учитывать отмену задачи                  | Значение может остаться «висеть»         | `withValue` автоматически очищается при отмене |
 
-```swift
-func fetchData() async {
-    print("Request ID:", TaskLocal.requestID.currentValue ?? "none")
-}
+### 5. TaskLocal vs другие способы передачи контекста (2026 сравнение)
 
-Task {
-    await TaskLocal.requestID.withValue("req456") {
-        await fetchData()
-        // Output: Request ID: req456
-    }
-}
-```
+| Механизм                  | Передача без явного параметра | Автоматическое наследование | Изоляция | Рекомендация 2026 | Когда использовать |
+|---------------------------|-------------------------------|------------------------------|----------|-------------------|---------------------|
+| `TaskLocal`               | Да                            | Да                           | Полная   | Основной выбор    | Контекст запроса, user ID, trace ID |
+| Явные параметры           | Нет                           | Нет                          | Ручная   | Простые случаи    | Когда контекст небольшой |
+| `@globalActor`            | Да                            | Да (глобально)               | Полная   | Глобальные сервисы | Логи, аналитика, БД |
+| Environment / DI          | Да (через @Environment)       | Частично                     | Ручная   | SwiftUI           | UI-контекст         |
+| Thread-local storage      | Да                            | Нет                          | Нет      | Legacy            | Старый код          |
 
-- Async функция получает доступ к TaskLocal без передачи аргумента.
-    
+**Вывод 2026**:
+- `TaskLocal` — **самый чистый и современный** способ передавать контекст по цепочке асинхронных вызовов  
+- Заменяет **почти все** ThreadLocal, RequestContext, CurrentUserHolder и т.д.  
+- Особенно полезен в **backend**, **API-сервисах**, **логах**, **трассировке** и **аутентификации**
 
----
+### 6. Лучшие практики 2026 года
 
-### Пример 5. TaskLocal с параллельными задачами
+- **Используй TaskLocal** для:
+  - request ID / trace ID  
+  - текущий пользователь / токен  
+  - tenant ID / организация  
+  - locale / timezone  
+  - correlation ID / logging context  
+- **Всегда** оборачивай в `withValue { ... }` — это единственный безопасный способ изменения  
+- **Не храни** в TaskLocal **большие объекты** — только ID, строки, маленькие структуры  
+- **Не забывай** — значение автоматически **очищается** при выходе из `withValue`  
+- **Для UI** — чаще используй `@Environment` / `@EnvironmentObject`  
+- **Swift 6 strict concurrency** — TaskLocal полностью поддерживается и безопасен  
+- **Тестирование** — легко мокать через `withValue` в тестах  
+- **Документируй** — пиши комментарий «TaskLocal — контекст запроса»
 
-```swift
-Task {
-    await TaskLocal.requestID.withValue("main") {
-        await withTaskGroup(of: Void.self) { group in
-            for i in 1...3 {
-                group.addTask {
-                    print("Task \(i):", TaskLocal.requestID.currentValue ?? "none")
-                    // Все задачи видят main
-                }
-            }
-        }
-    }
-}
-```
+**Короткий девиз 2026**:
+> «TaskLocal — это когда ты хочешь передать контекст по всей цепочке async-вызовов, **не засоряя сигнатуры функций** аргументами.  
+> В 2026 году это **must-have** для любого серьёзного асинхронного приложения.»
 
-- TaskLocal автоматически передаётся дочерним задачам.
-    
-
----
-
-## 6. Особенности TaskLocal
-
-1. **Immutable** — изменить значение напрямую нельзя, только через `withValue`
-    
-2. **Наследование** — дочерние задачи наследуют значение родителя
-    
-3. **Безопасность потоков** — TaskLocal безопасен для многопоточности
-    
-4. **Можно использовать для контекста запросов, идентификаторов пользователей, логирования**
-    
-
----
-
-## 7. Итог
-
-- `TaskLocal` = локальные данные для конкретной Task
-    
-- Доступны в async функциях и дочерних задачах без передачи аргументов
-    
-- Изменение только через `withValue`
-    
-- Отлично подходит для контекста запроса, логирования и user session
-    
-
----
+Удачи с чистым, прозрачным и безопасным контекстом в Swift! 📦

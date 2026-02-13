@@ -1,207 +1,158 @@
-## 1. Что такое `Task`
+Вот **полное, подробное и максимально актуальное** (на февраль 2026 года) руководство по **`Task`** в Swift Concurrency.
 
-**`Task`** — это объект, который **создаёт и управляет асинхронной задачей**.
+### 1. Что такое Task и зачем он нужен
 
-- Позволяет запускать код в **асинхронном контексте** без блокировки потока.
-    
-- Задачи могут выполняться:
-    
-    - на текущем [[Executor]] (например, [[actor]] или MainActor)
-        
-    - на глобальном executor (фоновые потоки) через `Task.detached`
-        
+**`Task`** — это **структурированная асинхронная единица работы** в Swift Concurrency.
 
-> Проще говоря: Task = «контейнер для асинхронной работы».
+Простыми словами:  
+`Task` — это контейнер, который запускает асинхронный код и управляет его жизненным циклом (выполнение, отмена, результат, ошибки).
 
----
+**Главные задачи `Task`** (2026):
 
-## 2. Основные виды задач
+- Запускать `async` код из **синхронного** контекста  
+- Создавать **независимые** фоновые задачи (`Task.detached`)  
+- Получать результат через `await task.value`  
+- Поддерживать **отмену** (`task.cancel()`)  
+- Автоматически **наследовать** текущий executor (если не detached)  
+- Обеспечивать **структурированную конкурентность** — все дочерние задачи завершаются вместе с родительской
 
-1. **Нормальный Task**
-    
+**Ключевые факты 2026**:
+
+- `Task` — **структурирован** — если родительская задача отменяется, все дочерние тоже отменяются  
+- `Task.detached` — **неструктурирован** — живёт независимо  
+- `Task` **всегда** наследует **приоритет** и **контекст изоляции** текущей задачи (если не detached)  
+- В Swift 6 с полной проверкой конкурентности `Task` — **основной** способ запуска асинхронного кода
+
+### 2. Основные виды Task (таблица 2026)
+
+| Вид Task                                  | Наследует executor? | Наследует приоритет? | Отмена наследуется? | Самый частый use-case 2026 |
+|-------------------------------------------|----------------------|-----------------------|----------------------|-----------------------------|
+| `Task { ... }`                            | Да                   | Да                    | Да                   | Основной запуск async-кода  |
+| `Task.detached { ... }`                   | Нет                  | Да (можно указать)    | Нет                  | Максимальный параллелизм    |
+| `Task(priority: .userInitiated) { ... }`  | Да                   | Да (явный)            | Да                   | Задачи с повышенным приоритетом |
+| `Task { @MainActor in ... }`              | Да (MainActor)       | Да                    | Да                   | Запуск UI-логики из фона    |
+| `Task(group: group) { ... }`              | Да                   | Да                    | Да                   | Внутри TaskGroup            |
+
+### 3. Самые популярные шаблоны Task 2026 года
+
+#### Шаблон 1 — Простой запуск из синхронного контекста (самый частый)
 
 ```swift
-Task {
-    // выполняется в текущем executor
+@MainActor
+class ViewModel: ObservableObject {
+    @Published var data: String = "Загрузка..."
+    
+    func load() {
+        Task {
+            let result = try? await api.fetchData()
+            data = result ?? "Ошибка"
+        }
+    }
 }
 ```
 
-2. **Detached Task**
-    
+#### Шаблон 2 — Detached для тяжёлых вычислений
 
 ```swift
-Task.detached {
-    // выполняется на глобальном executor
+Task.detached(priority: .utility) {
+    let result = heavyComputation()  // CPU-intensive
+    
+    await MainActor.run {
+        self.resultLabel.text = result.description
+    }
 }
 ```
 
-- Не привязан к текущему actor или MainActor.
-    
-- Полезен для фоновых вычислений.
-    
-
-3. **Task с результатом**
-    
+#### Шаблон 3 — Task с результатом и await
 
 ```swift
-Task<Int, Error> {
+let task = Task<Int, Never> {
+    try await Task.sleep(for: .seconds(2))
     return 42
 }
-```
-
-- Можно ожидать результат через `await task.value`.
-    
-
----
-
-## 3. Связь с async/await
-
-- `Task` часто используется для вызова асинхронных функций из **синхронного контекста**.
-    
-- Внутри `Task` можно использовать `await`.
-    
-
-```swift
-func fetchData() async -> String {
-    "Data"
-}
 
 Task {
-    let data = await fetchData()
-    print(data)
+    let answer = await task.value
+    print("Ответ:", answer)  // 42
 }
 ```
 
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейший Task
-
-```swift
-Task {
-    print("Hello from async task")
-}
-```
-
-- Код выполняется асинхронно на текущем executor.
-    
-
----
-
-### Пример 2. Task с результатом
-
-```swift
-Task<Int, Never> {
-    return 5 + 3
-}.value // await нужен для получения результата
-```
-
-```swift
-Task {
-    let result = await Task<Int, Never> { 5 + 3 }.value
-    print(result) // 8
-}
-```
-
----
-
-### Пример 3. Detached Task
-
-```swift
-Task.detached {
-    print("Running in detached task: \(Thread.current)")
-}
-```
-
-- Выполняется на глобальном executor.
-    
-
----
-
-### Пример 4. Task + cancellation
+#### Шаблон 4 — Отмена задачи (очень важно в 2026)
 
 ```swift
 let task = Task {
-    for i in 1...5 {
-        try Task.checkCancellation()
-        print("Step \(i)")
-        try await Task.sleep(nanoseconds: 500_000_000)
+    for i in 1...100 {
+        try Task.checkCancellation()  // проверка отмены
+        print("Шаг \(i)")
+        try await Task.sleep(for: .milliseconds(100))
     }
 }
 
-// Отмена задачи через 1 секунду
+// Отмена через 1 секунду
 Task {
-    try await Task.sleep(nanoseconds: 1_000_000_000)
+    try await Task.sleep(for: .seconds(1))
     task.cancel()
 }
 ```
 
-- `Task.checkCancellation()` проверяет, отменена ли задача.
-    
-
----
-
-### Пример 5. Task + Sendable
+#### Шаблон 5 — Task внутри actor (наследование изоляции)
 
 ```swift
-struct DataModel: Sendable {
-    let value: Int
+actor DataLoader {
+    private var cache: [URL: Data] = [:]
+    
+    func load(from url: URL) async -> Data? {
+        if let cached = cache[url] { return cached }
+        
+        let data = try? await URLSession.shared.data(from: url).0
+        if let data { cache[url] = data }
+        return data
+    }
 }
 
-Task.detached {
-    let model = DataModel(value: 42)
-    print(model.value) // безопасная передача в detached task
+let loader = DataLoader()
+
+Task {
+    // Task внутри actor наследует executor loader
+    let data = await loader.load(from: url)
+    print(data?.count ?? 0)
 }
 ```
 
-- `Task.detached` требует, чтобы все объекты были `Sendable`.
-    
+### 4. Типичные ошибки и ловушки 2026 года
 
----
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Вызов `await` внутри `Task.detached` без Sendable | Ошибка компиляции                        | Всё захватываемое — `Sendable` |
+| Долгая синхронная работа в `Task { ... }` внутри `@MainActor` | UI freeze (ANR)                          | Тяжёлое — в `Task.detached` |
+| Забыть отменять задачу при уходе с экрана   | Задача продолжает работать → утечки      | `task.cancel()` в `viewWillDisappear` / `.onDisappear` |
+| Думать, что `Task { ... }` внутри actor наследует изоляцию | Потеря контекста → ошибка доступа        | Используй `@_inheritActorContext` или `Task { [isolated self] in ... }` |
+| Игнорировать `task.value` без await         | Ошибка компиляции                        | Всегда `await task.value` |
+| Создавать тысячи `Task { ... }` без ограничения | Перегрузка пула потоков                  | Используй `TaskGroup` или `async let` |
 
-## 5. Особенности Task
+### 5. Task vs другие механизмы запуска асинхронного кода (2026 сравнение)
 
-1. **Каждая задача имеет свой executor**
-    
-    - Если не detached → наследует executor текущего контекста.
-        
-2. **Task.value**
-    
-    - Позволяет получать результат задачи
-        
-    - Обязательно `await`.
-        
-3. **Task.detached**
-    
-    - Полностью независимая задача
-        
-    - Используется для фоновых вычислений
-        
-4. **Task cancellation**
-    
-    - Задачи могут быть отменены через `task.cancel()`
-        
-    - Проверка через `Task.checkCancellation()`.
-        
-5. **Sendable requirement**
-    
-    - Detached task может принимать только `Sendable` данные.
-        
+| Механизм                  | Наследует executor? | Отмена наследуется? | Результат через await | Рекомендация 2026 | Когда использовать |
+|---------------------------|----------------------|----------------------|------------------------|-------------------|---------------------|
+| `Task { ... }`            | Да                   | Да                   | Да                     | Основной          | Обычный async-код   |
+| `Task.detached { ... }`   | Нет                  | Нет                  | Да                     | Для тяжёлого фона | Максимальный параллелизм |
+| `async let`               | Да                   | Да                   | Да (при чтении)        | Параллельные вызовы | 2–6 независимых задач |
+| `withTaskGroup`           | Да                   | Да                   | Да                     | Масштабируемость  | Много параллельных задач |
+| `DispatchQueue.async`     | Нет                  | Нет                  | Нет                    | Legacy            | Старый код          |
+| `MainActor.run { ... }`   | Да (MainActor)       | Нет                  | Да                     | Для UI            | Переключение на main |
 
----
+### 6. Лучшие практики 2026 года
 
-## 6. Итог
+- **Task { ... }** — основной способ запуска async-кода из синхронного контекста  
+- **Task.detached** — только для **тяжёлых** фоновых вычислений (без захвата UI или состояния)  
+- **Отмена** — всегда отменяй задачи при уходе с экрана / смене состояния  
+- **Sendable** — всё захватываемое в `Task.detached` и `@Sendable` замыканиях — `Sendable`  
+- **UI** — финальное присваивание делай на `@MainActor` / `MainActor.run`  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит почти все ошибки  
+- **Мониторинг** — Instruments → Swift Tasks — смотри количество задач и их executor-ы
 
-- `Task` = асинхронная единица работы
-    
-- Выполняется на текущем executor или detached (глобальный executor)
-    
-- Может возвращать результат (`Task.value`)
-    
-- Поддерживает отмену и обработку ошибок
-    
-- Detached task требует Sendable данных
-    
+**Короткий девиз 2026**:
+> «Task — это когда ты говоришь: «запускай этот асинхронный код прямо сейчас, и дай мне возможность дождаться результата через await».  
+> В 2026 году это **основная** единица асинхронной работы в Swift.»
 
----
+Удачи с чистым, отменяемым и эффективным асинхронным кодом в Swift! 🚀
