@@ -1,271 +1,192 @@
-## 1. Что такое `actor`
+Вот **полное, подробное и максимально насыщенное** руководство по **`actor`** в Swift — актуально на 2026 год (Swift 6+ и выше).
 
-👉 `actor` — это специальный тип (как [[class]] или [[struct]]), который гарантирует **потокобезопасный доступ к своим данным**.  
-Swift автоматически следит, чтобы доступ к состоянию `actor` был **только изнутри очереди актёра**.
+### 1. Что такое actor и зачем он нужен
 
-Можно сказать:
+**`actor`** — это **новый тип данных** в Swift (введён в Swift 5.5, 2021), который сочетает в себе:
 
-- `struct` — [[Value Type]] (копируется)
-    
-- `class` — [[Reference Type]] (ссылочный, не потокобезопасный)
-    
-- `actor` — reference type **с автоматической защитой от гонок данных**
-    
+- **ссылочную семантику** (как `class`) — передаётся по ссылке, не копируется  
+- **автоматическую потокобезопасность** — гарантирует, что **в каждый момент времени только один поток** может работать с внутренним состоянием актёра  
+- **изоляцию** — все свойства и методы по умолчанию **изолированы** (isolated), доступ к ним требует `await`
 
----
+**Главное обещание actor**:
+> «Если ты работаешь с моим состоянием — ты единственный в данный момент.  
+> Никто другой не может одновременно читать или писать мои свойства.»
 
-## 2. Зачем нужен `actor`
+Это **решает самую большую проблему** многопоточности в Swift до 5.5 — **Data Race** (гонки данных).
 
-Проблема: если два потока меняют одно и то же свойство у [[class]], может случиться **гонка данных**.  
-Решение: `actor` гарантирует, что в каждый момент времени только один поток работает с его внутренними данными.
+### 2. Основные правила actor (2026)
 
----
+| Правило                                   | Что это значит                                   | Последствия / пример |
+|-------------------------------------------|--------------------------------------------------|----------------------|
+| Все свойства и методы **по умолчанию изолированы** | Доступ к ним возможен только через `await`       | `await actor.value` или `await actor.method()` |
+| Внутри actor-а можно обращаться к свойствам **без await** | Потому что ты уже в изоляции                     | `value += 1` внутри метода actor-а — безопасно |
+| Actor — это **reference type**            | Передаётся по ссылке, один экземпляр             | `let a = Actor(); let b = a` → a === b |
+| Actor **не может** быть `struct` или `enum` | Только `class`-подобный тип                      | `actor` — это всегда класс под капотом |
+| `nonisolated` — выход из изоляции         | Метод / свойство доступно без `await`            | `nonisolated func utility() -> Int` |
+| `isolated` — явное указание изоляции      | Редко используется                               | `isolated var value: Int` (обычно не нужно) |
+| Actor **не может** наследоваться от другого actor-а | Нет множественной изоляции                      | Запрещено компилятором |
 
-## 3. Синтаксис
+### 3. Самые популярные и правильные шаблоны 2026 года
 
-```swift
-actor MyActor {
-    var counter = 0
-
-    func increment() {
-        counter += 1
-    }
-}
-```
-
----
-
-## 4. Как обращаться к `actor`
-
-❌ Нельзя просто вызвать метод:
-
-```swift
-let a = MyActor()
-a.increment() // Ошибка: 'async' call in a function that does not support concurrency
-```
-
-✅ Нужно через `await`:
-
-```swift
-let a = MyActor()
-Task {
-    await a.increment()
-}
-```
-
----
-
-## 5. Примеры от простого к сложному
-
-### Пример 1. Простая инкапсуляция состояния
+#### Шаблон 1 — Простой счётчик (классика)
 
 ```swift
 actor Counter {
     private var value = 0
     
     func increment() {
-        value += 1
+        value += 1          // безопасно — внутри actor
     }
     
     func getValue() -> Int {
-        value
+        value               // тоже безопасно
     }
 }
 
 let counter = Counter()
 
-Task {
-    await counter.increment()
-    print(await counter.getValue()) // 1
+Task.detached {
+    for _ in 0..<1000 {
+        await counter.increment()
+    }
 }
+
+Task.detached {
+    for _ in 0..<1000 {
+        await counter.increment()
+    }
+}
+
+// Итог всегда будет 2000
+print(await counter.getValue()) // 2000
 ```
 
-👉 Все операции защищены от гонок.
-
----
-
-### Пример 2. Несколько задач одновременно
+#### Шаблон 2 — Кэш / хранилище
 
 ```swift
-actor Logger {
-    private var messages: [String] = []
+actor ImageCache {
+    private var storage: [URL: UIImage] = [:]
     
-    func log(_ message: String) {
-        messages.append(message)
+    func store(_ image: UIImage, for url: URL) {
+        storage[url] = image
     }
     
-    func getAll() -> [String] {
-        messages
+    func image(for url: URL) -> UIImage? {
+        storage[url]
     }
 }
 
-let logger = Logger()
+let cache = ImageCache()
 
 Task {
-    await logger.log("Первое сообщение")
-}
-
-Task {
-    await logger.log("Второе сообщение")
+    let image = await downloadImage(url)
+    await cache.store(image, for: url)
 }
 
 Task {
-    print(await logger.getAll()) // ["Первое сообщение", "Второе сообщение"]
-}
-```
-
-👉 Даже при одновременных вызовах данные не повреждаются.
-
----
-
-### Пример 3. Изоляция снаружи
-
-```swift
-actor BankAccount {
-    private var balance: Int = 0
-    
-    func deposit(_ amount: Int) {
-        balance += amount
-    }
-    
-    func withdraw(_ amount: Int) -> Bool {
-        if balance >= amount {
-            balance -= amount
-            return true
-        }
-        return false
-    }
-    
-    func getBalance() -> Int {
-        balance
-    }
-}
-
-let account = BankAccount()
-
-Task {
-    await account.deposit(100)
-    print(await account.withdraw(50)) // true
-    print(await account.getBalance()) // 50
-}
-```
-
-👉 Всё изменяется атомарно.
-
----
-
-### Пример 4. Взаимодействие нескольких `actor`
-
-```swift
-actor Wallet {
-    private var coins: Int = 0
-    
-    func add(_ amount: Int) { coins += amount }
-    func take(_ amount: Int) -> Bool {
-        guard coins >= amount else { return false }
-        coins -= amount
-        return true
-    }
-}
-
-actor Game {
-    let wallet = Wallet()
-    
-    func play() async {
-        await wallet.add(10)
-        let success = await wallet.take(5)
-        print(success ? "Успех!" : "Недостаточно монет")
-    }
-}
-
-let game = Game()
-Task {
-    await game.play()
-}
-```
-
-👉 `actor` может содержать другой `actor`, и всё работает синхронно через `await`.
-
----
-
-### Пример 5. Nonisolated методы
-
-Иногда нужно, чтобы метод был **доступен без `await`** (не требовал изоляции).  
-Для этого есть `nonisolated`.
-
-```swift
-actor UserSession {
-    private var token: String = "12345"
-    
-    func getToken() -> String {
-        token
-    }
-    
-    nonisolated func appVersion() -> String {
-        "1.0.0"
-    }
-}
-
-let session = UserSession()
-
-Task {
-    print(await session.getToken()) // требует await
-    print(session.appVersion())     // доступно сразу
-}
-```
-
----
-
-### Пример 6. Сравнение с классом
-
-```swift
-final class UnsafeCounter {
-    var value = 0
-    func increment() { value += 1 }
-}
-
-let unsafeCounter = UnsafeCounter()
-
-DispatchQueue.concurrentPerform(iterations: 1000) { _ in
-    unsafeCounter.increment()
-}
-
-print(unsafeCounter.value) // ❌ может быть не 1000
-```
-
-А с `actor`:
-
-```swift
-actor SafeCounter {
-    var value = 0
-    func increment() { value += 1 }
-}
-
-let safeCounter = SafeCounter()
-
-Task {
-    await withTaskGroup(of: Void.self) { group in
-        for _ in 0..<1000 {
-            group.addTask {
-                await safeCounter.increment()
-            }
+    if let cached = await cache.image(for: url) {
+        await MainActor.run {
+            imageView.image = cached
         }
     }
-    print(await safeCounter.value) // ✅ всегда 1000
 }
 ```
 
----
+#### Шаблон 3 — nonisolated методы (часто забывают)
 
-## 6. Итог
+```swift
+actor Session {
+    private var token: String = ""
+    
+    func setToken(_ newToken: String) {
+        token = newToken
+    }
+    
+    nonisolated func getVersion() -> String {
+        return "1.2.3"  // доступно без await
+    }
+    
+    nonisolated var appName: String {
+        "MyApp"         // computed property без изоляции
+    }
+}
 
-- `actor` = потокобезопасный `class`
-    
-- Все свойства и методы по умолчанию **изолированы** (нужен [[await]] для доступа)
-    
-- Гарантирует отсутствие гонок данных
-    
-- Можно использовать `nonisolated` для методов без изоляции
-    
+let session = Session()
 
----
+print(session.appName)          // без await
+print(session.getVersion())     // без await
+
+Task {
+    await session.setToken("xyz") // с await
+}
+```
+
+#### Шаблон 4 — Actor как синглтон (аналог @globalActor)
+
+```swift
+actor AnalyticsTracker {
+    private var events: [String] = []
+    
+    func track(_ event: String) {
+        events.append(event)
+    }
+    
+    func flush() {
+        // отправка на сервер
+    }
+}
+
+// Глобальный экземпляр
+let tracker = AnalyticsTracker()
+
+// Использование
+Task {
+    await tracker.track("screen_view")
+}
+```
+
+(Если нужен именно глобальный актёр — лучше использовать `@globalActor` с `static let shared`.)
+
+### 4. Типичные ошибки и ловушки 2026 года
+
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Доступ к свойствам actor без `await` извне  | Ошибка компиляции                        | Всегда `await actor.property` |
+| Забыть `await` при вызове метода actor      | Ошибка компиляции                        | Компилятор сам напомнит |
+| Вызов actor-метода внутри другого actor без await | Ошибка: «actor-isolated»                 | `await` обязателен даже внутри actor |
+| Думать, что actor автоматически сериализует вызовы | Нет — только изоляция состояния          | Для строгой очерёдности — используй сериальную очередь или actor с nonisolated |
+| Хранить в actor большие данные без оптимизации | Задержки при переключении контекста      | Используй `actor` только для критического состояния, большие данные — в обычных типах |
+| Использовать actor для UI-логики            | Неэффективно (не на main thread)         | Для UI — `@MainActor` |
+
+### 5. actor vs другие механизмы изоляции (2026 сравнение)
+
+| Механизм                  | Потокобезопасность | Глобальность | Отмена задач | Сложность | Рекомендация 2026 |
+|---------------------------|---------------------|--------------|--------------|-----------|-------------------|
+| `actor`                   | Полная встроенная   | Нет          | Через Task   | Низкая    | Основной выбор для состояния |
+| `@MainActor`              | Полная (main thread)| Да           | Через Task   | Низкая    | Всё, что касается UI |
+| `@globalActor`            | Полная              | Да           | Через Task   | Средняя   | Централизованные сервисы |
+| `@isolated(any)`          | От параметра        | Нет          | Через Task   | Средняя   | Универсальные функции |
+| DispatchQueue (serial)    | Ручная              | Нет          | Сложно       | Средняя   | Legacy-код |
+| `class` + lock            | Ручная              | Нет          | Сложно       | Высокая   | Только если нет альтернативы |
+
+**Вывод 2026**:
+- `actor` — **основной инструмент** для хранения изменяемого состояния в многопоточном коде  
+- `@MainActor` — для UI и ViewModel  
+- `@globalActor` — для редких глобальных сервисов (логи, аналитика, БД)  
+- `@isolated(any)` — для универсальных функций, работающих с любым actor
+
+### 6. Лучшие практики 2026 года
+
+- **Держи actor маленькими** — только состояние + простые методы  
+- **Большие данные** (массивы, словари, изображения) — храни вне actor или используй `Copy-on-Write` структуры  
+- **nonisolated** — используй для методов, которые не трогают состояние (утилиты, константы)  
+- **Для UI** — `@MainActor` на ViewModel / контроллерах  
+- **Для тестов** — создавай экземпляры actor и вызывай через `await`  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит почти все ошибки с изоляцией  
+- **Мониторинг** — используй Instruments → Swift Tasks и Thread Sanitizer
+
+**Короткий девиз 2026**:
+> «actor — это когда ты хочешь сказать: «это моё состояние, и никто не может его трогать одновременно со мной».  
+> В 2026 году это основной способ хранения изменяемых данных в многопоточном Swift.»
+
+Удачи с чистой изоляцией и безопасным состоянием в Swift! 🛡️

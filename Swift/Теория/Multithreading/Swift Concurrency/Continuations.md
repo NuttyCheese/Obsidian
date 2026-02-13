@@ -1,98 +1,55 @@
-## 1. Что такое Continuation
+Вот **полное, подробное и максимально насыщенное** руководство по **`Continuation`** (в частности `CheckedContinuation` и `CheckedThrowingContinuation`) в Swift — актуально на 2026 год (Swift 6+ и выше).
 
-`Continuation` — это объект, который позволяет **превратить [[callback]]-based [[API]] (старые асинхронные функции) в [[async]]/[[await]]**.
+### 1. Что такое Continuation и зачем он нужен
 
-- [[Swift]] Concurrency не может напрямую «ждать» старые callback-функции.
-    
-- Continuation позволяет **останавливать задачу до вызова callback**, а потом возобновлять выполнение с результатом.
-    
+**Continuation** — это **объект-мост**, который позволяет **превратить старый callback-based API** в современный `async/await`.
 
-Swift предоставляет два основных типа:
+Проблема:
+- До Swift Concurrency (2019–2021) почти все асинхронные API работали через **completion handler** (замыкание, вызываемое позже).
+- Swift Concurrency не может «ждать» такие замыкания напрямую.
 
-|Тип|Когда использовать|
-|---|---|
-|`CheckedContinuation`|Для функций, которые **не бросают ошибки**|
-|`CheckedThrowingContinuation`|Для функций, которые **могут бросать ошибки**|
+Решение:
+- `withCheckedContinuation` / `withCheckedThrowingContinuation` **приостанавливает** текущую задачу (`suspend`)  
+- передаёт continuation в замыкание  
+- когда callback завершает работу → вызываем `continuation.resume(...)` → задача возобновляется с результатом
 
----
+**Коротко и по-человечески**:
+> Continuation = «я поставлю задачу на паузу, пока ты не скажешь мне результат через callback.  
+> Как только callback сработает — я продолжу с твоим значением».
 
-## 2. Основной синтаксис
+Это **самый мощный инструмент** для интеграции legacy-кода с async/await.
 
-```swift
-func oldAPI(completion: @escaping (Result<String, Error>) -> Void) {
-    // старый callback
-}
+### 2. Два основных типа Continuation (2026)
 
-func newAPI() async throws -> String {
-    try await withCheckedThrowingContinuation { continuation in
-        oldAPI { result in
-            switch result {
-            case .success(let value):
-                continuation.resume(returning: value)
-            case .failure(let error):
-                continuation.resume(throwing: error)
-            }
-        }
-    }
-}
-```
+| Тип                                      | Когда использовать                          | resume варианты                          | Проверка компилятора |
+|------------------------------------------|---------------------------------------------|------------------------------------------|-----------------------|
+| `CheckedContinuation<T, Never>`          | Нет ошибок (Result.success или просто T)   | `resume(returning: T)`                   | Да (один resume)      |
+| `CheckedThrowingContinuation<T, Error>`  | Может быть ошибка                           | `resume(returning: T)` или `resume(throwing: Error)` | Да (один resume)      |
+| `UnsafeContinuation<T, Never>`           | Низкоуровневый код, максимальная скорость   | То же                                    | Нет (unsafe)          |
+| `UnsafeThrowingContinuation<T, Error>`   | То же + ошибки                              | То же                                    | Нет (unsafe)          |
 
-- `withCheckedContinuation` / `withCheckedThrowingContinuation` создаёт continuation и приостанавливает `async` функцию.
-    
-- Когда callback завершает работу — вызываем `continuation.resume(...)`, чтобы вернуть результат.
-    
+**Рекомендация 2026**:
+- 99% случаев → **Checked** / **CheckedThrowing**  
+- `Unsafe` — только если ты **точно знаешь**, что делаешь (низкоуровневый код, производительность критично)
 
----
+### 3. Самые популярные шаблоны 2026 года
 
-## 3. Примеры от простого к сложному
-
-### Пример 1. Простой callback в async
+#### Шаблон 1 — Классический Result → async throws
 
 ```swift
-func fetchDataOld(completion: @escaping (String) -> Void) {
+func oldFetch(completion: @escaping (Result<String, Error>) -> Void) {
     DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-        completion("Данные старого API")
-    }
-}
-
-func fetchDataNew() async -> String {
-    await withCheckedContinuation { continuation in
-        fetchDataOld { result in
-            continuation.resume(returning: result)
-        }
-    }
-}
-
-// Использование
-Task {
-    let data = await fetchDataNew()
-    print(data)
-}
-```
-
----
-
-### Пример 2. Callback с ошибкой
-
-```swift
-enum NetworkError: Error {
-    case failed
-}
-
-func fetchDataOld(completion: @escaping (Result<String, Error>) -> Void) {
-    DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-        let success = Bool.random()
-        if success {
-            completion(.success("Данные получены"))
+        if Bool.random() {
+            completion(.success("Успех"))
         } else {
-            completion(.failure(NetworkError.failed))
+            completion(.failure(NSError(domain: "Test", code: -1)))
         }
     }
 }
 
-func fetchDataNew() async throws -> String {
+func modernFetch() async throws -> String {
     try await withCheckedThrowingContinuation { continuation in
-        fetchDataOld { result in
+        oldFetch { result in
             switch result {
             case .success(let value):
                 continuation.resume(returning: value)
@@ -103,81 +60,66 @@ func fetchDataNew() async throws -> String {
     }
 }
 
-// Использование
 Task {
     do {
-        let data = try await fetchDataNew()
+        let data = try await modernFetch()
         print(data)
     } catch {
-        print("Ошибка:", error)
+        print("Ошибка:", error.localizedDescription)
     }
 }
 ```
 
----
-
-### Пример 3. Таймер через Continuation
+#### Шаблон 2 — Простой completion без ошибки
 
 ```swift
-func wait(seconds: UInt64) async {
+func oldTimer(completion: @escaping () -> Void) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        completion()
+    }
+}
+
+func modernTimer() async {
     await withCheckedContinuation { continuation in
-        DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(Int(seconds))) {
+        oldTimer {
             continuation.resume()
         }
     }
 }
 
 Task {
-    print("Ждём 2 секунды…")
-    await wait(seconds: 2)
+    print("Жду 2 секунды...")
+    await modernTimer()
     print("Готово!")
 }
 ```
 
----
-
-### Пример 4. Интеграция старого делегата
+#### Шаблон 3 — Отмена вложенной задачи (очень важно!)
 
 ```swift
-protocol DownloaderDelegate: AnyObject {
-    func didFinishDownload(data: Data)
-}
-
-class Downloader {
-    weak var delegate: DownloaderDelegate?
-    
-    func start() {
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            self.delegate?.didFinishDownload(data: Data([1,2,3]))
-        }
-    }
-}
-
-func downloadAsync(downloader: Downloader) async -> Data {
-    await withCheckedContinuation { continuation in
-        class Proxy: DownloaderDelegate {
-            let cont: CheckedContinuation<Data, Never>
-            init(cont: CheckedContinuation<Data, Never>) { self.cont = cont }
-            func didFinishDownload(data: Data) { cont.resume(returning: data) }
+func modernDownload(url: URL) async throws -> Data {
+    try await withCheckedThrowingContinuation { continuation in
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error {
+                continuation.resume(throwing: error)
+            } else if let data {
+                continuation.resume(returning: data)
+            } else {
+                continuation.resume(throwing: URLError(.badServerResponse))
+            }
         }
         
-        let proxy = Proxy(cont: continuation)
-        downloader.delegate = proxy
-        downloader.start()
+        task.resume()
+        
+        // Важно: если задачу отменяют — отменяем URLSessionTask
+        continuation.onCancellation {
+            task.cancel()
+        }
     }
-}
-
-// Использование
-let downloader = Downloader()
-Task {
-    let data = await downloadAsync(downloader: downloader)
-    print("Данные:", data)
 }
 ```
 
----
-
-### Пример 5. AsyncSequence через Continuation
+#### Шаблон 4 — AsyncStream на базе Continuation (часто забывают)
 
 ```swift
 func numbersStream() -> AsyncStream<Int> {
@@ -185,7 +127,7 @@ func numbersStream() -> AsyncStream<Int> {
         Task {
             for i in 1...5 {
                 continuation.yield(i)
-                try? await Task.sleep(nanoseconds: 300_000_000)
+                try? await Task.sleep(for: .seconds(1))
             }
             continuation.finish()
         }
@@ -193,44 +135,52 @@ func numbersStream() -> AsyncStream<Int> {
 }
 
 Task {
-    for await n in numbersStream() {
-        print(n)
+    for await num in numbersStream() {
+        print(num)
     }
 }
 ```
 
-> Здесь Continuation скрыта внутри `AsyncStream`.
+Здесь `AsyncStream` внутри использует Continuation-подобный механизм.
 
----
+### 4. Типичные ошибки и ловушки 2026 года
 
-## 4. Особенности Continuation
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Забыть вызвать resume                       | Задача висит вечно (deadlock)            | Всегда resume (return / throw) |
+| Вызвать resume дважды                       | Runtime crash (fatal error)              | CheckedContinuation ловит в debug, но лучше один раз |
+| Не отменять вложенные задачи                | Задача продолжает работать после отмены Task | Использовать `continuation.onCancellation { ... }` |
+| Использовать UnsafeContinuation без причины | Нет проверки → скрытые ошибки            | Всегда Checked, если не критично |
+| Забыть `try` в `withCheckedThrowingContinuation` | Ошибка компиляции                        | `try await` всегда |
+| Делать тяжёлую работу до resume             | Блокирует весь актёр                     | Тяжёлое — в отдельный Task |
 
-1. **Ручной контроль**
-    
-    - Нужно вызывать `resume(returning:)` или `resume(throwing:)` **ровно один раз**.
-        
-2. **Проверка компилятора**
-    
-    - `withCheckedContinuation` проверяет, что `resume` вызывается один раз.
-        
-    - Есть `withUnsafeContinuation`, если нужен полный контроль (но без проверки).
-        
-3. **Идеально для интеграции старого API**
-    
-    - Делегаты, таймеры, [[URLSession]] с [[completion handler]], CoreBluetooth и т.д.
-        
+### 5. Continuation vs другие способы интеграции legacy (2026 сравнение)
 
----
+| Механизм                  | Простота | Поддержка ошибок | Отмена вложенных задач | Проверка resume | Рекомендация 2026 |
+|---------------------------|----------|-------------------|--------------------------|------------------|-------------------|
+| `withCheckedThrowingContinuation` | Высокая  | Да                | Да (onCancellation)      | Да               | Основной выбор    |
+| `withCheckedContinuation` | Высокая  | Нет               | Да                       | Да               | Без ошибок        |
+| `withUnsafeThrowingContinuation`  | Средняя  | Да                | Да                       | Нет              | Только производительность |
+| AsyncStream / AsyncThrowingStream | Высокая  | Да                | Да                       | Да               | Для потоков данных |
+| Combine → AsyncPublisher          | Средняя  | Да                | Да                       | Да               | Legacy-проекты с Combine |
 
-## 5. Итог
+**Вывод 2026**:
+- `withCheckedThrowingContinuation` — **золотой стандарт** для обёртки любого callback-API  
+- `AsyncStream` — когда нужен поток значений  
+- `Unsafe` — только если ты **точно знаешь**, что делаешь (очень редко)
 
-- Continuation = мост между **callback-based асинхронным кодом** и `async/await`.
-    
-- Основные функции: `withCheckedContinuation`, `withCheckedThrowingContinuation`.
-    
-- Используется для **таймеров, сетевых запросов, делегатов и старых библиотек**.
-    
-- Позволяет писать современный асинхронный код, не переписывая старые API.
-    
+### 6. Лучшие практики 2026 года
 
----
+- **Всегда используй Checked** (не Unsafe), если нет критической причины  
+- **Вызывай resume ровно один раз** — лучше всего через `defer` или switch  
+- **Обрабатывай отмену** — `continuation.onCancellation { ... }`  
+- **Для UI** — финальное присваивание делай на `@MainActor`  
+- **Тестирование** — проверяй, что при `Task.cancel()` вложенные операции останавливаются  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит забытые resume  
+- **Мониторинг** — Instruments → Swift Tasks — смотри suspension points и время ожидания
+
+**Короткий девиз 2026**:
+> «Continuation — это мост между старым callback-миром и новым async/await.  
+> В 2026 году почти любой legacy API оборачивается именно через withCheckedThrowingContinuation.»
+
+Удачи с красивым и безопасным переходом от callback к async/await в Swift! 🌉

@@ -1,157 +1,154 @@
-## 1. Что такое `await`
+Вот **полное, подробное и максимально насыщенное** руководство по ключевому слову **`await`** в Swift — актуально на 2026 год (Swift 6+ и строгий режим конкурентности).
 
-`await` — это **инструкция, которая приостанавливает выполнение текущей задачи**, пока не завершится асинхронная функция ([[async]]).
+### 1. Что такое await и зачем оно нужно
 
-- Она говорит компилятору: «Подожди здесь результат, но не блокируй поток».
-    
-- [[Swift]] Concurrency автоматически позволяет другим задачам выполняться во время ожидания.
-    
+**`await`** — это **инструкция приостановки** (suspension point), которая говорит:
 
----
+> «Здесь я жду завершения асинхронной операции (async-функции, async let, Task.sleep, actor-метода и т.д.).  
+> Пока я жду — **не блокируй поток**, отпусти его для других задач».
 
-## 2. Синтаксис
+Это ключевое слово делает конкурентный код **структурированным**, **читаемым** и **безопасным** — вместо callback-hell или DispatchQueue.main.async мы пишем линейный код.
+
+**Самое важное в 2026 году**:
+- `await` — **единственный способ** получить результат от асинхронной функции  
+- без `await` компилятор **не пропустит** вызов `async`-метода  
+- `await` **не блокирует поток** — это **кооперативная многозадачность** (cooperative multitasking)
+
+### 2. Где и когда нужно писать await (таблица 2026)
+
+| Тип операции                              | Нужно ли await? | Пример правильного вызова                     | Что будет, если забыть await |
+|-------------------------------------------|-----------------|-----------------------------------------------|-------------------------------|
+| Обычная `async` функция                   | Да              | `let data = await fetchData()`                | Ошибка компиляции             |
+| Метод `actor`-а                           | Да              | `await counter.increment()`                   | Ошибка компиляции             |
+| `async let` переменная                    | Да (при чтении) | `let user = await userTask`                   | Предупреждение / утечка результата |
+| `Task.sleep` / `Task.yield`               | Да              | `try await Task.sleep(for: .seconds(1))`      | Ошибка компиляции             |
+| `MainActor.run { ... }`                   | Да              | `await MainActor.run { label.text = "Hi" }`   | Ошибка компиляции             |
+| `withCheckedContinuation` / `withTaskGroup` | Да (на результатах) | `let result = await group.next()`          | Ошибка компиляции             |
+
+**Золотое правило**:
+> Если функция помечена `async` или возвращает `AsyncSequence` / `AsyncThrowingSequence` → **всегда** используй `await` при получении результата.
+
+### 3. Самые популярные и правильные шаблоны await 2026 года
+
+#### Шаблон 1 — Простейший await (самый частый)
 
 ```swift
-let result = await asyncFunction()
-```
-
-- `asyncFunction()` — функция, помеченная `async`.
-    
-- `await` нужен **только для вызова `async` функций**.
-    
-
----
-
-## 3. Простые примеры
-
-### Пример 1. Вызов async функции
-
-```swift
-func fetchData() async -> String {
-    "Данные загружены"
+func fetchUser() async throws -> User {
+    // ... сетевой запрос ...
 }
-
-Task {
-    let result = await fetchData()
-    print(result)
-}
-```
-
----
-
-### Пример 2. Последовательный вызов
-
-```swift
-func fetchUser() async -> String { "Иван" }
-func fetchOrders() async -> String { "Заказы" }
-
-Task {
-    let user = await fetchUser()      // ждём сначала пользователя
-    let orders = await fetchOrders()  // затем заказы
-    print(user, orders)
-}
-```
-
----
-
-### Пример 3. Параллельный вызов с [[async let]]
-
-```swift
-Task {
-    async let user = fetchUser()
-    async let orders = fetchOrders()
-    
-    let u = await user
-    let o = await orders
-    
-    print(u, o)
-}
-```
-
-✅ `async let` позволяет выполнять функции **параллельно**, а `await` ждёт их результат.
-
----
-
-### Пример 4. Работа с [[actor]]
-
-```swift
-actor Counter {
-    var value = 0
-    func increment() { value += 1 }
-    func getValue() -> Int { value }
-}
-
-let counter = Counter()
-
-Task {
-    await counter.increment()        // доступ к actor через await
-    let v = await counter.getValue()
-    print(v)
-}
-```
-
----
-
-### Пример 5. Асинхронный таймер
-
-```swift
-Task {
-    for i in 1...5 {
-        try? await Task.sleep(nanoseconds: 1_000_000_000) // ждём 1 секунду
-        print("Тик \(i)")
-    }
-}
-```
-
-✅ `await` позволяет «приостановить» выполнение без блокировки потока.
-
----
-
-## 4. Особенности `await`
-
-1. **Нельзя использовать вне async контекста**
-    
-
-```swift
-let result = await fetchData() // ❌ Ошибка, если не внутри async или Task
-```
-
-- Нужно обернуть в [[Task]] {} или вызвать из `async` функции.
-    
-
-2. **Сочетается с [[throws]]**
-    
-
-```swift
-func fetchData() async throws -> String { "Данные" }
 
 Task {
     do {
-        let result = try await fetchData()
-        print(result)
+        let user = try await fetchUser()
+        await MainActor.run {
+            nameLabel.text = user.name
+        }
     } catch {
         print("Ошибка:", error)
     }
 }
 ```
 
-3. **Не блокирует поток**
-    
+#### Шаблон 2 — await внутри @MainActor (очень частый в UI)
 
-- В отличие от `DispatchQueue.main.sync`, `await` приостанавливает задачу, а не поток.
-    
+```swift
+@MainActor
+class ProfileViewModel: ObservableObject {
+    @Published var profile: Profile?
+    @Published var isLoading = false
 
----
+    func load() async {
+        isLoading = true
+        defer { isLoading = false }  // defer работает и в async!
 
-## 5. Итог
+        let fetched = try? await api.fetchProfile()
+        profile = fetched
+    }
+}
+```
 
-- `await` = «подождать результат асинхронной функции».
-    
-- Используется внутри `async` функций или `Task`.
-    
-- Работает с `async let`, actor методами, таймерами, сетевыми вызовами.
-    
-- Обеспечивает безопасный, неблокирующий параллелизм.
-    
+#### Шаблон 3 — await + async let (параллельный + последовательный)
 
----
+```swift
+func fetchUser()    async throws -> User    { ... }
+func fetchPosts()   async throws -> [Post]  { ... }
+func process(posts: [Post]) async throws -> [ProcessedPost] { ... }
+
+Task {
+    async let userTask  = fetchUser()
+    async let postsTask = fetchPosts()
+
+    let user = try await userTask
+    
+    // ждём только posts, user уже готов
+    let rawPosts = try await postsTask
+    
+    let processed = try await process(posts: rawPosts)
+    
+    await MainActor.run {
+        self.user = user
+        self.posts = processed
+    }
+}
+```
+
+#### Шаблон 4 — await в цикле (обработка стрима)
+
+```swift
+let stream = AsyncStream<Int> { continuation in
+    Task {
+        for i in 1...10 {
+            continuation.yield(i)
+            try? await Task.sleep(for: .seconds(1))
+        }
+        continuation.finish()
+    }
+}
+
+Task {
+    for await number in stream {
+        print("Получено:", number)
+        // можно безопасно обновлять UI
+        await MainActor.run {
+            label.text = "Число: \(number)"
+        }
+    }
+}
+```
+
+### 4. Типичные ошибки и ловушки 2026 года
+
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Забыть `await` перед вызовом async-функции  | Ошибка компиляции                        | Компилятор напомнит |
+| Делать долгие синхронные операции внутри @MainActor | UI freeze (ANR)                          | Тяжёлое — в `Task.detached` или обычный `actor` |
+| Вызывать actor-метод без `await`            | Ошибка компиляции                        | Всегда `await actor.method()` |
+| Использовать `await` в не-async контексте   | Ошибка компиляции                        | Оборачивать в `Task { await ... }` |
+| Забыть `try` перед `async throws`           | Ошибка компиляции                        | `try await` всегда |
+| Делать последовательные await вместо async let | Медленный код                            | Используй `async let` для независимых задач |
+
+### 5. await vs другие механизмы ожидания (2026 сравнение)
+
+| Механизм                  | Блокирует поток? | Поддержка throws | Параллелизм | Рекомендация 2026 | Когда использовать |
+|---------------------------|------------------|-------------------|-------------|-------------------|---------------------|
+| `await func()`            | Нет              | Да                | Нет         | Основной          | Последовательные вызовы |
+| `await async let`         | Нет              | Да                | Да          | Золотой стандарт  | 2–6 параллельных задач |
+| `await withTaskGroup`     | Нет              | Да                | Да          | Масштабируемость  | Много задач         |
+| `DispatchQueue.main.async`| Да (если sync)   | Нет               | Нет         | Legacy            | Старый код          |
+| `RunLoop.current.run()`   | Да               | Нет               | Нет         | Legacy            | Очень старый код    |
+
+### 6. Лучшие практики 2026 года
+
+- **Всегда** пиши `await` перед любым `async`-вызовом — это закон  
+- **Используй `async let`** для независимых параллельных задач (2–6)  
+- **Тяжёлое** (сеть, диск, вычисления) — выноси из `@MainActor`  
+- **Ошибки** — всегда `try await` и `do-try-catch`  
+- **Отмена** — проверяй `Task.isCancelled` внутри долгих операций  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит забытые `await` и unsafe захваты  
+- **Мониторинг** — Instruments → Swift Tasks — смотри suspension points и время ожидания
+
+**Короткий девиз 2026**:
+> «await — это когда ты говоришь: «я подожду здесь, но не блокируй поток — пусть другие задачи работают».  
+> В 2026 году почти весь асинхронный код в Swift держится именно на await.»
+
+Удачи с чистым, быстрым и безопасным асинхронным кодом в Swift! 🚀

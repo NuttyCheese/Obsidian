@@ -1,186 +1,147 @@
-## 1. Что такое `Executor`
+Вот **полное, подробное и максимально насыщенное** руководство по понятию **`Executor`** в Swift Concurrency — актуально на 2026 год (Swift 6+ и строгий режим конкурентности).
 
-**Executor** — это объект, который определяет **контекст выполнения асинхронного кода**.
+### 1. Что такое Executor простыми словами
 
-- [[Swift]] Concurrency использует его для **гарантии изоляции данных и потокобезопасности**.
-    
-- Каждый [[actor]] имеет свой **executor**, и все его методы выполняются **внутри этого executor**.
-    
-- Executor отвечает за:
-    
-    - на каком потоке или очереди выполняется код,
-        
-    - порядок выполнения задач,
-        
-    - соблюдение изоляции акторов.
-        
+**Executor** — это **абстракция**, которая отвечает за то, **на каком потоке (или в каком контексте)** будет выполняться тело асинхронной функции или метод актора.
 
-> Можно сказать: Executor — это «место, где [[Swift]] Concurrency запускает задачи».
+В Swift Concurrency **каждый actor** (включая `@MainActor`) имеет **свой собственный executor**.
 
----
+Главные задачи любого executor-а:
 
-## 2. Основные виды Executor
+- **Гарантировать изоляцию** — в один момент времени только один поток работает с состоянием актора  
+- **Переключать контекст** — когда происходит `await`, Swift автоматически «перепрыгивает» на нужный executor  
+- **Определять поток** — на каком именно потоке (или пуле потоков) будет выполняться код  
+- **Обеспечивать последовательность** — методы одного актора никогда не выполняются параллельно
 
-1. **MainActor executor**
-    
-    - Все задачи выполняются на **главном потоке** (UI-поток).
-        
-    - Используется для обновления UI.
-        
-2. **Actor executor**
-    
-    - Каждый `actor` имеет свой executor.
-        
-    - Гарантирует последовательный и безопасный доступ к состоянию actor.
-        
-3. **Detached executor (Task.detached)**
-    
-    - Задачи выполняются на **любой доступной очереди**, без привязки к actor или MainActor.
-        
-    - Используется для фоновых вычислений.
-        
+**Коротко и по-человечески**:
+> Executor — это «личный планировщик» каждого актора.  
+> Он отвечает за вопрос: «Кто и когда может трогать мои данные?»
 
----
+### 2. Основные виды Executor в 2026 году
 
-## 3. Связь с async/await
+| Вид Executor               | На каком потоке работает                     | Глобальный? | Изоляция | Самый частый use-case 2026 |
+|----------------------------|----------------------------------------------|-------------|----------|-----------------------------|
+| **MainActor executor**     | Всегда на **главном потоке** (main thread)   | Да          | Полная   | UI, ViewModel, SwiftUI      |
+| **Обычный actor executor** | На **любом потоке** из глобального пула      | Нет         | Полная   | Данные, сервисы, кэш        |
+| **Detached executor**      | На **любом потоке** (Task.detached)          | Нет         | Отсутствует | Фоновые вычисления без изоляции |
+| **Custom executor**        | На потоке / очереди, которую вы сами задаёте | Нет         | Полная   | Редко (низкоуровневый код)  |
 
-- Когда мы вызываем `await actor.method()` — код фактически **переходит на executor актера**, где выполняется метод.
-    
-- `MainActor.run { ... }` — выполняет код на главном потоке.
-    
-- `Task.detached` — создаёт задачу **без executor**, можно выбрать свой.
-    
+**Важно**:
+- `Task { ... }` без явной аннотации → **не привязан к конкретному executor** (может быть любой поток)  
+- `Task { @MainActor in ... }` → сразу на MainActor executor  
+- `Task.detached { ... }` → detached executor (без изоляции)  
+- `await actor.method()` → автоматически переключает на executor этого actor-а
 
----
+### 3. Самые популярные шаблоны 2026 года
 
-## 4. Примеры от простого к сложному
-
-### Пример 1. MainActor executor
+#### Шаблон 1 — MainActor executor (UI)
 
 ```swift
 @MainActor
-func updateUI() {
-    print("Выполняется на главном потоке")
-}
-
-Task {
-    await updateUI() // переключаемся на MainActor executor
-}
-```
-
----
-
-### Пример 2. Actor executor
-
-```swift
-actor Counter {
-    var value = 0
-    func increment() {
-        value += 1
-        print("Executor актера: \(value)")
-    }
-}
-
-let counter = Counter()
-
-Task {
-    await counter.increment() // выполняется в executor актера
-}
-```
-
----
-
-### Пример 3. Detached executor
-
-```swift
-Task.detached {
-    print("Выполняется на любом потоке, без привязки к actor")
-}
-```
-
----
-
-### Пример 4. Комбинация MainActor и Detached
-
-```swift
-actor Logger {
-    func log(_ message: String) {
-        print("Logger executor:", message)
-    }
-}
-
-let logger = Logger()
-
-Task.detached {
-    await logger.log("Сообщение с detached executor") // переключается на executor actor
-    await MainActor.run {
-        print("Обновляем UI на главном потоке")
+class ProfileViewModel: ObservableObject {
+    @Published var profile: Profile?
+    
+    func load() async {
+        // Этот код уже на MainActor executor
+        let fetched = try? await api.fetchProfile()
+        profile = fetched  // безопасно обновляем UI
     }
 }
 ```
 
----
-
-### Пример 5. Явное переключение executor
+#### Шаблон 2 — Обычный actor executor (данные)
 
 ```swift
+actor UserCache {
+    private var users: [UUID: User] = [:]
+    
+    func store(_ user: User) {
+        users[user.id] = user  // безопасно — внутри executor
+    }
+    
+    func get(_ id: UUID) -> User? {
+        users[id]
+    }
+}
+
+let cache = UserCache()
+
 Task {
-    print("Текущий поток до switch:", Thread.current)
+    let user = User(id: UUID(), name: "Alex")
+    await cache.store(user)
+    let loaded = await cache.get(user.id)
+}
+```
+
+#### Шаблон 3 — Detached executor + переключение на MainActor
+
+```swift
+Task.detached(priority: .utility) {
+    // Этот код на detached executor (любой поток)
+    let data = heavyComputation()
     
     await MainActor.run {
-        print("Выполняется на главном потоке:", Thread.current)
+        // Переключаемся на MainActor executor
+        self.tableView.reloadData(with: data)
     }
     
-    await Task.detached {
-        print("Выполняется на detached executor:", Thread.current)
-    }.value
+    await someActor.process(data)  // переключаемся на executor someActor
 }
 ```
 
----
+#### Шаблон 4 — Явное переключение executor (редко, но мощно)
 
-## 5. Особенности
+```swift
+actor Database {
+    func query() async -> [String] { ... }
+}
 
-1. **Executor определяет поток и изоляцию**
+Task {
+    print("До:", Thread.current)
     
-    - Actor = один executor → гарантированная последовательность доступа.
-        
-    - MainActor = главный поток.
-        
-2. **Task.detached = без executor**
+    await Database().query()  // переключаемся на executor Database
     
-    - Задача может выполняться на любом потоке.
-        
-    - Не имеет изоляции actor.
-        
-3. **Слияние с async/await**
+    print("После actor:", Thread.current)
     
-    - При вызове `await` Swift автоматически переключает код на нужный executor.
-        
-    - Не нужно вручную указывать очереди ([[DispatchQueue]]).
-        
-4. **Проверка компилятора**
-    
-    - [[Swift]] проверяет, что изоляция actor соблюдается при вызове методов через [[await]].
-        
+    await MainActor.run {
+        print("На главном потоке:", Thread.current)
+    }
+}
+```
 
----
+### 4. Типичные ошибки и ловушки 2026 года
 
-## 6. Итог
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Доступ к actor-свойству без `await`         | Ошибка компиляции                        | Всегда `await actor.property` |
+| Вызов actor-метода без `await`              | Ошибка компиляции                        | Компилятор напомнит |
+| Долгая синхронная работа внутри `@MainActor` | UI freeze (ANR)                          | Тяжёлое — в `Task.detached` или обычный `actor` |
+| Думать, что `Task { ... }` внутри actor наследует executor | Нет — новый независимый контекст         | Используй `@_inheritActorContext` (редко) или `Task { @MainActor in ... }` |
+| Забыть переключиться на MainActor для UI    | Main Thread Violation                    | Все UI-обновления — через `@MainActor` |
+| Слишком много actor-ов с тяжёлыми задачами  | Переключение контекста → задержки        | Делай actor-ы маленькими |
 
-- Executor = «контекст выполнения» асинхронной задачи.
-    
-- Виды:
-    
-    1. **MainActor** → главный поток
-        
-    2. **Actor** → последовательный и безопасный доступ к actor
-        
-    3. **Detached executor** → фоновые задачи, без привязки
-        
-- `await` автоматически переключает код на executor цели.
-    
-- Позволяет писать безопасный многопоточный код без блокировок и гонок данных.
-    
+### 5. Executor vs другие механизмы изоляции (2026 сравнение)
 
----
+| Механизм                  | Executor по умолчанию              | Изоляция | Глобальность | Рекомендация 2026 |
+|---------------------------|------------------------------------|----------|--------------|-------------------|
+| `@MainActor`              | MainActor executor (главный поток) | Полная   | Да           | UI, ViewModel     |
+| обычный `actor`           | Собственный executor               | Полная   | Нет          | Данные, сервисы   |
+| `Task { ... }`            | Нет (любой поток)                  | Отсутствует | Нет        | Фоновые задачи    |
+| `Task.detached { ... }`   | Detached executor                  | Отсутствует | Нет        | Максимальный параллелизм |
+| `DispatchQueue`           | Ручная очередь                     | Ручная   | Нет          | Legacy-код        |
+
+### 6. Лучшие практики 2026 года
+
+- **actor** — для любого **изменяемого состояния** в многопотоке  
+- **@MainActor** — для **всего UI** (ViewModel, контроллеры, SwiftUI)  
+- **Task.detached** — для **тяжёлых фоновых вычислений** без изоляции  
+- **Переключение контекста** — используй `await MainActor.run` или `await actor.method()`  
+- **nonisolated** — для методов, которые не трогают состояние актёра  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит почти все ошибки с executor  
+- **Мониторинг** — Instruments → Swift Tasks — смотри переключения контекста и suspension points
+
+**Короткий девиз 2026**:
+> «Executor — это «личный секретарь» каждого актора: он решает, кто и когда может работать с его данными.  
+> В 2026 году почти всё изменяемое состояние живёт внутри actor-ов со своим executor-ом, а UI — на MainActor executor.»
+
+Удачи с чистой изоляцией и эффективным переключением контекста в Swift! ⚙️

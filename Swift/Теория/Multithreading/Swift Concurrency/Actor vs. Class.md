@@ -1,154 +1,153 @@
-## 1. Основное назначение
+Вот **полное, подробное и максимально насыщенное** руководство по сравнению **`class`** и **`actor`** в Swift — актуально на 2026 год (Swift 6+ и строгий режим конкурентности).
 
-|Тип|Назначение|
-|---|---|
-|**class**|Общий объектно-ориентированный тип. Используется для инкапсуляции состояния и поведения.|
-|**actor**|Специализированный тип для безопасного многопоточного доступа к данным. Гарантирует **изоляцию состояния**.|
+### 1. Основное назначение и философия (2026)
 
-- Основное отличие: **actor обеспечивает thread-safety (безопасность потоков) из коробки**, а класс — нет.
-    
+| Характеристика                  | class                                      | actor                                      | Кто побеждает в 2026 году |
+|---------------------------------|--------------------------------------------|--------------------------------------------|----------------------------|
+| Основная цель                   | Объектно-ориентированное программирование | Потокобезопасное хранение изменяемого состояния | actor (для многопоточности) |
+| Семантика                       | Reference type (по ссылке)                 | Reference type + изоляция состояния        | actor (безопаснее)         |
+| Потокобезопасность              | Отсутствует по умолчанию                   | Полная, встроенная                         | actor                      |
+| Когда использовать в новом коде | UI-объекты (UIViewController), legacy, протоколы без состояния | Всё изменяемое состояние в многопотоке     | actor в 90% случаев        |
 
----
+**Короткий вердикт 2026 года**:
+> Если объект **имеет изменяемое состояние** и будет использоваться из нескольких задач / потоков → **actor**.  
+> Если это **UI-объект**, **singleton без состояния** или **старый код** → **class**.
 
-## 2. Изоляция данных
+### 2. Сравнение ключевых свойств (таблица 2026)
 
-- **class**
-    
-    - Любой поток может обращаться к свойствам и методам одновременно.
-        
-    - Для безопасного многопоточного доступа нужны **lock, [[DispatchQueue]], GCD или другие механизмы синхронизации**.
-        
-- **actor**
-    
-    - Все свойства и методы по умолчанию **изолированы**.
-        
-    - Доступ к actor снаружи требует **[[await]]**, чтобы компилятор и [[Runtime]] гарантировали безопасность.
-        
+| Свойство                              | class                                      | actor                                      | Победитель и комментарий |
+|---------------------------------------|--------------------------------------------|--------------------------------------------|---------------------------|
+| Потокобезопасность                    | Нет (нужны lock / queue / @MainActor)      | Да (встроенная изоляция)                   | actor                     |
+| Доступ к свойствам извне              | Прямой (`object.property`)                 | Только через `await` (`await actor.property`) | class удобнее, actor безопаснее |
+| Доступ внутри типа                    | Прямой                                     | Прямой (без await)                         | Оба одинаково             |
+| Наследование                          | Полное (class → class)                     | Запрещено (actor не наследуется)           | class                     |
+| Реализация протоколов                 | Да                                         | Да                                         | Оба                       |
+| Sendable по умолчанию                 | Нет (нужен @unchecked Sendable)            | Да (автоматически)                         | actor                     |
+| Можно хранить в @MainActor            | Да                                         | Да (но избыточно)                          | Оба                       |
+| Можно использовать в TaskGroup        | Да (если Sendable)                         | Да                                         | actor проще               |
+| Размер экземпляра                     | Только указатель (8 байт)                  | Только указатель + executor                | class чуть легче          |
+| Copy-on-Write (Array, Dictionary и т.д.) | Работает                                   | Работает                                   | Оба                       |
+| Использование в SwiftUI               | Через @StateObject / @ObservedObject       | Через @StateObject + @MainActor            | @MainActor + class чаще   |
+
+### 3. Самые важные различия в примерах (2026 стиль)
+
+#### Пример 1 — Гонка данных (class vs actor)
 
 ```swift
-class CounterClass {
+// class → гонка данных
+final class CounterClass {
     var value = 0
+    func increment() { value += 1 }
 }
 
+let classCounter = CounterClass()
+
+Task.detached { for _ in 0..<1000 { classCounter.increment() } }
+Task.detached { for _ in 0..<1000 { classCounter.increment() } }
+
+// value почти никогда не будет ровно 2000
+```
+
+```swift
+// actor → всегда корректно
 actor CounterActor {
-    var value = 0
+    private var value = 0
+    func increment() { value += 1 }
+    var currentValue: Int { value }
 }
+
+let actorCounter = CounterActor()
+
+Task.detached { for _ in 0..<1000 { await actorCounter.increment() } }
+Task.detached { for _ in 0..<1000 { await actorCounter.increment() } }
+
+print(await actorCounter.currentValue) // всегда 2000
 ```
 
-- Вызов:
-    
+#### Пример 2 — nonisolated (когда actor может быть "как class")
 
 ```swift
-let counterClass = CounterClass()
-counterClass.value += 1 // ❌ небезопасно в многопоточном контексте
-
-let counterActor = CounterActor()
-Task {
-    await counterActor.value += 1 // ✅ безопасно
-}
-```
-
----
-
-## 3. Доступ к свойствам и методам
-
-| Особенность                      | class          | actor                                                     |
-| -------------------------------- | -------------- | --------------------------------------------------------- |
-| Вызов метода из другого потока   | напрямую       | через `await`                                             |
-| Вызов свойства из другого потока | напрямую       | через `await`                                             |
-| [[nonisolated]]                  | не применяется | можно использовать, чтобы метод был безопасен без `await` |
-| [[isolated]]                     | не применяется | можно указать, что аргумент или self уже безопасны        |
-
----
-
-## 4. Наследование и полиморфизм
-
-- **class**
+actor Session {
+    private var token: String = ""
     
-    - Поддерживает наследование, протоколы, переопределение методов
-        
-- **actor**
+    // изолированный метод — требует await
+    func setToken(_ new: String) {
+        token = new
+    }
     
-    - Не поддерживает наследование (нельзя делать `class Actor: Actor`)
-        
-    - Можно реализовывать протоколы
-        
-    - Основной способ расширения — **композиция через свойства actor**
-        
-
----
-
-## 5. Отношение к Sendable
-
-- **class**
+    // nonisolated — доступен без await
+    nonisolated func version() -> String {
+        "2.1.0"
+    }
     
-    - [[Reference Type]] → нельзя безопасно передавать между задачами без `@unchecked Sendable`
-        
-- **actor**
-    
-    - [[actor]] → **автоматически Sendable**
-        
-    - Благодаря internal executor изоляция гарантирует потокобезопасность
-        
-
----
-
-## 6. Пример сравнения
-
-```swift
-class CounterClass {
-    var value = 0
-    
-    func increment() {
-        value += 1
+    nonisolated var appName: String {
+        "MyApp"
     }
 }
 
-actor CounterActor {
-    var value = 0
-    
-    func increment() {
-        value += 1
-    }
-}
+let session = Session()
 
-// Использование
-let counterClass = CounterClass()
-let counterActor = CounterActor()
+print(session.appName)          // без await
+print(session.version())        // без await
 
 Task {
-    counterClass.increment() // ❌ небезопасно для многопоточного кода
-    await counterActor.increment() // ✅ безопасно
+    await session.setToken("xyz") // нужен await
 }
 ```
 
-- В многопоточной среде `class` может привести к **гонкам данных**, а `actor` автоматически предотвращает это.
+#### Пример 3 — actor внутри @MainActor (очень частый паттерн)
+
+```swift
+actor DataService {
+    private var users: [User] = []
+    func add(_ user: User) { users.append(user) }
+    func all() -> [User] { users }
+}
+
+@MainActor
+class UserListViewModel: ObservableObject {
+    @Published var users: [User] = []
     
-
----
-
-## 7. Когда использовать
-
-|Ситуация|Использовать class|Использовать actor|
-|---|---|---|
-|Объект только для одного потока|✅|❌ избыточно|
-|Многопоточный доступ к состоянию|❌ нужно синхронизировать|✅ безопасно по умолчанию|
-|Нужен наследуемый объект|✅|❌ нет наследования|
-|Параллельные задачи и async/await|❌ нужно вручную|✅ встроенная поддержка|
-
----
-
-## 8. Итог
-
-1. **Actor = class + thread-safety**
+    let service = DataService()
     
-2. Actor автоматически изолирует состояние, доступ через `await`
-    
-3. Class — обычный объект, безопасный доступ не гарантируется
-    
-4. Actor нельзя наследовать, class можно
-    
-5. Actor автоматически Sendable, class — нет
-    
+    func load() {
+        Task {
+            let loaded = await service.all()
+            users = loaded  // безопасно — мы на @MainActor
+        }
+    }
+}
+```
 
----
+### 4. Когда использовать class, а когда actor (рекомендации 2026)
+
+| Ситуация                                      | Рекомендация 2026                  | Почему |
+|-----------------------------------------------|-------------------------------------|--------|
+| UI-классы (UIViewController, UIView)          | class + @MainActor                  | UIKit/AppKit требует class |
+| ViewModel / ObservableObject                  | @MainActor class                    | SwiftUI / Combine ожидают @MainActor |
+| Изменяемое состояние в многопотоке           | actor                               | Автоматическая безопасность |
+| Immutable данные / конфиг                     | struct (Sendable)                   | Копирование, дешёвый захват |
+| Legacy-код / Objective-C обёртки              | class + @unchecked Sendable         | Совместимость |
+| Глобальный сервис (логи, аналитика, БД)       | @globalActor или обычный actor      | Централизация |
+| Параллельные независимые задачи               | TaskGroup / async let               | Нет нужды в actor |
+
+### 5. Лучшие практики 2026 года
+
+- **actor для всего изменяемого состояния** в многопотоке  
+- **@MainActor** — для всех ViewModel, контроллеров, UI-логики  
+- **struct** — для immutable данных, моделей, DTO  
+- **nonisolated** — используй для методов, которые не трогают состояние  
+- **Не делай actor слишком большим** — 5–15 свойств и методов максимум  
+- **Передавай actor по ссылке** — `let service = DataService()`  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит почти все ошибки  
+- **Тестирование** — создавай экземпляры actor и вызывай через `await`  
+- **Мониторинг** — Instruments → Swift Tasks + Thread Sanitizer
+
+**Короткий девиз 2026**:
+> «actor — это class, который не даёт тебе сломать себе многопоточность.  
+> В 2026 году почти всё изменяемое состояние должно жить в actor.  
+> UI — в @MainActor class.  
+> Immutable — в struct.  
+> Legacy — в class с осторожностью.»
+
+Удачи с безопасным, современным и читаемым многопоточным кодом в Swift! 🛡️

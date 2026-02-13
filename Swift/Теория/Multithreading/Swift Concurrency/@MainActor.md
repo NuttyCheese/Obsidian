@@ -1,196 +1,149 @@
-## 1. Что такое `@MainActor`
+Вот **полное, подробное и максимально насыщенное** руководство по атрибуту **`@MainActor`** в Swift — актуально на 2026 год (Swift 6.0+ и выше).
 
-`@MainActor` — это **глобальный actor**, встроенный в [[Swift]].
+### 1. Что такое @MainActor
 
-👉 Он гарантирует, что код, помеченный этим атрибутом, будет выполняться **на главном потоке (main thread)**.  
-А главный поток — это именно то место, где должен выполняться **UI-код ([[UIKit]], SwiftUI)**.
+**`@MainActor`** — это **встроенный глобальный актёр** (global actor), который гарантирует:
 
-По сути, [[@MainActor]] = "Убедиcь, что это выполняется в UI-потоке".
+- весь код, помеченный этим атрибутом, будет выполняться **строго на главном потоке** (main thread / UI thread)  
+- компилятор автоматически вставляет переключение контекста (hop to main actor)  
+- любые попытки доступа к изолированным свойствам/методам без правильной изоляции приводят к **ошибке компиляции** в строгом режиме (Swift 6+)
 
----
+**Коротко и по-человечески**:
+> `@MainActor` = «всё, что здесь написано, должно выполняться на главном потоке — и точка».
 
-## 2. Как это работает
+Это **самый важный** и **самый часто используемый** глобальный актёр в iOS/macOS-разработке 2025–2026 годов.
 
-- Если вы пометили метод, свойство или класс `@MainActor`, то [[Swift]] Concurrency обеспечит **изолированное выполнение** на главном потоке.
-    
-- Вызов такого метода из фонового потока будет требовать [[await]], чтобы переключиться на `MainActor`.
-    
-- Это избавляет от ручного `DispatchQueue.main.async { ... }`, которым пользовались раньше.
-    
+### 2. Почему @MainActor так важен
 
----
+| Проблема без @MainActor                     | Последствия                              | Как @MainActor решает проблему |
+|---------------------------------------------|------------------------------------------|---------------------------------|
+| Обновление UI из фонового потока            | Main Thread Violation → краш / баги      | Гарантированное выполнение на main |
+| Забыть `DispatchQueue.main.async`           | Случайные краши, визуальные артефакты    | Компилятор ловит ошибку заранее |
+| Множество `await DispatchQueue.main.async`  | Код становится нечитаемым                | Один `@MainActor` — и всё чисто |
+| Сложные цепочки Task + UI-обновление        | Легко забыть переключение на main        | Изоляция на уровне типа/метода  |
 
-## 3. Простые примеры
+**Факт 2026**:
+> В Swift 6+ с включённой полной проверкой строгой конкурентности (`strict concurrency checking = complete`) почти **все** UI-классы и ViewModel **обязаны** быть помечены `@MainActor` — иначе компилятор выдаст ошибку.
 
-### Пример 1. Метод на главном потоке
+### 3. Все способы применения @MainActor (2026 актуально)
+
+| Способ применения                         | Что происходит                                   | Самый частый use-case в 2026 |
+|-------------------------------------------|--------------------------------------------------|-------------------------------|
+| `@MainActor` на всём классе / struct      | Все методы и свойства изолированы на main       | ViewModel, ObservableObject, UIViewController |
+| `@MainActor` на отдельном методе          | Только этот метод выполняется на main            | Отдельные UI-обновления из actor |
+| `@MainActor` на свойстве                  | Доступ к свойству требует main-контекста         | Редко (лучше на классе)       |
+| `@MainActor func` в обычном классе        | Метод требует `await` при вызове из фона         | Сервисы с UI-действиями       |
+| `await MainActor.run { ... }`             | Временное переключение на main внутри функции    | Когда не хочется аннотировать весь метод |
+| `Task { @MainActor in ... }`              | Создаёт задачу, которая сразу на main            | Запуск UI-логики из фона      |
+
+### 4. Самые популярные шаблоны 2026 года
+
+#### Шаблон 1 — ViewModel целиком на @MainActor (самый частый)
 
 ```swift
 @MainActor
-func updateUI() {
-    print("Выполняется на главном потоке:", Thread.isMainThread) // true
-}
-```
-
----
-
-### Пример 2. Класс с аннотацией
-
-```swift
-@MainActor
-class ViewModel: ObservableObject {
-    @Published var text: String = "Привет"
-
-    func changeText() {
-        text = "Обновлено ✅"
+class ProfileViewModel: ObservableObject {
+    @Published var profile: Profile?
+    @Published var isLoading = false
+    
+    func load() async {
+        isLoading = true
+        let fetched = try? await fetchProfile()
+        profile = fetched
+        isLoading = false
     }
 }
 ```
 
-👉 Здесь **все свойства и методы** выполняются на `MainActor`.
-
----
-
-### Пример 3. Вызов из фонового потока
-
-```swift
-@MainActor
-func showMessage() {
-    print("Сообщение на UI")
-}
-
-Task {
-    print("Фоновая задача")
-    await showMessage() // переключение на главный поток
-}
-```
-
----
-
-### Пример 4. SwiftUI + @MainActor
-
-```swift
-@MainActor
-class AppState: ObservableObject {
-    @Published var status: String = "Загрузка..."
-    
-    func updateStatus() {
-        status = "Готово ✅"
-    }
-}
-
-struct ContentView: View {
-    @StateObject private var state = AppState()
-
-    var body: some View {
-        VStack {
-            Text(state.status)
-            Button("Обновить") {
-                Task {
-                    await state.updateStatus()
-                }
-            }
-        }
-    }
-}
-```
-
-👉 `AppState` полностью живёт на `MainActor`, так что обновление UI безопасно.
-
----
-
-### Пример 5. Смешивание с фоновой работой
+#### Шаблон 2 — Смешивание @MainActor и actor
 
 ```swift
 actor DataLoader {
-    func load() async -> String {
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-        return "Данные загружены"
+    func loadProfile() async -> Profile {
+        // фоновая работа
+        return try await api.fetchProfile()
     }
 }
 
 @MainActor
-class ViewModel: ObservableObject {
-    @Published var text = "Загрузка..."
-
+class ProfileViewModel: ObservableObject {
+    @Published var profile: Profile?
+    
     let loader = DataLoader()
-
-    func fetchData() {
+    
+    func refresh() {
         Task {
-            let result = await loader.load()
-            text = result // выполняется на MainActor
+            let data = await loader.loadProfile()
+            profile = data  // безопасно — мы уже на MainActor
         }
     }
 }
 ```
 
-👉 загрузка данных идёт в actor (фоново), а обновление текста — на главном потоке.
-
----
-
-### Пример 6. Сравнение с GCD
-
-**Раньше (до Swift Concurrency):**
+#### Шаблон 3 — Временное переключение с await MainActor.run
 
 ```swift
-DispatchQueue.global().async {
-    let data = "Загружено"
-    DispatchQueue.main.async {
-        self.label.text = data
+actor Analytics {
+    func trackEvent(_ name: String) async {
+        let payload = await preparePayload()
+        
+        await MainActor.run {
+            // только здесь можно безопасно вызвать UI-аналитику
+            AnalyticsManager.shared.logEvent(name, payload: payload)
+        }
     }
 }
 ```
 
-**Теперь (с `@MainActor`):**
+#### Шаблон 4 — @MainActor на замыкании / функции
 
 ```swift
-Task {
-    let data = "Загружено"
-    await updateLabel(with: data)
-}
-
-@MainActor
-func updateLabel(with text: String) {
-    label.text = text
+func showAlert(message: String) {
+    Task { @MainActor in
+        let alert = UIAlertController(title: "Сообщение", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true)
+    }
 }
 ```
 
-👉 Код становится чище и безопаснее.
+### 5. Типичные ошибки и ловушки 2026 года
 
----
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Забыть `@MainActor` на ViewModel            | Ошибка компиляции в Swift 6+             | Всегда помечать ObservableObject |
+| Вызов метода @MainActor без await из фона   | Ошибка компиляции                        | Всегда `await` при вызове извне |
+| `Task { ... }` внутри @MainActor без изоляции | Потеря контекста → ошибка                | Использовать `@_inheritActorContext` (редко) или `Task { @MainActor in ... }` |
+| Синхронный вызов сети / I/O на @MainActor   | UI freeze (ANR)                          | Всё тяжёлое — в обычный `actor` или `Task.detached` |
+| `@MainActor` на очень большом классе        | Всё становится последовательным → лаги   | Только UI-логика на @MainActor, данные — в actor |
 
-## 4. Когда использовать `@MainActor`
+### 6. @MainActor vs другие механизмы изоляции (2026 сравнение)
 
-- Для **UI-логики** (обновление интерфейса).
-    
-- Для `ObservableObject` в SwiftUI.
-    
-- Для сервисов, где доступ к данным должен быть строго из одного места (например, глобальный state приложения).
-    
-- Чтобы избежать ошибок "модификация UI не с main thread".
-    
+| Механизм                  | Поток выполнения | Глобальность | Отмена задач | Сложность | Рекомендация 2026 |
+|---------------------------|------------------|--------------|--------------|-----------|-------------------|
+| `@MainActor`              | Главный поток    | Да           | Через Task   | Низкая    | Для всего UI      |
+| `@globalActor` (свой)     | Любой (по выбору)| Да           | Через Task   | Средняя   | Для БД, логов     |
+| обычный `actor`           | Произвольный     | Нет          | Через Task   | Низкая    | Данные / бизнес-логика |
+| `@isolated(any)`          | От параметра     | Нет          | Через Task   | Средняя   | Универсальные функции |
+| DispatchQueue.main.async  | Главный поток    | Да           | Нет          | Средняя   | Legacy-код        |
 
----
+**Вывод 2026**:
+- `@MainActor` — **единственный правильный** способ работы с UI в Swift 6+  
+- Всё остальное состояние → обычные `actor`  
+- Глобальные актёры (кроме `@MainActor`) → только для очень специфических случаев
 
-## 5. Сравнение с другими атрибутами
+### 7. Лучшие практики 2026 года
 
-|Атрибут|Что делает|
-|---|---|
-|`@MainActor`|Гарантирует выполнение на главном потоке (UI)|
-|`@globalActor`|Позволяет создать свой глобальный actor (например, для базы данных)|
-|`@isolated(any)`|Позволяет функции унаследовать изоляцию от переданного actor-параметра|
-|`@_inheritActorContext`|Внутренний атрибут (нестабильный), сохраняет actor-контекст в Task|
+- **Все ViewModel / ObservableObject** — помечать `@MainActor`  
+- **Все UIViewController** — помечать `@MainActor` (в SwiftUI/UIKit)  
+- **Тяжёлая работа** — выносить в обычный `actor` или `Task.detached`  
+- **Вызовы из фона** — всегда через `await` или `Task { @MainActor in ... }`  
+- **Swift 6 strict concurrency** — включать полную проверку — ловит почти все ошибки  
+- **Тестирование** — использовать `await MainActor.run` в тестах  
+- **Мониторинг** — включать **Main Thread Checker** в схеме Xcode
 
----
+**Короткий девиз 2026**:
+> «@MainActor — это когда ты говоришь: «всё, что здесь, должно быть на главном потоке — и точка».  
+> В 2026 году это уже не рекомендация, а **обязательное правило** для всего UI-кода в Swift.»
 
-## 6. Выводы
-
-- `@MainActor` — это встроенный глобальный actor для UI.
-    
-- Помеченные им методы/классы всегда выполняются на **главном потоке**.
-    
-- Это замена старого `DispatchQueue.main.async`.
-    
-- Работает как гарант безопасного доступа к UI.
-    
-
----
+Удачи с чистым, безопасным и отзывчивым UI в Swift! 🖼️

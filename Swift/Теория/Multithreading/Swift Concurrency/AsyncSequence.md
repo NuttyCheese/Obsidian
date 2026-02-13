@@ -1,149 +1,123 @@
-## 1. Что такое `AsyncSequence`
+Вот **полное, подробное и максимально насыщенное** руководство по **`AsyncSequence`** в Swift — актуально на 2026 год (Swift 6+ и выше).
 
-`AsyncSequence` — это **асинхронная последовательность** (аналог обычного [[Swift/Теория/Swift/Standart Library/Sequence]]), которая генерирует элементы **постепенно, с возможной задержкой**, и их можно обрабатывать с помощью [[for-await]].
+### 1. Что такое AsyncSequence и зачем он нужен
 
-- Используется, когда данные приходят не сразу (например, поток событий, загрузка данных из сети, таймеры).
-    
-- Каждый элемент может быть получен **асинхронно**, без блокировки текущего потока.
-    
+**`AsyncSequence`** — это **асинхронный аналог** протокола `Sequence`.
 
-Пример аналогии: обычный массив — все элементы уже есть. AsyncSequence — элементы появляются постепенно.
+Обычный `Sequence` даёт элементы **синхронно и сразу** (массив, диапазон, строка и т.д.).
 
----
+`AsyncSequence` даёт элементы **постепенно**, с возможными **задержками** между ними, и их получение требует **асинхронного ожидания**.
 
-## 2. Основной синтаксис
+**Главные отличия**:
+
+| Характеристика              | Sequence (обычная)                  | AsyncSequence                              |
+|-----------------------------|--------------------------------------|---------------------------------------------|
+| Получение элементов         | Синхронно (`for ... in`)            | Асинхронно (`for await ... in`)            |
+| Блокировка потока           | Может блокировать                   | Никогда не блокирует (suspendable)         |
+| Источник данных             | Всё уже в памяти                    | Данные могут приходить постепенно (сеть, таймер, события) |
+| Обработка ошибок            | Нет встроенной                      | Поддерживает `AsyncThrowingSequence`       |
+| Основные сценарии           | Массивы, диапазоны, коллекции       | Потоки событий, загрузка по частям, таймеры, стримы из сети |
+
+**Коротко и по-человечески**:
+> AsyncSequence — это когда данные **не лежат все сразу**, а **приходят по одному** с паузами, и ты хочешь их обрабатывать по мере поступления, не блокируя поток.
+
+### 2. Основной синтаксис и протоколы
 
 ```swift
-for await element in asyncSequence {
-    // обработка каждого элемента
+for await элемент in asyncSequence {
+    // обработка элемента
 }
 ```
 
-- `for await` — ключевое отличие от обычного `for`.
-    
-- Любой `AsyncSequence` должен реализовать метод `makeAsyncIterator() -> AsyncIterator`, который возвращает `AsyncIteratorProtocol`.
-    
-
----
-
-## 3. Простейший пример
-
-### Пример 1. AsyncSequence с числовым диапазоном
+Чтобы тип стал `AsyncSequence`, он должен реализовать:
 
 ```swift
-struct AsyncNumbers: AsyncSequence {
-    typealias Element = Int
+protocol AsyncSequence {
+    associatedtype Element
+    associatedtype AsyncIterator : AsyncIteratorProtocol where AsyncIterator.Element == Element
     
-    let count: Int
-    
-    struct AsyncIterator: AsyncIteratorProtocol {
-        var current = 1
-        let max: Int
-        
-        mutating func next() async -> Int? {
-            guard current <= max else { return nil }
-            let value = current
-            current += 1
-            try? await Task.sleep(nanoseconds: 300_000_000) // имитация задержки
-            return value
-        }
-    }
-    
-    func makeAsyncIterator() -> AsyncIterator {
-        AsyncIterator(current: 1, max: count)
-    }
-}
-
-// Использование
-Task {
-    let numbers = AsyncNumbers(count: 5)
-    for await num in numbers {
-        print(num)
-    }
+    func makeAsyncIterator() -> AsyncIterator
 }
 ```
 
-✅ Выведет числа 1..5 с задержкой ~0.3 сек каждое.
-
----
-
-## 4. Пример 2. AsyncSequence с сетью
+А итератор:
 
 ```swift
-struct URLLines: AsyncSequence {
-    typealias Element = String
-    let url: URL
-    
-    struct AsyncIterator: AsyncIteratorProtocol {
-        var lines: [String]
-        var index = 0
-        
-        mutating func next() async -> String? {
-            guard index < lines.count else { return nil }
-            let line = lines[index]
-            index += 1
-            try? await Task.sleep(nanoseconds: 200_000_000)
-            return line
-        }
-    }
-    
-    func makeAsyncIterator() -> AsyncIterator {
-        // Имитация загрузки текста с сайта
-        AsyncIterator(lines: ["line1", "line2", "line3"])
-    }
-}
-
-// Использование
-Task {
-    let sequence = URLLines(url: URL(string: "https://example.com")!)
-    for await line in sequence {
-        print(line)
-    }
+protocol AsyncIteratorProtocol {
+    associatedtype Element
+    mutating func next() async -> Element?
 }
 ```
 
----
+### 3. Готовые реализации в стандартной библиотеке и Foundation (2026)
 
-## 5. Пример 3. AsyncStream
+| Тип / Источник                          | Что возвращает                          | Пример использования |
+|-----------------------------------------|------------------------------------------|----------------------|
+| `AsyncStream<Element>`                  | Произвольный поток (yield / finish)     | Таймеры, события, уведомления |
+| `AsyncThrowingStream<Element, Error>`   | То же + может бросать ошибки            | Сетевые стримы, парсинг |
+| `URLSession.AsyncBytes`                 | Байты из сети (по частям)               | `for try await byte in response.bytes { ... }` |
+| `AsyncThrowingStream` из `lines`        | Строки из потока (например, из файла)   | `for try await line in file.lines { ... }` |
+| `NotificationCenter.Notifications`      | Асинхронный поток уведомлений           | `for await notification in center.notifications(named: .didBecomeActive) { ... }` |
+| `Timer.publish(every:on:in:)`           | Поток `Date` с заданным интервалом      | `for await date in timer { ... }` |
+| `AsyncMapSequence`, `AsyncFilterSequence` и т.д. | Трансформеры над другими AsyncSequence   | `sequence.map { ... }`, `filter { ... }` |
 
-[[Swift]] предоставляет готовый тип **`AsyncStream`** для создания AsyncSequence из [[callback]] или событий:
+### 4. Самые популярные шаблоны 2026 года
+
+#### Шаблон 1 — Таймер как AsyncSequence (очень частый в UI)
 
 ```swift
-let stream = AsyncStream<Int> { continuation in
+let timer = AsyncStream<Date> { continuation in
     Task {
-        for i in 1...5 {
-            continuation.yield(i)
-            try? await Task.sleep(nanoseconds: 300_000_000)
+        var count = 0
+        while count < 10 {
+            continuation.yield(Date())
+            try? await Task.sleep(for: .seconds(1))
+            count += 1
         }
         continuation.finish()
     }
 }
 
 Task {
-    for await num in stream {
-        print(num)
+    for await date in timer {
+        await MainActor.run {
+            label.text = date.formatted()
+        }
     }
 }
 ```
 
-✅ Очень удобно для событий, таймеров и потоков данных.
-
----
-
-## 6. Пример 4. AsyncThrowingStream
-
-Если поток может бросать ошибку:
+#### Шаблон 2 — Поток строк из сети (реальный сценарий)
 
 ```swift
-let throwingStream = AsyncThrowingStream<Int, Error> { continuation in
+let url = URL(string: "https://example.com/stream.txt")!
+
+Task {
+    do {
+        let (bytes, _) = try await URLSession.shared.bytes(from: url)
+        
+        for try await line in bytes.lines {
+            print("Получена строка:", line)
+            // например, парсинг JSONL, SSE, чат-стрим и т.д.
+        }
+    } catch {
+        print("Ошибка стрима:", error)
+    }
+}
+```
+
+#### Шаблон 3 — AsyncThrowingStream + обработка ошибок
+
+```swift
+let stream = AsyncThrowingStream<Int, Error> { continuation in
     Task {
-        for i in 1...5 {
-            if i == 3 {
-                continuation.finish(throwing: NSError(domain: "Test", code: 1))
+        for i in 1...10 {
+            if i == 5 {
+                continuation.finish(throwing: NSError(domain: "Test", code: -1))
                 return
             }
             continuation.yield(i)
-            try? await Task.sleep(nanoseconds: 200_000_000)
+            try await Task.sleep(for: .milliseconds(300))
         }
         continuation.finish()
     }
@@ -151,50 +125,66 @@ let throwingStream = AsyncThrowingStream<Int, Error> { continuation in
 
 Task {
     do {
-        for try await num in throwingStream {
-            print(num)
+        for try await number in stream {
+            print("Получено:", number)
         }
     } catch {
-        print("Ошибка в потоке:", error)
+        print("Поток прерван ошибкой:", error)
     }
 }
 ```
 
----
-
-## 7. Пример 5. Таймер как AsyncSequence
+#### Шаблон 4 — Комбинирование нескольких AsyncSequence
 
 ```swift
-let timerStream = AsyncStream<Date> { continuation in
-    Task {
-        for _ in 1...5 {
-            continuation.yield(Date())
-            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 секунда
-        }
-        continuation.finish()
-    }
-}
+let timer = AsyncStream<Date> { ... }  // каждую секунду
+let notifications = NotificationCenter.default.notifications(named: .didBecomeActive)
 
 Task {
-    for await date in timerStream {
-        print("Текущее время:", date)
+    for await (date, _) in merge(timer, notifications) {
+        await MainActor.run {
+            statusLabel.text = "Последнее событие: \(date.formatted())"
+        }
     }
 }
 ```
 
-✅ Отлично подходит для обновлений UI или событий в приложении.
+(Здесь используется `merge` из Swift Algorithms или кастомный `AsyncMergeSequence`.)
 
----
+### 5. Типичные ошибки и ловушки 2026 года
 
-## 8. Итог
+| Ошибка                                      | Последствия                              | Как избежать |
+|---------------------------------------------|------------------------------------------|--------------|
+| Забыть `await` в `for await`                | Ошибка компиляции                        | Всегда `for await` |
+| Использовать обычный `for` вместо `for await` | Ошибка компиляции                        | Компилятор напомнит |
+| Долгая синхронная работа внутри `next()`    | Блокирует весь актёр / поток             | Всё тяжёлое — в отдельный `Task` |
+| Не вызывать `continuation.finish()`         | Поток висит вечно                        | Всегда завершать (throwing или нормально) |
+| Забыть обработку ошибок в `AsyncThrowingStream` | Не пойманная ошибка крашит задачу        | Всегда `do-try-await` |
+| Слишком много элементов без backpressure    | Переполнение памяти                      | Использовать буферизацию или ограничение |
 
-- `AsyncSequence` = последовательность элементов, которые приходят асинхронно.
-    
-- Используется с `for await` для безопасного получения данных.
-    
-- Можно создавать свой AsyncSequence через `AsyncIteratorProtocol` или использовать готовые типы (`AsyncStream`, `AsyncThrowingStream`).
-    
-- Идеально подходит для **сетевых потоков, таймеров, событий UI, actor сообщений**.
-    
+### 6. AsyncSequence vs другие механизмы потоков данных (2026 сравнение)
 
----
+| Механизм                  | Параллелизм внутри потока | Обработка ошибок | Отмена | Backpressure | Рекомендация 2026 | Когда использовать |
+|---------------------------|----------------------------|-------------------|--------|--------------|-------------------|---------------------|
+| `AsyncSequence` / `AsyncStream` | Нет (один за раз)          | Да (throws)       | Да     | Частично     | Основной выбор    | Потоки событий, стримы |
+| `AsyncThrowingStream`     | Нет                        | Да                | Да     | Частично     | Для ошибок        | Сетевые стримы, SSE |
+| Combine (Publisher)       | Да (много подписчиков)     | Да                | Да     | Да           | Legacy / Rx       | Старые проекты |
+| NotificationCenter + AsyncSequence | Нет                   | Нет               | Да     | Нет          | Современный       | События приложения |
+| URLSession bytes / lines  | Нет                        | Да                | Да     | Да           | Стандартный       | Загрузка по частям |
+
+### 7. Лучшие практики 2026 года
+
+- **Используй `AsyncStream`** для создания собственных потоков (таймеры, события, очереди)  
+- **Для сети** — предпочитай `URLSession.bytes` / `lines` — это уже готовый `AsyncSequence`  
+- **Для ошибок** — всегда `AsyncThrowingStream`  
+- **Для UI** — финальное потребление делай на `@MainActor`  
+- **Отмена** — используй `Task.cancel()` — `AsyncStream` сам завершится  
+- **Backpressure** — если нужно ограничивать скорость — используй буферизацию или `AsyncChannel` (из swift-async-algorithms)  
+- **Swift 6 strict concurrency** — включай полную проверку — она ловит забытые `await` и unsafe захваты  
+- **Мониторинг** — Instruments → Swift Tasks + Swift Async Stream
+
+**Короткий девиз 2026**:
+> «AsyncSequence — это когда данные приходят не все сразу, а по одному, с паузами, и ты хочешь их обрабатывать по мере поступления.  
+> В 2026 году это основной способ работы с потоками событий, сетевыми стримами и таймерами в Swift.»
+
+Удачи с элегантными и безопасными асинхронными потоками в Swift! 🌊
