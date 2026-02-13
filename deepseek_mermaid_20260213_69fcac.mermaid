@@ -1,0 +1,115 @@
+graph TD
+    %% Корень: NSObject
+    NSObject[NSObject]
+
+    %% Основная ветвь: UIResponder
+    UIResponder[UIResponder]
+    NSObject --> UIResponder
+
+    %% Ветвь Views (от UIResponder)
+    UIView[UIView]
+    UIResponder --> UIView
+
+    %% Подклассы UIView: Основные views
+    UIView --> ActivityIndicator[UIActivityIndicatorView]
+    UIView --> Button[UIButton]
+    UIView --> CollectionReusable[UICollectionReusableView]
+    UIView --> DatePicker[UIDatePicker]
+    UIView --> ImageView[UIImageView]
+    UIView --> Label[UILabel]
+    UIView --> PageControl[UIPageControl]
+    UIView --> PickerView[UIPickerView]
+    UIView --> ProgressView[UIProgressView]
+    UIView --> SegmentedControl[UISegmentedControl]
+    UIView --> Slider[UISlider]
+    UIView --> Stepper[UIStepper]
+    UIView --> Switch[UISwitch]
+    UIView --> TabBar[UITabBar]
+    UIView --> TableViewCell[UITableViewCell]
+    UIView --> Toolbar[UIToolbar]
+    UIView --> TextField[UITextField]
+    UIView --> WebView[WKWebView]
+    UIView --> VisualEffectView[UIVisualEffectView]
+
+    %% Ветвь UIControl (от UIView)
+    UIControl[UIControl]
+    UIView --> UIControl
+    UIControl --> Button
+    UIControl --> DatePicker
+    UIControl --> PageControl
+    UIControl --> PickerView
+    UIControl --> SegmentedControl
+    UIControl --> Slider
+    UIControl --> Stepper
+    UIControl --> Switch
+
+    %% Ветвь UIScrollView (от UIView)
+    UIScrollView[UIScrollView]
+    UIView --> UIScrollView
+    UIScrollView --> CollectionView[UICollectionView]
+    UIScrollView --> TableView[UITableView]
+    UIScrollView --> TextView[UITextView]
+
+    %% Другие views (дополнительные)
+    UIView --> AlertView[UIAlertView]
+    UIView --> ActionSheet[UIActionSheet]
+    UIView --> NavigationBar[UINavigationBar]
+    UIView --> SearchBar[UISearchBar]
+    UIView --> StackView[UIStackView]
+    UIView --> HostView[UIHostingController]
+    UIView --> AugmentedView[UIAugmentedView]
+
+    %% Ветвь UIWindow (от UIResponder)
+    UIWindow[UIWindow]
+    UIResponder --> UIWindow
+    SceneWindow[UIWindowScene]
+    UIWindow --> SceneWindow
+
+    %% Ветвь UIViewController (от UIResponder)
+    UIViewController[UIViewController]
+    UIResponder --> UIViewController
+
+    %% Подклассы UIViewController
+    UIViewController --> ActivityVC[UIActivityViewController]
+    UIViewController --> AlertVC[UIAlertController]
+    UIViewController --> CloudSharingVC[UICloudSharingController]
+    UIViewController --> CollectionVC[UICollectionViewController]
+    UIViewController --> ColorPickerVC[UIColorPickerViewController]
+    UIViewController --> DocumentBrowserVC[UIDocumentBrowserViewController]
+    UIViewController --> DocumentMenuVC[UIDocumentMenuViewController]
+    UIViewController --> DocumentPickerExtVC[UIDocumentPickerExtensionViewController]
+    UIViewController --> DocumentPickerVC[UIDocumentPickerViewController]
+    UIViewController --> DocumentVC[UIDocumentViewController]
+    UIViewController --> FontPickerVC[UIFontPickerViewController]
+    UIViewController --> InputVC[UIInputViewController]
+    UIViewController --> NavigationVC[UINavigationController]
+    UIViewController --> PageVC[UIPageViewController]
+    UIViewController --> ReferenceLibraryVC[UIReferenceLibraryViewController]
+    UIViewController --> SearchContainerVC[UISearchContainerViewController]
+    UIViewController --> SearchVC[UISearchController]
+    UIViewController --> SplitVC[UISplitViewController]
+    UIViewController --> TabBarVC[UITabBarController]
+    UIViewController --> TableVC[UITableViewController]
+    UIViewController --> ImagePickerVC[UIImagePickerController]
+    UIViewController --> MailVC[MFMailComposeViewController]
+    UIViewController --> ARVC[ARViewController]
+
+    %% Ветвь UIApplication (от UIResponder)
+    UIApplication[UIApplication]
+    UIResponder --> UIApplication
+    UIApplication --> Delegate[UIApplicationDelegate]
+
+    %% Дополнительные классы
+    UIResponder --> Accessibility[UIAccessibilityElement]
+    UIResponder --> PasteControl[UIPasteControl]
+    UIResponder --> MenuController[UIMenuController]
+    UIResponder --> KeyCommand[UIKeyCommand]
+    UIResponder --> DynamicAnimator[UIDynamicAnimator]
+
+    %% Стили и темы
+    NSObject --> Appearance[UIAppearance]
+    NSObject --> Style[UIStyle]
+
+    %% Стилизация deprecated классов
+    classDef deprecated fill:#ffcccc,stroke:#333,stroke-width:1px
+    class AlertView,ActionSheet deprecated
