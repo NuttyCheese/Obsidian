@@ -1,4 +1,4 @@
-**AnyClass** в Swift — это **метатип**, представляющий **любой класс** (не структуру, не перечисление, не протокол и не актёр).
+**AnyClass** в [[Swift]] — это **метатип**, представляющий **любой класс** (не структуру, не перечисление, не протокол и не актёр).
 
 Это один из самых мощных и одновременно самых опасных инструментов в системе типов Swift, потому что он полностью отключает статическую проверку типов.
 
@@ -20,7 +20,7 @@ let customClass: AnyClass = MyViewController.self
 
 ### Основные варианты использования (реальные сценарии 2026 года)
 
-#### 1. Работа с Objective-C runtime (самое частое)
+#### 1. Работа с [[Objective-C]] [[runtime]] (самое частое)
 
 ```swift
 let className = "UIViewController"
@@ -57,7 +57,7 @@ if let cls = type(of: any) as? AnyClass {
 }
 ```
 
-#### 4. Работа с KVO / KVC (Key-Value Observing / Coding)
+#### 4. Работа с [[KVO]] / [[KVC]] (Key-Value Observing / Coding)
 
 ```swift
 let observer = MyObserver()
@@ -77,14 +77,14 @@ object.observe(\.value, options: [.new]) { _, _ in
    → нужно явно кастовать: `as? AnyClass`
 
 2. **Путаница между Any.Type и AnyClass**  
-   - `Any.Type` — любой тип (struct, enum, class, протокол)  
-   - `AnyClass` — **только классовый** тип (т.е. типы, унаследованные от `AnyObject`)
+   - `Any.Type` — любой тип ([[struct]], [[enum]], [[class]], [[protocol]])  
+   - `AnyClass` — **только классовый** тип (т.е. типы, унаследованные от [[AnyObject]])
 
 3. **Потеря типобезопасности**  
    После `as AnyClass` компилятор ничего не знает о методах → нужно использовать `performSelector`, `value(forKey:)` или unsafe-битовые трюки
 
-4. **Unsafe retain/release** при работе с alloc/init  
-   Часто забывают `autoreleasepool` или `CFRelease` при работе с Objective-C runtime
+4. **Unsafe retain/release** при работе с [[alloc]]/[[init]]  
+   Часто забывают [[autoreleasepool]] или `CFRelease` при работе с Objective-C runtime
 
 ### Современные альтернативы AnyClass в 2026 году
 
@@ -103,5 +103,3 @@ object.observe(\.value, options: [.new]) { _, _ in
 **Короткий девиз 2026**:
 > «AnyClass — это когда ты вынужден общаться с Objective-C миром или делать очень динамичный код.  
 > В чистом Swift 6+ его использование — почти всегда признак legacy или очень специфического кейса.»
-
-Удачи с безопасным и типобезопасным кодом в Swift! 🛡️
