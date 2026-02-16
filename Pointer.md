@@ -1,9 +1,9 @@
-**Pointer** в Swift — это низкоуровневое понятие, связанное с **работой с памятью напрямую** через **указатели** (pointers).  
-В современном Swift (2026 год, Swift 6+) указатели используются крайне редко в обычном коде, но остаются **необходимыми** в следующих областях:
+**Pointer** в [[Swift]] — это низкоуровневое понятие, связанное с **работой с памятью напрямую** через **указатели** (pointers).  
+В современном [[Swift]] (2026 год, Swift 6+) указатели используются крайне редко в обычном коде, но остаются **необходимыми** в следующих областях:
 
-- взаимодействие с C/C++/Objective-C API  
+- взаимодействие с C/C++/[[Objective-C]] [[API]]  
 - работа с сырыми буферами (UnsafeRawBufferPointer, UnsafeMutableRawBufferPointer)  
-- высокопроизводительные вычисления (Metal, Accelerate, AVFoundation, Core Graphics)  
+- высокопроизводительные вычисления ([[Metal]], Accelerate, [[AVFoundation]], Core Graphics)  
 - парсинг бинарных форматов  
 - низкоуровневая оптимизация (копирование памяти, выравнивание, SIMD)
 
@@ -48,7 +48,7 @@ bytes.withUnsafeMutableBufferPointer { buffer in
 }
 ```
 
-#### 3. UnsafeRawPointer + MemoryLayout (парсинг бинарных данных)
+#### 3. UnsafeRawPointer + [[MemoryLayout]] (парсинг бинарных данных)
 
 ```swift
 let data = Data([0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00]) // два Int32: 1 и 2
@@ -80,7 +80,7 @@ destination.withUnsafeMutableBytes { destPtr in
 
 - **Предпочитай withUnsafeBufferPointer / withUnsafeMutableBufferPointer** — это самый безопасный и читаемый способ  
 - **MemoryLayout<T>.stride** — всегда используй вместо .size при работе с массивами/буферами  
-- **Проверяй границы** — перед `load(fromByteOffset:)` проверяй `offset + MemoryLayout<T>.size <= buffer.count`  
+- **Проверяй границы** — перед `load(fromByteOffset:)` проверяй `offset + MemoryLayout<T>.size <= buffer.count
 - **UnsafeRawBufferPointer** — используй только когда нужен доступ к байтам (C-API, бинарные форматы)  
 - **Swift 6 strict concurrency** — все Unsafe-указатели **не Sendable** → работай с ними в одной задаче или используй `nonisolated(unsafe)`  
 - **Не храни Unsafe-указатели** — они инвалидируются при выходе из withUnsafe-блока  
@@ -91,5 +91,3 @@ destination.withUnsafeMutableBytes { destPtr in
 > «Указатели в Swift — это когда тебе нужно общаться с C-API, работать с сырыми буферами или выжимать максимум производительности.  
 > В 2026 году основной инструмент — withUnsafeBufferPointer / withUnsafeMutableBufferPointer.  
 > UnsafeRawPointer используй только когда без него не обойтись, и всегда с MemoryLayout.»
-
-Удачи с безопасной и производительной работой с памятью в Swift! 🧠
