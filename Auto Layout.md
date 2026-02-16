@@ -118,5 +118,3 @@ bioLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 **Короткий девиз 2026**:
 > «Auto Layout в 2026 году — это когда ты пишешь адаптивный UI один раз и он работает на всех устройствах, ориентациях, темах и локализациях.  
 > Самый современный стиль — NSLayoutAnchor + programmatic constraints + safe area.»
-
-Удачи с идеально адаптивным и читаемым интерфейсом в Swift! 📱

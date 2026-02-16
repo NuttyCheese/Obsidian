@@ -1,15 +1,15 @@
-**NSLayoutAnchor** — это современный, типобезопасный и самый рекомендуемый способ создания **Auto Layout constraints** в [[UIKit]] начиная с [[iOS]] 9 (2015 год). К 2026 году это **де-факто стандарт** для программного Auto Layout в [[Swift]].
+**NSLayoutAnchor** — это современный, типобезопасный и самый рекомендуемый способ создания **Auto Layout constraints** в [[UIKit]] начиная с [[iOS]] 9 (2015 год). К 2026 году это **де-факто стандарт** для программного [[Auto Layout]] в [[Swift]].
 
 Он полностью заменил старые способы (VFL, `NSLayoutConstraint` с константами вручную) благодаря читаемости, безопасности типов и удобству цепочек.
 
 ### Основные классы NSLayoutAnchor
 
-| Класс                          | Что привязывает                          | Самые частые методы                          | Пример использования |
-|--------------------------------|------------------------------------------|----------------------------------------------|----------------------|
-| **NSLayoutXAxisAnchor**        | Горизонтальные позиции (leading, trailing, left, right, centerX) | `constraint(equalTo:)`, `constraint(equalToConstant:)` | leadingAnchor, trailingAnchor, centerXAnchor |
-| **NSLayoutYAxisAnchor**        | Вертикальные позиции (top, bottom, centerY, firstBaseline, lastBaseline) | `constraint(equalTo:)`, `constraint(greaterThanOrEqualTo:)` | topAnchor, bottomAnchor, centerYAnchor |
-| **NSLayoutDimension**          | Размеры (width, height)                  | `constraint(equalTo:)`, `constraint(equalToConstant:)`, `constraint(equalToMultiplier:)` | widthAnchor, heightAnchor |
-| **NSLayoutAnchor** (базовый)   | Общий предок для всех выше               | —                                            | — |
+| Класс                        | Что привязывает                                                          | Самые частые методы                                                                      | Пример использования                         |
+| ---------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------- |
+| **[[NSLayoutXAxisAnchor]]**  | Горизонтальные позиции (leading, trailing, left, right, centerX)         | `constraint(equalTo:)`, `constraint(equalToConstant:)`                                   | leadingAnchor, trailingAnchor, centerXAnchor |
+| **[[NSLayoutYAxisAnchor]]**  | Вертикальные позиции (top, bottom, centerY, firstBaseline, lastBaseline) | `constraint(equalTo:)`, `constraint(greaterThanOrEqualTo:)`                              | topAnchor, bottomAnchor, centerYAnchor       |
+| **[[NSLayoutDimension]]**    | Размеры (width, height)                                                  | `constraint(equalTo:)`, `constraint(equalToConstant:)`, `constraint(equalToMultiplier:)` | widthAnchor, heightAnchor                    |
+| **NSLayoutAnchor** (базовый) | Общий предок для всех выше                                               | —                                                                                        | —                                            |
 
 ### Самый популярный и рекомендуемый паттерн 2026 года
 
@@ -98,11 +98,11 @@ NSLayoutConstraint.activate([
 
 - **translatesAutoresizingMaskIntoConstraints = false** — обязательно для всех programmatic вью  
 - **NSLayoutConstraint.activate([...])** — активируй сразу массивом (одна операция)  
-- **safeAreaLayoutGuide / readableContentGuide** — вместо прямого topAnchor к superview  
+- **[[safeAreaLayoutGuide]] / [[readableContentGuide]]** — вместо прямого topAnchor к superview  
 - **identifier** — задавай для всех важных констрейнтов (видно в отладчике и логах)  
 - **priority** — используй .required (1000), .high (750), .low (250) для гибкости  
-- **@MainActor** — все операции с constraints — на главном акторе  
-- **Swift 6 strict concurrency** — NSLayoutAnchor / NSLayoutConstraint полностью Sendable-safe  
+- **[[@MainActor]]** — все операции с constraints — на главном акторе  
+- **Swift 6 strict concurrency** — NSLayoutAnchor / [[NSLayoutConstraint]] полностью [[Sendable]]-safe  
 - **Тестирование** — используй snapshot-тесты (iOSSnapshotTestCase) для проверки layout  
 - **Документируйте** — пиши комментарий «NSLayoutAnchor — программный Auto Layout с safe area»
 
