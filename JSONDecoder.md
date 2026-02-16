@@ -1,6 +1,6 @@
-**JSONDecoder** — это класс из Foundation, который позволяет декодировать JSON-данные в Swift-структуры, соответствующие протоколу **Decodable** (или **Codable**).
+**JSONDecoder** — это класс из [[Foundation]], который позволяет декодировать [[JSON]]-данные в [[Swift]]-структуры, соответствующие протоколу **[[Decodable]]** (или **[[Codable]]**).
 
-По состоянию на 2026 год (Swift 6+) `JSONDecoder` остаётся **основным и самым надёжным** инструментом для парсинга JSON в iOS/macOS-приложениях. Он полностью поддерживает современный Swift (async/await, strict concurrency, generics, property wrappers) и активно развивается Apple.
+По состоянию на 2026 год (Swift 6+) `JSONDecoder` остаётся **основным и самым надёжным** инструментом для парсинга JSON в [[iOS]]/macOS-приложениях. Он полностью поддерживает современный [[Swift]] ([[async]]/[[await]], strict concurrency, [[generic]], property wrappers) и активно развивается Apple.
 
 ### Основные возможности JSONDecoder (актуальные 2026)
 
@@ -37,7 +37,7 @@ func fetchUser() async throws -> User {
 }
 ```
 
-#### Паттерн 2 — Кастомный DateFormatter (очень частый для API)
+#### Паттерн 2 — Кастомный DateFormatter (очень частый для [[API]])
 
 ```swift
 let decoder = JSONDecoder()
@@ -99,7 +99,7 @@ let user = try decoder.decode(User.self, from: data)
 - **Всегда задавай `keyDecodingStrategy = .convertFromSnakeCase`** — 90% современных API используют snake_case  
 - **dateDecodingStrategy = .iso8601** — самый надёжный и быстрый для ISO 8601 дат  
 - **nonConformingFloatDecodingStrategy** — обязательно для API, которые могут возвращать "Infinity" / "NaN"  
-- **userInfo** — используй для передачи контекста (DateFormatter, флаги, environment)  
+- **userInfo** — используй для передачи контекста ([[DateFormatter]], флаги, environment)  
 - **Swift 6 strict concurrency** — `JSONDecoder` thread-safe, но декодируй в `@MainActor` или `Task`  
 - **Ошибки** — всегда обрабатывай `DecodingError` с `debugDescription` для логов  
 - **Производительность** — для больших JSON используй `JSONDecoder().decode` в `Task.detached`  
@@ -107,8 +107,6 @@ let user = try decoder.decode(User.self, from: data)
 - **Документируйте** — пиши комментарий «JSONDecoder — настроен на snake_case + ISO 8601»
 
 **Короткий девиз 2026**:
-> «JSONDecoder в 2026 году — это когда ты хочешь превратить JSON в красивые Swift-структуры быстро, безопасно и без боли.  
+> «JSONDecoder в 2026 году — это когда ты хочешь превратить [[JSON]] в красивые [[Swift]]-структуры быстро, безопасно и без боли.  
 > Самый важный момент — правильно настроить `keyDecodingStrategy` и `dateDecodingStrategy`.  
 > Для всего остального — `Codable` + `JSONDecoder` — это стандарт.»
-
-Удачи с надёжным и читаемым парсингом JSON в Swift! 📦

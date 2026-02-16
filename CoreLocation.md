@@ -1,25 +1,25 @@
-**Core Location** — это основной фреймворк Apple для работы с **геолокацией**, **движением**, **компасом**, **iBeacon** и **региональным мониторингом** на всех платформах Apple (iOS, iPadOS, macOS, watchOS, tvOS, visionOS).
+**Core Location** — это основной фреймворк Apple для работы с **геолокацией**, **движением**, **компасом**, **iBeacon** и **региональным мониторингом** на всех платформах Apple ([[iOS]], iPadOS, macOS, watchOS, tvOS, visionOS).
 
 По состоянию на февраль 2026 года Core Location остаётся **единственным официальным способом** получения точных геоданных и событий движения на устройствах Apple.
 
 ### Ключевые возможности Core Location (актуальные 2026)
 
-| Возможность                          | Класс / API                              | Минимальная версия ОС | Точность / энергопотребление | Когда использовать в 2026 |
-|--------------------------------------|------------------------------------------|------------------------|-------------------------------|----------------------------|
-| **Текущее местоположение**           | `CLLocationManager` + `requestLocation()` | iOS 9+                 | Высокая (GPS + Wi-Fi + Cell)  | Основной способ получения координат |
-| **Значимые изменения местоположения** | `startMonitoringSignificantLocationChanges()` | iOS 4+                 | Низкое энергопотребление      | Фоновый трекинг (например, погода по городу) |
-| **Региональный мониторинг**          | `CLCircularRegion` + `startMonitoring(for:)` | iOS 4+                 | Среднее                       | Геозоны (вход/выход из региона) |
-| **iBeacon (Bluetooth beacons)**      | `CLBeaconRegion` + `startMonitoring(for:)` | iOS 7+                 | Очень низкое энергопотребление | Магазины, музеи, indoor-навигация |
-| **Heading (компас)**                 | `startUpdatingHeading()`                 | iOS 3+                 | Среднее                       | AR, карты, навигация |
-| **Motion Activity**                  | `CMMotionActivityManager` (Core Motion) + Core Location | iOS 7+                 | Низкое                        | Определение ходьбы/бега/транспорта |
-| **Deferred location updates**        | `allowDeferredLocationUpdates(untilTraveled:timeout:)` | iOS 6+                 | Очень низкое                  | Долгие поездки (экономия батареи) |
-| **Authorization**                    | `requestWhenInUseAuthorization()` / `requestAlwaysAuthorization()` | iOS 8+                 | —                             | Обязательно перед использованием |
-| **CLLocationButton** (iOS 15+)       | `CLLocationButton` (SwiftUI)             | iOS 15+                | —                             | Простой доступ к локации из UI |
-| **Live Location** (iOS 18+)          | Поддержка в Find My / Messages           | iOS 18+                | —                             | Шеринг локации в реальном времени |
+| Возможность                           | Класс / [[API]]                                                    | Минимальная версия ОС | Точность / энергопотребление   | Когда использовать в 2026                    |
+| ------------------------------------- | ------------------------------------------------------------------ | --------------------- | ------------------------------ | -------------------------------------------- |
+| **Текущее местоположение**            | `CLLocationManager` + `requestLocation()`                          | iOS 9+                | Высокая (GPS + Wi-Fi + Cell)   | Основной способ получения координат          |
+| **Значимые изменения местоположения** | `startMonitoringSignificantLocationChanges()`                      | iOS 4+                | Низкое энергопотребление       | Фоновый трекинг (например, погода по городу) |
+| **Региональный мониторинг**           | `CLCircularRegion` + `startMonitoring(for:)`                       | iOS 4+                | Среднее                        | Геозоны (вход/выход из региона)              |
+| **iBeacon (Bluetooth beacons)**       | `CLBeaconRegion` + `startMonitoring(for:)`                         | iOS 7+                | Очень низкое энергопотребление | Магазины, музеи, indoor-навигация            |
+| **Heading (компас)**                  | `startUpdatingHeading()`                                           | iOS 3+                | Среднее                        | AR, карты, навигация                         |
+| **Motion Activity**                   | `CMMotionActivityManager` (Core Motion) + Core Location            | iOS 7+                | Низкое                         | Определение ходьбы/бега/транспорта           |
+| **Deferred location updates**         | `allowDeferredLocationUpdates(untilTraveled:timeout:)`             | iOS 6+                | Очень низкое                   | Долгие поездки (экономия батареи)            |
+| **Authorization**                     | `requestWhenInUseAuthorization()` / `requestAlwaysAuthorization()` | iOS 8+                | —                              | Обязательно перед использованием             |
+| **CLLocationButton** (iOS 15+)        | `CLLocationButton` (SwiftUI)                                       | iOS 15+               | —                              | Простой доступ к локации из UI               |
+| **Live Location** (iOS 18+)           | Поддержка в Find My / Messages                                     | iOS 18+               | —                              | Шеринг локации в реальном времени            |
 
 ### Самый популярный и рекомендуемый паттерн 2026 года
 
-#### Современный подход: CLLocationManager + async/await + actor
+#### Современный подход: CLLocationManager + [[async]]/[[await]] + [[actor]]
 
 ```swift
 import CoreLocation
@@ -114,5 +114,3 @@ class LocationViewModel: ObservableObject {
 > «Core Location в 2026 году — это когда тебе нужно точное местоположение пользователя.  
 > Самый современный стиль — actor + async/await + requestLocation().  
 > Избегай startUpdatingLocation() в большинстве случаев — это энергозатратно и устарело.»
-
-Удачи с точной и энергоэффективной геолокацией в Swift! 📍

@@ -1,4 +1,4 @@
-**AVPlayer** — это центральный класс из **AVFoundation** для воспроизведения аудио и видео в приложениях Apple (iOS, iPadOS, macOS, tvOS, visionOS).  
+**AVPlayer** — это центральный класс из **[[AVFoundation]]** для воспроизведения аудио и видео в приложениях Apple ([[iOS]], iPadOS, macOS, tvOS, visionOS).  
 Он поддерживает практически все современные форматы (H.264, HEVC/H.265, AV1, MP4, HLS, DASH, FairPlay DRM и т.д.) и является **единственным рекомендуемым** инструментом для нативного воспроизведения медиа в 2026 году.
 
 ### Основные возможности AVPlayer (актуальные на 2026 год)
@@ -122,9 +122,9 @@ class VideoPlayerViewController: UIViewController {
 - **AVPlayerViewController** — для простого воспроизведения (встроенные контролы, PiP, AirPlay)  
 - **AVPlayerLayer** — для кастомного UI (оверлеи, субтитры, кастомные кнопки)  
 - **AVAudioSession** — обязательно настрой `.playback` категорию  
-- **@MainActor** — весь UI-контроллер и обновления — на главном акторе  
-- **KVO** — наблюдай за `status`, `timeControlStatus`, `reasonForWaitingToPlay`  
-- **Swift 6 strict concurrency** — AVPlayer thread-safe, но UI-обновления — только @MainActor  
+- **[[@MainActor]]** — весь UI-контроллер и обновления — на главном акторе  
+- **[[KVO]]** — наблюдай за `status`, `timeControlStatus`, `reasonForWaitingToPlay`  
+- **[[Swift]] 6 strict concurrency** — AVPlayer thread-safe, но UI-обновления — только @MainActor  
 - **Фоновое воспроизведение** — настрой `AVAudioSession` + background modes  
 - **Прогресс / время** — используй `periodicTimeObserver`  
 - **Документируйте** — пиши комментарий «AVPlayer — воспроизведение HLS / локального видео с контролами»
@@ -133,5 +133,3 @@ class VideoPlayerViewController: UIViewController {
 > «AVPlayer — это когда тебе нужно воспроизводить видео/аудио с поддержкой HLS, FairPlay, PiP, AirPlay и фонового режима.  
 > В 2026 году это **единственный** рекомендуемый инструмент Apple для нативного медиа-плеера.  
 > Для простых случаев — AVPlayerViewController, для кастомного UI — AVPlayer + AVPlayerLayer.»
-
-Удачи с плавным и энергоэффективным воспроизведением медиа в Swift! ▶️

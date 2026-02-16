@@ -1,6 +1,6 @@
 **CGSize** — это простая структура из **Core Graphics** (импортируется через `import UIKit` / `import CoreGraphics`), которая описывает **два измерения** — ширину и высоту (width и height).
 
-Это один из самых часто используемых типов в iOS/macOS-разработке 2026 года.
+Это один из самых часто используемых типов в [[iOS]]/macOS-разработке 2026 года.
 
 ### Основное определение
 
@@ -14,9 +14,9 @@ public struct CGSize {
 }
 ```
 
-- **CGFloat** — основной тип координат и размеров (на 64-битных системах — Double, на 32-битных — Float)  
-- **Value type** (struct) — копируется по значению, полностью **Sendable**, безопасен в Swift Concurrency  
-- **Hashable**, **Equatable**, **Codable** (с iOS 11+)
+- **CGFloat** — основной тип координат и размеров (на 64-битных системах — [[Double]], на 32-битных — [[Float]])  
+- **Value type** ([[struct]]) — копируется по значению, полностью **Sendable**, безопасен в [[Swift Concurrency]]  
+- **[[Hashable]]**, **[[Equatable]]**, **[[Codable]]** (с iOS 11+)
 
 ### Ключевые отличия CGSize vs CGRect vs CGPoint
 
@@ -63,7 +63,7 @@ let scaledSize = CGSize(width: imageSize.width * scale, height: imageSize.height
 let fittedSize = AVMakeRect(aspectRatio: imageSize, insideRect: CGRect(origin: .zero, size: targetSize)).size
 ```
 
-4. **Работа с UIImage / CGImage / CALayer**
+4. **Работа с [[UIImage]] / CGImage / CALayer**
 
 ```swift
 let image = UIImage(named: "avatar")
@@ -127,5 +127,3 @@ extension CGSize {
 > «CGSize — это когда тебе нужны только **ширина и высота** без позиции.  
 > В 2026 году это **основной** тип для описания размеров вью, изображений, ячеек, контента и расчёта масштаба.  
 > bounds.size — твой главный источник правды о реальных размерах после Auto Layout.»
-
-Удачи с точными размерами и адаптивным интерфейсом в Swift! 📐

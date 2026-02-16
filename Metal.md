@@ -80,7 +80,7 @@ class MetalRenderer: NSObject, MTKViewDelegate {
 
 ### Лучшие практики Metal в Swift 2026
 
-- **MTKView** — основной способ отображения Metal-контента в UIKit/AppKit  
+- **MTKView** — основной способ отображения Metal-контента в [[UIKit]]/[[AppKit]]  
 - **Metal 3 features** — используй на A17 Pro/M3+ (ray tracing, mesh shaders, MetalFX)  
 - **Compute shaders** — для ML inference, обработки изображений, физики — самый частый сценарий  
 - **Argument Buffers** — для больших сцен (тысячи draw calls)  
@@ -92,6 +92,4 @@ class MetalRenderer: NSObject, MTKViewDelegate {
 **Короткий девиз 2026**:
 > «Metal — это когда тебе нужна максимальная производительность GPU на устройствах Apple.  
 > В 2026 году это **единственный выбор** для серьёзной 3D-графики, ray tracing, кастомного рендеринга и GPGPU.  
-> Для простых анимаций и UI — SwiftUI / UIKit / SceneKit / RealityKit.»
-
-Удачи с высокопроизводительной графикой и вычислениями на GPU в Swift! ⚙️
+> Для простых анимаций и UI — [[SwiftUI]] / UIKit / SceneKit / RealityKit.»

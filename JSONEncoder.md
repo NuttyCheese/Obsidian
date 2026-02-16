@@ -1,6 +1,6 @@
-**JSONEncoder** — это класс из Foundation, который позволяет кодировать (преобразовывать) Swift-объекты, соответствующие протоколу **Encodable** (или **Codable**), в JSON-данные.
+**JSONEncoder** — это класс из [[Foundation]], который позволяет кодировать (преобразовывать) Swift-объекты, соответствующие протоколу **[[Encodable]]** (или **[[Codable]]**), в [[JSON]]-данные.
 
-По состоянию на 2026 год (Swift 6+) `JSONEncoder` остаётся **основным и самым надёжным** инструментом для сериализации данных в JSON в iOS/macOS-приложениях. Он полностью поддерживает современный Swift (async/await, strict concurrency, property wrappers, generics) и активно используется Apple.
+По состоянию на 2026 год ([[Swift]] 6+) `JSONEncoder` остаётся **основным и самым надёжным** инструментом для сериализации данных в [[JSON]] в [[iOS]]/macOS-приложениях. Он полностью поддерживает современный Swift ([[async]]/[[await]], strict concurrency, property wrappers, [[generics]]) и активно используется Apple.
 
 ### Основные возможности JSONEncoder (актуальные 2026)
 
@@ -36,7 +36,7 @@ func encodeUser(_ user: User) throws -> Data {
 }
 ```
 
-#### Паттерн 2 — Кастомный DateFormatter (очень частый для API)
+#### Паттерн 2 — Кастомный [[DateFormatter]] (очень частый для API)
 
 ```swift
 let encoder = JSONEncoder()
@@ -82,7 +82,7 @@ encoder.userInfo[User.isAdminKey] = true
 let data = try encoder.encode(user)
 ```
 
-#### Паттерн 4 — Асинхронное кодирование в Task (очень частый в 2026)
+#### Паттерн 4 — Асинхронное кодирование в [[Task]] (очень частый в 2026)
 
 ```swift
 func sendUserToServer(_ user: User) async throws {
@@ -103,7 +103,7 @@ func sendUserToServer(_ user: User) async throws {
 
 ### Лучшие практики JSONEncoder в Swift 2026
 
-- **keyEncodingStrategy = .convertToSnakeCase** — 90% современных API используют snake_case  
+- **keyEncodingStrategy = .convertToSnakeCase** — 90% современных [[API]] используют snake_case  
 - **dateEncodingStrategy = .iso8601** — самый надёжный и быстрый для большинства API  
 - **outputFormatting = [.prettyPrinted, .sortedKeys]** — только для отладки / логов (убирай в продакшене)  
 - **nonConformingFloatEncodingStrategy** — обязательно для API, которые могут принимать "Infinity" / "NaN"  
@@ -118,5 +118,3 @@ func sendUserToServer(_ user: User) async throws {
 > «JSONEncoder в 2026 году — это когда ты хочешь превратить красивые Swift-структуры в правильный JSON быстро и без боли.  
 > Самый важный момент — правильно настроить `keyEncodingStrategy` и `dateEncodingStrategy`.  
 > Для всего остального — `Codable` + `JSONEncoder` — это стандарт.»
-
-Удачи с надёжным и читаемым кодированием JSON в Swift! 📤

@@ -1,32 +1,32 @@
-**Core Foundation** (CF) — это низкоуровневая библиотека на языке C, входящая в состав **Foundation** и являющаяся фундаментом почти всей экосистемы Apple (iOS, iPadOS, macOS, watchOS, tvOS, visionOS).
+**Core Foundation** (CF) — это низкоуровневая библиотека на языке C, входящая в состав **Foundation** и являющаяся фундаментом почти всей экосистемы Apple ([[iOS]], iPadOS, macOS, watchOS, tvOS, visionOS).
 
 По состоянию на февраль 2026 года Core Foundation остаётся **одним из самых важных и активно используемых** фреймворков, особенно в следующих случаях:
 
-- взаимодействие с Objective-C runtime  
+- взаимодействие с [[Objective-C]] [[runtime]]  
 - работа с низкоуровневыми типами данных (CFString, CFArray, CFDictionary и т.д.)  
 - интеграция с C/C++ библиотеками  
-- высокопроизводительные задачи, где Swift-объекты слишком «тяжёлые»  
+- высокопроизводительные задачи, где [[Swift]]-объекты слишком «тяжёлые»  
 - legacy-код и поддержка старых версий ОС
 
 ### Основные типы и возможности Core Foundation (актуальные 2026)
 
-| Тип / Класс CF                  | Эквивалент в Swift / Foundation       | Когда используют в 2026 году                          | Примечание / статус |
-|---------------------------------|----------------------------------------|--------------------------------------------------------|----------------------|
-| `CFStringRef`                   | `String` / `NSString`                  | Почти никогда напрямую (кроме C-API)                   | Toll-free bridged    |
-| `CFArrayRef` / `CFMutableArrayRef` | `[Any]` / `NSMutableArray`           | Редко, только в C-интерфейсах                          | Toll-free bridged    |
-| `CFDictionaryRef`               | `[AnyHashable: Any]` / `NSDictionary`  | Редко, в legacy или C-API                              | Toll-free bridged    |
-| `CFDataRef`                     | `Data`                                 | Часто в C-API (например, Security, Audio)              | Toll-free bridged    |
-| `CFURLRef`                      | `URL`                                  | Почти всегда `URL`                                     | Toll-free bridged    |
-| `CFUUIDRef`                     | `UUID`                                 | Иногда в C-API                                         | Toll-free bridged    |
-| `CFBundleRef`                   | `Bundle`                               | Редко, в основном `Bundle.main`                        | Toll-free bridged    |
-| `CFErrorRef`                    | `Error` / `NSError`                    | Часто в C-API (Security, Network)                      | Toll-free bridged    |
-| `CFRunLoopRef`                  | `RunLoop`                              | Редко, в низкоуровневых задачах                        | Не bridged           |
-| `CFNotificationCenterRef`       | `NotificationCenter`                   | Почти всегда `NotificationCenter`                      | Не bridged           |
-| `CFMachPortRef`                 | —                                      | Очень редко (IPC, XPC)                                 | Не bridged           |
+| Тип / Класс CF                     | Эквивалент в [[Swift]] / [[Foundation]] | Когда используют в 2026 году              | Примечание / статус |
+| ---------------------------------- | --------------------------------------- | ----------------------------------------- | ------------------- |
+| `CFStringRef`                      | [[String]] / [[NSString]]               | Почти никогда напрямую (кроме C-API)      | Toll-free bridged   |
+| `CFArrayRef` / `CFMutableArrayRef` | `[Any]` / `NSMutableArray`              | Редко, только в C-интерфейсах             | Toll-free bridged   |
+| `CFDictionaryRef`                  | `[AnyHashable: Any]` / `NSDictionary`   | Редко, в legacy или C-API                 | Toll-free bridged   |
+| `CFDataRef`                        | [[Data]]                                | Часто в C-API (например, Security, Audio) | Toll-free bridged   |
+| `CFURLRef`                         | [[URL]]                                 | Почти всегда `URL`                        | Toll-free bridged   |
+| `CFUUIDRef`                        | [[UUID]]                                | Иногда в C-API                            | Toll-free bridged   |
+| `CFBundleRef`                      | `Bundle`                                | Редко, в основном `Bundle.main`           | Toll-free bridged   |
+| `CFErrorRef`                       | `Error` / `NSError`                     | Часто в C-API (Security, Network)         | Toll-free bridged   |
+| `CFRunLoopRef`                     | `RunLoop`                               | Редко, в низкоуровневых задачах           | Не bridged          |
+| `CFNotificationCenterRef`          | [[NotificationCenter]]                  | Почти всегда `NotificationCenter`         | Не bridged          |
+| `CFMachPortRef`                    | —                                       | Очень редко (IPC, XPC)                    | Не bridged          |
 
 ### Самые частые сценарии использования Core Foundation в Swift 2026
 
-1. **Работа с C-API библиотек** (Security, Audio, Core Graphics, Core Text, Core Location и т.д.)
+1. **Работа с C-API библиотек** (Security, Audio, Core Graphics, Core Text, [[CoreLocation]] и т.д.)
 
 ```swift
 import Security
@@ -86,7 +86,5 @@ CFNotificationCenterAddObserver(center, nil, { _, _, name, _, _ in
 
 **Короткий девиз 2026**:
 > «Core Foundation в 2026 году — это когда тебе нужно общаться с низкоуровневыми C-API Apple.  
-> В чистом Swift почти всё заменено на String, Data, Array, Dictionary и т.д.  
+> В чистом Swift почти всё заменено на [[String]], [[Data]], [[Array]], [[Dictionary]] и т.д.  
 > CF-типы используй только там, где без них не обойтись — и всегда через toll-free bridging.»
-
-Удачи с низкоуровневым, но безопасным кодом в Swift! 🔧

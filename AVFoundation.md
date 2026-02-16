@@ -1,19 +1,19 @@
-**AVFoundation** — это фундаментальный фреймворк Apple для работы с **аудио**, **видео**, **захватом медиа** и **обработкой медиаданных** на всех платформах Apple (iOS, iPadOS, macOS, watchOS, tvOS, visionOS).
+**AVFoundation** — это фундаментальный фреймворк Apple для работы с **аудио**, **видео**, **захватом медиа** и **обработкой медиаданных** на всех платформах Apple ([[iOS]], iPadOS, macOS, watchOS, tvOS, visionOS).
 
 По состоянию на февраль 2026 года AVFoundation остаётся **основным и самым мощным** низкоуровневым инструментом для любых задач, связанных с медиа, особенно там, где требуется полный контроль или высокая производительность.
 
 ### Основные подфреймворки и классы AVFoundation (актуальные 2026)
 
-| Подзадача / Функциональность          | Главные классы / протоколы                          | Когда использовать в 2026 году                          | Современная альтернатива / примечание |
-|----------------------------------------|------------------------------------------------------|----------------------------------------------------------|----------------------------------------|
-| Захват видео и аудио с камеры/микрофона | `AVCaptureSession`, `AVCaptureDevice`, `AVCaptureVideoDataOutput` | Реал-тайм обработка кадров, кастомные камеры, AR/Vision | RealityKit / ARKit для AR, AVFoundation для raw-кадров |
-| Запись видео/аудио                     | `AVAssetWriter`, `AVAssetWriterInput`, `AVCaptureMovieFileOutput` | Кастомная запись, обработка на лету                     | `AVAssetExportSession` для простых случаев |
-| Воспроизведение аудио/видео            | `AVPlayer`, `AVPlayerItem`, `AVPlayerLayer`, `AVAudioPlayer` | Плееры, стриминг, background playback                   | AVPlayer → основной, AVAudioEngine для продвинутого аудио |
-| Обработка аудио (эффекты, микширование) | `AVAudioEngine`, `AVAudioPlayerNode`, `AVAudioUnit` | Эквалайзер, реверб, запись/микширование в реал-тайм     | AVAudioEngine — современный стандарт |
-| Работа с медиафайлами и метаданными    | `AVAsset`, `AVAssetTrack`, `AVMetadataItem`, `AVMutableComposition` | Редактирование, извлечение метаданных, композиция       | AVAsset + AVComposition — мощно |
-| Распознавание речи / транскрипция     | `SFSpeechRecognizer` (Speech фреймворк) + AVAudioEngine | Живое распознавание, субтитры                           | Speech + AVFoundation |
-| Vision + AVFoundation                  | `AVCaptureVideoDataOutput` + Vision requests         | Реал-тайм детекция объектов, лиц, текста                | Vision + AVCapture |
-| Live Activities + Push + AVFoundation  | `AVPlayer` + Push Notifications                      | Фоновое воспроизведение + уведомления о смене трека     | iOS 18+ интеграция |
+| Подзадача / Функциональность            | Главные классы / протоколы                                          | Когда использовать в 2026 году                          | Современная альтернатива / примечание                     |
+| --------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------- |
+| Захват видео и аудио с камеры/микрофона | `AVCaptureSession`, `AVCaptureDevice`, `AVCaptureVideoDataOutput`   | Реал-тайм обработка кадров, кастомные камеры, AR/Vision | RealityKit / ARKit для AR, AVFoundation для raw-кадров    |
+| Запись видео/аудио                      | `AVAssetWriter`, `AVAssetWriterInput`, `AVCaptureMovieFileOutput`   | Кастомная запись, обработка на лету                     | `AVAssetExportSession` для простых случаев                |
+| Воспроизведение аудио/видео             | `AVPlayer`, `AVPlayerItem`, `AVPlayerLayer`, `AVAudioPlayer`        | Плееры, стриминг, background playback                   | AVPlayer → основной, AVAudioEngine для продвинутого аудио |
+| Обработка аудио (эффекты, микширование) | `AVAudioEngine`, `AVAudioPlayerNode`, `AVAudioUnit`                 | Эквалайзер, реверб, запись/микширование в реал-тайм     | AVAudioEngine — современный стандарт                      |
+| Работа с медиафайлами и метаданными     | `AVAsset`, `AVAssetTrack`, `AVMetadataItem`, `AVMutableComposition` | Редактирование, извлечение метаданных, композиция       | AVAsset + AVComposition — мощно                           |
+| Распознавание речи / транскрипция       | `SFSpeechRecognizer` (Speech фреймворк) + AVAudioEngine             | Живое распознавание, субтитры                           | Speech + AVFoundation                                     |
+| Vision + AVFoundation                   | `AVCaptureVideoDataOutput` + Vision requests                        | Реал-тайм детекция объектов, лиц, текста                | Vision + AVCapture                                        |
+| Live Activities + Push + AVFoundation   | `AVPlayer` + Push Notifications                                     | Фоновое воспроизведение + уведомления о смене трека     | [[iOS]] 18+ интеграция                                    |
 
 ### Самые популярные и рекомендуемые паттерны AVFoundation в 2026 году
 
@@ -121,7 +121,7 @@ class VideoPlayerManager {
 
 - **Всегда запрашивай разрешения** асинхронно (`requestAccess(for:)`)  
 - **Используй actor** для хранения состояния (камера, плеер, буферы)  
-- **AVCaptureSession** — запускай/останавливай в `viewWillAppear` / `viewWillDisappear`  
+- **AVCaptureSession** — запускай/останавливай в [[viewWillAppear]] / [[viewWillDisappear]]  
 - **AVPlayer** — используй `AVPlayerViewController` для простых плееров, `AVPlayerLayer` для кастомных  
 - **AVAudioEngine** — современный способ работы с аудио (заменил старый AVAudioPlayer в большинстве случаев)  
 - **Vision + AVCapture** — стандарт для реал-тайм компьютерного зрения  
@@ -133,5 +133,3 @@ class VideoPlayerManager {
 > «AVFoundation — это когда тебе нужен полный контроль над аудио/видео на уровне устройства.  
 > В 2026 году это **лучший выбор** для кастомных камер, плееров, обработки в реал-тайм и интеграции с Vision / Metal.  
 > Для простых плееров и аудио — используй AVPlayer / AVAudioPlayer, для сложного — AVFoundation + actor.»
-
-Удачи с мощной обработкой медиа в Swift! 🎥🎤
