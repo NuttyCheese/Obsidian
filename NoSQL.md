@@ -4,25 +4,25 @@
 
 ### Основные типы NoSQL-баз (актуальные в 2026)
 
-| Тип NoSQL            | Примеры (лидеры 2026)                  | Основные сильные стороны                              | Типичные сценарии в мобильных/iOS-приложениях | Самый популярный выбор 2026 |
-|----------------------|----------------------------------------|-------------------------------------------------------|------------------------------------------------|--------------------------------|
-| **Document-oriented** | MongoDB, CouchDB, Firebase Firestore, Couchbase | Гибкая схема (JSON-подобные документы), вложенные структуры | Профили пользователей, чаты, контент, настройки | **Firestore** (Firebase), MongoDB Atlas |
-| **Key-Value**        | Redis, DynamoDB, Aerospike, Memcached, Dragonfly | Максимальная скорость, простота, in-memory            | Кэш сессий, лидерборды, rate limiting, временные данные | **Redis** / **Dragonfly** (open-source), DynamoDB |
-| **Wide-column**      | Cassandra, ScyllaDB, Bigtable, Amazon Keyspaces | Масштабируемость записи, горизонтальное шардирование | Логи, метрики, временные ряды, IoT-данные      | **ScyllaDB** (быстрее Cassandra), Cassandra |
-| **Graph**            | Neo4j, ArangoDB, Amazon Neptune, TigerGraph | Отношения и графовые запросы (Cypher, Gremlin)        | Социальные графы, рекомендации, fraud detection | **Neo4j** / **ArangoDB** (мультимодель) |
-| **Time-series**      | InfluxDB, TimescaleDB (PostgreSQL), VictoriaMetrics | Оптимизация под временные ряды и метрики              | Метрики приложений, аналитика использования     | **InfluxDB** / **TimescaleDB** |
-| **Search / Full-text** | Elasticsearch, OpenSearch, Meilisearch, Typesense | Полнотекстовый поиск, фасеты, автодополнение         | Поиск по контенту, фильтры, рекомендации        | **OpenSearch** / **Meilisearch** (лёгкий) |
+| Тип NoSQL              | Примеры (лидеры 2026)                               | Основные сильные стороны                                        | Типичные сценарии в мобильных/iOS-приложениях           | Самый популярный выбор 2026                       |
+| ---------------------- | --------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| **Document-oriented**  | MongoDB, CouchDB, [[Firebase]] Firestore, Couchbase | Гибкая схема ([[JSON]]-подобные документы), вложенные структуры | Профили пользователей, чаты, контент, настройки         | **Firestore** (Firebase), MongoDB Atlas           |
+| **Key-Value**          | Redis, DynamoDB, Aerospike, Memcached, Dragonfly    | Максимальная скорость, простота, in-memory                      | Кэш сессий, лидерборды, rate limiting, временные данные | **Redis** / **Dragonfly** (open-source), DynamoDB |
+| **Wide-column**        | Cassandra, ScyllaDB, Bigtable, Amazon Keyspaces     | Масштабируемость записи, горизонтальное шардирование            | Логи, метрики, временные ряды, IoT-данные               | **ScyllaDB** (быстрее Cassandra), Cassandra       |
+| **Graph**              | Neo4j, ArangoDB, Amazon Neptune, TigerGraph         | Отношения и графовые запросы (Cypher, Gremlin)                  | Социальные графы, рекомендации, fraud detection         | **Neo4j** / **ArangoDB** (мультимодель)           |
+| **Time-series**        | InfluxDB, TimescaleDB (PostgreSQL), VictoriaMetrics | Оптимизация под временные ряды и метрики                        | Метрики приложений, аналитика использования             | **InfluxDB** / **TimescaleDB**                    |
+| **Search / Full-text** | Elasticsearch, OpenSearch, Meilisearch, Typesense   | Полнотекстовый поиск, фасеты, автодополнение                    | Поиск по контенту, фильтры, рекомендации                | **OpenSearch** / **Meilisearch** (лёгкий)         |
 
-### Самые популярные NoSQL-решения в iOS-приложениях 2026
+### Самые популярные NoSQL-решения в [[iOS]]-приложениях 2026
 
-| База / Сервис               | Тип          | Локально на устройстве? | Синхронизация | Оффлайн-поддержка | Цена / модель | Самый частый сценарий в iOS 2026 |
-|-----------------------------|--------------|--------------------------|---------------|-------------------|---------------|-----------------------------------|
-| **Firebase Firestore**      | Document     | Нет (только через SDK)   | Да (реал-тайм) | Да (очень хорошая) | Pay-as-you-go | Чаты, профили, контент, синхронизация |
-| **MongoDB Atlas** + Realm   | Document     | Да (MongoDB Realm)       | Да            | Да                | Free tier + платно | Оффлайн-first приложения          |
-| **Supabase** (PostgreSQL + Realtime) | Relational + Realtime | Нет                      | Да            | Частичная         | Free tier + платно | Альтернатива Firebase             |
-| **Redis** / **Dragonfly**   | Key-Value    | Нет (через сервер)       | Нет           | Нет               | Open-source / managed | Кэш, сессии, лидерборды           |
-| **Couchbase Mobile**        | Document     | Да (Couchbase Lite)      | Да            | Отличная          | Платно / enterprise | Оффлайн-first, синхронизация      |
-| **SQLite** + **SwiftData**  | Relational   | Да                       | Нет (нужен бэкенд) | Полная            | Бесплатно     | Локальное хранение (не NoSQL)     |
+| База / Сервис                            | Тип                   | Локально на устройстве? | Синхронизация      | Оффлайн-поддержка  | Цена / модель         | Самый частый сценарий в iOS 2026      |
+| ---------------------------------------- | --------------------- | ----------------------- | ------------------ | ------------------ | --------------------- | ------------------------------------- |
+| **Firebase Firestore**                   | Document              | Нет (только через SDK)  | Да (реал-тайм)     | Да (очень хорошая) | Pay-as-you-go         | Чаты, профили, контент, синхронизация |
+| **MongoDB Atlas** + Realm                | Document              | Да (MongoDB Realm)      | Да                 | Да                 | Free tier + платно    | Оффлайн-first приложения              |
+| **Supabase** ([[PostgreSQL]] + Realtime) | Relational + Realtime | Нет                     | Да                 | Частичная          | Free tier + платно    | Альтернатива Firebase                 |
+| **Redis** / **Dragonfly**                | Key-Value             | Нет (через сервер)      | Нет                | Нет                | Open-source / managed | Кэш, сессии, лидерборды               |
+| **Couchbase Mobile**                     | Document              | Да (Couchbase Lite)     | Да                 | Отличная           | Платно / enterprise   | Оффлайн-first, синхронизация          |
+| **[[SQLite]]** + **[[SwiftData]]**       | Relational            | Да                      | Нет (нужен бэкенд) | Полная             | Бесплатно             | Локальное хранение (не NoSQL)         |
 
 ### Почему NoSQL так популярен в мобильной разработке 2026
 
@@ -30,12 +30,12 @@
 - **Гибкая схема** — быстро менять структуру данных без миграций  
 - **Реал-тайм синхронизация** — чаты, коллаборативные фичи, live-обновления  
 - **Масштабируемость** — миллионы пользователей без шардирования вручную  
-- **Простота интеграции** — Firebase, Supabase, MongoDB Realm имеют отличные Swift SDK
+- **Простота интеграции** — Firebase, Supabase, MongoDB Realm имеют отличные [[Swift]] SDK
 
 ### Самый популярный стек 2026 для мобильных приложений с NoSQL
 
-1. **Frontend** — SwiftUI + TCA / MVVM  
-2. **Локальное хранение** — SwiftData / Core Data / Realm (для оффлайн)  
+1. **Frontend** — [[SwiftUI]] + [[TCA]] / [[MVVM]]  
+2. **Локальное хранение** — SwiftData / [[Core Data]] / [[Realm]] (для оффлайн)  
 3. **Облачная NoSQL** — **Firebase Firestore** (самый частый) / **Supabase** / **MongoDB Realm**  
 4. **Кэш / быстрые данные** — Redis / Dragonfly  
 5. **Аналитика / логи** — InfluxDB / TimescaleDB  

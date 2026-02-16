@@ -1,24 +1,24 @@
-**NSArray** — это **неизменяемый** (immutable) массив объектов в **Foundation** (Objective-C и Swift), который используется для хранения упорядоченной коллекции элементов.
+**NSArray** — это **неизменяемый** (immutable) массив объектов в **[[Foundation]]** ([[Objective-C]] и [[Swift]]), который используется для хранения упорядоченной коллекции элементов.
 
-В 2026 году (Swift 6+, iOS 18+, macOS 15+) **NSArray** остаётся актуальным, но в чистом Swift-коде его использование **сильно сократилось**.  
-Большинство разработчиков предпочитают **Swift Array** (`[T]`), потому что он:
+В 2026 году (Swift 6+, [[iOS]] 18+, macOS 15+) **NSArray** остаётся актуальным, но в чистом Swift-коде его использование **сильно сократилось**.  
+Большинство разработчиков предпочитают **Swift [[Array]]** (`[T]`), потому что он:
 
 - типобезопасен  
 - быстрее в большинстве случаев  
-- лучше интегрируется с generics, Codable, SwiftUI, Combine и Swift Concurrency  
+- лучше интегрируется с [[generic]], [[Codable]], [[SwiftUI]], [[Combine]] и [[Swift Concurrency]]  
 - имеет более удобный синтаксис
 
 ### Когда NSArray всё ещё используется в 2026 году (реальные сценарии)
 
-| Сценарий                                      | Почему NSArray / NSMutableArray всё ещё нужен | Альтернатива в чистом Swift |
-|-----------------------------------------------|------------------------------------------------|-----------------------------|
-| Работа с **Objective-C API** (UIKit, AppKit, Core Foundation, старые фреймворки) | Многие методы возвращают/принимают NSArray/NSMutableArray | `as [Any]` / `as? [T]` |
-| **KVC / KVO** (Key-Value Coding / Observing)  | `value(forKeyPath:)` часто возвращает NSArray | Combine / Observation (Swift 5.9+) |
-| **UserDefaults** (стандартный способ хранения массивов) | `array(forKey:)` возвращает NSArray?          | `Codable` + JSON в UserDefaults |
-| **NSCoding / NSSecureCoding** (архивация)     | `encodeObject(_:forKey:)` ожидает NSArray     | `Codable` + JSON / PropertyList |
-| **Core Data** (managed objects relationships) | To-many relationships — это NSArray           | `@FetchRequest` / SwiftData |
-| **Legacy-код** / поддержка iOS 12–14          | Совместимость                                 | Миграция на Swift Array     |
-| **Высокая совместимость с C/Objective-C**     | Прямой bridging без overhead                  | Редко                       |
+| Сценарий                                                                             | Почему NSArray / NSMutableArray всё ещё нужен             | Альтернатива в чистом Swift        |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------- | ---------------------------------- |
+| Работа с **Objective-C API** ([[UIKit]], AppKit, Core Foundation, старые фреймворки) | Многие методы возвращают/принимают NSArray/NSMutableArray | `as [Any]` / `as? [T]`             |
+| **[[KVC]] / [[KVO]]** (Key-Value Coding / Observing)                                 | `value(forKeyPath:)` часто возвращает NSArray             | Combine / Observation (Swift 5.9+) |
+| **[[UserDefaults]]** (стандартный способ хранения массивов)                          | `array(forKey:)` возвращает NSArray?                      | `Codable` + JSON в UserDefaults    |
+| **NSCoding / NSSecureCoding** (архивация)                                            | `encodeObject(_:forKey:)` ожидает NSArray                 | `Codable` + JSON / PropertyList    |
+| **[[Core Data]]** (managed objects relationships)                                    | To-many relationships — это NSArray                       | `@FetchRequest` / [[SwiftData]]    |
+| **Legacy-код** / поддержка iOS 12–14                                                 | Совместимость                                             | Миграция на Swift Array            |
+| **Высокая совместимость с C/[[Objective-C]]**                                        | Прямой bridging без overhead                              | Редко                              |
 
 ### Самые популярные и рекомендуемые паттерны NSArray в Swift 2026
 
@@ -101,5 +101,3 @@ if let data = UserDefaults.standard.data(forKey: "fruits"),
 > «NSArray в 2026 году — это когда ты вынужден работать с Objective-C миром или legacy-кодом.  
 > В чистом Swift почти всё заменено на Array<T>.  
 > Главное правило: как только получил NSArray — сразу приводи к [T] и забудь про него.»
-
-Удачи с типобезопасными и современными коллекциями в Swift! 📦

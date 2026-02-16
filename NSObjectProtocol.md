@@ -1,9 +1,9 @@
-**NSObjectProtocol** — это фундаментальный протокол в Objective-C runtime, который определяет базовый интерфейс для всех объектов, наследующихся от **NSObject** (или его аналогов в Swift).
+**NSObjectProtocol** — это фундаментальный протокол в [[Objective-C]] [[runtime]], который определяет базовый интерфейс для всех объектов, наследующихся от **NSObject** (или его аналогов в Swift).
 
 В 2026 году (Swift 6+, iOS 18+, macOS 15+) **NSObjectProtocol** остаётся **очень важным**, особенно в следующих случаях:
 
-- взаимодействие с Objective-C кодом и runtime  
-- работа с KVC/KVO, NotificationCenter, Core Foundation, старыми фреймворками  
+- взаимодействие с [[Objective-C]] кодом и [[runtime]]  
+- работа с [[KVC]]/[[KVO]], [[NotificationCenter]], Core Foundation, старыми фреймворками  
 - обеспечение совместимости с legacy-API  
 - реализация некоторых низкоуровневых возможностей (responds(to:), isKind(of:), performSelector и т.д.)
 
@@ -99,5 +99,3 @@ if let view = object as? UIView {
 > «NSObjectProtocol в 2026 году — это когда ты вынужден общаться с Objective-C runtime или legacy-API.  
 > В чистом Swift почти всё заменено на `as?`, `is`, протоколы и generics.  
 > Главное правило: как только получил AnyObject или NSObjectProtocol — сразу приводи к конкретному типу и забудь про него.»
-
-Удачи с типобезопасным и современным кодом в Swift! 🛡️

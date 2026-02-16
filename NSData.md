@@ -1,30 +1,30 @@
-**NSData** — это класс из **Foundation**, представляющий **неизменяемую** (immutable) последовательность байтов. Он используется для работы с сырыми данными (бинарными, файлами, сетевыми ответами, криптографией, изображениями и т.д.).
+**NSData** — это класс из **[[Foundation]]**, представляющий **неизменяемую** (immutable) последовательность байтов. Он используется для работы с сырыми данными (бинарными, файлами, сетевыми ответами, криптографией, изображениями и т.д.).
 
-В 2026 году (Swift 6+) **NSData** всё ещё активно используется, но в чистом Swift-коде его почти полностью вытеснил **Data** — Swift-структура, которая является **value type** и имеет те же возможности, но гораздо лучше интегрируется с современным Swift (generics, Codable, async/await, strict concurrency).
+В 2026 году ([[Swift]] 6+) **NSData** всё ещё активно используется, но в чистом Swift-коде его почти полностью вытеснил **Data** — Swift-структура, которая является **[[value type]]** и имеет те же возможности, но гораздо лучше интегрируется с современным Swift (generic, [[Codable]], [[async]]/[[await]], strict concurrency).
 
 ### Ключевые отличия NSData vs Data (2026 актуальные)
 
-| Характеристика                  | NSData (Objective-C)                     | Data (Swift)                                 | Победитель в 2026 |
-|---------------------------------|------------------------------------------|----------------------------------------------|-------------------|
-| Тип                             | Reference type (class)                   | Value type (struct)                          | **Data** (копируется по значению) |
-| ARC / Memory management         | ARC (автоматический)                     | Автоматический (копирование при необходимости) | **Data** (без retain cycle) |
-| Mutability                      | Есть `NSMutableData`                     | Есть `Data(mutating:)` / `withUnsafeMutableBytes` | **Data** (более гибко) |
-| Bridging с Swift                | Полное (toll-free bridged)               | Нативный тип                                 | **Data** (нет overhead) |
-| Codable / JSONEncoder/Decoder   | Не поддерживает напрямую                 | Полная поддержка                             | **Data** |
-| Swift Concurrency (Sendable)    | Не Sendable                              | Sendable                                     | **Data** |
-| Производительность копирования  | Дешевле (только указатель)               | Дороже при копировании (но CoW — copy-on-write) | Ничья (CoW в Data оптимизирован) |
-| Использование в новом коде      | Только в ObjC-API и legacy               | Почти 100% случаев                           | **Data** |
+| Характеристика                        | NSData (Objective-C)           | [[Data]] (Swift)                                    | Победитель в 2026                 |
+| ------------------------------------- | ------------------------------ | --------------------------------------------------- | --------------------------------- |
+| Тип                                   | [[Reference type]] ([[class]]) | [[Value type]] ([[struct]])                         | **Data** (копируется по значению) |
+| ARC / Memory management               | [[ARC]] (автоматический)       | Автоматический (копирование при необходимости)      | **Data** (без retain cycle)       |
+| Mutability                            | Есть `NSMutableData`           | Есть `Data(mutating:)` / `withUnsafeMutableBytes`   | **Data** (более гибко)            |
+| Bridging с Swift                      | Полное (toll-free bridged)     | Нативный тип                                        | **Data** (нет overhead)           |
+| [[Codable]] / [[JSONEncoder]]/Decoder | Не поддерживает напрямую       | Полная поддержка                                    | **Data**                          |
+| [[Swift Concurrency]] ([[Sendable]])  | Не Sendable                    | Sendable                                            | **Data**                          |
+| Производительность копирования        | Дешевле (только указатель)     | Дороже при копировании (но CoW — [[copy-on-write]]) | Ничья (CoW в Data оптимизирован)  |
+| Использование в новом коде            | Только в ObjC-API и legacy     | Почти 100% случаев                                  | **Data**                          |
 
 ### Когда NSData всё ещё нужен в 2026 году
 
-| Сценарий                                      | Почему NSData / NSMutableData всё ещё используется | Рекомендация / альтернатива |
-|-----------------------------------------------|-----------------------------------------------------|-----------------------------|
-| Вызовы **Objective-C API** (Core Foundation, Security, Core Audio, AVFoundation и т.д.) | Многие методы возвращают/принимают NSData/NSMutableData | Приводи сразу к `Data`: `data as Data` |
-| **NSCoding / NSSecureCoding** (архивация старых объектов) | `encodeObject(_:forKey:)` ожидает NSData            | Переходи на `Codable` + `JSONEncoder` |
-| **NSKeyedArchiver / NSKeyedUnarchiver**       | Legacy-архивация (UserDefaults старого стиля)       | Используй `Codable` + `PropertyListEncoder` |
-| **Core Data** (transformable attributes)      | Иногда хранит NSData                                | Используй `Codable` атрибуты |
-| **Высокая совместимость с C/Objective-C**     | Прямой bridging без overhead                        | Редко (почти всегда Data) |
-| **NSMutableData** для мутабельных буферов     | Динамическое добавление байтов в старом коде        | `Data(mutating:)` + `append` / `withUnsafeMutableBytes` |
+| Сценарий                                                                                            | Почему NSData / NSMutableData всё ещё используется      | Рекомендация / альтернатива                             |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| Вызовы **[[Objective-C]] [[API]]** (Core Foundation, Security, Core Audio, [[AVFoundation]] и т.д.) | Многие методы возвращают/принимают NSData/NSMutableData | Приводи сразу к `Data`: `data as Data`                  |
+| **NSCoding / NSSecureCoding** (архивация старых объектов)                                           | `encodeObject(_:forKey:)` ожидает NSData                | Переходи на `Codable` + `JSONEncoder`                   |
+| **NSKeyedArchiver / NSKeyedUnarchiver**                                                             | Legacy-архивация ([[UserDefaults]] старого стиля)       | Используй `Codable` + `PropertyListEncoder`             |
+| **[[Core Data]]** (transformable attributes)                                                        | Иногда хранит NSData                                    | Используй `Codable` атрибуты                            |
+| **Высокая совместимость с C/Objective-C**                                                           | Прямой bridging без overhead                            | Редко (почти всегда Data)                               |
+| **NSMutableData** для мутабельных буферов                                                           | Динамическое добавление байтов в старом коде            | `Data(mutating:)` + `append` / `withUnsafeMutableBytes` |
 
 ### Самые популярные и рекомендуемые паттерны 2026 года
 
@@ -81,5 +81,3 @@ data.withUnsafeBytes { buffer in
 > «NSData в 2026 году — это когда ты вынужден работать с Objective-C миром или legacy-кодом.  
 > В чистом Swift почти всё заменено на Data — value type, Sendable, Codable и гораздо удобнее.  
 > Главное правило: как только получил NSData — сразу приводи к Data и забудь про него.»
-
-Удачи с безопасной и современной работой с байтами в Swift! 📦
