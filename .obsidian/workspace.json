@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "non-optional.md",
+                "file": "Metal.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "non-optional"
+              "title": "Metal"
             }
           }
         ]
@@ -196,6 +196,11 @@
   },
   "active": "6d308573824586cc",
   "lastOpenFiles": [
+    "multipart or form-data.md",
+    "mutable.md",
+    "MySQL.md",
+    "SwiftData.md",
+    "non-optional.md",
     "NoSQL.md",
     "NSArray.md",
     "NSData.md",
@@ -217,11 +222,6 @@
     "public.md",
     "reference semantic.md",
     "CGFloat.md",
-    "Pointer.md",
-    "SwiftData.md",
-    "protocol type.md",
-    "required init.md",
-    "Sendable.md",
     "Swift/Теория/Patterns/Принципы",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
