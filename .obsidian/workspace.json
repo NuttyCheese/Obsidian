@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "viewDidDisappear.md",
+                "file": "value semantic.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "viewDidDisappear"
+              "title": "value semantic"
             }
           }
         ]
@@ -197,7 +197,21 @@
   "active": "6d308573824586cc",
   "lastOpenFiles": [
     "viewDidAppear.md",
+    "viewDidDisappear.md",
+    "Decimal.md",
     "value semantic.md",
+    "viewDidLayoutSubviews.md",
+    "frame.md",
+    "bounds.md",
+    "Auto Layout.md",
+    "viewDidLoad.md",
+    "viewWillDisappear.md",
+    "viewWillTransition.md",
+    "viewWillAppear.md",
+    "AVPlayer.md",
+    "withTaskCancellation.md",
+    "withThrowingTaskGroup.md",
+    "wrapper.md",
     "URLSessionWebSocketDelegate.md",
     "URLSessionTaskDelegate.md",
     "URLSessionDownloadDelegate.md",
@@ -208,20 +222,6 @@
     "super.init.md",
     "some Protocol.md",
     "some.md",
-    "Sendable.md",
-    "required init.md",
-    "reference semantic.md",
-    "public.md",
-    "README.md",
-    "protocol type.md",
-    "PostgreSQL.md",
-    "Pointer.md",
-    "Point.md",
-    "OSLog.md",
-    "open.md",
-    "Numeric.md",
-    "NSValue.md",
-    "NSString.md",
     "Swift/Теория/Patterns/Принципы",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",
