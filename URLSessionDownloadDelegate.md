@@ -1,14 +1,14 @@
-**URLSessionDownloadDelegate** — это протокол в **Foundation**, который позволяет получать **детальные события** при выполнении задач типа `downloadTask` в `URLSession`.
+**URLSessionDownloadDelegate** — это протокол в **[[Foundation]]**, который позволяет получать **детальные события** при выполнении задач типа `downloadTask` в `URLSession`.
 
 Он используется, когда тебе нужно:
 
 - скачивать файлы **с прогрессом** (progress tracking)  
-- получать файл **по частям** или в виде временного URL  
+- получать файл **по частям** или в виде временного [[URL]]  
 - возобновлять прерванные загрузки (resume)  
 - обрабатывать **редиректы**, **аутентификацию**, **фоновые загрузки**  
 - работать с **background-сессиями** (фоновые загрузки после выхода из приложения)
 
-В 2026 году это **единственный правильный способ** делать надёжные фоновые и прогрессивные загрузки файлов в iOS/macOS-приложениях.
+В 2026 году это **единственный правильный способ** делать надёжные фоновые и прогрессивные загрузки файлов в [[iOS]]/macOS-приложениях.
 
 ### Когда использовать URLSessionDownloadDelegate (а не dataTask или data(from:))
 
@@ -21,7 +21,7 @@
 | Кастомная обработка **редиректов** и **аутентификации** | `willPerformHTTPRedirection`, `didReceive challenge` | Автоматический редирект |
 | Сохранение файла **на диск** без загрузки в память | `urlSession(_:downloadTask:didFinishDownloadingTo:)` даёт временный URL | `data(from:)` — загружает всё в память |
 
-### Самый популярный и рекомендуемый паттерн 2026 (async/await + delegate)
+### Самый популярный и рекомендуемый паттерн 2026 ([[async]]/[[await]] + [[delegate]])
 
 ```swift
 import Foundation
@@ -134,10 +134,10 @@ for await progress in downloader.observeProgress() {
 
 ### Лучшие практики URLSessionDownloadDelegate в Swift 2026
 
-- **Держи delegate в actor** — безопасно для concurrency  
-- **nonisolated** — методы delegate должны быть `nonisolated`, т.к. вызываются не на main thread  
+- **Держи delegate в [[actor]]** — безопасно для concurrency  
+- **nonisolated** — методы delegate должны быть `nonisolated`, т.к. вызываются не на [[main thread]]  
 - **continuation** — используй `withCheckedThrowingContinuation` для async/await  
-- **didFinishDownloadingTo** — здесь получаешь временный URL файла (перемещай его сразу!)  
+- **didFinishDownloadingTo** — здесь получаешь временный [[URL]] файла (перемещай его сразу!)  
 - **didWriteData** — обновляй прогресс UI через `@MainActor`  
 - **Swift 6 strict concurrency** — delegate-методы **не** @MainActor → используй `Task { @MainActor in ... }` для UI  
 - **Фоновые сессии** — обязательно используй уникальный `identifier` и `sessionSendsLaunchEvents = true`  
@@ -147,6 +147,4 @@ for await progress in downloader.observeProgress() {
 **Короткий девиз 2026**:
 > «URLSessionDownloadDelegate — это когда тебе нужно скачивать файлы с прогрессом, возобновлением, фоном и контролем над каждым этапом.  
 > В 2026 году это **единственный** способ сделать настоящую надёжную фоновую загрузку.  
-> Для простых случаев — `downloadTask` без delegate или Alamofire.»
-
-Удачи с надёжными, прогрессивными и фоновыми загрузками в Swift! 📥
+> Для простых случаев — `downloadTask` без delegate или [[Alamofire]].»

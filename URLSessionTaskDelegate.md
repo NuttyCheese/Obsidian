@@ -1,23 +1,23 @@
 **URLSessionTaskDelegate** — это протокол в **Foundation**, который позволяет получать **детальные события** для **любой** задачи (`URLSessionTask`) в `URLSession`: dataTask, downloadTask, uploadTask и streamTask.
 
-Это **самый мощный** и **самый низкоуровневый** способ кастомизации сетевых операций в iOS/macOS-приложениях.
+Это **самый мощный** и **самый низкоуровневый** способ кастомизации сетевых операций в [[iOS]]/macOS-приложениях.
 
-В 2026 году (Swift 6+, iOS 18+, macOS 15+) он используется, когда стандартные `data(from:)`, `downloadTask` или Alamofire недостаточно гибки.
+В 2026 году (Swift 6+, iOS 18+, macOS 15+) он используется, когда стандартные `data(from:)`, `downloadTask` или [[Alamofire]] недостаточно гибки.
 
 ### Когда использовать URLSessionTaskDelegate (а не просто data(from:) или downloadTask)
 
-| Сценарий                                      | Почему нужен именно TaskDelegate                 | Альтернатива (если не нужен) |
-|-----------------------------------------------|--------------------------------------------------|------------------------------|
-| **Прогресс загрузки/выгрузки** любого типа    | `urlSession(_:task:didSendBodyData:...)` и `urlSession(_:task:didReceiveChallenge:...)` | Простые запросы → `data(from:)` |
-| **Обработка HTTP-аутентификации** (Basic, Digest, NTLM, Kerberos, OAuth) | `urlSession(_:task:didReceive:challenge:completionHandler:)` | Bearer-токен в заголовках |
-| **Кастомные редиректы**                       | `urlSession(_:task:willPerformHTTPRedirection:...)` | Автоматический редирект |
-| **Управление кэшированием вручную**           | `urlSession(_:task:willCacheResponse:completionHandler:)` | Автоматический кэш |
-| **Сбор метрик** (время, размер, тип соединения) | `urlSession(_:task:didFinishCollecting:)`        | Instruments / Alamofire metrics |
-| **Обработка ошибок сертификатов / SSL**       | `didReceive challenge`                           | Доверенные сертификаты в конфигурации |
-| **Фоновые сессии** (background upload/download) | Обязателен для `URLSessionConfiguration.background` | Обычные сессии — не нужен |
-| **Логирование всех событий** (headers, timing, redirects) | Полный контроль над жизненным циклом задачи      | Alamofire interceptors |
+| Сценарий                                                                     | Почему нужен именно TaskDelegate                                                        | Альтернатива (если не нужен)          |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------- |
+| **Прогресс загрузки/выгрузки** любого типа                                   | `urlSession(_:task:didSendBodyData:...)` и `urlSession(_:task:didReceiveChallenge:...)` | Простые запросы → `data(from:)`       |
+| **Обработка [[HTTP]]-аутентификации** (Basic, Digest, NTLM, Kerberos, OAuth) | `urlSession(_:task:didReceive:challenge:completionHandler:)`                            | Bearer-токен в заголовках             |
+| **Кастомные редиректы**                                                      | `urlSession(_:task:willPerformHTTPRedirection:...)`                                     | Автоматический редирект               |
+| **Управление кэшированием вручную**                                          | `urlSession(_:task:willCacheResponse:completionHandler:)`                               | Автоматический кэш                    |
+| **Сбор метрик** (время, размер, тип соединения)                              | `urlSession(_:task:didFinishCollecting:)`                                               | Instruments / Alamofire metrics       |
+| **Обработка ошибок сертификатов / SSL**                                      | `didReceive challenge`                                                                  | Доверенные сертификаты в конфигурации |
+| **Фоновые сессии** (background upload/download)                              | Обязателен для `URLSessionConfiguration.background`                                     | Обычные сессии — не нужен             |
+| **Логирование всех событий** (headers, timing, redirects)                    | Полный контроль над жизненным циклом задачи                                             | Alamofire interceptors                |
 
-### Самый популярный и рекомендуемый паттерн 2026 (async/await + TaskDelegate)
+### Самый популярный и рекомендуемый паттерн 2026 ([[async]]/[[await]] + TaskDelegate)
 
 ```swift
 import Foundation
@@ -135,5 +135,3 @@ actor AdvancedNetworkClient: NSObject, URLSessionTaskDelegate {
 > «URLSessionTaskDelegate — это когда тебе нужен полный контроль над жизненным циклом любой сетевой задачи: прогресс, редиректы, аутентификация, метрики и фон.  
 > В 2026 году это **единственный** способ сделать по-настоящему кастомную и надёжную сетевую логику.  
 > Для простых запросов — `data(from:)` или Alamofire.»
-
-Удачи с мощной, прогрессивной и полностью контролируемой сетью в Swift! 🌐

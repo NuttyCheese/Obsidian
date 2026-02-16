@@ -17,7 +17,7 @@
 | **Числовые типы**                       | [[Int]], [[UInt]], [[Float]], [[Double]], [[Bool]], Float16    | **Да**                          | **Нет**                                 | Да                              |
 | **[[CGPoint]], [[CGRect]], [[CGSize]]** | Core Graphics структуры                                        | **Да**                          | **Нет**                                 | Да                              |
 
-### Примеры value semantics vs reference semantics
+### Примеры value semantic vs [[reference semantic]]
 
 ```swift
 // Value semantics — struct
@@ -48,7 +48,7 @@ print(personB.name)     // "Bob"
 
 ### Самые важные особенности value semantics в Swift 2026
 
-1. **Copy-on-Write (CoW)**  
+1. **[[Copy-on-Write]] (CoW)**  
    Большинство коллекций (Array, Dictionary, Set, String, Data) используют **ленивое копирование**:  
    - Пока ты не мутируешь копию — она делит память с оригиналом (дешёво)  
    - Как только мутируешь — создаётся независимая копия
@@ -84,7 +84,7 @@ actor Cache {
 
 ### Когда value semantics ломается (ловушки)
 
-1. **struct содержит ссылочный тип** (class, actor)
+1. **[[struct]] содержит ссылочный тип** ([[class]], [[actor]])
 
 ```swift
 struct Container {
@@ -98,7 +98,7 @@ c2.user.name = "Bob"     // изменит и c1.user.name
 
 2. **NSMutable* коллекции** (NSMutableArray, NSMutableDictionary) — reference semantics
 
-3. **Existential types** (`any Protocol`) — боксинг → reference semantics
+3. **Existential types** ([[any Protocol]]) — боксинг → reference semantics
 
 ### Лучшие практики value semantics в Swift 2026
 
@@ -107,7 +107,7 @@ c2.user.name = "Bob"     // изменит и c1.user.name
 - **Избегай class** — если только не нужна именно reference semantics (делегаты, view controllers, shared state)  
 - **actor** — для mutable shared state вместо class + lock  
 - **final class + immutable свойства** — если нужен reference type (экономия vtable)  
-- **@MainActor** — для UI-классов (UIViewController, ViewModel)  
+- **@MainActor** — для UI-классов ([[UIViewController]], ViewModel)  
 - **Sendable** — обязательно для всех типов, передаваемых между задачами  
 - **Документируйте** — пиши комментарий «value semantics — копия независима»
 
@@ -116,5 +116,3 @@ c2.user.name = "Bob"     // изменит и c1.user.name
 > В Swift 2026 это **основа** безопасного, предсказуемого и конкурентного кода.  
 > Главное правило: struct / enum / String / Array — почти всегда value semantics.  
 > class / actor — reference semantics (опасно без @MainActor / Sendable).»
-
-Удачи с предсказуемым и безопасным кодом в Swift! 🧱

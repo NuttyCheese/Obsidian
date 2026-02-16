@@ -1,4 +1,4 @@
-**URLSessionDataDelegate** — это протокол в **Foundation**, который позволяет получать **детальные события** при выполнении задач типа `dataTask` в `URLSession`.
+**URLSessionDataDelegate** — это протокол в **[[Foundation]]**, который позволяет получать **детальные события** при выполнении задач типа `dataTask` в `URLSession`.
 
 Он используется, когда тебе нужно:
 
@@ -8,21 +8,21 @@
 - реагировать на **редиректы**, **аутентификацию**, **кэширование**  
 - работать с **фоновыми сессиями** (background download/upload)
 
-В 2026 году (Swift 6+, iOS 18+, macOS 15+) это **один из самых мощных** способов кастомизировать сетевые запросы, особенно когда `URLSession.shared.data(from:)` недостаточно гибок.
+В 2026 году ([[Swift]] 6+, [[iOS]] 18+, macOS 15+) это **один из самых мощных** способов кастомизировать сетевые запросы, особенно когда `URLSession.shared.data(from:)` недостаточно гибок.
 
 ### Когда использовать URLSessionDataDelegate (а не просто data(from:))
 
-| Сценарий                                      | Почему нужен именно delegate                     | Альтернатива (если не нужен) |
-|-----------------------------------------------|--------------------------------------------------|------------------------------|
-| Показывать **прогресс-бар** при загрузке файла/изображения | `urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)` | Combine / async/await + progress publisher |
-| Получать данные **по частям** (streaming)     | `urlSession(_:dataTask:didReceive:)` вызывается многократно | Простые запросы → `data(from:)` |
-| Обрабатывать **редиректы** вручную            | `urlSession(_:task:willPerformHTTPRedirection:)` | Автоматический редирект по умолчанию |
-| Кастомная **аутентификация** (HTTP Basic, Digest, NTLM, OAuth) | `urlSession(_:task:didReceive:challenge:completionHandler:)` | Bearer-токен в заголовках |
-| Работа с **фоновыми сессиями** (background download/upload) | Обязателен для `URLSessionConfiguration.background` | Обычные сессии → не нужен |
-| Управление **кэшированием** вручную           | `urlSession(_:dataTask:willCacheResponse:completionHandler:)` | Автоматический кэш |
-| Логирование **всех событий** (headers, metrics) | `urlSession(_:task:didFinishCollecting:)` | Alamofire / URLSessionTaskDelegate |
+| Сценарий                                                           | Почему нужен именно delegate                                                  | Альтернатива (если не нужен)               |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------- | ------------------------------------------ |
+| Показывать **прогресс-бар** при загрузке файла/изображения         | `urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)` | Combine / async/await + progress publisher |
+| Получать данные **по частям** (streaming)                          | `urlSession(_:dataTask:didReceive:)` вызывается многократно                   | Простые запросы → `data(from:)`            |
+| Обрабатывать **редиректы** вручную                                 | `urlSession(_:task:willPerformHTTPRedirection:)`                              | Автоматический редирект по умолчанию       |
+| Кастомная **аутентификация** ([[HTTP]] Basic, Digest, NTLM, OAuth) | `urlSession(_:task:didReceive:challenge:completionHandler:)`                  | Bearer-токен в заголовках                  |
+| Работа с **фоновыми сессиями** (background download/upload)        | Обязателен для `URLSessionConfiguration.background`                           | Обычные сессии → не нужен                  |
+| Управление **кэшированием** вручную                                | `urlSession(_:dataTask:willCacheResponse:completionHandler:)`                 | Автоматический кэш                         |
+| Логирование **всех событий** (headers, metrics)                    | `urlSession(_:task:didFinishCollecting:)`                                     | Alamofire / URLSessionTaskDelegate         |
 
-### Самый популярный и рекомендуемый паттерн 2026 (async/await + delegate)
+### Самый популярный и рекомендуемый паттерн 2026 ([[async]]/[[await]] + [[delegate]])
 
 ```swift
 import Foundation
@@ -113,11 +113,11 @@ Task {
 ### Лучшие практики URLSessionDataDelegate в Swift 2026
 
 - **Держи delegate в actor** — безопасно для concurrency  
-- **nonisolated** — методы delegate должны быть `nonisolated`, т.к. вызываются не на main thread  
-- **continuation** — используй `withCheckedThrowingContinuation` для async/await  
+- **nonisolated** — методы delegate должны быть `nonisolated`, т.к. вызываются не на [[main thread]]  
+- **continuation** — используй `withCheckedThrowingContinuation` для [[async]]/[[await]]  
 - **receivedData.append** — собирай данные по частям в `didReceive data:`  
 - **didCompleteWithError** — всегда завершай continuation здесь  
-- **Swift 6 strict concurrency** — delegate-методы **не** @MainActor → используй `Task { @MainActor in ... }` для UI-обновлений  
+- **Swift 6 strict concurrency** — [[delegate]]-методы **не** [[@MainActor]] → используй `Task { @MainActor in ... }` для UI-обновлений  
 - **Прогресс** — обновляй через `didSendBodyData` / `didReceive data`  
 - **Документируйте** — пиши комментарий «URLSessionDataDelegate — потоковая загрузка с прогрессом»
 
@@ -125,5 +125,3 @@ Task {
 > «URLSessionDataDelegate — это когда тебе нужно получать данные по частям, показывать прогресс, обрабатывать редиректы или работать с фоновыми сессиями.  
 > В 2026 году это **единственный** способ сделать мощную кастомную сетевую загрузку.  
 > Для простых запросов — `data(from:)` или Alamofire.»
-
-Удачи с потоковой, прогрессивной и кастомной загрузкой в Swift! 📡

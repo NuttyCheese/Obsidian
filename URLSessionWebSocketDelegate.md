@@ -1,18 +1,18 @@
 **URLSessionWebSocketDelegate** — это протокол в **Foundation**, который позволяет получать события и управлять **WebSocket-соединением**, созданным через `URLSessionWebSocketTask`.
 
-В 2026 году это **единственный официальный** способ работать с **WebSocket** в нативных приложениях Apple (iOS 13+, macOS 10.15+, watchOS 6+, tvOS 13+, visionOS).
+В 2026 году это **единственный официальный** способ работать с **[[WebSocket]]** в нативных приложениях Apple (iOS 13+, macOS 10.15+, watchOS 6+, tvOS 13+, visionOS).
 
 ### Когда использовать именно URLSessionWebSocketDelegate
 
-| Сценарий                                      | Почему именно этот delegate                      | Альтернатива (если не подходит) |
-|-----------------------------------------------|--------------------------------------------------|---------------------------------|
-| Нативный WebSocket без сторонних библиотек    | Полный контроль, интеграция с URLSession         | Starscream, Socket.IO, Alamofire WebSocket |
-| Реал-тайм чат, уведомления, live-данные       | Низкая задержка, поддержка background            | Firebase Realtime / Firestore   |
-| Фоновый WebSocket (работает после сворачивания) | Поддержка background-сессий                      | —                               |
-| Кастомная аутентификация, пинг-понг, reconnect | `didOpen`, `didReceive`, `didClose`, `didReceive challenge` | Starscream / Socket.IO          |
-| Интеграция с Combine / async/await            | Полный контроль над событиями                    | Combine + PassthroughSubject    |
+| Сценарий                                            | Почему именно этот delegate                                 | Альтернатива (если не подходит)            |
+| --------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------ |
+| Нативный WebSocket без сторонних библиотек          | Полный контроль, интеграция с [[URLSession]]                | Starscream, Socket.IO, Alamofire WebSocket |
+| Реал-тайм чат, уведомления, live-данные             | Низкая задержка, поддержка background                       | [[Firebase]] Realtime / Firestore          |
+| Фоновый [[WebSocket]] (работает после сворачивания) | Поддержка background-сессий                                 | —                                          |
+| Кастомная аутентификация, пинг-понг, reconnect      | `didOpen`, `didReceive`, `didClose`, `didReceive challenge` | [[Starscream]] / Socket.IO                 |
+| Интеграция с [[Combine]] / [[async]]/[[await]]      | Полный контроль над событиями                               | [[Combine]] + PassthroughSubject           |
 
-### Самый популярный и рекомендуемый паттерн 2026 (actor + async/await + delegate)
+### Самый популярный и рекомендуемый паттерн 2026 ([[actor]] + [[async]]/[[await]] + [[delegate]])
 
 ```swift
 import Foundation
@@ -156,11 +156,11 @@ Task {
 ### Лучшие практики URLSessionWebSocketDelegate в Swift 2026
 
 - **Держи delegate в actor** — безопасно для concurrency  
-- **nonisolated** — методы delegate должны быть `nonisolated` (вызываются не на main thread)  
+- **nonisolated** — методы delegate должны быть `nonisolated` (вызываются не на [[main thread]])  
 - **AsyncStream** — идеально для приёма сообщений (`didReceive`)  
 - **didOpenWithProtocol** — проверяй протокол (например, "chat")  
 - **didCloseWith** — обрабатывай коды закрытия (1000 — нормальное, 1006 — ошибка соединения)  
-- **Swift 6 strict concurrency** — delegate-методы **не** @MainActor → используй `Task { @MainActor in ... }` для UI  
+- **Swift 6 strict concurrency** — delegate-методы **не** [[@MainActor]] → используй `Task { @MainActor in ... }` для UI  
 - **Пинг-понг** — реализуй вручную (отправляй ping каждые 30 сек)  
 - **Reconnect** — при `didCloseWith` или ошибке запускай reconnect-логику  
 - **Документируйте** — пиши комментарий «URLSessionWebSocketDelegate — обработка WebSocket-соединения»
@@ -169,5 +169,3 @@ Task {
 > «URLSessionWebSocketDelegate — это когда тебе нужен нативный, надёжный WebSocket с полным контролем: прогресс, reconnect, аутентификация и фон.  
 > В 2026 году это **единственный** официальный способ от Apple для WebSocket.  
 > Для простых чатов — Firebase / Supabase Realtime, для всего остального — URLSession + delegate.»
-
-Удачи с реал-тайм связью в Swift! 🔌

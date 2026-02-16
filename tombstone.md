@@ -1,4 +1,4 @@
-**Tombstone** (надгробие, могильный камень) — это термин, который в программировании (особенно в iOS/macOS-разработке и Objective-C/Swift) имеет несколько очень конкретных значений.
+**Tombstone** (надгробие, могильный камень) — это термин, который в программировании (особенно в [[iOS]]/macOS-разработке и [[Objective-C]]/[[Swift]]) имеет несколько очень конкретных значений.
 
 Вот актуальные на 2026 год основные значения слова «tombstone» в контексте Swift/Objective-C:
 
@@ -11,7 +11,7 @@
 - Любое сообщение, отправленное на такой объект → вызывает **EXC_BREAKPOINT** или лог «*** -[NSObject(NSObject) doesNotRecognizeSelector:]»  
 - Это **самый мощный инструмент отладки** утечек памяти и use-after-free багов
 
-**Как включить zombies в 2026 году** (Xcode 18+):
+**Как включить zombies в 2026 году** ([[Xcode]] 18+):
 
 1. Edit Scheme → Run → Diagnostics → Enable Zombie Objects  
 2. Или Environment Variables: `NSZombieEnabled = YES`
@@ -21,7 +21,7 @@
 *** -[__NSArrayM objectAtIndex:]: message sent to deallocated instance 0x1234567890abc
 ```
 
-### 2. **Tombstone в Swift Concurrency (реже, но встречается)**
+### 2. **Tombstone в [[Swift Concurrency]] (реже, но встречается)**
 
 В Swift 6+ с **strict concurrency checking** иногда возникает термин **tombstone** в контексте **Task cancellation** и **actor isolation**.
 
@@ -29,7 +29,7 @@
 
 Это внутренний термин в runtime и компиляторе, в коде ты его не увидишь напрямую.
 
-### 3. **Tombstone в базах данных / NoSQL / Kafka / Event Sourcing**
+### 3. **Tombstone в базах данных / [[NoSQL]] / Kafka / Event Sourcing**
 
 В распределённых системах и event-sourcing **tombstone** — это специальное сообщение/запись, которая означает **«удалить этот ключ»**.
 
@@ -49,12 +49,10 @@
 2. Запусти приложение в debug-режиме  
 3. Дождись ошибки «message sent to deallocated instance»  
 4. Посмотри стек-трейс — увидишь точное место, где объект был deallocated  
-5. Найди retain cycle / premature dealloc (чаще всего weak/delegate, [weak self], actor isolation)  
+5. Найди [[retain cycle]] / premature dealloc (чаще всего weak/delegate, [weak self], actor isolation)  
 6. Исправь → выключи zombies (они замедляют приложение)
 
 **Короткий девиз 2026**:
 > «Tombstone / zombie — это когда умерший объект встаёт из могилы и кричит: «ты пытался меня использовать после смерти!»  
 > В 2026 году это **лучший друг** при отладке retain cycle и use-after-free.  
 > Включи NSZombieEnabled → получи стек-трейс → найди баг → выключи.»
-
-Удачи в охоте на зомби и воскрешении мёртвых объектов в Swift! 🧟‍♂️
