@@ -1,5 +1,3 @@
-## 1. Что это такое
-
 **`UISplitViewControllerDelegate`** — протокол, который позволяет:
 
 - контролировать поведение колонок (primary, secondary, supplementary),

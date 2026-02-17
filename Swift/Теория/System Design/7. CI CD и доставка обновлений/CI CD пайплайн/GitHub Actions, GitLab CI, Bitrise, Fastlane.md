@@ -22,7 +22,7 @@
     
 - Поддержка матриц для разных версий [[Xcode]] и [[iOS]].
     
-- Интеграция с [[TestFlight]] и [[App Store Connect]] через [[Fastlane]].
+- Интеграция с [[TestFlight]] и [[Swift/App Store Connect]] через [[Fastlane]].
     
 
 ### Пример workflow

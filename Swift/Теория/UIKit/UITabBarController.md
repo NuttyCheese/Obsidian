@@ -1,5 +1,3 @@
-## 1. Что такое `UITabBarController`
-
 **`UITabBarController`** — это **контейнерный контроллер** (container view controller), который управляет панелью вкладок (**[[UITabBar]]**) и связанными с ней [[UIViewController]].
 
 🔑 Основные моменты:

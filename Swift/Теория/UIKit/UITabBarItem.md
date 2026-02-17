@@ -1,5 +1,3 @@
-## 1. Что такое `UITabBarItem`
-
 **`UITabBarItem`** — это объект, который описывает **одну вкладку** в [[UITabBar]].  
 Каждая вкладка в [[UITabBarController]] обязательно имеет свой `UITabBarItem`.
 

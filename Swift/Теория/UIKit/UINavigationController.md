@@ -1,5 +1,3 @@
-## 1. Что такое `UINavigationController`
-
 **`UINavigationController`** — это контейнерный контроллер (container view controller), который управляет **стеком экранов** ([[UIViewController]]) и предоставляет пользователю удобную навигацию между ними.
 
 🔑 Особенности:

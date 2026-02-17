@@ -83,7 +83,7 @@ guard let signature = SecKeyCreateSignature(privateKey,
 
 - **Biometric authentication** → FaceID / TouchID с безопасным хранением ключей.
     
-- **Хранение токенов и паролей** → вместе с [[Keychain]] и доступом через Secure Enclave.
+- **Хранение токенов и паролей** → вместе с [[KeyChain]] и доступом через Secure Enclave.
     
 - **Подпись транзакций** → финансовые приложения.
     

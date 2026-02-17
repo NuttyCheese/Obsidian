@@ -1,5 +1,3 @@
-## 1. Что это вообще такое
-
 `UIViewControllerAnimatedTransitioning` — протокол, который **описывает анимацию перехода между двумя [[UIViewController]]**.
 
 Важно:
