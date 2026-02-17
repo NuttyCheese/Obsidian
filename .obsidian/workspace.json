@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "55d7e7a067a58de2",
+        "id": "a66a52c6d52a5bd4",
         "type": "tabs",
         "children": [
           {
-            "id": "c96ddc6a0e7a5a1e",
+            "id": "598e44332f4ce965",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/UIKit/UIFontPickerViewController.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "UIFontPickerViewController"
+              "title": "Новая вкладка"
             }
           }
         ]
@@ -53,10 +49,10 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "Sendable",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
-                "collapseAll": true,
+                "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
               },
@@ -194,34 +190,34 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "c96ddc6a0e7a5a1e",
+  "active": "e407b43c27bfa155",
   "lastOpenFiles": [
-    "Swift/Теория/UIKit/CollectionView/UICollectionView.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionView and UITableView.md",
-    "UITableViewFlowLayout.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionViewCell.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionViewController.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionViewDataSource.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionViewDelegate.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionViewDiffableDataSource.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionViewFlowLayout.md",
-    "UIEdgeInsets.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionViewLayout.md",
-    "UICollectionViewCompositionalLayout.md",
-    "Swift/Теория/UIKit/TableView/UITableView.md",
-    "Swift/Теория/UIKit/TableView/UITableViewCell.md",
-    "Swift/Теория/UIKit/TableView/UITableViewController.md",
-    "Swift/Теория/UIKit/TableView/UITableViewDataSource.md",
-    "Swift/Теория/UIKit/TableView/UITableViewDelegate.md",
-    "Swift/Теория/UIKit/TableView/UITableViewDiffableDataSource.md",
-    "Swift/Теория/UIKit/UIGestureRecognizer/UIGestureRecognizer.md",
-    "Swift/Теория/UIKit/UIGestureRecognizer/UILongPressGestureRecognizer.md",
-    "Swift/Теория/UIKit/UIGestureRecognizer/UIPanGestureRecognizer.md",
-    "Swift/Теория/UIKit/UIGestureRecognizer/UIPinchGestureRecognizer.md",
-    "Swift/Теория/UIKit/UIGestureRecognizer/UIRotationGestureRecognizer.md",
-    "Swift/Теория/UIKit/UIGestureRecognizer/UIScreenEdgePanGestureRecognizer.md",
-    "Swift/Теория/UIKit/UIGestureRecognizer/UISwipeGestureRecognizer.md",
+    "Swift/Теория/Monads/Writer Monad.md",
+    "Swift/Теория/Patterns/What patterns are used in iOS.md",
+    "viewDidLayoutSubviews.md",
+    "Swift/Теория/Контроль памяти/Value Type.md",
+    "value semantic.md",
+    "URLSessionConfiguration.md",
+    "Swift/Теория/Testing/Unit-test.md",
+    "Swift/Теория/Сетевое взаимодействие/URLRequest.md",
     "Swift/Теория/UIKit/UIGestureRecognizer/UITapGestureRecognizer.md",
+    "Swift/Теория/UIKit/UIGestureRecognizer/UIRotationGestureRecognizer.md",
+    "Swift/Теория/UIKit/UIGestureRecognizer/UILongPressGestureRecognizer.md",
+    "Swift/Теория/Общие вопросы/UIKit.md",
+    "Swift/Теория/UIKit/UIGestureRecognizer/UIGestureRecognizer.md",
+    "Swift/Теория/UIKit/UIColorPickerViewController.md",
+    "UIColor.md",
+    "Swift/Теория/UIKit/CollectionView/UICollectionViewCell.md",
+    "Swift/Теория/UIKit/CollectionView/UICollectionView and UITableView.md",
+    "Swift/Теория/UIKit/UIBarItem.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Tree.md",
+    "Swift/Теория/Testing/TDD.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/swapAt.md",
+    "super.init.md",
+    "Swift/Теория/Контроль памяти/struct = stack, class = heap.md",
+    "Swift/Теория/Контроль памяти/Stack and Heap.md",
+    "Swift/Теория/Контроль памяти/Stack.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/sort.md",
     "Swift/Теория/Patterns/Принципы",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",

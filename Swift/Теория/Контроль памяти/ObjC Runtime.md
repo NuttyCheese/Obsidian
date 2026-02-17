@@ -1,4 +1,4 @@
-#memory_control #obj-c 
+#objective_c #runtime #dynamic_dispatch #memory_management #ios_development
 **Objective-C Runtime** — это фундаментальная часть [[Objective-C]], которая обеспечивает **динамическую типизацию**, **динамическую загрузку классов**, **рефлексию** и **диспетчеризацию методов** во время выполнения программы.  
 Она существует как отдельная библиотека (`libobjc`) и до сих пор активно используется в [[iOS]]/macOS, даже в чистом [[Swift]]-коде (через мост к [[Foundation]]/[[UIKit]]/AppKit).
 

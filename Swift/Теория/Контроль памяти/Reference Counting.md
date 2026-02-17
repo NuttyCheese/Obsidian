@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#memory_management #reference_counting #arc #swift #ios_development
 **Счётчик ссылок** (Reference Counting) — это механизм, который отслеживает, сколько **сильных ссылок** (strong references) указывает на объект. Когда счётчик достигает **0**, объект автоматически освобождается из памяти.
 
 [[Swift]] использует **автоматический счётчик ссылок** — **[[ARC]]** (Automatic Reference Counting).  

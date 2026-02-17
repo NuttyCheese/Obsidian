@@ -1,4 +1,4 @@
-#memory_control #Swift 
+#swift #types #reference_type #memory_management #oop
 # Ссылочные типы (Reference Types) в [[Swift]]
 
 **Ссылочный тип** — это тип данных, экземпляры которого передаются **по ссылке**, а не по значению.  
@@ -51,7 +51,7 @@ print(alice2 === alice1)      // true — одна и та же сущность
 
 ### Реальные сценарии в iOS (2026)
 
-- **[[UIViewController]]**, **[[Swift/Расширения/UIView]]**, **[[NSObject]]**-подклассы — всегда reference types
+- **[[UIViewController]]**, **[[UIView]]**, **[[NSObject]]**-подклассы — всегда reference types
 - Делегаты / datasource / observers — обычно `weak var`
 - Замыкания, захватывающие `self` — **всегда** `[weak self]`
 - Кэши изображений / данных — [[NSCache]] или [[Dictionary]] с reference types

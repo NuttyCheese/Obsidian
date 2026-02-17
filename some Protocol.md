@@ -54,7 +54,7 @@ struct RealFactory: Factory {
 ### Когда `some` НЕЛЬЗЯ использовать
 
 - В свойствах [[struct]]/[[class]] (кроме computed property с getter)
-- В [[array]] / [[dictionary]] / [[set]]
+- В [[Array]] / [[dictionary]] / [[set]]
 - В параметрах функций (только [[any]])
 - В переменных, которые нужно присваивать разные conforming типы
 

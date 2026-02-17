@@ -39,7 +39,7 @@ UIView.animate(withDuration: 1.0) {
 }
 ```
 
-- [[Swift/Расширения/UIView]].animate сохраняет замыкание до завершения анимации → если self не слабый, возможен retain cycle.
+- [[UIView]].animate сохраняет замыкание до завершения анимации → если self не слабый, возможен retain cycle.
     
 
 ---

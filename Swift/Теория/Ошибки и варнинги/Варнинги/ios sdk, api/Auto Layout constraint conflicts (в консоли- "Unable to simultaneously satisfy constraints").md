@@ -104,7 +104,7 @@ heightConstraint.isActive = true
 
 ---
 
-#### 4️⃣ Отладка с [[Swift/Расширения/UIView]] методами
+#### 4️⃣ Отладка с [[UIView]] методами
 
 - `view.constraints` и `view.debugDescription` показывают текущие активные constraints.
     
