@@ -4,53 +4,39 @@
     "type": "split",
     "children": [
       {
-        "id": "a4de06e3cf6a223f",
+        "id": "77da0dbf347f598b",
         "type": "tabs",
         "children": [
           {
-            "id": "e184c1e962611be0",
+            "id": "76704a20240ba192",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/NSSQLiteStoreType.md",
+                "file": "Swift/Теория/Сторонние библиотеки и расширения/AFNetworking.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "NSSQLiteStoreType"
+              "title": "AFNetworking"
             }
           },
           {
-            "id": "4aa4d16ee0d1baf4",
+            "id": "d09e0fd108c70f40",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/NSObject.md",
+                "file": "Swift/Builder.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "NSObject"
-            }
-          },
-          {
-            "id": "19af8dd5977873e7",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/viewWillTransition.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "viewWillTransition"
+              "title": "Builder"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -185,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/viewWillTransition.md",
+                "file": "Swift/Builder.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура viewWillTransition"
+              "title": "Структура Builder"
             }
           },
           {
@@ -223,43 +209,43 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "19af8dd5977873e7",
+  "active": "d09e0fd108c70f40",
   "lastOpenFiles": [
-    "Swift/@IBAction.md",
-    "Swift/@globalActor.md",
-    "Swift/'…' is deprecated- first deprecated in iOS ….md",
-    "Swift/Расширения/ext+UIView.md",
-    "Swift/Расширения/ext+UITableView.md",
-    "Swift/Расширения/ext+UIColor.md",
-    "Swift/Расширения/ext+Array.md",
-    "Swift/Расширения/ext+Bool.md",
-    "Swift/Расширения/ext+Collection.md",
-    "Swift/Расширения/ext+UICollectionView.md",
-    "Swift/System Design/1. Основы проектирования систем/Архитектуры/Монолит.md",
-    "Swift/System Design/1. Основы проектирования систем/Архитектуры/Микросервисы.md",
-    "Swift/Быстрая сортировка.md",
-    "Swift/Как делать сборку.md",
-    "Swift/Линейный поиск.md",
+    "Swift/Теория/Swift/break.md",
+    "Swift/Теория/UIKit/bounds.md",
+    "Swift/Теория/Многопоточность/await.md",
+    "Swift/Теория/Swift/AVPlayer.md",
+    "Swift/Теория/Многопоточность/BlockOperation.md",
+    "Swift/Теория/Combine/Binding.md",
+    "Swift/Теория/Хранение данных/Binary.md",
+    "Swift/Теория/Фреймворк Apple/UIKit.md",
+    "Swift/Теория/Фреймворк Apple/Foundation.md",
+    "Swift/Теория/Фреймворк Apple/AVFoundation.md",
+    "Swift/Теория/Фреймворк Apple",
+    "Swift/Теория/Контроль памяти/autorelease.md",
+    "Swift/Теория/UIKit/Auto Layout.md",
+    "Swift/Теория/Ошибки и варнинги/Attempted to read an unowned reference but object was deallocated.md",
+    "Swift/Теория/Многопоточность/AsyncSequence.md",
+    "Swift/Теория/Swift/Atomic Operation.md",
+    "Swift/Теория/Многопоточность/async.md",
+    "Swift/Теория/Swift/AssociatedType.md",
+    "Swift/Теория/Swift/Associated value.md",
+    "Swift/Теория/Swift/as.md",
+    "Swift/Теория/Swift/Array.md",
+    "Swift/Теория/Ошибки и варнинги/Argument passed to call that takes no arguments.md",
+    "Swift/Теория/Общие вопросы/Application Life Cycle.md",
+    "Swift/Теория/Монады/Applicative functors.md",
+    "Swift/Теория/UIKit/AppDelegate.md",
+    "Swift/Теория/Общие вопросы/API.md",
+    "Swift/Теория/Swift/AnyObject.md",
+    "Swift/Теория/Методологии ведения проекта",
+    "Swift/Теория/UIKit/UIViewController life cycle",
     "remove_all_tags_final.py",
-    "Swift/YAGNI.md",
     "remove_all_tags.py",
-    "Swift/NSPredicate.md",
-    "Swift/NSValue.md",
-    "Swift/NSPersistentContainer.md",
-    "Swift/NSObjectProtocol.md",
-    "Swift/NSObject.md",
-    "Swift/NSSQLiteStoreType.md",
-    "Swift/Методология DevOps.md",
-    "Swift/Методология Kanban.md",
-    "Swift/Методология Scrum.md",
-    "Swift/Методология Waterfall.md",
     "add_thematic_tags.py",
     "fix_tag_spacing_one_line.py",
     "fix_tag_spacing.py",
     "remove_tags_complete.py",
-    "remove_tags_final.py",
-    "remove_tags.py",
-    "fix_tags_spacing.py",
-    "process_tags.py"
+    "remove_tags_final.py"
   ]
 }
