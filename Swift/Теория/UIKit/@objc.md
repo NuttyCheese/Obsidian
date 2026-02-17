@@ -1,6 +1,6 @@
-**@objc** — это атрибут в Swift, который делает объявленный элемент (класс, метод, свойство, протокол) **видимым и доступным** для **Objective-C runtime**.
+**@objc** — это атрибут в Swift, который делает объявленный элемент (класс, метод, свойство, протокол) **видимым и доступным** для **Objective-C [[runtime]]**.
 
-Без `@objc` Swift-элемент остаётся «закрытым» внутри Swift и недоступен для Objective-C кода, селекторов, KVO, Interface Builder и старого Objective-C API.
+Без `@objc` Swift-элемент остаётся «закрытым» внутри [[Swift]] и недоступен для Objective-C кода, селекторов, [[KVO]], Interface Builder и старого [[Objective-C]] [[API]].
 
 ### Зачем нужен @objc в 2026 году (реальные сценарии)
 
@@ -39,7 +39,7 @@ func tappedButton(_ sender: UIButton) { ... }
 ### Самые важные нюансы 2026 года
 
 - **@objc требует наследования от NSObject**  
-  Без `NSObject` (или класса, наследующего NSObject) `@objc` не скомпилируется.
+  Без `NSObject` (или класса, наследующего [[NSObject]]) `@objc` не скомпилируется.
 
 - **@objc + dynamic** — для KVO и полного динамического dispatch  
   `@objc` делает метод видимым, `dynamic` — заставляет использовать динамический dispatch (через runtime) вместо статического.
@@ -69,8 +69,6 @@ func tappedButton(_ sender: UIButton) { ... }
 
 **Короткий девиз 2026**:
 > @objc — это «мост» из Swift в Objective-C runtime.  
-> Пиши его, когда нужен селектор, KVO, Interface Builder, optional протоколы Objective-C или старый ObjC-код.  
-> В 2026 году @objc нужен везде, где есть #selector, @IBAction, KVO или Objective-C API.  
+> Пиши его, когда нужен селектор, KVO, Interface Builder, [[optional]] протоколы Objective-C или старый ObjC-код.  
+> В 2026 году @objc нужен везде, где есть #selector, [[@IBAction]], KVO или Objective-C API.  
 > Без него Swift-код остаётся «невидимым» для Objective-C мира.
-
-Удачи с селекторами, KVO и Interface Builder в Swift! 🔗

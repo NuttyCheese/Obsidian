@@ -1,19 +1,19 @@
-**AppDelegate** — это центральный класс в UIKit-приложениях, который реализует протокол **`UIApplicationDelegate`**.
+**AppDelegate** — это центральный класс в [[UIKit]]-приложениях, который реализует протокол **`UIApplicationDelegate`**.
 
 Он отвечает за **жизненный цикл всего приложения** и получает уведомления о ключевых системных событиях.
 
 ### Когда и зачем нужен AppDelegate в 2026 году
 
-| Сценарий                                      | Почему именно AppDelegate                              | Альтернатива в современных проектах |
-|-----------------------------------------------|--------------------------------------------------------|-------------------------------------|
-| Настройка при запуске приложения              | `didFinishLaunchingWithOptions` — первое место, где можно что-то сделать | SceneDelegate / @main + App struct (SwiftUI) |
-| Обработка push-уведомлений (remote/local)     | `didReceiveRemoteNotification`, `didRegisterForRemoteNotifications` | UNUserNotificationCenterDelegate |
-| Управление состоянием приложения (фон/активное) | `applicationDidEnterBackground`, `applicationDidBecomeActive` | SceneDelegate (в сценах) |
-| Настройка глобального окна (legacy UIKit)     | Создание `window` и `rootViewController`               | UIScene / UIWindowScene в iOS 13+ |
-| Регистрация сторонних сервисов (Firebase, Amplitude, Crashlytics) | Один раз при запуске                                   | AppDelegate или @main init |
-| Обработка URL-схем / Universal Links          | `application(_:open:options:)`                         | SceneDelegate или SwiftUI onOpenURL |
-| Управление ориентацией / поддержкой multitasking | `supportedInterfaceOrientationsFor`                    | Info.plist + SceneDelegate |
-| Завершение приложения / сохранение состояния   | `applicationWillTerminate` (редко вызывается)          | `applicationDidEnterBackground` |
+| Сценарий                                                          | Почему именно AppDelegate                                                | Альтернатива в современных проектах                  |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------- |
+| Настройка при запуске приложения                                  | `didFinishLaunchingWithOptions` — первое место, где можно что-то сделать | [[SceneDelegate]] / @main + App struct ([[SwiftUI]]) |
+| Обработка push-уведомлений (remote/local)                         | `didReceiveRemoteNotification`, `didRegisterForRemoteNotifications`      | [[UNUserNotificationCenterDelegate]]                 |
+| Управление состоянием приложения (фон/активное)                   | `applicationDidEnterBackground`, `applicationDidBecomeActive`            | SceneDelegate (в сценах)                             |
+| Настройка глобального окна (legacy UIKit)                         | Создание `window` и `rootViewController`                                 | UIScene / [[UIWindowScene]] в iOS 13+                |
+| Регистрация сторонних сервисов (Firebase, Amplitude, Crashlytics) | Один раз при запуске                                                     | AppDelegate или @main init                           |
+| Обработка URL-схем / Universal Links                              | `application(_:open:options:)`                                           | SceneDelegate или SwiftUI onOpenURL                  |
+| Управление ориентацией / поддержкой multitasking                  | `supportedInterfaceOrientationsFor`                                      | Info.plist + SceneDelegate                           |
+| Завершение приложения / сохранение состояния                      | `applicationWillTerminate` (редко вызывается)                            | `applicationDidEnterBackground`                      |
 
 ### Современный AppDelegate 2026 (минимальный + полезный)
 
@@ -96,7 +96,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 2. Реализовать `didFinishLaunchingWithOptions` — здесь вся инициализация  
 3. Добавить обработку состояний: `DidBecomeActive`, `DidEnterBackground`, `WillTerminate`  
 4. Настроить push (регистрация + получение)  
-5. (Опционально) добавить поддержку URL-схем, Universal Links, Handoff, Siri Shortcuts  
+5. (Опционально) добавить поддержку [[URL]]-схем, [[Universal Link]], Handoff, Siri Shortcuts  
 6. Использовать **SceneDelegate** / **SwiftUI App** для управления окнами и сценами (если проект не чистый legacy UIKit)
 
 ### Короткий девиз 2026
@@ -104,5 +104,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 > AppDelegate — это «мозг» всего приложения: он ловит запуск, фон, уведомления, токены и все глобальные события.  
 > В 2026 году в новых проектах его роль уменьшилась (многое ушло в SceneDelegate и @main), но он всё ещё **обязателен** для push, Firebase, аналитики и глобальной инициализации.  
 > Пиши минимум кода, но обязательно обрабатывай ключевые состояния.
-
-Удачи с правильным запуском и жизненным циклом приложения в Swift! 🚀

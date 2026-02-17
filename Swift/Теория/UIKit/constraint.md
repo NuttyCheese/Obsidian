@@ -1,5 +1,5 @@
 #uikit #Swift #ios 
-**Constraint** (ограничение) — это основная единица **Auto Layout** в UIKit. Оно описывает **математическое отношение** между двумя элементами интерфейса (или между элементом и его контейнером/супервиу), которое система должна соблюдать при расчёте layout.
+**Constraint** (ограничение) — это основная единица **[[Auto Layout]]** в [[UIKit]]. Оно описывает **математическое отношение** между двумя элементами интерфейса (или между элементом и его контейнером/супервиу), которое система должна соблюдать при расчёте layout.
 
 Каждое ограничение решает уравнение вида:
 
@@ -12,13 +12,13 @@
 
 ### Основные способы создания Constraint в 2026 году
 
-| Способ                              | Уровень современности | Когда использовать в 2026 | Пример кода (коротко) |
-|-------------------------------------|-------------------------|----------------------------|-----------------------|
-| **NSLayoutAnchor** (рекомендуемый)  | ★★★★★                  | Всегда, если пишешь UIKit вручную | `view.topAnchor.constraint(equalTo: superview.topAnchor, constant: 20).isActive = true` |
-| **NSLayoutConstraint.activate([...])** | ★★★★☆                  | Когда много констрейнтов сразу     | `NSLayoutConstraint.activate([v1.leadingAnchor.constraint(equalTo: v2.trailingAnchor, constant: 8), ...])` |
-| **SnapKit**                         | ★★★★☆                  | Если хочешь читаемый и лаконичный код | `view.snp.makeConstraints { $0.top.equalToSuperview().offset(20) }` |
-| **SwiftUI .frame / .offset / .padding** | ★★★★★ (в SwiftUI)     | Если проект на SwiftUI             | `Text("Hello").frame(width: 100, height: 50)` |
-| **VFL (Visual Format Language)**    | ★☆☆☆☆                  | Только legacy / очень редкие случаи | `NSLayoutConstraint.constraints(withVisualFormat: "H:|-16-[v]-16-|", ...)` |
+| Способ                                      | Уровень современности | Когда использовать в 2026             | Пример кода (коротко)                                                                                      |             |          |
+| ------------------------------------------- | --------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------- | -------- |
+| **[[NSLayoutAnchor]]** (рекомендуемый)      | ★★★★★                 | Всегда, если пишешь UIKit вручную     | `view.topAnchor.constraint(equalTo: superview.topAnchor, constant: 20).isActive = true`                    |             |          |
+| **[[NSLayoutConstraint]].activate([...])**  | ★★★★☆                 | Когда много констрейнтов сразу        | `NSLayoutConstraint.activate([v1.leadingAnchor.constraint(equalTo: v2.trailingAnchor, constant: 8), ...])` |             |          |
+| **[[SnapKit]]**                             | ★★★★☆                 | Если хочешь читаемый и лаконичный код | `view.snp.makeConstraints { $0.top.equalToSuperview().offset(20) }`                                        |             |          |
+| **[[SwiftUI]] .frame / .offset / .padding** | ★★★★★ (в SwiftUI)     | Если проект на SwiftUI                | `Text("Hello").frame(width: 100, height: 50)`                                                              |             |          |
+| **VFL (Visual Format Language)**            | ★☆☆☆☆                 | Только legacy / очень редкие случаи   | `NSLayoutConstraint.constraints(withVisualFormat: "H:                                                      | -16-[v]-16- | ", ...)` |
 
 ### Самый популярный и рекомендуемый паттерн 2026 года (NSLayoutAnchor + activate)
 
@@ -95,12 +95,10 @@ constraint.isActive = true
 - **constant** — используй для отступов (положительные = внутрь, отрицательные = наружу)  
 - **multiplier** — для пропорций (например, width = height × 1.618 — золотое сечение)  
 - **@MainActor** — все операции с constraints — на главном акторе  
-- **Swift 6 strict concurrency** — NSLayoutConstraint полностью Sendable-safe  
+- **Swift 6 strict concurrency** — NSLayoutConstraint полностью [[Sendable]]-safe  
 - **Документируйте** — пиши комментарий «NSLayoutConstraint — адаптивный layout с safe area»
 
 **Короткий девиз 2026**:
 > Constraint — это математическое правило «этот край = тот край + 16» или «ширина = высота × 1.5».  
 > В 2026 году **единственный современный** способ — **NSLayoutAnchor + activate**.  
 > SnapKit — для читаемости, SwiftUI — для новых проектов, VFL — уже почти мёртв.
-
-Удачи с идеально адаптивным и читаемым Auto Layout в Swift! 📏
