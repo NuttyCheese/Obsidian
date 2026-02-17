@@ -1,162 +1,106 @@
-## 1. Что такое `@IBAction`
+**@IBAction** — это специальный атрибут в Swift, который делает метод **видимым и доступным** для **Interface Builder** (IB) в Xcode.
 
-**`@IBAction`** — это специальный атрибут [[Swift]], который делает метод доступным для **Interface Builder**.
+Он позволяет **привязывать** методы к событиям UI-элементов (кнопки, переключатели, слайдеры, жесты и т.д.) прямо в визуальном редакторе — без написания кода `addTarget(_:action:)` вручную.
 
-- Используется в **[[UIViewController]] или классах, наследующих NSObject**
-    
-- Позволяет привязывать метод к событиям UI, например:
-    
-    - кнопка нажата ([[TouchUpInside]])
-        
-    - переключатель изменён (`Value Changed`)
-        
-- На самом деле, под капотом метод помечается как **`@objc`**, чтобы его можно было вызвать через [[Objective-C]] [[Runtime]]
-    
+### Главное, для чего нужен @IBAction (2026 актуально)
 
-> Проще говоря: `@IBAction` = «метод, который Interface Builder может вызвать при взаимодействии пользователя с UI».
+- Связывает **UI-событие** (нажатие кнопки, изменение слайдера, выбор сегмента и т.д.) с методом в коде
+- Работает **только** с элементами, которые наследуются от `UIControl` или поддерживают target-action (UIButton, UISwitch, UISlider, UISegmentedControl, UITextField, UIBarButtonItem и т.д.)
+- Под капотом автоматически добавляет **`@objc`** — метод становится видимым для Objective-C runtime
+- Позволяет **drag-and-drop** подключение в Interface Builder (Ctrl+Drag от элемента к коду)
 
----
-
-## 2. Основные термины
-
-|Термин|Описание|
-|---|---|
-|**Interface Builder**|Визуальный редактор интерфейсов в Xcode|
-|**Target-Action**|Механизм, который связывает UI-элемент с методом|
-|**Selector**|Уникальный идентификатор метода (`#selector`)|
-|**IBAction**|Атрибут Swift для связи метода с UI-событием|
-|**@objc**|Атрибут, который делает метод доступным для Objective-C runtime|
-
----
-
-## 3. Основной синтаксис
+### Ключевые правила написания @IBAction
 
 ```swift
-import UIKit
+@IBAction func имяМетода(_ sender: ТипЭлемента) {
+    // код
+}
+```
 
-class ViewController: UIViewController {
-    @IBAction func buttonTapped(_ sender: UIButton) {
-        print("Button tapped!")
+- **@IBAction** — обязательно перед func
+- **sender** — параметр, через который приходит объект, вызвавший действие (обычно UIButton, UISwitch и т.д.)
+- Тип sender можно указывать конкретно (UIButton) или общо (Any, UIControl)
+- Метод может быть **private**, но тогда подключение в IB нужно делать вручную
+
+### Самые частые примеры (2026 стиль)
+
+#### 1. Кнопка (самый популярный случай)
+
+```swift
+@IBAction func loginButtonTapped(_ sender: UIButton) {
+    print("Кнопка Войти нажата")
+    // Логика входа
+}
+```
+
+#### 2. Переключатель (UISwitch)
+
+```swift
+@IBAction func darkModeSwitchChanged(_ sender: UISwitch) {
+    let isOn = sender.isOn
+    overrideUserInterfaceStyle = isOn ? .dark : .light
+}
+```
+
+#### 3. Слайдер (UISlider)
+
+```swift
+@IBAction func volumeSliderChanged(_ sender: UISlider) {
+    let value = sender.value  // от 0.0 до 1.0
+    player?.volume = value
+}
+```
+
+#### 4. Сегментированный контрол (UISegmentedControl)
+
+```swift
+@IBAction func segmentChanged(_ sender: UISegmentedControl) {
+    let index = sender.selectedSegmentIndex
+    switch index {
+    case 0: showGridView()
+    case 1: showListView()
+    default: break
     }
 }
 ```
 
-- `_ sender: UIButton` — ссылка на элемент, вызвавший действие
-    
-- Метод можно подключить к кнопке в Interface Builder
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Кнопка с простым действием
+#### 5. Один метод на несколько элементов (общий sender)
 
 ```swift
-@IBAction func buttonPressed(_ sender: UIButton) {
-    print("Button pressed")
-}
-```
-
-- При нажатии кнопки в UI вызовется этот метод
-    
-
----
-
-### Пример 2. [[UISwitch]]
-
-```swift
-@IBAction func switchChanged(_ sender: UISwitch) {
-    if sender.isOn {
-        print("Switch is ON")
-    } else {
-        print("Switch is OFF")
+@IBAction func controlValueChanged(_ sender: UIControl) {
+    switch sender {
+    case let button as UIButton:
+        print("Нажата кнопка с тегом \(button.tag)")
+    case let switchControl as UISwitch:
+        print("Переключатель: \(switchControl.isOn ? "Вкл" : "Выкл")")
+    case let slider as UISlider:
+        print("Слайдер: \(slider.value)")
+    default:
+        break
     }
 }
 ```
 
-- Используется для отслеживания **состояния переключателей**
-    
+### Важные нюансы 2026 года
 
----
-
-### Пример 3. [[UISlider]]
+- **@IBAction** работает **только** с Interface Builder  
+  Если ты добавляешь target-action в коде — пиши просто `@objc func`, без @IBAction
+- **sender** можно опустить (редко):
 
 ```swift
-@IBAction func sliderChanged(_ sender: UISlider) {
-    print("Slider value: \(sender.value)")
+@IBAction func simpleTap() {
+    print("Тапнули")
 }
 ```
 
-- Позволяет получить **текущее значение ползунка**
-    
+- **Несколько событий на один метод** — подключай несколько раз в IB к разным событиям (Touch Up Inside, Value Changed и т.д.)
+- **Swift 6 strict concurrency** — @IBAction-методы вызываются на главном потоке → безопасны  
+  Но если внутри вызываешь async код — оборачивай в Task { await ... }
+- **Документируйте** — пиши комментарий «@IBAction — обработка нажатия кнопки Войти»
 
----
+**Короткий девиз 2026**:
+> @IBAction — это когда ты хочешь **соединить кнопку/переключатель/слайдер с методом в коде** прямо в Interface Builder.  
+> В 2026 году это **самый удобный** способ привязки UI-событий в UIKit-проектах со Storyboard/XIB.  
+> В чистом коде (без IB) — используй просто @objc + addTarget.
 
-### Пример 4. [[UIButton]] с анимацией
-
-```swift
-@IBAction func animateButton(_ sender: UIButton) {
-    UIView.animate(withDuration: 0.5) {
-        sender.alpha = 0.5
-    }
-}
-```
-
-- Можно добавить **анимацию или логику изменения UI**
-    
-
----
-
-### Пример 5. Использование с multiple sender types
-
-```swift
-@IBAction func controlChanged(_ sender: UIControl) {
-    if let button = sender as? UIButton {
-        print("Button tapped: \(button.tag)")
-    } else if let slider = sender as? UISlider {
-        print("Slider value: \(slider.value)")
-    }
-}
-```
-
-- Один метод может обрабатывать **несколько типов UI-элементов**
-    
-
----
-
-## 5. Особенности @IBAction
-
-1. Метод должен быть **func**, обычно с параметром `sender`
-    
-2. Под капотом — это **`@objc`**
-    
-3. Используется только с **UI-элементами в Interface Builder**
-    
-4. Может быть **private**, но тогда подключение в IB может потребовать ручного соединения
-    
-5. Позволяет обрабатывать **события UI без прямого кода добавления target-action**
-    
-
----
-
-## 6. Итог
-
-- **@IBAction** = метод для связывания с UI-событиями
-    
-- Позволяет:
-    
-    - Кнопкам (`UIButton`)
-        
-    - Переключателям (`UISwitch`)
-        
-    - Ползункам (`UISlider`)
-        
-    - Другим контролам реагировать на действия пользователя
-        
-- Работает через **Objective-C runtime** и селекторы
-    
-- Может быть read-only ([[func]]) и optional (через optional targets)
-    
-
----
+Удачи с быстрым и удобным подключением действий в интерфейсе! 🎛️

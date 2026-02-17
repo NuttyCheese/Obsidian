@@ -1,35 +1,140 @@
-`UICollectionViewDataSource` - это протокол в фреймворке [[UIKit]], который используется для предоставления данных и управления содержимым коллекционного представления (`UICollectionView`). Этот протокол определяет методы, которые ваше приложение должно реализовать, чтобы сообщить коллекционному представлению о количестве секций, элементов в каждой секции и представлении каждого элемента.
+**UICollectionViewDataSource** — это протокол в UIKit, который отвечает за **предоставление данных** коллекционному представлению (`UICollectionView`).
 
-Вот основные методы протокола `UICollectionViewDataSource`:
+Он говорит коллекции:
+- сколько у неё секций
+- сколько элементов в каждой секции
+- какую ячейку показать для каждого индекса
 
-1. `collectionView(_:numberOfItemsInSection:)`: Этот метод запрашивает количество элементов (ячеек) в указанной секции коллекции. Вам нужно вернуть количество элементов в указанной секции.
+Это **обязательный** протокол — без него коллекция просто не сможет отобразить ничего.
 
-2. `collectionView(_:cellForItemAt:)`: Этот метод запрашивает представление ячейки для конкретного индекса (indexPath) в коллекции. Вам нужно создать или получить ячейку и настроить ее, а затем вернуть ее для отображения в коллекции.
+### Обязательные методы (must implement)
 
-3. Дополнительные методы: Помимо основных методов, `UICollectionViewDataSource` также содержит другие методы для поддержки перемещения элементов, изменения секций и других операций. Однако эти методы не являются обязательными для реализации.
+| Метод                                              | Что возвращает                                 | Самый частый пример реализации 2026 |
+|----------------------------------------------------|------------------------------------------------|-------------------------------------|
+| `collectionView(_:numberOfItemsInSection:)`        | Количество элементов в конкретной секции       | `return items.count` или `data[section].count` |
+| `collectionView(_:cellForItemAt:)`                 | Готовую ячейку для показа по indexPath         | `dequeueReusableCell` → `configure(with:)` → `return cell` |
 
-Пример реализации протокола `UICollectionViewDataSource`:
+### Очень часто реализуемые (но необязательные) методы
+
+| Метод                                              | Что делает                                     | Когда обычно нужен |
+|----------------------------------------------------|------------------------------------------------|---------------------|
+| `numberOfSections(in:)`                            | Сколько секций всего                           | Почти всегда (по умолчанию 1) |
+| `collectionView(_:viewForSupplementaryElementOfKind:at:)` | Заголовки, футеры, decoration views            | При использовании headers/footers |
+| `collectionView(_:canMoveItemAt:)`                 | Можно ли перетаскивать элемент                 | Drag & drop поддержка |
+| `collectionView(_:moveItemAt:to:)`                 | Обработка перемещения элемента                 | Drag & drop |
+
+### Самый современный и рекомендуемый паттерн 2026 года
+
+#### Вариант 1 — Классический dataSource (для простых коллекций)
 
 ```swift
-class MyCollectionViewController: UICollectionViewController {
+class PhotosViewController: UIViewController {
     
-    // Реализация метода для определения количества секций в коллекции
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+    private var photos: [Photo] = []
+    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self  // если нужен didSelect и т.д.
+        collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: "PhotoCell")
+        
+        // ... constraints для collectionView
+    }
+}
+
+extension PhotosViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return photos.count
     }
     
-    // Реализация метода для определения количества элементов в секции
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return data.count
-    }
-    
-    // Реализация метода для создания и настройки ячейки коллекции
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MyCell", for: indexPath) as! MyCollectionViewCell
-        cell.textLabel.text = data[indexPath.item]
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
+        let photo = photos[indexPath.item]
+        cell.configure(with: photo)
         return cell
     }
 }
 ```
 
-В этом примере `MyCollectionViewController` является классом, управляющим коллекцией. Он реализует методы протокола `UICollectionViewDataSource` для определения количества секций, элементов в каждой секции и настройки представления каждого элемента.
+#### Вариант 2 — Самый рекомендуемый в 2026: **UICollectionViewDiffableDataSource** (снимки + анимации)
+
+```swift
+class PhotosViewController: UIViewController {
+    
+    enum Section {
+        case main
+    }
+    
+    private typealias DataSource = UICollectionViewDiffableDataSource<Section, Photo>
+    private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Photo>
+    
+    private var dataSource: DataSource!
+    private var collectionView: UICollectionView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        configureCollectionView()
+        configureDataSource()
+        applyInitialSnapshot()
+    }
+    
+    private func configureCollectionView() {
+        let layout = UICollectionViewCompositionalLayout { _, _ in
+            let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1.0),
+                                                                heightDimension: .fractionalHeight(1.0)))
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .fractionalWidth(1.0),
+                                                                             heightDimension: .absolute(150)), subitems: [item])
+            return NSCollectionLayoutSection(group: group)
+        }
+        
+        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(collectionView)
+    }
+    
+    private func configureDataSource() {
+        dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, photo in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
+            cell.configure(with: photo)
+            return cell
+        }
+    }
+    
+    private func applyInitialSnapshot() {
+        var snapshot = Snapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(photos, toSection: .main)
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
+    // При обновлении данных
+    func updatePhotos(_ newPhotos: [Photo]) {
+        var snapshot = Snapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(newPhotos, toSection: .main)
+        dataSource.apply(snapshot, animatingDifferences: true)
+    }
+}
+```
+
+### Короткий чек-лист «Что нужно сделать, чтобы UICollectionViewDataSource заработал»
+
+1. Создать UICollectionView  
+2. Зарегистрировать ячейки (обязательно!)  
+3. Назначить dataSource (self или отдельный объект)  
+4. Реализовать минимум два метода:
+   - `numberOfItemsInSection`  
+   - `cellForItemAt`  
+5. Вызвать `reloadData()` или применить snapshot при изменении данных  
+
+### Короткий девиз 2026
+
+> UICollectionViewDataSource — это когда ты говоришь коллекции:  
+> «сколько у меня элементов, и какую ячейку показать на этом месте».  
+> В 2026 году **рекомендуется** использовать **DiffableDataSource** — он даёт анимации, производительность и меньше багов.
+
+Удачи с быстрой и красивой коллекцией! 📸

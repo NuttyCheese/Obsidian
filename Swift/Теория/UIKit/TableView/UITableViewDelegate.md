@@ -1,56 +1,138 @@
-`UITableViewDelegate` - это протокол в [[iOS]] SDK, который определяет методы для настройки и управления поведением таблицы ([[Swift/Теория/UIKit/TableView/UITableView]]). Объект, который реализует этот протокол, действует в качестве делегата для таблицы и может обрабатывать события, такие как выбор строки, изменение высоты строк, заголовков и другие.
+**UITableViewDelegate** — это протокол в UIKit, который отвечает за **взаимодействие пользователя** с таблицей и **управление её поведением** (в отличие от `UITableViewDataSource`, который только даёт данные).
 
-Некоторые основные методы `UITableViewDelegate`:
+Он обрабатывает:
 
-1. **tableView(_:didSelectRowAt:)**: Этот метод вызывается при выборе строки пользователем. Он позволяет реагировать на выбор определенной строки и выполнять соответствующие действия.
-    
-2. **tableView(_:heightForRowAt:)**: Этот метод возвращает высоту строки для указанной строки таблицы. Он используется, если вы хотите, чтобы строки имели разную высоту.
-    
-3. **tableView(_:viewForHeaderInSection:)**: Этот метод возвращает представление (view) для заголовка указанной секции. Он используется, когда в таблице есть секции и требуется настроить внешний вид заголовка.
-    
-4. **tableView(_:didEndDisplaying:forRowAt:)**: Этот метод вызывается после того, как строка перестала отображаться на экране. Он может быть использован для выполнения дополнительных действий, например, когда нужно освободить ресурсы строки.
-    
-5. **tableView(_:willDisplayHeaderView:forSection:)**: Этот метод вызывается перед отображением заголовка секции на экране. Он позволяет настроить внешний вид заголовка перед его отображением.
-    
+- нажатия и выделение строк  
+- высоту строк, заголовков, футеров  
+- подсветку / unhighlight  
+- появление/исчезновение строк  
+- скролл, swipe actions, editing mode и многое другое
 
-Пример использования `UITableViewDelegate`:
+### Обязательные методы?  
+Нет обязательных.  
+Все методы **опциональные** — реализуй только то, что нужно.
+
+### Самые важные методы в 2026 году (реальный топ)
+
+| Метод                                              | Когда вызывается                                  | Самый частый пример использования 2026 |
+|----------------------------------------------------|---------------------------------------------------|----------------------------------------|
+| `tableView(_:didSelectRowAt:)`                     | Пользователь нажал на строку                      | Открыть детальный экран, показать алерт |
+| `tableView(_:didDeselectRowAt:)`                   | Строка потеряла выделение                         | Снять выделение, обновить UI           |
+| `tableView(_:heightForRowAt:)`                     | Запрос высоты строки                              | Динамическая высота (UITableView.automaticDimension) |
+| `tableView(_:didHighlightRowAt:)` / `didUnhighlightRowAt:` | Строка нажата / отпущена (touch down/up)          | Анимация нажатия (scale 0.97, alpha 0.8) |
+| `tableView(_:willDisplay:forRowAt:)`               | Строка вот-вот появится на экране                 | Prefetch изображений, анимации входа   |
+| `tableView(_:didEndDisplaying:forRowAt:)`          | Строка ушла с экрана                              | Отменить загрузку изображений          |
+| `tableView(_:trailingSwipeActionsConfigurationForRowAt:)` | Swipe справа (удалить, редактировать)             | .delete, .edit, custom actions         |
+| `tableView(_:leadingSwipeActionsConfigurationForRowAt:)` | Swipe слева (архивировать, пометить)              | .archive, .flag                        |
+| `scrollViewDidScroll(_:)` (из UIScrollViewDelegate) | Прокрутка таблицы                                 | Parallax header, sticky sections       |
+
+### Самый современный паттерн 2026 (с DiffableDataSource + @MainActor)
+
 ```swift
-import UIKit
-
-class MyTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    let data = ["Item 1", "Item 2", "Item 3"]
+@MainActor
+class TasksViewController: UIViewController {
+    
+    private let tableView = UITableView(frame: .zero, style: .insetGrouped)
+    private var dataSource: UITableViewDiffableDataSource<Int, Task>!
+    private var tasks: [Task] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let tableView = UITableView(frame: view.bounds, style: .plain)
-        tableView.dataSource = self
-        tableView.delegate = self // Установка делегата
+        tableView.delegate = self
+        tableView.register(TaskCell.self, forCellReuseIdentifier: "TaskCell")
+        
         view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        configureDataSource()
+        loadTasks()
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+    private func configureDataSource() {
+        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, task in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TaskCell", for: indexPath) as! TaskCell
+            cell.configure(with: task)
+            return cell
+        }
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+    private func loadTasks() {
+        // ... загрузка данных
+        applySnapshot()
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        cell.textLabel?.text = data[indexPath.row]
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Выбрана строка с индексом \(indexPath.row)")
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50 // Возвращаем высоту строки
+    private func applySnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Task>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(tasks)
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
+extension TasksViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        guard let task = dataSource.itemIdentifier(for: indexPath) else { return }
+        // Открыть детальный экран
+        let detailVC = TaskDetailViewController(task: task)
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, 
+                  trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, completion in
+            // Удаление задачи
+            completion(true)
+        }
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+    
+    func tableView(_ tableView: UITableView, 
+                  didHighlightRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) {
+            UIView.animate(withDuration: 0.15) {
+                cell.transform = CGAffineTransform(scaleX: 0.97, y: 0.97)
+                cell.contentView.alpha = 0.85
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, 
+                  didUnhighlightRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) {
+            UIView.animate(withDuration: 0.15) {
+                cell.transform = .identity
+                cell.contentView.alpha = 1.0
+            }
+        }
+    }
+}
 ```
-В этом примере используется `UITableViewDelegate` для обработки событий выбора строки (`didSelectRowAt`) и настройки высоты строк таблицы (`heightForRowAt`). Делегат также используется для настройки и управления другими аспектами поведения таблицы в зависимости от потребностей приложения.
+
+### Лучшие практики UITableViewDelegate в Swift 2026
+
+- **delegate = self** — чаще всего контроллер сам себе делегат  
+- **didSelectRowAt** — основной метод для обработки нажатия (всегда deselectRow)  
+- **didHighlight / didUnhighlight** — для красивой анимации нажатия (scale 0.97, alpha 0.85)  
+- **trailingSwipeActionsConfigurationForRowAt** — для swipe-to-delete / edit (iOS 11+)  
+- **heightForRowAt** — используй `UITableView.automaticDimension` для динамической высоты  
+- **@MainActor** — весь контроллер или методы делегата — на главном акторе  
+- **Swift 6 strict concurrency** — UITableViewDelegate методы вызываются на главном потоке → безопасно  
+- **Документируйте** — пиши комментарий «UITableViewDelegate — обработка выбора, swipe и анимации нажатия»
+
+**Короткий девиз 2026**:
+> UITableViewDelegate — это когда ты говоришь таблице:  
+> «что делать, когда пользователь нажал строку, подсветил её, начал скроллить или строка появилась/исчезла».  
+> В 2026 году основные методы — didSelect, didHighlight/didUnhighlight, swipe actions и heightForRowAt.  
+> Всё остальное — в DiffableDataSource или Compositional Layout.
+
+Удачи с отзывчивым и красивым списком! 📱

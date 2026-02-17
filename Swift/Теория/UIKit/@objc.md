@@ -1,185 +1,76 @@
-## 1. Что такое `@objc`
+**@objc** — это атрибут в Swift, который делает объявленный элемент (класс, метод, свойство, протокол) **видимым и доступным** для **Objective-C runtime**.
 
-**`@objc`** — это атрибут, который делает [[Swift]]-элемент доступным для **[[Objective-C]] [[Runtime]]**.
+Без `@objc` Swift-элемент остаётся «закрытым» внутри Swift и недоступен для Objective-C кода, селекторов, KVO, Interface Builder и старого Objective-C API.
 
-- Используется для **классов, методов, свойств, протоколов**
-    
-- Позволяет:
-    
-    - Вызывать Swift из Objective-C
-        
-    - Использовать селекторы ([[#selector]])
-        
-    - Подключать методы к [[@IBAction]], [[@IBOutlet]]
-        
-    - Работать с KVO (Key-Value Observing)
-        
+### Зачем нужен @objc в 2026 году (реальные сценарии)
 
-> Проще говоря: `@objc` = «сделай Swift-элемент доступным Objective-C».
+| Сценарий                                      | Почему нужен именно @objc                              | Пример |
+|-----------------------------------------------|--------------------------------------------------------|--------|
+| Использование `#selector`                     | Селекторы — это Objective-C механизм                   | `button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)` |
+| `@IBAction` и `@IBOutlet` в Interface Builder | IB работает через Objective-C runtime                  | `@IBAction func tapped(_ sender: UIButton)` |
+| Key-Value Observing (KVO)                     | KVO — чисто Objective-C фича                           | `@objc dynamic var age: Int` |
+| Опциональные методы в протоколах              | Objective-C протоколы поддерживают optional методы     | `@objc optional func optionalMethod()` |
+| Вызов из Objective-C кода                     | Старый код / библиотеки на ObjC                        | Редко, но встречается в legacy |
+| `Timer`, `NotificationCenter`, `performSelector` | Все эти API используют селекторы                      | `Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(tick), ...)` |
+| Динамический вызов методов                    | `performSelector`, `responds(to:)` и т.д.              | Редко, но нужно для низкоуровневой магии |
 
----
-
-## 2. Основные термины
-
-| Термин                        | Описание                                                                               |
-| ----------------------------- | -------------------------------------------------------------------------------------- |
-| **Objective-C Runtime**       | Среда выполнения Objective-C, которая управляет селекторами, KVO, динамическим вызовом |
-| **Selector**                  | Уникальный идентификатор метода (`#selector`)                                          |
-| **IBAction / IBOutlet**       | Атрибуты для UI в Interface Builder, требуют `@objc`                                   |
-| **Dynamic Dispatch**          | Вызов метода через runtime, а не напрямую                                              |
-| **Optional Protocol Methods** | Методы протоколов Objective-C, которые могут быть опциональными                        |
-
----
-
-## 3. Основной синтаксис
+### Ключевые правила и синтаксис @objc
 
 ```swift
-import UIKit
+// 1. Метод с селектором
+@objc func buttonTapped(_ sender: UIButton) { ... }
 
-class MyViewController: UIViewController {
-    @objc func buttonTapped() {
-        print("Button tapped")
-    }
-}
-```
+// 2. Свойство для KVO
+@objc dynamic var counter: Int = 0
 
-- `@objc` делает метод доступным **для Objective-C runtime**
-    
-- Можно использовать с `#selector`
-    
+// 3. Класс целиком (все публичные методы/свойства становятся @objc)
+@objc class MyClass: NSObject { ... }
 
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Selector
-
-```swift
-let button = UIButton()
-button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-
-@objc func buttonTapped() {
-    print("Button pressed")
-}
-```
-
-- Метод доступен через селектор
-    
-- Без `@objc` компилятор не даст использовать `#selector`
-    
-
----
-
-### Пример 2. @objc с properties
-
-```swift
-class Person: NSObject {
-    @objc var name: String = "Alice"
-}
-
-let person = Person()
-print(person.name)
-```
-
-- Свойство становится **доступным через Objective-C**
-    
-
----
-
-### Пример 3. @objc и KVO
-
-```swift
-class Person: NSObject {
-    @objc dynamic var age: Int = 0
-}
-
-let person = Person()
-let observation = person.observe(\.age, options: [.new]) { object, change in
-    print("Age changed to \(change.newValue!)")
-}
-
-person.age = 25 // Выведет: Age changed to 25
-```
-
-- `@objc dynamic` позволяет **использовать Key-Value Observing**
-    
-
----
-
-### Пример 4. @objc с optional protocol methods
-
-```swift
+// 4. Протокол с optional методами
 @objc protocol MyDelegate {
-    @objc optional func didFinishTask()
+    @objc optional func optionalMethod()
 }
 
-class TaskHandler: NSObject, MyDelegate {
-    func didFinishTask() {
-        print("Task finished")
-    }
-}
+// 5. Переименовать селектор (редко, но полезно)
+@objc(buttonWasTapped:)
+func tappedButton(_ sender: UIButton) { ... }
 ```
 
-- Протоколы Objective-C поддерживают **опциональные методы**
-    
-- Swift требует `@objc optional`
-    
+### Самые важные нюансы 2026 года
 
----
+- **@objc требует наследования от NSObject**  
+  Без `NSObject` (или класса, наследующего NSObject) `@objc` не скомпилируется.
 
-### Пример 5. Использование с таймером
+- **@objc + dynamic** — для KVO и полного динамического dispatch  
+  `@objc` делает метод видимым, `dynamic` — заставляет использовать динамический dispatch (через runtime) вместо статического.
 
 ```swift
-class TimerExample: NSObject {
-    var timer: Timer?
-
-    func startTimer() {
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
-    }
-
-    @objc func timerFired() {
-        print("Timer fired")
-    }
-}
+@objc dynamic var name: String = ""  // KVO будет работать
 ```
 
-- Метод таймера должен быть `@objc`, чтобы runtime смог вызвать его
-    
+- **private @objc** — разрешено, но селектор всё равно будет доступен  
+  Можно использовать `#selector(MyClass.privateMethod)` даже если метод private.
 
----
+- **@objc без параметров** — для свойств и методов без аргументов  
+  `@objc var isEnabled: Bool`
 
-## 5. Особенности `@objc`
+- **Swift 6 strict concurrency**  
+  `@objc` методы вызываются на главном потоке → безопасны, но если внутри async — используй `Task { @MainActor in ... }`
 
-1. Делает Swift-код доступным **для Objective-C runtime**
-    
-2. Используется с **методами, свойствами, протоколами**
-    
-3. Обязателен для **селекторов, IBAction, KVO, optional methods**
-    
-4. Может быть использован только с **классами наследниками NSObject**
-    
-5. Совмещается с `dynamic` для динамического вызова
-    
+### Короткий чек-лист «Когда писать @objc»
 
----
+- Нужно `#selector` — да  
+- `@IBAction` / `@IBOutlet` — да (автоматически добавляется)  
+- KVO (`observe(\.keyPath)`) — да + `dynamic`  
+- Optional протоколы Objective-C — да  
+- `Timer`, `performSelector`, `NotificationCenter` с селектором — да  
+- Вызов из Objective-C кода — да  
+- Чистый Swift без ObjC-runtime — **нет**
 
-## 6. Итог
+**Короткий девиз 2026**:
+> @objc — это «мост» из Swift в Objective-C runtime.  
+> Пиши его, когда нужен селектор, KVO, Interface Builder, optional протоколы Objective-C или старый ObjC-код.  
+> В 2026 году @objc нужен везде, где есть #selector, @IBAction, KVO или Objective-C API.  
+> Без него Swift-код остаётся «невидимым» для Objective-C мира.
 
-- **@objc** = мост между Swift и Objective-C
-    
-- Используется для:
-    
-    - Селекторов (`#selector`)
-        
-    - IBAction / IBOutlet
-        
-    - KVO (`dynamic`)
-        
-    - Optional protocol methods
-        
-- Обязательно для **классов наследников NSObject**, если нужен Objective-C runtime
-    
-- Позволяет **динамически вызывать методы и работать с Objective-C [[API]]**
-    
-
----
+Удачи с селекторами, KVO и Interface Builder в Swift! 🔗

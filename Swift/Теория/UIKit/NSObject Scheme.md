@@ -41,8 +41,8 @@
 | 31  | [[UITabBarController]]                | UIViewController       | … → UIViewController → UITabBarController                 | Табы (вкладки)                            |
 | 32  | [[UISplitViewController]]             | UIViewController       | … → UIViewController → UISplitViewController              | Split-screen (iPad)                       |
 | 33  | [[UIPageViewController]]              | UIViewController       | … → UIViewController → UIPageViewController               | Страничный скролл (как книги)             |
-| 34  | [[UITableViewController]]             | UIViewController       | … → UIViewController → UITableViewController              | Контроллер + готовая таблица              |
-| 35  | [[UICollectionViewController]]        | UIViewController       | … → UIViewController → UICollectionViewController         | Контроллер + коллекция                    |
+| 34  | [[Swift/Теория/UIKit/UITableViewController]]             | UIViewController       | … → UIViewController → UITableViewController              | Контроллер + готовая таблица              |
+| 35  | [[Swift/Теория/UIKit/UICollectionViewController]]        | UIViewController       | … → UIViewController → UICollectionViewController         | Контроллер + коллекция                    |
 | 36  | [[UIAlertController]]                 | UIViewController       | … → UIViewController → UIAlertController                  | Алерт / экшн-шит                          |
 | 37  | [[UIActivityViewController]]          | UIViewController       | … → UIViewController → UIActivityViewController           | Share-sheet                               |
 | 38  | [[UIImagePickerController]]           | UINavigationController | … → UINavigationController → UIImagePickerController      | Камера / галерея                          |

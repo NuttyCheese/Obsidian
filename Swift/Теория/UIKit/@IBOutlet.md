@@ -1,116 +1,82 @@
-## 1. Что такое `@IBOutlet`
+**@IBOutlet** — это специальный атрибут в Swift, который позволяет **связать переменную в коде** с UI-элементом, созданным в **Interface Builder** (Storyboard или XIB).
 
-**`@IBOutlet`** — это специальный атрибут [[Swift]], который позволяет **связывать переменные в коде с UI-элементами**, созданными в Interface Builder (Storyboard или [[xib]]).
+Проще говоря:  
+`@IBOutlet` = «переменная в коде, которая автоматически заполняется ссылкой на элемент интерфейса из IB».
 
-- Используется только в **классах, наследующих `NSObject`**, чаще всего [[UIViewController]] или [[Swift/Теория/UIKit/UIView]]
-    
-- Позволяет **получить доступ к UI-элементам напрямую из кода**
-    
-- Атрибут **под капотом использует [[@objc]]**, чтобы runtime мог установить связь между интерфейсом и свойством
-    
+### Зачем нужен @IBOutlet (2026 актуально)
 
-> Проще говоря: `@IBOutlet` = «свойство в коде, которое связано с элементом интерфейса в IB».
+- Доступ к UI-элементам из кода **без ручного создания**  
+- Удобно менять свойства (текст, цвет, скрытие, изображение) прямо в `viewDidLoad`  
+- Работает только с элементами, которые наследуются от `NSObject` (UILabel, UIButton, UIImageView, UISlider, UITableView, UICollectionView и т.д.)  
+- Под капотом использует **@objc** — runtime Objective-C устанавливает связь  
+- Предотвращает retain cycle через **weak** ссылку
 
----
-
-## 2. Основные термины
-
-| Термин                     | Описание                                                                         |
-| -------------------------- | -------------------------------------------------------------------------------- |
-| **Interface Builder (IB)** | Визуальный редактор интерфейсов в Xcode                                          |
-| **Outlet**                 | Связь между свойством кода и UI-элементом                                        |
-| **UIControl / UIView**     | Типы элементов интерфейса, с которыми работает IBOutlet                          |
-| **@objc**                  | Атрибут, который делает свойство доступным для [[Objective-C]] [[Runtime]]       |
-| **[[Optional]]**           | Обычно IBOutlet делается Optional, так как связь может быть не установлена сразу |
-
----
-
-## 3. Основной синтаксис
+### Основной синтаксис (самый частый и правильный в 2026)
 
 ```swift
-import UIKit
-
-class ViewController: UIViewController {
-    @IBOutlet weak var titleLabel: UILabel!
-}
+@IBOutlet weak var titleLabel: UILabel!
+@IBOutlet weak var loginButton: UIButton!
+@IBOutlet weak var avatarImageView: UIImageView!
 ```
 
-- `weak` — предотвращает **retain cycle**
-    
-- [[UILabel]]! — Implicitly Unwrapped Optional, чтобы можно было использовать до установки соединения
-    
-- После подключения в Interface Builder, `titleLabel` становится доступным в коде
-    
+- **weak** — обязательно (чтобы не было retain cycle)  
+- **!** (implicitly unwrapped optional) — стандарт, потому что связь устанавливается после `viewDidLoad`  
+- Можно использовать **?** (обычный optional), но тогда нужно разворачивать через guard/optional chaining
 
----
+### Самые частые примеры использования @IBOutlet
 
-## 4. Примеры от простого к сложному
-
-### Пример 1. UILabel
+#### 1. UILabel — изменение текста
 
 ```swift
-@IBOutlet weak var label: UILabel!
+@IBOutlet weak var greetingLabel: UILabel!
 
 override func viewDidLoad() {
     super.viewDidLoad()
-    label.text = "Hello, World!"
+    greetingLabel.text = "Привет, \(userName)!"
+    greetingLabel.textColor = .systemBlue
 }
 ```
 
-- Присваиваем текст напрямую через IBOutlet
-    
-
----
-
-### Пример 2. [[UIButton]]
+#### 2. UIButton — настройка внешнего вида
 
 ```swift
-@IBOutlet weak var button: UIButton!
+@IBOutlet weak var submitButton: UIButton!
 
 override func viewDidLoad() {
     super.viewDidLoad()
-    button.setTitle("Tap me", for: .normal)
+    submitButton.setTitle("Отправить", for: .normal)
+    submitButton.backgroundColor = .systemGreen
+    submitButton.layer.cornerRadius = 12
 }
 ```
 
-- Меняем **текст кнопки** через IBOutlet
-    
-
----
-
-### Пример 3. [[UIImageView]]
+#### 3. UIImageView — загрузка изображения
 
 ```swift
-@IBOutlet weak var imageView: UIImageView!
+@IBOutlet weak var profileImageView: UIImageView!
 
 override func viewDidLoad() {
     super.viewDidLoad()
-    imageView.image = UIImage(named: "example")
+    profileImageView.image = UIImage(named: "avatar")
+    profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2
+    profileImageView.clipsToBounds = true
 }
 ```
 
-- Загружаем картинку в ImageView через IBOutlet
-    
-
----
-
-### Пример 4. UISlider + IBOutlet
+#### 4. UITableView / UICollectionView — настройка таблицы
 
 ```swift
-@IBOutlet weak var slider: UISlider!
+@IBOutlet weak var tableView: UITableView!
 
 override func viewDidLoad() {
     super.viewDidLoad()
-    slider.value = 0.5
+    tableView.dataSource = self
+    tableView.delegate = self
+    tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
 }
 ```
 
-- Устанавливаем начальное значение ползунка через IBOutlet
-    
-
----
-
-### Пример 5. IBOutlet Collection
+#### 5. IBOutlet Collection — группа элементов
 
 ```swift
 @IBOutlet var buttons: [UIButton]!
@@ -119,41 +85,33 @@ override func viewDidLoad() {
     super.viewDidLoad()
     for (index, button) in buttons.enumerated() {
         button.setTitle("Button \(index + 1)", for: .normal)
+        button.tag = index + 1
     }
 }
 ```
 
-- IBOutlet Collection = массив UI-элементов, которые можно обработать одновременно
-    
+### Как правильно подключать @IBOutlet в Interface Builder
 
----
+1. Открой Storyboard / XIB  
+2. Выдели нужный UI-элемент (UILabel, UIButton и т.д.)  
+3. Ctrl+Drag (или правой кнопкой → drag) от элемента к классу контроллера в коде  
+4. Выбери **Connection: Outlet**  
+5. Укажи имя переменной (например, `titleLabel`)  
+6. Xcode автоматически создаст строку `@IBOutlet weak var titleLabel: UILabel!`
 
-## 5. Особенности @IBOutlet
+### Лучшие практики @IBOutlet в Swift 2026
 
-1. Атрибут **связывает код и Interface Builder**
-    
-2. Обычно используется с **`weak`** и **implicitly unwrapped optional (!)**
-    
-3. Работает только с классами, наследующими **NSObject**
-    
-4. Можно создавать **IBOutlet Collection** для группы элементов
-    
-5. Позволяет **изменять свойства UI в коде** после загрузки интерфейса
-    
+- **weak** — всегда (retain cycle)  
+- **!** — стандарт для implicitly unwrapped (если уверен, что связь будет установлена)  
+- **?** — если элемент может отсутствовать (например, в разных конфигурациях экрана)  
+- **IBOutlet Collection** — для группы кнопок/лейблов/вью  
+- **@MainActor** — весь контроллер — на главном акторе  
+- **Swift 6 strict concurrency** — @IBOutlet полностью безопасен  
+- **Документируйте** — пиши комментарий «@IBOutlet — метка приветствия из Storyboard»
 
----
+**Короткий девиз 2026**:
+> @IBOutlet — это когда ты хочешь **управлять элементом из Interface Builder** прямо из кода: менять текст, цвет, изображение, скрывать/показывать.  
+> В 2026 году это **самый удобный** способ работы с UI в UIKit-проектах со Storyboard/XIB.  
+> Всегда weak + ! и подключай через Ctrl+Drag.
 
-## 6. Итог
-
-- **@IBOutlet** = свойство для связи с UI-элементом из Interface Builder
-    
-- Позволяет:
-    
-    - UILabel, UIButton, UIImageView, UISlider и др. быть доступны в коде
-        
-    - IBOutlet Collection для группы элементов
-        
-    - Работает через Objective-C runtime и `weak` ссылку
-        
-
----
+Удачи с быстрым и удобным доступом к UI-элементам в Swift! 🎛️

@@ -1,58 +1,129 @@
-`UIGestureRecognizer` - это класс в [[UIKit]], который представляет собой инструмент для обнаружения жестов пользователя на экране [[iOS]]-устройства. Он позволяет приложению реагировать на различные жесты, такие как нажатия (tap), свайпы (swipe), жесты масштабирования (pinch), вращение (rotation) и другие.
+**UIGestureRecognizer** — это базовый класс в UIKit, который отвечает за **распознавание жестов** пользователя (тап, свайп, пинч, лонг-пресс, пан и т.д.).
 
-Вот основные методы и свойства класса `UIGestureRecognizer`:
+Он позволяет легко добавлять интерактивность к любому `UIView` (в том числе к `UITableViewCell`, `UICollectionViewCell`, `UIImageView`, `UIView` и т.д.).
 
-1. **Методы для управления жестами**:
-   - `func addTarget(_ target: Any?, action: Selector)`: Добавляет цель (target) и действие (action), которое будет вызвано при обнаружении жеста.
-   - `func require(toFail otherGestureRecognizer: UIGestureRecognizer)`: Устанавливает зависимость от другого `UIGestureRecognizer`, при котором этот жест будет активироваться только после отмены (failure) другого жеста.
+### Для чего используют UIGestureRecognizer в 2026 году (реальные сценарии)
 
-2. **Свойства для настройки поведения жестов**:
-   - `var isEnabled: Bool`: Определяет, включен ли данный жест. Если `true`, то жест активен и начинает отслеживать пользовательские действия. Если `false`, то жест игнорируется.
-   - `var cancelsTouchesInView: Bool`: Определяет, должен ли жест отменять (cancel) события касания (touches) в представлении, на котором он был обнаружен.
-   - `var delegate: UIGestureRecognizerDelegate?`: Делегат, который может управлять поведением жеста и определять, должен ли он начинать распознавание.
+| Жест / Класс                              | Основное назначение в 2026 году                     | Самый частый пример использования |
+|-------------------------------------------|------------------------------------------------------|-----------------------------------|
+| **UITapGestureRecognizer**                | Одиночный / двойной тап                             | Открыть фото, выбрать элемент, toggle switch |
+| **UILongPressGestureRecognizer**          | Долгое нажатие                                      | Контекстное меню, drag & drop, редактирование |
+| **UIPanGestureRecognizer**                | Перетаскивание пальцем                              | Перемещение вью, pull-to-refresh, свайп-меню |
+| **UISwipeGestureRecognizer**              | Быстрый свайп в сторону                             | Swipe-to-delete, свайп для перехода |
+| **UIPinchGestureRecognizer**              | Масштабирование (пинч двумя пальцами)               | Зум фото/карты/контента |
+| **UIRotationGestureRecognizer**           | Вращение двумя пальцами                             | Поворот фото/объекта в редакторе |
+| **UIScreenEdgePanGestureRecognizer**      | Свайп с края экрана                                 | Переход назад (как в iOS навигации) |
+| **Комбинации жестов**                     | Одновременное использование нескольких              | Пинч + пан = зум + перемещение |
 
-Пример использования `UIGestureRecognizer` для обнаружения тапа (нажатия):
+### Что необходимо сделать, чтобы начать использовать UIGestureRecognizer
+
+#### Минимальный рабочий пример (2026 стиль)
 
 ```swift
 import UIKit
 
-class ViewController: UIViewController {
+class ImageViewController: UIViewController {
+    
+    private let imageView = UIImageView(image: UIImage(systemName: "photo"))
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Создаем UITapGestureRecognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true  // обязательно!
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(imageView)
         
-        // Добавляем UITapGestureRecognizer к представлению
-        view.addGestureRecognizer(tapGesture)
+        NSLayoutConstraint.activate([
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            imageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.6)
+        ])
+        
+        setupGestures()
     }
     
-    @objc func handleTap(_ sender: UITapGestureRecognizer) {
-        // Обработка тапа
-        print("Tap detected")
+    private func setupGestures() {
+        // 1. Одиночный тап — показать алерт
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        imageView.addGestureRecognizer(tap)
+        
+        // 2. Двойной тап — зум
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
+        doubleTap.numberOfTapsRequired = 2
+        imageView.addGestureRecognizer(doubleTap)
+        
+        // 3. Долгое нажатие — показать меню
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        longPress.minimumPressDuration = 0.5
+        imageView.addGestureRecognizer(longPress)
+        
+        // 4. Пинч (масштабирование)
+        let pinch = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch))
+        imageView.addGestureRecognizer(pinch)
+        
+        // 5. Пан (перетаскивание)
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
+        imageView.addGestureRecognizer(pan)
+        
+        // Важно: двойной тап не должен мешать одиночному
+        tap.require(toFail: doubleTap)
+    }
+    
+    @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: imageView)
+        print("Тап в точке: \(location)")
+        // Например, показать алерт или зум
+    }
+    
+    @objc private func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
+        // Зум при двойном тапе
+        UIView.animate(withDuration: 0.3) {
+            self.imageView.transform = self.imageView.transform == .identity 
+                ? CGAffineTransform(scaleX: 2, y: 2) 
+                : .identity
+        }
+    }
+    
+    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            // Показать контекстное меню
+            let alert = UIAlertController(title: "Действия", message: nil, preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "Сохранить", style: .default))
+            alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+            present(alert, animated: true)
+        }
+    }
+    
+    @objc private func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        imageView.transform = imageView.transform.scaledBy(x: gesture.scale, y: gesture.scale)
+        gesture.scale = 1.0
+    }
+    
+    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: view)
+        imageView.center = CGPoint(x: imageView.center.x + translation.x, 
+                                  y: imageView.center.y + translation.y)
+        gesture.setTranslation(.zero, in: view)
     }
 }
 ```
 
-В этом примере мы создаем `UITapGestureRecognizer` и добавляем его к представлению контроллера. При каждом обнаружении тапа вызывается метод `handleTap(_:`, который выводит сообщение о том, что тап был обнаружен.
+### Лучшие практики UIGestureRecognizer в Swift 2026
 
-`UIGestureRecognizer` обеспечивает гибкую и мощную систему для обнаружения различных жестов пользователя и реагирования на них в приложениях iOS. Он широко используется для создания интерактивных и интуитивно понятных пользовательских интерфейсов.
+- **isUserInteractionEnabled = true** — обязательно для вью, к которой добавляешь жест  
+- **addGestureRecognizer** — добавляй жесты к нужной вью (не к контроллеру)  
+- **require(toFail:)** — используй для разрешения конфликтов (двойной тап → требует одиночного)  
+- **@objc** — обязательно для методов, которые передаёшь в селектор  
+- **gesture.state** — проверяй .began / .changed / .ended / .cancelled в обработчиках  
+- **@MainActor** — все обработчики жестов — на главном акторе  
+- **Swift 6 strict concurrency** — UIGestureRecognizer полностью безопасен  
+- **Документируйте** — пиши комментарий «UIGestureRecognizer — тап и лонг-пресс для открытия контекстного меню»
 
-Ниже приведены основные типы жестов:
+**Короткий девиз 2026**:
+> UIGestureRecognizer — это когда ты хочешь добавить **интерактивность** любому вью: тап, свайп, пинч, лонг-пресс, пан и т.д.  
+> В 2026 году это **основной инструмент** для жестов в UIKit.  
+> Добавляй жест → пиши @objc-метод → используй require(toFail:) для разрешения конфликтов.
 
-1. **[[UITapGestureRecognizer]]**: Обнаруживает одиночное касание (тап) на представлении.
-    
-2. **[[UIPinchGestureRecognizer]]**: Обнаруживает жест масштабирования (прижатия или разжатия двумя пальцами).
-    
-3. **[[UIRotationGestureRecognizer]]**: Обнаруживает жест вращения двумя пальцами.
-    
-4. **[[UISwipeGestureRecognizer]]**: Обнаруживает быстрое свайпирование в указанном направлении.
-    
-5. **[[UIPanGestureRecognizer]]**: Обнаруживает перемещение пальца по экрану (перетаскивание).
-    
-6. **[[UIScreenEdgePanGestureRecognizer]]**: Обнаруживает свайпирование с края экрана.
-    
-7. **[[UILongPressGestureRecognizer]]**: Обнаруживает долгое нажатие на представлении.
-    
-
-Каждый из этих типов жестов позволяет приложению реагировать на различные действия пользователя и предоставляет возможность создания интерактивного и интуитивно понятного пользовательского интерфейса. Кроме того, существует возможность комбинирования нескольких жестов для создания более сложных пользовательских интерфейсов.
+Удачи с отзывчивым и интуитивным интерфейсом в Swift! 👆
