@@ -26,7 +26,7 @@ NSString *str = [[[NSString alloc] initWithFormat:@"Hello %@", @"World"] autorel
 } // здесь все объекты из пула освобождаются
 ```
 
-Без `@autoreleasepool` в цикле память может расти до конца [[runloop]] → пики памяти.
+Без `@autoreleasepool` в цикле память может расти до конца [[RunLoop]] → пики памяти.
 
 ### 3. Когда `@autoreleasepool` всё ещё нужен (2026)
 

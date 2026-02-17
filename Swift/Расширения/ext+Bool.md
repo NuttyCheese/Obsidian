@@ -1,3 +1,4 @@
+#extension #bool #int #array 
 ```swift
 extension Bool {
     var intValue: Int { self ? 1 : 0 }

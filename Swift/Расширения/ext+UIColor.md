@@ -1,3 +1,4 @@
+#extension #uicolor #cgcolor
 ```swift
 @available(iOS 13.0, *)
 extension UIColor {

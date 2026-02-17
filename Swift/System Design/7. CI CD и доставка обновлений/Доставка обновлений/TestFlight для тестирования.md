@@ -32,7 +32,7 @@
     
     - Архивировать проект в [[Xcode]] (`Product > Archive`).
         
-    - Загрузить билд в [[Swift/Теория/System Design/7. CI CD и доставка обновлений/Доставка обновлений/App Store Connect]].
+    - Загрузить билд в [[Swift/System Design/7. CI CD и доставка обновлений/Доставка обновлений/App Store Connect]].
         
 2. **Настройка тестирования**
     

@@ -1,3 +1,4 @@
+#extension #collection #array
 ```swift
 extension Collection {
     subscript(safe index: Index) -> Element? {

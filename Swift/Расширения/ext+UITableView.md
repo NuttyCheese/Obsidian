@@ -1,3 +1,4 @@
+#extension #uitableview #uitableviewcell #protocol  
 ```swift
 extension UITableView {
     /// Регистрирует ячейки с использованием имени класса в качестве reuseIdentifier

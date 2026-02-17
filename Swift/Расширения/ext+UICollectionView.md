@@ -1,3 +1,4 @@
+#extension #uicollectionview #uicollectionviewcell #uicollectionviewLayout  #protocol
 ```swift
 extension UICollectionView {
     /// Регистрирует ячейки с использованием имени класса в качестве reuseIdentifier

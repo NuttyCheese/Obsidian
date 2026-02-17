@@ -101,7 +101,7 @@ navigationController?.navigationBar.scrollEdgeAppearance = appearance
 
 - Обычно **не добавляют `UINavigationBar` вручную** — за это отвечает `UINavigationController`.
     
-- Если нужен отдельный кастомный бар, можно использовать [[UINavigationBar]] как обычный [[Swift/Теория/UIKit/UIView]].
+- Если нужен отдельный кастомный бар, можно использовать [[UINavigationBar]] как обычный [[UIView]].
     
 - Поддерживает **Large Titles** (большие заголовки при скролле списка).
     

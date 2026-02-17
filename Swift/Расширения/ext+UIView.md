@@ -1,3 +1,4 @@
+#extension #uiview 
 ```swift
 extension UIView {
     /// Включает пользовательское взаимодействие

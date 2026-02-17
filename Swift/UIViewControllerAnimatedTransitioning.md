@@ -348,7 +348,7 @@ UIKit transitions — мощный, но тяжёлый инструмент.
 
 - Core Animation напрямую
     
-- [[Swift/Теория/UIKit/UIView]] animations
+- [[UIView]] animations
     
 
 Настоящее:

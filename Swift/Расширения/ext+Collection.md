@@ -1,3 +1,4 @@
+#collection #string #optional
 ```swift
 extension Collection {
     /// Проверяет, содержит ли коллекция хотя бы один элемент,
