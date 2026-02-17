@@ -1,4 +1,4 @@
-**Size Classes** (размерные классы) в iOS — это механизм **адаптивного интерфейса**, который позволяет одному и тому же приложению выглядеть и вести себя по-разному в зависимости от:
+**Size Classes** (размерные классы) в [[iOS]] — это механизм **адаптивного интерфейса**, который позволяет одному и тому же приложению выглядеть и вести себя по-разному в зависимости от:
 
 - размера экрана устройства  
 - ориентации (портрет/ландшафт)  
@@ -47,7 +47,7 @@ Size Classes делят ширину и высоту экрана на два у
 
 Size Classes — это часть **trait collection** (`UITraitCollection`).
 
-Каждый `UIViewController` и `UIView` имеет свойство:
+Каждый [[UIViewController]] и [[UIView]] имеет свойство:
 
 ```swift
 var traitCollection: UITraitCollection { get }
@@ -119,12 +119,10 @@ override func viewWillTransition(to size: CGSize, with coordinator: UIViewContro
 - **Не привязывайся жёстко к устройству** — проверяй `horizontalSizeClass` и `verticalSizeClass`, а не `UIDevice.current.userInterfaceIdiom`  
 - **Используй safeAreaLayoutGuide** и `traitCollection` в связке — для адаптивных отступов  
 - **Тестируй на всех комбинациях** — особенно wC-hR (iPhone портрет), wR-hC (iPad Slide Over), wR-hR (iPad полноэкранный)  
-- **В SwiftUI** — аналог Size Classes встроен в `@Environment(\.horizontalSizeClass)` и `.horizontalSizeClass`  
+- **В [[SwiftUI]]** — аналог Size Classes встроен в `@Environment(\.horizontalSizeClass)` и `.horizontalSizeClass`  
 - **Документируйте** — пиши комментарий «Адаптация layout для compact width (iPhone портрет)»
 
 **Короткий девиз 2026**:
 > Size Classes — это «умный способ сказать: на маленьком экране делай одну колонку, на большом — две, и не проверяй модель iPhone/iPad».  
-> В 2026 году это **основной** инструмент адаптивного дизайна в UIKit.  
+> В 2026 году это **основной** инструмент адаптивного дизайна в [[UIKit]].  
 > Проверяй `horizontalSizeClass == .regular` → показывай больше контента, `== .compact` → упрощай интерфейс.
-
-Удачи с универсальными и красивыми интерфейсами на всех устройствах! 📱

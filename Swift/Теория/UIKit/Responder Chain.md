@@ -1,4 +1,4 @@
-**Responder Chain** в UIKit — это один из самых фундаментальных и при этом недооценённых механизмов всей платформы iOS.
+**Responder Chain** в [[UIKit]] — это один из самых фундаментальных и при этом недооценённых механизмов всей платформы iOS.
 
 Если коротко и по-человечески:
 
@@ -8,14 +8,14 @@
 
 ### 1. Кто вообще входит в Responder Chain
 
-Все объекты, которые могут получать и обрабатывать события, наследуются от **`UIResponder`**:
+Все объекты, которые могут получать и обрабатывать события, наследуются от **[[UIResponder]]**:
 
-- `UIView` (и все его подклассы: UIButton, UILabel, UIImageView, UITableViewCell и т.д.)
-- `UIViewController`
-- `UIWindow`
-- `UIApplication`
-- `UIApplicationDelegate` / `UISceneDelegate` (в некоторых случаях)
-- `UIWindowScene` (в сценах)
+- [[UIView]] (и все его подклассы: [[UIButton]], [[UILabel]], [[UIImageView]], [[UITableViewCell]] и т.д.)
+- [[UIViewController]]
+- [[UIWindow]]
+- [[UIApplication]]
+- [[UIApplicationDelegate]] / [[UISceneDelegate]] (в некоторых случаях)
+- [[UIWindowScene]] (в сценах)
 
 Каждый из них знает, кто следующий в цепочке через свойство:
 
@@ -144,5 +144,3 @@ override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 геометрия → ответственность.
 
 Понимаешь их — понимаешь, как на самом деле работает UIKit.
-
-Удачи с глубоким пониманием и гибкой обработкой событий! 👆

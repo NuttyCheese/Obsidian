@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/UIKit/TouchUpOutside.md",
+                "file": "Swift/Теория/UIKit/Responder Chain.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TouchUpOutside"
+              "title": "Responder Chain"
             }
           },
           {
@@ -266,6 +266,20 @@
   },
   "active": "c96ddc6a0e7a5a1e",
   "lastOpenFiles": [
+    "UIApplicationDelegate.md",
+    "Swift/Теория/UIKit/Responder Chain.md",
+    "UISceneDelegate.md",
+    "UIWindowScene.md",
+    "Swift/Теория/UIKit/SceneDelegate.md",
+    "Swift/Теория/UIKit/selector.md",
+    "UICommand.md",
+    "Swift/Теория/UIKit/self.md",
+    "Swift/Теория/UIKit/setNeedsLayout.md",
+    "Swift/Теория/UIKit/size class.md",
+    "Swift/Теория/UIKit/subviews.md",
+    "Swift/Теория/UIKit/TouchDown.md",
+    "Swift/Теория/UIKit/TouchUpInside.md",
+    "Swift/Теория/UIKit/TouchUpOutside.md",
     "Swift/Теория/UIKit/UIAction.md",
     "Swift/Теория/UIKit/UIActivityIndicatorView.md",
     "Swift/Теория/UIKit/UIActivityViewController.md",
@@ -278,20 +292,6 @@
     "Swift/Теория/UIKit/UIBarItem.md",
     "Swift/Теория/UIKit/UIButton.md",
     "Swift/Теория/UIKit/UIButton.Configuration.md",
-    "Swift/Теория/UIKit/UIColorPickerViewController.md",
-    "Swift/Теория/UIKit/UIColorPickerViewControllerDelegate.md",
-    "Swift/Теория/UIKit/UIControl.md",
-    "Swift/Теория/UIKit/UIDatePicker.md",
-    "Swift/Теория/UIKit/UIDocumentPickerViewController.md",
-    "Swift/Теория/UIKit/UIFontPickerViewController.md",
-    "Swift/Теория/UIKit/CollectionView/UICollectionViewController.md",
-    "Swift/Теория/UIKit/UICollectionViewController.md",
-    "Swift/Теория/UIKit/TouchUpOutside.md",
-    "Swift/Теория/UIKit/TouchUpInside.md",
-    "Swift/Теория/UIKit/TouchDown.md",
-    "Swift/Теория/UIKit/subviews.md",
-    "Swift/Теория/UIKit/size class.md",
-    "Swift/Теория/UIKit/setNeedsLayout.md",
     "Swift/Теория/Patterns/Принципы",
     "deepseek_mermaid_20260213_69fcac 1.mermaid",
     "deepseek_mermaid_20260213_69fcac.mermaid",

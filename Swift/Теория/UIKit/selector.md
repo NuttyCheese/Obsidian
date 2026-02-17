@@ -1,9 +1,9 @@
-**Selector** в Swift — это тип данных, который представляет **имя метода** (или функции) объекта. Он позволяет **динамически** ссылаться на метод и вызывать его во время выполнения программы.
+**Selector** в [[Swift]] — это тип данных, который представляет **имя метода** (или функции) объекта. Он позволяет **динамически** ссылаться на метод и вызывать его во время выполнения программы.
 
 В чистом Swift это не очень распространённый тип — Swift предпочитает статическую типизацию и замыкания.  
 Но **Selector** остаётся крайне важным, потому что:
 
-- Большая часть UIKit, Foundation и старого Cocoa построена на Objective-C runtime  
+- Большая часть [[UIKit]], [[Foundation]] и старого Cocoa построена на [[Objective-C]] [[runtime]]  
 - Многие API UIKit до сих пор используют **target-action** механизм, который требует именно `Selector`  
 - Без `Selector` не работают кнопки, жесты, таймеры, уведомления и многое другое
 
@@ -39,14 +39,14 @@ Argument of '#selector' does not refer to '@objc' method, property, or initializ
 
 ### 3. Самые частые места использования Selector в 2026 году
 
-| API / Механизм                              | Как используется Selector                              | Пример (коротко) |
-|---------------------------------------------|--------------------------------------------------------|------------------|
-| `addTarget(_:action:for:)` (UIButton и др.) | `action: #selector(methodName(_:))`                    | `button.addTarget(self, action: #selector(tapped), for: .touchUpInside)` |
-| `Timer.scheduledTimer`                      | `selector: #selector(timerTick)`                       | `Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(tick), ...)` |
-| `NotificationCenter.addObserver`            | `selector: #selector(didReceiveNotification)`          | `center.addObserver(self, selector: #selector(handleNotif), name: ..., object: nil)` |
-| `performSelector(onMainThread:)`            | `selector: #selector(updateUI)`                        | Редко, но иногда в legacy |
-| `UIMenu` / `UICommand` (контекстные меню)   | `action: #selector(copyText)`                          | `UICommand(title: "Copy", action: #selector(copy))` |
-| `UIApplication.sendAction(_:to:from:for:)`  | Прямой вызов через Selector                            | Когда target = nil — ищет по Responder Chain |
+| API / Механизм                                | Как используется Selector                     | Пример (коротко)                                                                      |
+| --------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `addTarget(_:action:for:)` (UIButton и др.)   | `action: #selector(methodName(_:))`           | `button.addTarget(self, action: #selector(tapped), for: .touchUpInside)`              |
+| `Timer.scheduledTimer`                        | `selector: #selector(timerTick)`              | `Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(tick), ...)` |
+| `NotificationCenter.addObserver`              | `selector: #selector(didReceiveNotification)` | `center.addObserver(self, selector: #selector(handleNotif), name: ..., object: nil)`  |
+| `performSelector(onMainThread:)`              | `selector: #selector(updateUI)`               | Редко, но иногда в legacy                                                             |
+| [[UIMenu]] / [[UICommand]] (контекстные меню) | `action: #selector(copyText)`                 | `UICommand(title: "Copy", action: #selector(copy))`                                   |
+| `UIApplication.sendAction(_:to:from:for:)`    | Прямой вызов через Selector                   | Когда target = nil — ищет по Responder Chain                                          |
 
 ### 4. Самый полный и современный пример 2026 года
 
@@ -99,22 +99,20 @@ final class SettingsViewController: UIViewController {
 - **UIKit не переписан на Swift** — он по-прежнему Objective-C под капотом  
 - **target-action** — это классический паттерн Cocoa, который не заменён полностью замыканиями  
 - **Совместимость** — старые библиотеки, Objective-C код, App Extensions всё ещё используют Selector  
-- **Гибкость** — target = nil + Responder Chain позволяет писать очень declarative UI
+- **Гибкость** — target = [[nil]] + [[Responder Chain]] позволяет писать очень declarative UI
 
 ### 6. Альтернативы Selector в современном Swift
 
-| Ситуация                              | Selector (традиционно)                     | Современная альтернатива 2026                     |
-|---------------------------------------|--------------------------------------------|---------------------------------------------------|
-| Кнопка нажата                         | `addTarget(self, action: #selector(...))`  | `button.addAction(UIAction { _ in ... }, for: .touchUpInside)` |
-| Таймер                                | `Timer.scheduledTimer(..., selector: ...)` | `Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in ... }` |
-| Уведомления                           | `addObserver(self, selector: ...)`         | `NotificationCenter.default.publisher(for: ...).sink { ... }` |
-| Меню (UIMenu)                         | `action: #selector(...)`                   | `UIAction(title: "Copy", handler: { _ in ... })` |
+| Ситуация          | Selector (традиционно)                     | Современная альтернатива 2026                                           |
+| ----------------- | ------------------------------------------ | ----------------------------------------------------------------------- |
+| Кнопка нажата     | `addTarget(self, action: #selector(...))`  | `button.addAction(UIAction { _ in ... }, for: .touchUpInside)`          |
+| Таймер            | `Timer.scheduledTimer(..., selector: ...)` | `Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in ... }` |
+| Уведомления       | `addObserver(self, selector: ...)`         | `NotificationCenter.default.publisher(for: ...).sink { ... }`           |
+| Меню ([[UIMenu]]) | `action: #selector(...)`                   | `UIAction(title: "Copy", handler: { _ in ... })`                        |
 
 ### Короткий девиз 2026
 
 > Selector — это **имя метода**, которое может вызвать Objective-C runtime.  
-> В 2026 году он нужен почти исключительно для **UIKit target-action**, `Timer`, `NotificationCenter` и legacy.  
-> Для нового кода — предпочитай **closures** (`UIAction`, `Timer.scheduledTimer { ... }`, Combine, async/await).  
+> В 2026 году он нужен почти исключительно для **UIKit target-action**, [[Timer]], [[NotificationCenter]] и legacy.  
+> Для нового кода — предпочитай **[[closure]]** ([[UIAction]], `Timer.scheduledTimer { ... }`, [[Combine]], [[async]]/[[await]]).  
 > Но если видишь `#selector` — знай, что под капотом работает старая, но надёжная магия Cocoa.
-
-Удачи с динамическими вызовами и чистым кодом в Swift! 🔗
