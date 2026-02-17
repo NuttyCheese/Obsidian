@@ -1,166 +1,135 @@
-## 1. Что такое `TouchUpOutside`
+**TouchUpOutside** — это событие `UIControl.Event.touchUpOutside`, которое срабатывает **только в одном конкретном случае**:
 
-**`TouchUpOutside`** — это событие [[UIControl]], которое срабатывает **когда пользователь нажал на элемент (например, кнопку) и отпустил палец за пределами его границ**.
+Пользователь **нажал** на элемент управления (чаще всего кнопку), **удерживал палец**, но **отпустил его за пределами границ** этого элемента.
 
-- Используется в [[UIButton]], [[UISlider]] и других наследниках **UIControl**
-    
-- Отличается от [[TouchUpInside]]: событие срабатывает **только если отпуск происходит вне границ**
-    
-- Часто применяется для **отмены действия или сброса состояния кнопки**
-    
+Это **отмена нажатия** — пользователь передумал, свайпнул мимо или просто промахнулся при отпускании.
 
-> Проще говоря: `TouchUpOutside` = «пользователь нажал на кнопку, но отпустил палец вне её границ».
+### Почему TouchUpOutside так важен в UX 2026 года
 
----
+| Ситуация / поведение пользователя             | Какое событие приходит                  | Что нужно сделать в приложении (рекомендация 2026) |
+|------------------------------------------------|------------------------------------------|-----------------------------------------------------|
+| Нажал → отпустил внутри кнопки                 | `touchUpInside`                          | Выполнить действие (логин, купить, сохранить)       |
+| Нажал → отпустил **вне** кнопки                | `touchUpOutside`                         | **Отменить** эффект нажатия, вернуть кнопку в исходное состояние |
+| Нажал → начал свайп за пределы → отпустил      | `touchDragExit` → `touchUpOutside`       | Отменить выделение, сбросить анимацию               |
+| Нажал → система прервала (звонок, жест назад) | `touchCancel`                            | Откатить состояние, убрать выделение                |
+| Нажал → держит палец долго                     | `touchDown` → ничего до отпускания       | Показать эффект удержания (если нужно)             |
 
-## 2. Основные термины
-
-|Термин|Описание|
-|---|---|
-|**UIControl.Event**|Перечисление событий, которые могут происходить с элементами UIControl|
-|**TouchUpOutside**|Событие при отпускании пальца за пределами кнопки|
-|**Target-Action**|Механизм связывания события и метода|
-|**@IBAction / addTarget**|Способы обработать событие в коде|
-
----
-
-## 3. Основной синтаксис
-
-### Через [[@IBAction]]
-
-```swift
-@IBAction func buttonTouchUpOutside(_ sender: UIButton) {
-    print("Touch up outside!")
-}
+**Самая частая и правильная последовательность при "плохом" нажатии**:
+```
+touchDown → touchDragInside → touchDragExit → touchUpOutside
 ```
 
-- В Interface Builder привязывается к событию **Touch Up Outside**
-    
+### Когда и зачем используют именно TouchUpOutside в 2026 году
 
-### Через addTarget
+| Цель / Эффект                                 | Почему именно `touchUpOutside`                          | Пример кода (коротко) |
+|-----------------------------------------------|--------------------------------------------------------|-----------------------|
+| **Отмена визуального эффекта нажатия**        | Пользователь передумал — нужно вернуть кнопку в нормальный вид | `sender.backgroundColor = .systemBlue` |
+| Сброс анимации scale / shadow / alpha         | Кнопка не должна оставаться "нажатой"                  | `sender.transform = .identity` |
+| Отмена предварительной логики                 | Например, начал предзагрузку на `touchDown` — отменить | `cancelPreload()` |
+| Избежать случайных действий                   | Если палец сместился — не выполнять основное действие  | Не вызывать `login()` |
+| Улучшить ощущение "живой" кнопки              | Пользователь видит, что система "поняла" отмену        | Плавный возврат цвета/размера |
+| Комбинировать с long press / context menu     | Долгое нажатие → меню, короткое + уход за пределы → ничего | `UIMenu` на `longPress`, отмена на `touchUpOutside` |
 
-```swift
-let button = UIButton(type: .system)
-button.addTarget(self, action: #selector(buttonTouchUpOutside(_:)), for: .touchUpOutside)
-
-@objc func buttonTouchUpOutside(_ sender: UIButton) {
-    print("Touch up outside programmatically!")
-}
-```
-
-- Программный способ отслеживания события
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простое логирование
+### Самый современный и рекомендуемый паттерн 2026 года (полный контроль UX кнопки)
 
 ```swift
-@IBAction func buttonTouchUpOutside(_ sender: UIButton) {
-    print("User released touch outside the button")
-}
-```
-
-- Просто вывод в консоль
+final class ModernButton: UIButton {
     
-
----
-
-### Пример 2. Отмена действия
-
-```swift
-@IBAction func cancelButtonAction(_ sender: UIButton) {
-    actionCancelled = true
-    print("Action cancelled")
-}
-var actionCancelled = false
-```
-
-- Используется для **отмены ранее запущенного действия**
+    private var initialBackgroundColor: UIColor!
     
-
----
-
-### Пример 3. Сменить цвет кнопки
-
-```swift
-@IBAction func buttonTouchUpOutside(_ sender: UIButton) {
-    sender.backgroundColor = .systemGray
-}
-```
-
-- Изменение визуального состояния кнопки, если палец ушёл за границы
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
     
-
----
-
-### Пример 4. Сравнение с TouchUpInside
-
-```swift
-@IBAction func buttonTouchDown(_ sender: UIButton) {
-    sender.backgroundColor = .blue
-}
-
-@IBAction func buttonTouchUpInside(_ sender: UIButton) {
-    sender.backgroundColor = .green
-}
-
-@IBAction func buttonTouchUpOutside(_ sender: UIButton) {
-    sender.backgroundColor = .red
-}
-```
-
-- Разные цвета для разных событий: нажатие, отпуск внутри и отпуск снаружи
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
     
-
----
-
-### Пример 5. addTarget с несколькими событиями
-
-```swift
-let button = UIButton(type: .system)
-button.addTarget(self, action: #selector(buttonEvent(_:)), for: [.touchUpInside, .touchUpOutside])
-
-@objc func buttonEvent(_ sender: UIButton) {
-    print("Event: \(sender.title(for: .normal) ?? "")")
-}
-```
-
-- Один метод может обрабатывать **несколько типов событий** одновременно
-    
-
----
-
-## 5. Особенности TouchUpOutside
-
-1. Срабатывает **только при отпускании пальца вне границ**
-    
-2. Отличается от `TouchDown` (срабатывает при нажатии) и `TouchUpInside` (отпуск внутри)
-    
-3. Часто используется для **отмены действия или сброса состояния**
-    
-4. Поддерживается как **@IBAction**, так и **addTarget**
-    
-5. Полезно для создания **интерактивного UX**, где важно понимать, что пользователь «отменил» нажатие
-    
-
----
-
-## 6. Итог
-
-- **TouchUpOutside** = событие UIControl при отпускании пальца за пределами элемента
-    
-- Позволяет:
-    
-    - Отслеживать отмену действия
+    private func setup() {
+        layer.cornerRadius = 16
+        titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        initialBackgroundColor = backgroundColor ?? .systemBlue
         
-    - Изменять внешний вид кнопки при уходе пальца
-        
-    - Использовать вместе с [[TouchDown]] и TouchUpInside для полного контроля UX
-        
-- Поддерживается **Interface Builder** и **код**
+        // Добавляем все нужные обработчики
+        addTarget(self, action: #selector(touchDown), for: .touchDown)
+        addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        addTarget(self, action: #selector(touchDragExit), for: .touchDragExit)
+        addTarget(self, action: #selector(touchDragEnter), for: .touchDragEnter) // для возврата эффекта
+    }
     
+    @objc private func touchDown() {
+        UIView.animate(withDuration: 0.12) {
+            self.transform = CGAffineTransform(scaleX: 0.94, y: 0.94)
+            self.backgroundColor = self.initialBackgroundColor.withAlphaComponent(0.85)
+            self.layer.shadowOpacity = 0.4
+        }
+        
+        // Лёгкий haptic
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+    }
+    
+    @objc private func touchUp() {
+        UIView.animate(withDuration: 0.22, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.4) {
+            self.transform = .identity
+            self.backgroundColor = self.initialBackgroundColor
+            self.layer.shadowOpacity = 0
+        }
+    }
+    
+    @objc private func touchDragExit() {
+        // Палец ушёл за пределы — отменяем эффект
+        UIView.animate(withDuration: 0.15) {
+            self.transform = .identity
+            self.backgroundColor = self.initialBackgroundColor
+            self.layer.shadowOpacity = 0
+        }
+    }
+    
+    @objc private func touchDragEnter() {
+        // Палец вернулся в границы — возвращаем эффект нажатия
+        touchDown()
+    }
+}
+```
 
----
+### Почему именно такой подход в 2026 году
+
+- **0.12 сек** на нажатие + **0.22 сек spring** на возврат — идеальное время по Human Interface Guidelines  
+- **Haptic feedback** (medium) — делает кнопку "живой", как системные элементы iOS  
+- **touchDragExit + touchDragEnter** — полный контроль за поведением при свайпе пальцем  
+- **touchCancel** — обрабатывает прерывания (входящий звонок, жест назад, системные события)  
+- **Нет reliance на `highlighted`** — Apple рекомендует кастомные анимации вместо стандартного состояния
+
+### Полный список событий для идеальной кнопки 2026
+
+```swift
+button.addTarget(self, action: #selector(touchDown), for: .touchDown)
+button.addTarget(self, action: #selector(touchDragEnter), for: .touchDragEnter)
+button.addTarget(self, action: #selector(touchDragExit), for: .touchDragExit)
+button.addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+```
+
+Но в 90% случаев достаточно:
+
+- `.touchDown` → начать эффект  
+- `.touchUpInside` → выполнить действие  
+- `.touchUpOutside` + `.touchCancel` + `.touchDragExit` → отменить эффект
+
+### Лучшие практики TouchUpInside в Swift 2026
+
+- **Делай анимацию короткой** (0.1–0.25 сек) и естественной (spring damping 0.7–0.9)  
+- **Используй UIImpactFeedbackGenerator** (medium/light) для тактильного отклика  
+- **Не перегружай обработчик** — избегай сети, тяжёлых вычислений в `touchUpInside`  
+- **Комбинируй с `highlighted`** — если нужен быстрый fallback  
+- **@MainActor** — все обработчики событий UI — на главном акторе  
+- **Swift 6 strict concurrency** — события вызываются на главном потоке → безопасно  
+- **Документируйте** — пиши комментарий «@objc func — основное действие кнопки при успешном TouchUpInside»
+
+**Короткий девиз 2026**:
+> `TouchUpInside` — это **самое надёжное** событие для выполнения действия кнопки: пользователь **нажал и отпустил внутри** → значит, он **точно хотел** это сделать.  
+> В 2026 году это **основной** триггер для всех важных действий (логин, отправить, купить, перейти).  
+> Всегда комбинируй с `touchDown` (эффект нажатия) и `touchUpOutside`/`touchCancel` (отмена эффекта).
+
+Удачи с интуитивными и приятными кнопками в твоём приложении! 👆

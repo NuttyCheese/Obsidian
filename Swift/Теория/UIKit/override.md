@@ -1,33 +1,125 @@
-`override` - это ключевое слово в [[Swift]], которое используется для объявления переопределенных методов и свойств в подклассе. Переопределение позволяет подклассам предоставлять собственную реализацию методов и свойств, которые уже определены в их суперклассах.
+**`override`** — это ключевое слово в Swift, которое **обязательно** используется при переопределении методов, свойств, сабскриптов или наблюдателей свойств, унаследованных от суперкласса.
 
-Основные характеристики `override`:
+Его главная задача — **явно указать компилятору**, что ты намеренно заменяешь реализацию из суперкласса, а не случайно создал метод с таким же именем.
 
-1. **Переопределение методов**: Подклассы могут переопределять методы своих суперклассов, предоставляя собственную реализацию. Это позволяет изменять поведение методов в соответствии с требованиями подкласса.
-    
-2. **Переопределение свойств**: Подклассы могут переопределять хранимые и вычисляемые свойства своих суперклассов, предоставляя собственные реализации или переопределяя геттеры и сеттеры.
-    
-3. **Использование ключевого слова `override`**: Для того чтобы указать, что метод или свойство является переопределенным, необходимо использовать ключевое слово `override` перед объявлением метода или свойства в подклассе.
-    
+### Когда `override` обязателен (и компилятор выдаст ошибку без него)
 
-Пример использования `override` для переопределения метода:
+| Что переопределяем                  | Нужно ли `override`? | Пример ошибки без override                          | Примечание |
+|-------------------------------------|-----------------------|-----------------------------------------------------|------------|
+| Метод суперкласса                   | **Да**                | Method 'move()' must be declared with 'override'    | Самый частый случай |
+| Хранимое свойство (var)             | **Да**                | Property does not override any property from its superclass | Редко, но возможно |
+| Вычисляемое свойство (var / let)    | **Да**                | Property with type 'Int' cannot override a property with a different type | Геттер/сеттер |
+| Наблюдатель свойства (willSet/didSet) | **Да**                | Observer declared on non-observable property        | Только если в суперклассе есть наблюдатель |
+| Сабскрипт (subscript)               | **Да**                | Subscript must be declared with 'override'          | Редко используется |
+| Ассоциированный тип в протоколе     | **Нет**               | —                                                   | override не нужен |
+
+### Самые важные правила использования `override` в 2026 году
+
+1. **override обязателен** — если метод/свойство уже существует в любом из суперклассов (включая NSObject, UIView, UIViewController и т.д.)
+
+2. **override запрещён**, если в суперклассе ничего подобного нет — компилятор выдаст ошибку:
+   ```
+   Method does not override any method from its superclass
+   ```
+
+3. **final** в суперклассе блокирует переопределение:
+   ```swift
+   class Vehicle {
+       final func move() { ... }
+   }
+   class Car: Vehicle {
+       override func move() { ... } // Ошибка: Cannot override 'final' method
+   }
+   ```
+
+4. **required** + override — для обязательных методов в протоколах/классах
+   ```swift
+   class Base: NSObject {
+       required init(coder: NSCoder) { ... }
+   }
+   class Child: Base {
+       required init(coder: NSCoder) { ... } // required + override не пишется явно
+   }
+   ```
+
+5. **override + dynamic** — для KVO и полного динамического dispatch
+   ```swift
+   @objc dynamic override var description: String { ... }
+   ```
+
+### Самые частые и полезные примеры 2026 года
+
+#### 1. Переопределение методов жизненного цикла UIViewController
+
+```swift
+class ProfileViewController: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // твоя логика после вызова суперкласса
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // обновить данные перед показом
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // здесь уже актуальные bounds
+    }
+}
+```
+
+#### 2. Переопределение computed property
+
 ```swift
 class Vehicle {
-    func move() {
-        print("Moving...")
+    var description: String {
+        "Generic vehicle"
     }
 }
 
 class Car: Vehicle {
-    override func move() {
-        print("Driving...")
+    override var description: String {
+        "Car with \(wheels) wheels"
+    }
+}
+```
+
+#### 3. Переопределение свойства с наблюдателем
+
+```swift
+class BaseView: UIView {
+    var backgroundColor: UIColor? {
+        didSet {
+            print("Base color changed")
+        }
     }
 }
 
-let vehicle = Vehicle()
-vehicle.move() // Вывод: Moving...
-
-let car = Car()
-car.move() // Вывод: Driving...
-
+class CustomView: BaseView {
+    override var backgroundColor: UIColor? {
+        didSet {
+            super.backgroundColor?.setFill() // вызов суперкласса
+            print("Custom color changed")
+        }
+    }
+}
 ```
-В этом примере класс `Car` является подклассом класса `Vehicle` и переопределяет его метод `move()`, предоставляя собственную реализацию для движения. При вызове метода `move()` для объекта класса `Car` будет использоваться переопределенная реализация.
+
+### Короткий чек-лист «Когда писать override»
+
+- Метод уже есть в суперклассе → **да**  
+- Свойство уже есть → **да**  
+- Наблюдатель свойства уже есть → **да**  
+- Сабскрипт уже есть → **да**  
+- Метод/свойство только в протоколе → **нет**  
+- Ты придумал новое имя → **нет** (иначе ошибка)
+
+**Короткий девиз 2026**:
+> `override` — это не просто слово, это **гарантия**, что ты осознанно заменяешь поведение суперкласса.  
+> Без него компилятор не даст переопределить ничего.  
+> Всегда пиши `super.метод()` первым, если не хочешь сломать суперкласс.
+
+Удачи с чистым и предсказуемым наследованием в Swift! 🧬

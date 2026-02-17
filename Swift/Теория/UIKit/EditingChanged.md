@@ -1,167 +1,107 @@
-## 1. Что такое `EditingChanged`
+**`EditingChanged`** — это событие типа `UIControl.Event`, которое срабатывает **каждый раз, когда текст в `UITextField` изменяется** во время активного редактирования (пользователь печатает, стирает, вставляет, автокоррект меняет символ и т.д.).
 
-**`EditingChanged`** — это событие [[UIControl]], которое срабатывает **каждый раз, когда изменяется текст в [[UITextField]] или [[UITextView]]** во время редактирования.
+### Ключевые отличия от похожих событий (2026 актуально)
 
-- Используется в **UITextField** и **UITextView** (через UIControl для UITextField)
-    
-- Отличается от [[EditingDidEnd]], которое срабатывает при завершении редактирования (когда пользователь покидает поле)
-    
-- Часто применяется для **валидации текста в реальном времени** или обновления интерфейса
-    
+| Событие                  | Когда срабатывает                                      | Самый частый сценарий использования 2026 |
+|--------------------------|--------------------------------------------------------|------------------------------------------|
+| `editingChanged`         | Каждый символ при вводе/удалении/вставке               | Live-валидация, форматирование, поиск в реальном времени |
+| `editingDidBegin`        | Пользователь начал редактировать (тапнул в поле)       | Показать клавиатуру, подсветить поле    |
+| `editingDidEnd`          | Пользователь закончил редактирование (тап за пределы)  | Сохранить значение, скрыть клавиатуру    |
+| `editingDidEndOnExit`    | Завершение редактирования по нажатию Return            | Отправка формы по Enter                  |
+| `valueChanged`           | Для UISlider, UISwitch, UISegmentedControl и т.д.      | Не для текста                            |
 
-> Проще говоря: `EditingChanged` = «текст в поле изменился прямо сейчас».
+### Когда использовать `editingChanged` в 2026 году
 
----
+| Сценарий                                      | Почему именно `editingChanged`                         | Пример кода (коротко) |
+|-----------------------------------------------|--------------------------------------------------------|-----------------------|
+| Live-валидация пароля / email                 | Показать зелёный/красный фон или иконку сразу          | `if text.count >= 8 { green } else { red }` |
+| Форматирование номера телефона / карты        | Автоматически добавлять пробелы/дефисы при вводе       | `text = formatPhone(text)` |
+| Поиск в реальном времени                      | Фильтровать список по мере ввода текста                 | `tableView.reloadData()` на каждый символ |
+| Подсчёт символов / ограничение длины          | Показывать «Осталось 120/150» или обрезать текст       | `label.text = "\(text.count)/150"` |
+| Активация кнопки «Далее» / «Отправить»        | Кнопка enabled только если поле заполнено корректно    | `button.isEnabled = !text.isEmpty` |
+| Маски / автодополнение                        | Показывать подсказки или форматировать на лету         | `text = maskCreditCard(text)` |
 
-## 2. Основные термины
-
-| Термин                        | Описание                                                               |
-| ----------------------------- | ---------------------------------------------------------------------- |
-| **UIControl.Event**           | Перечисление событий, которые могут происходить с элементами UIControl |
-| **EditingChanged**            | Событие изменения текста в текстовом поле                              |
-| **Target-Action**             | Механизм связывания события и метода                                   |
-| **[[@IBAction]] / addTarget** | Способы обработать событие в коде                                      |
-| **UITextField**               | Текстовое поле, которое поддерживает событие EditingChanged            |
-
----
-
-## 3. Основной синтаксис
-
-### Через @IBAction
+### Самый современный паттерн 2026 года
 
 ```swift
-@IBAction func textFieldEditingChanged(_ sender: UITextField) {
-    print("Text changed: \(sender.text ?? "")")
-}
-```
-
-- В Interface Builder привязывается к событию **Editing Changed**
+final class LoginViewController: UIViewController {
     
-
-### Через addTarget
-
-```swift
-let textField = UITextField()
-textField.addTarget(self, action: #selector(textFieldEditingChanged(_:)), for: .editingChanged)
-
-@objc func textFieldEditingChanged(_ sender: UITextField) {
-    print("Text changed programmatically: \(sender.text ?? "")")
-}
-```
-
-- Программный способ отслеживания изменения текста
+    @IBOutlet weak var emailTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var loginButton: UIButton!
     
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Логирование текста
-
-```swift
-@IBAction func textFieldEditingChanged(_ sender: UITextField) {
-    print("Current text: \(sender.text ?? "")")
-}
-```
-
-- Выводим текущий текст при каждом изменении
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Вариант 1: через IBAction в Interface Builder
+        // (подключаем событие Editing Changed в Storyboard/XIB)
+        
+        // Вариант 2: программно (если нет IB)
+        emailTextField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
+        
+        updateLoginButtonState()
+    }
     
-
----
-
-### Пример 2. Валидация текста
-
-```swift
-@IBAction func textFieldEditingChanged(_ sender: UITextField) {
-    if let text = sender.text, text.count > 5 {
-        sender.backgroundColor = .green
-    } else {
-        sender.backgroundColor = .red
+    @objc private func textFieldEditingChanged(_ textField: UITextField) {
+        updateLoginButtonState()
+        
+        // Дополнительная логика в зависимости от поля
+        switch textField {
+        case emailTextField:
+            validateEmail(textField.text ?? "")
+        case passwordTextField:
+            validatePassword(textField.text ?? "")
+        default:
+            break
+        }
+    }
+    
+    private func updateLoginButtonState() {
+        let emailValid = !(emailTextField.text?.isEmpty ?? true)
+        let passwordValid = (passwordTextField.text?.count ?? 0) >= 6
+        
+        loginButton.isEnabled = emailValid && passwordValid
+        loginButton.backgroundColor = loginButton.isEnabled ? .systemBlue : .systemGray
+    }
+    
+    private func validateEmail(_ text: String) {
+        // Простая валидация в реальном времени
+        let isValid = text.contains("@") && text.contains(".")
+        emailTextField.textColor = isValid ? .label : .systemRed
+    }
+    
+    private func validatePassword(_ text: String) {
+        passwordTextField.textColor = text.count >= 6 ? .label : .systemRed
     }
 }
 ```
 
-- Меняем цвет фона в зависимости от длины текста
-    
+### Лучшие практики `EditingChanged` в Swift 2026
 
----
-
-### Пример 3. Включение кнопки по условию
+- **debounce** — если логика тяжёлая (поиск по сети, сложная валидация) — добавляй задержку 0.3–0.5 сек
 
 ```swift
-@IBAction func textFieldEditingChanged(_ sender: UITextField) {
-    submitButton.isEnabled = !(sender.text?.isEmpty ?? true)
-}
-@IBOutlet weak var submitButton: UIButton!
-```
-
-- Кнопка активна только если поле не пустое
-    
-
----
-
-### Пример 4. Ограничение длины текста
-
-```swift
-@IBAction func textFieldEditingChanged(_ sender: UITextField) {
-    if let text = sender.text, text.count > 10 {
-        sender.text = String(text.prefix(10))
+private var searchWorkItem: DispatchWorkItem?
+@objc func textFieldEditingChanged(_ textField: UITextField) {
+    searchWorkItem?.cancel()
+    let workItem = DispatchWorkItem { [weak self] in
+        self?.performSearch(textField.text ?? "")
     }
+    searchWorkItem = workItem
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: workItem)
 }
 ```
 
-- Ограничиваем количество символов в реальном времени
-    
+- **Не делай тяжёлые операции** в обработчике — это вызывается на каждый символ  
+- **Используй `textField(_:shouldChangeCharactersIn:replacementString:)`** — если нужно ограничить ввод (только цифры, максимум символов)  
+- **@MainActor** — все обработчики событий UI — на главном акторе  
+- **Swift 6 strict concurrency** — `editingChanged` вызывается на главном потоке → безопасно  
+- **Документируйте** — пиши комментарий «@objc func — live-валидация и активация кнопки при изменении текста»
 
----
+**Короткий девиз 2026**:
+> `EditingChanged` — это когда тебе нужно **реагировать на каждый введённый символ** в текстовом поле: валидация в реальном времени, форматирование, активация кнопки, поиск по мере ввода.  
+> В 2026 году это **основной** способ сделать текстовые поля «живыми» и отзывчивыми.  
+> Для тяжёлой логики — добавляй debounce.
 
-### Пример 5. Форматирование текста
-
-```swift
-@IBAction func textFieldEditingChanged(_ sender: UITextField) {
-    if let text = sender.text {
-        sender.text = text.uppercased() // Преобразуем текст в верхний регистр сразу при вводе
-    }
-}
-```
-
-- Можно применять любое форматирование текста на лету
-    
-
----
-
-## 5. Особенности EditingChanged
-
-1. Срабатывает **каждый раз при изменении текста**, пока пользователь редактирует
-    
-2. Отличается от **EditingDidEnd** (срабатывает при завершении редактирования)
-    
-3. Используется для:
-    
-    - Валидации ввода
-        
-    - Форматирования текста
-        
-    - Управления состоянием кнопок и других UI элементов
-        
-4. Поддерживается как **@IBAction**, так и **addTarget**
-    
-
----
-
-## 6. Итог
-
-- **EditingChanged** = событие изменения текста в UITextField
-    
-- Позволяет:
-    
-    - Следить за текстом в реальном времени
-        
-    - Делать валидацию и форматирование на лету
-        
-    - Управлять UI элементами в зависимости от введённого текста
-        
-- Поддерживается **Interface Builder** и **код**
-    
-
----
+Удачи с мгновенной и удобной обработкой текста в Swift! ⌨️

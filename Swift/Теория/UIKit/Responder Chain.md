@@ -1,308 +1,148 @@
-# Responder Chain в UIKit
+**Responder Chain** в UIKit — это один из самых фундаментальных и при этом недооценённых механизмов всей платформы iOS.
 
-**Responder Chain** — это механизм, с помощью которого [[iOS]] доставляет события (touch, gesture, motion, action) от системы к нужному объекту в иерархии приложения.
+Если коротко и по-человечески:
 
-Это **основа**:
+> Responder Chain — это **маршрут доставки** любого события пользователя (тап, свайп, клавиша, shake, меню, команда и т.д.) от системы до того объекта, который решит, что с этим событием делать.
 
-- обработки нажатий
-    
-- кнопок
-    
-- жестов
-    
-- `target–action`
-    
-- меню, `UICommand`, клавиатуры
-    
-- и даже `sendAction(_:)`
-    
+Это **не** про геометрию (где именно ткнули), а про **ответственность** (кто имеет право обработать).
 
-Если ты понимаешь responder chain — ты понимаешь UIKit.
+### 1. Кто вообще входит в Responder Chain
 
----
+Все объекты, которые могут получать и обрабатывать события, наследуются от **`UIResponder`**:
 
-# 1. Кто такой Responder
-
-Все объекты, участвующие в обработке событий, наследуются от:
-
-```swift
-UIResponder
-```
-
-К ним относятся:
-
-- `UIView`
-    
+- `UIView` (и все его подклассы: UIButton, UILabel, UIImageView, UITableViewCell и т.д.)
 - `UIViewController`
-    
 - `UIWindow`
-    
 - `UIApplication`
-    
+- `UIApplicationDelegate` / `UISceneDelegate` (в некоторых случаях)
+- `UIWindowScene` (в сценах)
 
-Каждый [[UIResponder]] знает, кто следующий в цепочке:
+Каждый из них знает, кто следующий в цепочке через свойство:
 
 ```swift
-var next: UIResponder? { get }
+var nextResponder: UIResponder? { get }
 ```
 
-Это и есть **цепочка**.
-
----
-
-# 2. Базовая цепочка
-
-Для обычного экрана цепочка выглядит так:
+По умолчанию цепочка строится так:
 
 ```
-UIView (кнопка)
+Самая вложенная UIView (кнопка, ячейка и т.д.)
   ↓
-Superview
+её superview
   ↓
-...
+... (вверх по иерархии view)
   ↓
-UIViewController
+UIViewController (если вью принадлежит контроллеру)
   ↓
 UIWindow
   ↓
 UIApplication
+  ↓
+UIApplication.shared (или AppDelegate / SceneDelegate в некоторых случаях)
 ```
 
-Если объект не обработал событие — оно передаётся дальше по `next`.
-
----
-
-# 3. Откуда вообще берётся событие
-
-Жизненный путь нажатия:
+### 2. Как выглядит полный путь события (тап по экрану)
 
 ```
-Палец
- ↓
-iOS Kernel
- ↓
-SpringBoard
- ↓
-UIApplication
- ↓
-UIWindow
- ↓
-hitTest(_:with:)
- ↓
-Найденная UIView
- ↓
-Responder Chain
+Палец коснулся экрана
+  ↓
+iOS → SpringBoard → UIApplication
+  ↓
+UIWindow получает событие
+  ↓
+window.hitTest(point, with: event) → находит самую вложенную UIView
+  ↓
+Если найдена → эта UIView становится первой в Responder Chain
+  ↓
+UIKit вызывает touchesBegan / touchesMoved / touchesEnded на этой UIView
+  ↓
+Если метод не вызвал super → событие поглощено, цепочка обрывается
+  ↓
+Если вызвал super → событие идёт дальше по nextResponder
+  ↓
+И так до UIApplication или пока кто-то не обработает
 ```
 
-UIKit сначала определяет **какой View был нажат** через `hitTest`, а потом уже запускает responder chain.
+### 3. Самые важные методы Responder Chain
 
----
+| Метод                              | Когда вызывается                                  | Что обычно делают внутри                          | Важно помнить |
+|------------------------------------|---------------------------------------------------|---------------------------------------------------|---------------|
+| `touchesBegan(_:with:)`            | Начало касания                                    | Начать жест, запомнить точку, показать выделение | Вызывай `super` если не хочешь поглотить событие |
+| `touchesMoved(_:with:)`            | Палец двигается                                   | Перетаскивание, рисование, свайп                  | Часто самый тяжёлый по количеству вызовов |
+| `touchesEnded(_:with:)`            | Палец оторвался                                   | Завершить действие (нажатие, свайп)               | Здесь чаще всего принимают решение |
+| `touchesCancelled(_:with:)`        | Система отменила касание (системный жест, звонок) | Откатить состояние, убрать выделение              | Обязательно обрабатывай |
+| `motionBegan(_:with:)`             | Shake (тряска устройства)                         | Отменить, undo, показать меню                     | Редко, но важно |
+| `pressesBegan(_:with:)`            | Физические кнопки (Apple Pencil, геймпад)         | Обработка hardware-ввода                          | iPad + контроллеры |
 
-# 4. [[hitTest]] и выбор первой view
+### 4. Магия: target = nil в target-action
 
-UIKit ищет самую глубокую view под пальцем:
+Самый красивый и мощный пример использования Responder Chain — это когда ты пишешь:
 
 ```swift
-window.hitTest(point, with: event)
+button.addTarget(nil, action: #selector(saveDocument), for: .touchUpInside)
 ```
 
-Упрощённо:
+UIKit делает примерно так:
 
-```swift
-func hitTest(_ point: CGPoint) -> UIView? {
-    for subview in subviews.reversed() {
-        if subview.frame.contains(point) {
-            return subview.hitTest(convertedPoint)
-        }
-    }
-    return self
-}
+```
+Кнопка нажата
+  ↓
+hitTest нашёл кнопку
+  ↓
+Responder Chain начинается с кнопки
+  ↓
+Кнопка ищет объект, у которого есть метод saveDocument
+  ↓
+Не нашла → спрашивает superview
+  ↓
+Не нашла → спрашивает view controller
+  ↓
+Нашла в контроллере → вызывает saveDocument
 ```
 
-Это **не responder chain** — это поиск стартовой точки.
+Это позволяет:
+- не привязывать кнопку жёстко к конкретному объекту
+- иметь одну кнопку «Сохранить» в navigation bar, а логику сохранения — в текущем контроллере
+- создавать **децентрализованный** UI
 
-Responder chain начинается **после**.
+### 5. Самые частые места, где Responder Chain спасает
 
----
+| Ситуация                                      | Как работает Responder Chain                           | Почему это круто |
+|-----------------------------------------------|--------------------------------------------------------|------------------|
+| Кнопка в navigation bar без target            | Событие идёт в текущий visible view controller         | Нет сильной связи, легко менять логику |
+| Клавиатурные команды (Cmd+S, Cmd+Z)           | `canPerformAction(_:withSender:)` идёт по цепочке      | Команды работают везде, где есть нужный метод |
+| Shake для Undo / Redo                         | `motionBegan` доходит до первого, кто реализует       | Стандартный жест работает автоматически |
+| Долгое нажатие → контекстное меню             | `canPerformAction` проверяется по всей цепочке         | Меню появляется там, где есть обработчик |
+| Кастомные жесты в ScrollView                  | ScrollView может перехватить pan, но не блокировать tap | Гибкое управление приоритетами жестов |
 
-# 5. Простейший пример
+### 6. Как перехватить событие раньше всех
 
 ```swift
-class MyView: UIView {
+class InterceptingView: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("MyView")
-        super.touchesBegan(touches, with: event)
-    }
-}
-
-class MyViewController: UIViewController {
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("ViewController")
-        super.touchesBegan(touches, with: event)
+        print("Я перехватил касание первым!")
+        // НЕ вызываем super → событие дальше не пойдёт
     }
 }
 ```
 
-При тапе по `MyView`:
-
-```
-MyView
-ViewController
-UIWindow
-UIApplication
-```
-
-Если ты **не вызовешь** `super`, цепочка **оборвётся**.
-
----
-
-# 6. Как кнопки работают через Responder Chain
-
-[[UIButton]] не вызывает метод напрямую. Он делает:
+Или наоборот — пропустить и передать дальше:
 
 ```swift
-UIApplication.shared.sendAction(
-    #selector(buttonTapped),
-    to: target,
-    from: self,
-    for: event
-)
+override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    super.touchesBegan(touches, with: event) // передаём вверх
+}
 ```
 
-Если `target == nil`, UIKit ищет обработчик по responder chain.
+### Короткий девиз 2026
 
-Это значит:
+> **hitTest** спрашивает: «Где именно лежит вью под пальцем?»  
+> **Responder Chain** спрашивает: «Кто из объектов имеет право это обработать?»  
+> Первый находит кандидата, второй доставляет событие до того, кто скажет «я возьму».
 
-```swift
-@objc func buttonTapped()
-```
+Это два последовательных шага одной системы:  
+геометрия → ответственность.
 
-может быть:
+Понимаешь их — понимаешь, как на самом деле работает UIKit.
 
-- в [[Swift/Теория/UIKit/UIView]]
-    
-- в [[UIViewController]]
-    
-- даже в `AppDelegate`
-    
-
----
-
-# 7. Магия target = nil
-
-```swift
-button.addTarget(nil, action: #selector(save), for: .touchUpInside)
-```
-
-UIKit делает:
-
-```
-button
-↓
-superview
-↓
-view controller
-↓
-window
-↓
-app
-```
-
-И вызывает первый объект, где есть `save`.
-
-Это позволяет делать **децентрализованную архитектуру UI**.
-
----
-
-# 8. Как ViewController попадает в цепочку
-
-По умолчанию:
-
-```
-UIView → UIViewController → UIWindow
-```
-
-UIKit автоматически связывает:
-
-```swift
-view.next == viewController
-viewController.next == window
-```
-
-Поэтому ViewController может ловить:
-
-- кнопки
-    
-- жесты
-    
-- клавиатуру
-    
-- меню
-    
-
-без прямых ссылок.
-
----
-
-# 9. Жизненный цикл события
-
-Для touch:
-
-```
-touchesBegan
-→ touchesMoved
-→ touchesEnded / touchesCancelled
-```
-
-Каждый этап идёт по responder chain.
-
-Если объект «съел» событие и не вызвал `super` — дальше оно не пойдёт.
-
----
-
-# 10. Gesture Recognizers и Responder Chain
-
-Жесты сидят **между hitTest и responder chain**.
-
-Пайплайн:
-
-```
-hitTest → UIView
-    ↓
-Gesture Recognizers
-    ↓ (если не распознали)
-touchesBegan → responder chain
-```
-
-Поэтому:
-
-- жест может «перехватить» событие
-    
-- touches не придут вообще
-    
-
----
-
-# 11. Почему это фундамент UIKit
-
-Responder Chain позволяет:
-
-- кнопкам не знать про контроллеры
-    
-- view не иметь ссылок на владельцев
-    
-- меню, клавиатуре, командам работать глобально
-    
-
-Это **архитектурная развязка**, заложенная ещё в NeXTSTEP — и она переживёт любые UI-фреймворки поверх UIKit.
-
----
-
-# Ментальная модель
-
-Responder Chain — это не «обработка тапа».  
-Это **маршрут, по которому UIKit доставляет намерение пользователя** от пикселя до логики.
-
-Сначала находится место,  
-потом ищется смысл,  
-и только потом вызывается код.
+Удачи с глубоким пониманием и гибкой обработкой событий! 👆

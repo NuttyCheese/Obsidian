@@ -1,171 +1,126 @@
-## 1. Что такое `TouchDown`
+**TouchDown** — это одно из событий (`UIControl.Event.touchDown`) в UIKit, которое срабатывает **в самый момент, когда пользователь впервые касается** элемента управления (чаще всего `UIButton`, но также `UISlider`, `UISegmentedControl` и другие наследники `UIControl`).
 
-**`TouchDown`** — это событие [[UIControl]], которое срабатывает **сразу в момент, когда пользователь касается элемента (например, кнопки)**.
+Это **самое раннее** событие в цепочке касаний кнопки.
 
-- Используется в [[UIButton]], [[UISlider]] и других наследниках **UIControl**
-    
-- Отличается от [[TouchUpInside]] и [[TouchUpOutside]], которые срабатывают при отпускании пальца
-    
-- Часто применяется для **визуальной реакции кнопки на нажатие**
-    
+### Полная цепочка событий касания кнопки (2026 актуально)
 
-> Проще говоря: `TouchDown` = «пользователь коснулся кнопки».
+| Событие                  | Когда срабатывает                                      | Кол-во вызовов при одном нажатии | Самый частый сценарий использования в 2026 |
+|--------------------------|--------------------------------------------------------|----------------------------------|--------------------------------------------|
+| `touchDown`              | Палец только что коснулся кнопки                       | 1                                | Визуальный эффект нажатия (scale down, цвет) |
+| `touchDownRepeat`        | Двойное/тройное касание (очень редко)                  | 1+                               | Почти не используется                      |
+| `touchDragEnter`         | Палец вошёл в границы кнопки после начала вне её       | 0–1                              | Редко (для кастомных drag-жестов)          |
+| `touchDragInside`        | Палец двигается внутри кнопки                          | много                            | Редко                                      |
+| `touchDragOutside`       | Палец вышел за границы кнопки                          | 0–1                              | Отмена эффекта нажатия                     |
+| `touchDragExit`          | Палец вышел за границы и больше не возвращается        | 0–1                              | Отмена выделения                           |
+| `touchUpInside`          | Палец отпущен **внутри** кнопки                        | 0–1                              | Основное действие (нажатие кнопки)         |
+| `touchUpOutside`         | Палец отпущен **вне** кнопки                           | 0–1                              | Отмена действия                            |
+| `touchCancel`            | Система отменила касание (звонок, системный жест)      | 0–1                              | Откат состояния                            |
 
----
-
-## 2. Основные термины
-
-| Термин                        | Описание                                                               |
-| ----------------------------- | ---------------------------------------------------------------------- |
-| **UIControl.Event**           | Перечисление событий, которые могут происходить с элементами UIControl |
-| **TouchDown**                 | Событие при начале нажатия на элемент                                  |
-| **Target-Action**             | Механизм связывания события и метода                                   |
-| **[[@IBAction]] / addTarget** | Способы обработать событие в коде                                      |
-
----
-
-## 3. Основной синтаксис
-
-### Через @IBAction
-
-```swift
-@IBAction func buttonTouchDown(_ sender: UIButton) {
-    print("Touch down!")
-}
+**Самая частая последовательность при обычном нажатии**:
+```
+touchDown → (touchDragInside, если палец двигался) → touchUpInside
 ```
 
-- В Interface Builder привязывается к событию **Touch Down**
-    
+### Для чего используют именно `TouchDown` в 2026 году
 
-### Через addTarget
+| Цель / Эффект                                 | Почему именно `TouchDown` (а не `touchUpInside`) | Пример кода (коротко) |
+|-----------------------------------------------|---------------------------------------------------|-----------------------|
+| Показать **эффект нажатия** (scale, тень, цвет) | Реакция должна быть мгновенной, как в iOS Human Interface Guidelines | `sender.transform = .init(scaleX: 0.95, y: 0.95)` |
+| Начать **предварительную анимацию** или звук   | Пользователь должен почувствовать отклик сразу при касании | `playClickSound()` |
+| Выделить кнопку или показать ripple-эффект     | Ripple должен начинаться с момента касания        | `startRippleAnimation(at: touchPoint)` |
+| Запустить **предзагрузку** данных или анимацию | Пока палец держат — уже начать подготовку        | `preloadNextScreen()` |
+| Отменить эффект при свайпе за пределы          | Комбинируется с `touchDragExit` / `touchUpOutside` | `resetButtonAppearance()` |
 
-```swift
-let button = UIButton(type: .system)
-button.addTarget(self, action: #selector(buttonTouchDown(_:)), for: .touchDown)
-
-@objc func buttonTouchDown(_ sender: UIButton) {
-    print("Touch down programmatically!")
-}
-```
-
-- Программный способ отслеживания события
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простое логирование
+### Самый современный и рекомендуемый паттерн 2026 года
 
 ```swift
-@IBAction func buttonTouchDown(_ sender: UIButton) {
-    print("User started touching the button")
-}
-```
-
-- Просто вывод в консоль
+final class ActionButton: UIButton {
     
-
----
-
-### Пример 2. Изменение цвета кнопки при нажатии
-
-```swift
-@IBAction func buttonTouchDown(_ sender: UIButton) {
-    sender.backgroundColor = .gray
-}
-```
-
-- Визуальная обратная связь при начале нажатия
-    
-
----
-
-### Пример 3. Возврат цвета при отпускании
-
-```swift
-@IBAction func buttonTouchDown(_ sender: UIButton) {
-    sender.backgroundColor = .gray
-}
-
-@IBAction func buttonTouchUpInside(_ sender: UIButton) {
-    sender.backgroundColor = .systemBlue
-}
-@IBAction func buttonTouchUpOutside(_ sender: UIButton) {
-    sender.backgroundColor = .systemBlue
-}
-```
-
-- Контролируем внешний вид кнопки на разных событиях
-    
-
----
-
-### Пример 4. addTarget с TouchDown
-
-```swift
-let button = UIButton(type: .system)
-button.addTarget(self, action: #selector(buttonTouchDown(_:)), for: .touchDown)
-
-@objc func buttonTouchDown(_ sender: UIButton) {
-    print("TouchDown event triggered!")
-}
-```
-
-- Программная обработка начала нажатия
-    
-
----
-
-### Пример 5. TouchDown с анимацией
-
-```swift
-@IBAction func buttonTouchDown(_ sender: UIButton) {
-    UIView.animate(withDuration: 0.1) {
-        sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
     }
-}
-
-@IBAction func buttonTouchUpInside(_ sender: UIButton) {
-    UIView.animate(withDuration: 0.1) {
-        sender.transform = .identity
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+    
+    private func setup() {
+        // Визуальные настройки
+        layer.cornerRadius = 12
+        backgroundColor = .systemBlue
+        setTitleColor(.white, for: .normal)
+        titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        
+        // Добавляем обработчики событий
+        addTarget(self, action: #selector(touchDown), for: .touchDown)
+        addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        addTarget(self, action: #selector(touchDragExit), for: .touchDragExit)
+    }
+    
+    @objc private func touchDown() {
+        UIView.animate(withDuration: 0.12) {
+            self.transform = CGAffineTransform(scaleX: 0.94, y: 0.94)
+            self.backgroundColor = .systemBlue.withAlphaComponent(0.85)
+            self.layer.shadowOpacity = 0.4
+        }
+    }
+    
+    @objc private func touchUp() {
+        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5) {
+            self.transform = .identity
+            self.backgroundColor = .systemBlue
+            self.layer.shadowOpacity = 0
+        }
+    }
+    
+    @objc private func touchDragExit() {
+        UIView.animate(withDuration: 0.15) {
+            self.transform = .identity
+            self.backgroundColor = .systemBlue
+        }
     }
 }
 ```
 
-- Кнопка **сжимается при касании**, а возвращается в исходное состояние при отпускании
-    
+### Почему именно такой подход в 2026 году
 
----
+- **0.12–0.2 секунды** — идеальное время для анимации нажатия (Apple Human Interface Guidelines)  
+- **Spring with damping** — даёт естественный «отскок»  
+- **touchDragExit** — отменяет эффект, если пользователь свайпнул за пределы (как в системных кнопках)  
+- **touchCancel** — обрабатывает системные отмены (входящий звонок, жест назад)  
+- **Нет `highlighted` состояния** — Apple рекомендует кастомные анимации вместо стандартного highlighted
 
-## 5. Особенности TouchDown
+### Полный список событий для кнопки (рекомендуемый набор 2026)
 
-1. Срабатывает **сразу при касании**, до отпускания пальца
-    
-2. Отличается от `TouchUpInside` и `TouchUpOutside`
-    
-3. Часто используется для **визуальной обратной связи (эффект нажатия)**
-    
-4. Поддерживается **@IBAction** и **addTarget**
-    
-5. Можно комбинировать с другими событиями для полного UX
-    
+```swift
+button.addTarget(self, action: #selector(touchDown), for: .touchDown)
+button.addTarget(self, action: #selector(touchDownRepeat), for: .touchDownRepeat) // редко
+button.addTarget(self, action: #selector(touchDragEnter), for: .touchDragEnter)   // редко
+button.addTarget(self, action: #selector(touchDragInside), for: .touchDragInside) // редко
+button.addTarget(self, action: #selector(touchDragOutside), for: .touchDragOutside)
+button.addTarget(self, action: #selector(touchDragExit), for: .touchDragExit)
+button.addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+```
 
----
+Но в 90% случаев достаточно:
 
-## 6. Итог
+- `.touchDown` — начать эффект нажатия  
+- `.touchUpInside` + `.touchUpOutside` + `.touchCancel` — вернуть в исходное состояние
 
-- **TouchDown** = событие UIControl при начале нажатия
-    
-- Позволяет:
-    
-    - Реализовать визуальные эффекты нажатия
-        
-    - Запускать предварительные действия до отпускания пальца
-        
-    - Использовать вместе с TouchUpInside / TouchUpOutside для контроля UX
-        
-- Поддерживается **Interface Builder** и программно через **addTarget**
-    
+### Лучшие практики TouchDown в Swift 2026
 
----
+- **Делай анимацию короткой** (0.1–0.2 сек) и естественной (spring damping 0.7–0.9)  
+- **Не перегружай** — избегай сложных вычислений в `touchDown`  
+- **Комбинируй с `highlighted`** — если хочешь стандартный эффект + кастомный  
+- **@MainActor** — все обработчики событий UI — на главном акторе  
+- **Swift 6 strict concurrency** — события вызываются на главном потоке → безопасно  
+- **Документируйте** — пиши комментарий «@objc func — визуальный эффект нажатия кнопки»
+
+**Короткий девиз 2026**:
+> `TouchDown` — это когда пользователь **только коснулся** кнопки.  
+> В 2026 году это **основной** триггер для мгновенной визуальной обратной связи: сжатие, подсветка, ripple, звук.  
+> Всегда комбинируй с `touchUpInside`/`touchUpOutside`/`touchCancel` для возврата в исходное состояние.
+
+Удачи с отзывчивыми и приятными кнопками в твоём приложении! 👆

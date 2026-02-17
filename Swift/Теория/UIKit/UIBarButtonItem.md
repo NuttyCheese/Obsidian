@@ -1,182 +1,134 @@
-## 1. Что такое `UIBarButtonItem`
+**UIBarButtonItem** — это специальный элемент управления в UIKit, предназначенный исключительно для размещения в двух местах:
 
-**`UIBarButtonItem`** — это **кнопка или элемент управления**, предназначенный для размещения в:
+- **UINavigationBar** (навигационная панель сверху)
+- **UIToolbar** (панель инструментов снизу или кастомная)
 
-- **[[UINavigationBar]]** (верхняя панель навигации)
-    
-- **[[UIToolbar]]** (панель инструментов внизу экрана)
-    
+Это **не** обычная `UIButton` и **не** наследуется от `UIView`.  
+Это подкласс `UIBarItem`, который выглядит и ведёт себя как кнопка, но управляется через специальный API навигации и тулбара.
 
-Особенности:
+В 2026 году это **основной** способ добавить кнопки в навигацию и нижнюю панель инструментов в UIKit-приложениях.
 
-- Не является **[[Swift/Теория/UIKit/UIView]]**, а **[[UIBarItem]]**
+### Основные типы UIBarButtonItem
+
+| Тип создания                                 | Внешний вид / поведение                              | Когда использовать в 2026 | Пример |
+|----------------------------------------------|-------------------------------------------------------|----------------------------|--------|
+| **Текстовый** (title)                        | Просто текст («Сохранить», «Готово»)                  | Простые действия, где иконка не нужна | `UIBarButtonItem(title: "Сохранить", style: .plain, ...)` |
+| **Иконка** (image)                           | SF Symbol или кастомная картинка                      | Современный минималистичный дизайн | `UIBarButtonItem(image: UIImage(systemName: "plus"), ...)` |
+| **Системная кнопка** (barButtonSystemItem)   | Готовые иконки Apple (edit, add, done, trash и т.д.)  | Стандартные действия (редактировать, добавить, отменить) | `UIBarButtonItem(barButtonSystemItem: .edit, ...)` |
+| **Кастомная вью** (customView)               | Любая UIView (UILabel, UIImageView, UIStackView и т.д.) | Сложный UI: аватар, счётчик, прогресс | `UIBarButtonItem(customView: customAvatarView)` |
+
+### Стили (style) — влияют на внешний вид текста
+
+| Стиль               | Внешний вид текста                          | Когда использовать в 2026 |
+|---------------------|---------------------------------------------|----------------------------|
+| `.plain`            | Обычный текст (синий на светлой теме)       | Большинство кнопок         |
+| `.done`             | Жирный, синий (или акцентный) текст         | Кнопка «Готово», «Сохранить» в формах |
+| `.bordered` (устарел) | Рамка вокруг текста (iOS < 13)              | Не используйте — устарел   |
+
+### Самый популярный и современный паттерн 2026 года
+
+#### 1. Кнопка в Navigation Bar (самый частый случай)
+
+```swift
+class DetailViewController: UIViewController {
     
-- Может отображать:
-    
-    - Текст (`title`)
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-    - Изображение (`image`)
+        // Кнопка "Сохранить" справа
+        let saveButton = UIBarButtonItem(
+            title: "Сохранить",
+            style: .done,
+            target: self,
+            action: #selector(saveTapped)
+        )
+        navigationItem.rightBarButtonItem = saveButton
         
-    - Системные кнопки (`.add`, `.edit`, `.done` и др.)
-        
-- Может иметь **действие (`action`)** через target-action
+        // Кнопка "Добавить" слева с иконкой
+        let addButton = UIBarButtonItem(
+            image: UIImage(systemName: "plus.circle.fill"),
+            style: .plain,
+            target: self,
+            action: #selector(addTapped)
+        )
+        navigationItem.leftBarButtonItem = addButton
+    }
     
-
-> Проще говоря: `UIBarButtonItem` = кнопка для навигационной панели или тулбара.
-
----
-
-## 2. Основные термины
-
-|Термин|Описание|
-|---|---|
-|**title**|Текст кнопки|
-|**image**|Изображение для кнопки|
-|**style**|Стиль кнопки (`.plain`, `.done`, `.bordered`)|
-|**target-action**|Механизм, который вызывается при нажатии кнопки|
-|**systemItem**|Предустановленные системные кнопки (`.add`, `.edit`, `.save`, и др.)|
-|**UINavigationItem.leftBarButtonItem / rightBarButtonItem**|Размещение кнопки слева или справа в NavigationBar|
-|**UIToolbar.items**|Размещение кнопок в тулбаре|
-
----
-
-## 3. Основной синтаксис
-
-### Создание кнопки с текстом
-
-```swift
-let button = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveTapped))
-```
-
-### Создание кнопки с изображением
-
-```swift
-let button = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTapped))
-```
-
-### Создание системной кнопки
-
-```swift
-let button = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTapped))
-```
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простая текстовая кнопка
-
-```swift
-let saveButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveTapped))
-navigationItem.rightBarButtonItem = saveButton
-
-@objc func saveTapped() {
-    print("Save button tapped")
+    @objc private func saveTapped() {
+        print("Сохранение...")
+    }
+    
+    @objc private func addTapped() {
+        print("Добавление...")
+    }
 }
 ```
 
-- Кнопка справа в NavigationBar с текстом
-    
-
----
-
-### Пример 2. Кнопка с изображением
-
-```swift
-let addButton = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addTapped))
-navigationItem.leftBarButtonItem = addButton
-
-@objc func addTapped() {
-    print("Add button tapped")
-}
-```
-
-- Кнопка слева с иконкой из SF Symbols
-    
-
----
-
-### Пример 3. Системная кнопка
+#### 2. Несколько кнопок справа (группа действий)
 
 ```swift
 let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTapped))
-navigationItem.rightBarButtonItem = editButton
+let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
 
-@objc func editTapped() {
-    print("Edit button tapped")
-}
+navigationItem.rightBarButtonItems = [shareButton, editButton]
 ```
 
-- Используем готовый системный стиль `.edit`
-    
-
----
-
-### Пример 4. Несколько кнопок в NavigationBar
+#### 3. Кнопка с кастомной вью (аватар, счётчик, прогресс)
 
 ```swift
-let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
-let editButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTapped))
-navigationItem.rightBarButtonItems = [addButton, editButton]
+let avatarView = UIImageView(image: UIImage(systemName: "person.circle.fill"))
+avatarView.contentMode = .scaleAspectFill
+avatarView.frame = CGRect(x: 0, y: 0, width: 32, height: 32)
+avatarView.layer.cornerRadius = 16
+avatarView.clipsToBounds = true
 
-@objc func addTapped() { print("Add tapped") }
-@objc func editTapped() { print("Edit tapped") }
+let avatarButton = UIBarButtonItem(customView: avatarView)
+
+// Добавляем tap gesture вручную
+let tap = UITapGestureRecognizer(target: self, action: #selector(profileTapped))
+avatarView.isUserInteractionEnabled = true
+avatarView.addGestureRecognizer(tap)
+
+navigationItem.rightBarButtonItem = avatarButton
 ```
 
-- Размещаем несколько кнопок справа
-    
-
----
-
-### Пример 5. UIBarButtonItem в UIToolbar
+#### 4. Кнопки в UIToolbar (нижняя панель)
 
 ```swift
-let toolbar = UIToolbar(frame: CGRect(x: 0, y: 700, width: view.frame.width, height: 50))
+let toolbar = UIToolbar(frame: CGRect(x: 0, y: view.bounds.height - 50, width: view.bounds.width, height: 50))
 
-let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped))
 let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped))
 let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
 
-toolbar.setItems([cancelButton, flexibleSpace, doneButton], animated: false)
+toolbar.items = [cancelButton, flexibleSpace, doneButton]
 view.addSubview(toolbar)
-
-@objc func doneTapped() { print("Done tapped") }
-@objc func cancelTapped() { print("Cancel tapped") }
 ```
 
-- Используем тулбар с кнопками и гибким пространством
-    
+### Лучшие практики UIBarButtonItem в Swift 2026
 
----
+- **Используй UIAction вместо target-action** (iOS 14+)
 
-## 5. Особенности UIBarButtonItem
+```swift
+let saveAction = UIAction { _ in
+    print("Сохранено")
+}
 
-1. **Не является UIView**, поэтому нельзя напрямую изменять frame
-    
-2. Для кастомного UI используют **customView**
-    
-3. Поддерживает как текст, так и изображение
-    
-4. Может быть **несколько кнопок** в NavigationBar и Toolbar
-    
-5. Использует **target-action** для обработки нажатий
-    
+let saveButton = UIBarButtonItem(title: "Сохранить", primaryAction: saveAction)
+navigationItem.rightBarButtonItem = saveButton
+```
 
----
+- **Для системных иконок** — всегда используй `barButtonSystemItem` (`.edit`, `.add`, `.done`, `.trash`, `.action` и т.д.) — они автоматически адаптируются под тему и доступность  
+- **iPad / Mac Catalyst** — обязательно указывай `popoverPresentationController` при показе action sheet из кнопки  
+- **SF Symbols** — используй `UIImage(systemName:weight:scale:)` для иконок  
+- **Не делай слишком много кнопок справа** — максимум 2–3, иначе интерфейс перегружен  
+- **@MainActor** — все действия кнопок — на главном акторе  
+- **Swift 6 strict concurrency** — UIBarButtonItem полностью безопасен  
+- **Документируйте** — пиши комментарий «UIBarButtonItem — кнопка "Сохранить" в навигационной панели»
 
-## 6. Итог
+**Короткий девиз 2026**:
+> UIBarButtonItem — это **кнопка специально для навигационной панели и тулбара**.  
+> В 2026 году используй **UIAction** вместо target-action, системные иконки и максимум 2–3 кнопки справа.  
+> Это **единственный правильный** способ добавить действия в верхнюю/нижнюю панель в UIKit.
 
-- **UIBarButtonItem** = кнопка для NavigationBar или UIToolbar
-    
-- Позволяет:
-    
-    - Добавлять текстовые, графические и системные кнопки
-        
-    - Использовать несколько кнопок сразу
-        
-    - Привязывать действия через target-action
-        
-- Отличие от UIButton: **не UIView**, управляется через UIBarButtonItem API
-    
-
----
+Удачи с чистыми и нативными навигационными панелями в твоём приложении! 🔝

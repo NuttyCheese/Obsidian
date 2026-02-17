@@ -1,160 +1,106 @@
-## 1. Что такое `CALayer`
+**CALayer** — это **низкоуровневый объект** из Core Animation, который управляет **всем визуальным содержимым и анимациями** любого `UIView`.
 
-**`CALayer`** — это объект, который управляет **визуальным содержимым и анимациями элементов интерфейса**.
+Каждый `UIView` имеет **свой собственный слой** (`view.layer`), и именно через этот слой происходят:
+- отрисовка фона, текста, изображений
+- скругление углов, границы, тени
+- маски, градиенты, маскирование
+- все анимации (перемещение, масштаб, прозрачность, вращение и т.д.)
 
-- Каждое [[Swift/Теория/UIKit/UIView]] содержит **свой слой `layer`**, через который можно управлять:
-    
-    - **Границами** (`borderWidth`, `borderColor`)
-        
-    - **Скруглениями углов** (`cornerRadius`)
-        
-    - **Тенью** (`shadowOpacity`, `shadowOffset`, `shadowColor`)
-        
-    - **Анимациями** (CABasicAnimation, CAKeyframeAnimation)
-        
-- `CALayer` может содержать **подслои (`sublayers`)**, создавая иерархию визуальных слоев
-    
+Проще говоря:  
+`UIView` — это «логический контейнер» (обработка событий, layout, иерархия),  
+а `CALayer` — это «визуальный движок», который рисует всё на экране.
 
-> Проще говоря: `CALayer` = «невидимый слой под UIView, который управляет всеми визуальными эффектами и анимациями».
+### Почему CALayer важен в 2026 году
 
----
+| Возможность                          | Через UIView (старый способ)                  | Через CALayer (современный способ)                  | Почему CALayer лучше |
+|--------------------------------------|------------------------------------------------|-----------------------------------------------------|----------------------|
+| Скругление углов                     | `layer.cornerRadius`                           | `layer.cornerRadius`                                | То же, но быстрее и точнее |
+| Тень                                 | `layer.shadow*` свойства                       | `layer.shadow*` + `shadowPath`                      | Тень без `shadowPath` очень дорогая |
+| Градиент / маска                     | Нужно вручную рисовать в `draw(_:)`           | `CAGradientLayer`, `mask`                           | Гораздо проще и быстрее |
+| Анимации                             | `UIView.animate`                               | `CABasicAnimation`, `CAKeyframeAnimation`           | Полный контроль, поддержка completion, timing |
+| Сложные композиции                   | Много вложенных вью                            | Иерархия `sublayers`                                | Меньше overhead, лучше производительность |
+| 3D-трансформации                     | Ограничено                                     | `transform`, `sublayerTransform`, perspective       | Полноценная 3D-графика |
 
-## 2. Основные термины
+### Основные свойства CALayer (самые используемые в 2026)
 
-|Термин|Описание|
-|---|---|
-|**layer**|Свойство UIView, возвращает CALayer, связанный с этим UIView|
-|**sublayers**|Массив подслоев, которые находятся внутри слоя|
-|**cornerRadius**|Скругление углов слоя|
-|**shadowOpacity / shadowColor / shadowOffset**|Свойства тени слоя|
-|**borderWidth / borderColor**|Граница слоя|
-|**mask / contents**|Маска слоя или содержимое (изображение, цвет)|
-|**CABasicAnimation / CAKeyframeAnimation**|Анимации, которые применяются к CALayer|
+| Свойство / Метод                     | Тип                              | Что делает / Пример использования 2026 |
+|--------------------------------------|----------------------------------|----------------------------------------|
+| `cornerRadius`                       | CGFloat                          | Скругление углов (самое частое)        |
+| `borderWidth` / `borderColor`        | CGFloat / CGColor                | Тонкая рамка вокруг карточек           |
+| `shadowOpacity` / `shadowRadius` / `shadowOffset` / `shadowColor` | Float / CGFloat / CGSize / CGColor | Тень (обязательно используй `shadowPath`) |
+| `shadowPath`                         | CGPath?                          | Оптимизация тени (экономит GPU)        |
+| `masksToBounds`                      | Bool                             | Обрезать содержимое по границам слоя   |
+| `backgroundColor`                    | CGColor?                         | Цвет фона (чаще используют view.backgroundColor) |
+| `contents`                           | Any? (обычно CGImage)            | Прямое изображение без UIImageView     |
+| `sublayers`                          | [CALayer]?                       | Добавление градиентов, масок, эффектов |
+| `addSublayer(_:)`                    | —                                | Добавление подслоя (градиент, маска)   |
+| `add(_:forKey:)`                     | —                                | Добавление анимации                    |
 
----
-
-## 3. Основной синтаксис
-
-```swift
-let view = UIView(frame: CGRect(x: 50, y: 50, width: 100, height: 100))
-view.backgroundColor = .systemBlue
-
-// Работа с layer
-view.layer.cornerRadius = 10
-view.layer.borderWidth = 2
-view.layer.borderColor = UIColor.black.cgColor
-view.layer.shadowColor = UIColor.black.cgColor
-view.layer.shadowOpacity = 0.5
-view.layer.shadowOffset = CGSize(width: 3, height: 3)
-```
-
-- `view.layer` возвращает связанный слой для любого UIView
-    
-- Многие свойства слоя используют **CGColor** вместо UIColor
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Скругление углов
+### Самый популярный и современный паттерн 2026 года
 
 ```swift
-let view = UIView(frame: CGRect(x: 50, y: 50, width: 100, height: 100))
-view.backgroundColor = .systemRed
-view.layer.cornerRadius = 20
-```
-
-- Простейшее визуальное изменение слоя
+final class CardView: UIView {
     
-
----
-
-### Пример 2. Добавление тени
-
-```swift
-view.layer.shadowColor = UIColor.black.cgColor
-view.layer.shadowOpacity = 0.7
-view.layer.shadowOffset = CGSize(width: 5, height: 5)
-view.layer.shadowRadius = 10
-```
-
-- Слой создаёт **тень вокруг UIView**
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupLayer()
+    }
     
-
----
-
-### Пример 3. Граница слоя
-
-```swift
-view.layer.borderWidth = 2
-view.layer.borderColor = UIColor.white.cgColor
-```
-
-- Добавляет **рамку вокруг UIView**
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
-
----
-
-### Пример 4. Добавление подслоя
-
-```swift
-let subLayer = CALayer()
-subLayer.frame = CGRect(x: 10, y: 10, width: 80, height: 80)
-subLayer.backgroundColor = UIColor.yellow.cgColor
-view.layer.addSublayer(subLayer)
-```
-
-- Создание и добавление **подслоя** в существующий слой
-    
-
----
-
-### Пример 5. Анимация слоя
-
-```swift
-let animation = CABasicAnimation(keyPath: "opacity")
-animation.fromValue = 0
-animation.toValue = 1
-animation.duration = 1.0
-view.layer.add(animation, forKey: "fadeIn")
-```
-
-- Простейшая анимация появления слоя
-    
-
----
-
-## 5. Особенности CALayer
-
-1. **Каждый UIView имеет слой** → view.layer
-    
-2. Свойства слоя используют **Core Graphics типы** (CGColor, CGSize, CGPoint)
-    
-3. Позволяет **создавать сложные визуальные эффекты и анимации**
-    
-4. Поддерживает **иерархию слоев через sublayers**
-    
-5. Можно применять анимации через **CABasicAnimation, CAKeyframeAnimation, CATransaction**
-    
-
----
-
-## 6. Итог
-
-- **CALayer** = невидимый слой, управляющий визуальным представлением UIView
-    
-- Позволяет:
-    
-    - Скруглять углы, добавлять тень, рамку
+    private func setupLayer() {
+        // Основные визуальные свойства
+        backgroundColor = .systemBackground
+        layer.cornerRadius = 16
+        layer.masksToBounds = false  // важно для тени!
         
-    - Создавать подслои
+        // Тень (самый частый и дорогой эффект)
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.25
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 12
         
-    - Анимировать свойства слоя
+        // Оптимизация тени (обязательно!)
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
         
-    - Использовать Core Animation для плавных эффектов
-        
-- Слой отделён от логики UIView, что делает анимации и визуальные эффекты эффективнее
+        // Пример подслоя — градиент
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = bounds
+        gradientLayer.colors = [UIColor.systemBlue.cgColor, UIColor.systemPurple.cgColor]
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 1)
+        layer.insertSublayer(gradientLayer, at: 0)
+    }
     
+    // Обновляем shadowPath при изменении размеров
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
+        
+        // Обновляем градиент (если он есть)
+        if let gradient = layer.sublayers?.first as? CAGradientLayer {
+            gradient.frame = bounds
+        }
+    }
+}
+```
 
----
+### Лучшие практики работы с CALayer в Swift 2026
+
+- **Всегда используй `shadowPath`** — без него тень очень дорогая по GPU  
+- **masksToBounds = false** — если есть тень (иначе тень обрезается)  
+- **layoutSubviews()** — обновляй `shadowPath`, `frame` подслоёв здесь  
+- **CAGradientLayer**, `CAShapeLayer`, `CAReplicatorLayer` — добавляй как sublayers для сложных эффектов  
+- **CABasicAnimation** / **CAKeyframeAnimation** — для сложных анимаций (UIView.animate не всегда хватает)  
+- **@MainActor** — все операции с CALayer — на главном акторе  
+- **Swift 6 strict concurrency** — CALayer полностью безопасен  
+- **Документируйте** — пиши комментарий «CALayer — скругление + оптимизированная тень + градиент»
+
+**Короткий девиз 2026**:
+> CALayer — это «визуальный движок» под каждым UIView.  
+> Скругление, тень, градиент, маска, анимация — всё это делается **только** через layer.  
+> В 2026 году: shadowPath обязательно, sublayers для эффектов, layoutSubviews для обновлений.
+
+Удачи с красивым и производительным UI в Swift! ✨

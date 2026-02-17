@@ -1,31 +1,109 @@
-Rendering blocks - это концепция использования замыканий ([[closure]]) для выполнения операций рисования или генерации контента. В контексте [[UIKit]], rendering blocks используются для создания изображений, выполнения рисования на экране и других операций, связанных с рендерингом пользовательского интерфейса.
+**Rendering blocks** (или **блоки рендеринга**) — это современный и рекомендуемый способ выполнения операций рисования в UIKit, начиная с iOS 10 (2016 год). Они пришли на смену устаревшим функциям `UIGraphicsBeginImageContext` / `UIGraphicsEndImageContext`.
 
-Когда вы используете rendering blocks в UIKit, вы создаете экземпляр [[UIGraphicsImageRenderer]] или [[UIGraphicsPDFRenderer]], а затем вызываете метод `image(actions:)` или `pdf(actions:)`, передавая замыкание, которое содержит код рендеринга.
+Это замыкания (closures), которые передаются в методы рендереров (`UIGraphicsImageRenderer`, `UIGraphicsPDFRenderer`, `UIGraphicsImageRendererFormat` и т.д.), и внутри них выполняется весь код рисования.
 
-Вот пример использования rendering blocks для создания изображения с помощью `UIGraphicsImageRenderer`:
+### Почему rendering blocks — это стандарт 2026 года
+
+| Старый способ (до iOS 10)                  | Новый способ (rendering blocks)                     | Преимущества нового подхода |
+|--------------------------------------------|-----------------------------------------------------|-----------------------------|
+| `UIGraphicsBeginImageContext(size)`        | `UIGraphicsImageRenderer(size:).image { ctx in ... }` | Автоматическое управление контекстом |
+| `UIGraphicsGetCurrentContext()`            | Контекст передаётся в замыкание как параметр       | Нет риска неправильного контекста |
+| `UIGraphicsEndImageContext()`              | Контекст автоматически завершается после замыкания | Нет утечек памяти |
+| Масштабирование и цветовые пространства вручную | Поддержка `@2x`, `@3x`, HDR, wide color автоматически | Поддержка всех современных экранов |
+| Не thread-safe                             | Thread-safe (можно вызывать с background)           | Безопасно для асинхронного рендеринга |
+
+### Основные рендереры и их методы (2026 актуально)
+
+| Рендерер                              | Основное назначение                          | Самый частый метод                  | Возвращает          |
+|---------------------------------------|----------------------------------------------|-------------------------------------|---------------------|
+| `UIGraphicsImageRenderer`             | Создание `UIImage`                           | `.image(actions:)`                  | `UIImage`           |
+| `UIGraphicsPDFRenderer`               | Создание PDF-документов                      | `.pdfData(actions:)` / `.writePDF(to:actions:)` | `Data` или файл     |
+| `UIGraphicsImageRendererFormat`       | Настройка формата (scale, color space, opacity) | —                                   | —                   |
+
+### Самый популярный и рекомендуемый паттерн 2026 года
+
+#### 1. Создание простого изображения (иконка, аватар, placeholder)
 
 ```swift
-let renderer = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 200))
-let image = renderer.image { context in
-    // Нарисовать красный квадрат
-    UIColor.red.setFill()
-    context.fill(CGRect(x: 0, y: 0, width: 200, height: 200))
+func createRoundedAvatarPlaceholder(size: CGSize, color: UIColor) -> UIImage {
+    let renderer = UIGraphicsImageRenderer(size: size)
+    
+    return renderer.image { ctx in
+        // Фон
+        color.setFill()
+        ctx.fill(CGRect(origin: .zero, size: size))
+        
+        // Скруглённый круг
+        let inset = size.width * 0.1
+        let circleRect = CGRect(x: inset, y: inset, width: size.width - inset * 2, height: size.height - inset * 2)
+        UIBezierPath(ovalIn: circleRect).addClip()
+        
+        UIColor.white.setFill()
+        ctx.fill(circleRect)
+        
+        // Иконка человека (SF Symbol)
+        let config = UIImage.SymbolConfiguration(pointSize: size.width * 0.5, weight: .medium)
+        if let personImage = UIImage(systemName: "person.fill", withConfiguration: config) {
+            let imageRect = CGRect(x: (size.width - personImage.size.width) / 2,
+                                  y: (size.height - personImage.size.height) / 2,
+                                  width: personImage.size.width,
+                                  height: personImage.size.height)
+            personImage.draw(in: imageRect)
+        }
+    }
 }
 ```
 
-В этом примере мы создаем экземпляр `UIGraphicsImageRenderer` с размером 200x200 точек, а затем вызываем метод `image(actions:)`, передавая замыкание. Внутри замыкания мы выполняем операции рисования, в данном случае, рисуем красный квадрат, и заполняем его красным цветом.
-
-Подобным образом, можно использовать rendering blocks для создания PDF-файлов с помощью `UIGraphicsPDFRenderer`. Вот пример:
+#### 2. Создание PDF с несколькими страницами
 
 ```swift
-let renderer = UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: 200, height: 200))
-let data = renderer.pdfData { context in
-    // Нарисовать красный круг
-    UIColor.red.setFill()
-    context.fillEllipse(in: CGRect(x: 50, y: 50, width: 100, height: 100))
+func generateInvoicePDF(data: InvoiceData) -> Data {
+    let pageWidth: CGFloat = 595.0   // A4 в 72 dpi
+    let pageHeight: CGFloat = 842.0
+    let renderer = UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight))
+    
+    return renderer.pdfData { context in
+        for page in 1...data.numberOfPages {
+            context.beginPage()
+            
+            // Заголовок
+            let title = "Invoice #\(page)"
+            let attrs: [NSAttributedString.Key: Any] = [.font: UIFont.boldSystemFont(ofSize: 24)]
+            title.draw(at: CGPoint(x: 50, y: 50), withAttributes: attrs)
+            
+            // Таблица, логотип, подпись — всё внутри замыкания
+            // ...
+        }
+    }
 }
 ```
 
-В этом примере мы создаем экземпляр `UIGraphicsPDFRenderer` с заданными границами, а затем вызываем метод `pdfData(actions:)`, передавая замыкание. Внутри замыкания мы выполняем операции рисования, в данном случае, рисуем красный круг, и заполняем его красным цветом.
+#### 3. Рендеринг с поддержкой scale и HDR (современный экран)
 
-Rendering blocks позволяют удобно и эффективно выполнить операции рисования или генерации контента в UIKit, предоставляя гибкий способ создания изображений, PDF-файлов и других видов графического контента.
+```swift
+let format = UIGraphicsImageRendererFormat()
+format.scale = UIScreen.main.scale          // @2x / @3x
+format.preferredRange = .automatic          // HDR, wide color если экран поддерживает
+format.opaque = false
+
+let renderer = UIGraphicsImageRenderer(size: size, format: format)
+let image = renderer.image { ctx in
+    // код рисования
+}
+```
+
+### Лучшие практики rendering blocks в Swift 2026
+
+- **Всегда используй `UIGraphicsImageRenderer`** вместо старых `UIGraphicsBeginImageContext`  
+- **Передавай format** с правильным `scale` и `preferredRange` для поддержки современных экранов  
+- **Не делай тяжёлые вычисления внутри замыкания** — это выполняется синхронно на главном потоке  
+- **Асинхронный рендеринг** — если нужно рендерить много/сложно, используй `DispatchQueue.global().async` + `UIGraphicsImageRenderer`  
+- **@MainActor** — если рендеришь на главном потоке (для UI)  
+- **Документируйте** — пиши комментарий «UIGraphicsImageRenderer — генерация placeholder-аватарки с градиентом»
+
+**Короткий девиз 2026**:
+> Rendering blocks — это **единственный современный** способ рисовать изображения, PDF и графику в UIKit.  
+> `UIGraphicsImageRenderer.image { ctx in ... }` — твой основной инструмент.  
+> Забудь старые `UIGraphicsBeginImageContext` — они устарели с 2016 года и могут привести к утечкам памяти.
+
+Удачи с красивым и производительным рендерингом в Swift! 🎨
