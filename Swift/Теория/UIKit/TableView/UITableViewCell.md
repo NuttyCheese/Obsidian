@@ -1,4 +1,4 @@
-**UITableViewCell** — это базовый класс ячейки для **UITableView** в UIKit.
+**UITableViewCell** — это базовый класс ячейки для **[[UITableView]]** в [[UIKit]].
 
 Он отвечает за отображение **одной строки** таблицы и является контейнером для вашего контента (текст, картинки, кнопки, кастомные вью и т.д.).
 
@@ -9,7 +9,7 @@
 - Автоматически поддерживает **переиспользование** (reuse) → огромная экономия памяти на длинных списках  
 - Имеет встроенный `contentView` — **всегда** добавляй UI именно туда (не в self)  
 - Поддерживает **выделение**, **выбранное состояние**, **editing mode**, **swipe actions**, **accessibility**  
-- Работает с **UITableViewDiffableDataSource** и автоматической высотой  
+- Работает с **[[UITableViewDiffableDataSource]]** и автоматической высотой  
 - Имеет встроенные стили (.default, .subtitle, .value1, .value2) и аксессуары (.disclosureIndicator, .checkmark и т.д.)
 
 ### Самый современный способ создания ячейки в 2026 году
@@ -117,18 +117,16 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
 
 ### Лучшие практики UITableViewCell в Swift 2026
 
-- **final class** — экономия vtable, меньше overhead  
-- **lazy var** — UI создаётся только при первом обращении  
+- **[[final]] [[class]]** — экономия [[vtable]], меньше overhead  
+- **[[lazy]] [[var]]** — UI создаётся только при первом обращении  
 - **contentView** — **всегда** добавляй subviews именно туда  
 - **configure(with:)** — отдельный метод для заполнения данными  
 - **prepareForReuse()** — обязательно сбрасывай состояние (изображения, текст, цвета, alpha)  
-- **@MainActor** — если ячейка обновляет UI из async-кода  
-- **Swift 6 strict concurrency** — UITableViewCell не Sendable → избегай передачи в Task без @MainActor  
+- **[[@MainActor]]** — если ячейка обновляет UI из async-кода  
+- **[[Swift]] 6 strict concurrency** — UITableViewCell не [[Sendable]] → избегай передачи в Task без @MainActor  
 - **Документируйте** — пиши комментарий «UITableViewCell — кастомная ячейка задачи с ленивой инициализацией»
 
 **Короткий девиз 2026**:
 > UITableViewCell — это **контейнер для одной строки таблицы**.  
 > Создаёшь подкласс, добавляешь UI в contentView, настраиваешь в configure(with:), регистрируешь один раз.  
 > В 2026 году — всегда programmatic + final + lazy + configure-метод + prepareForReuse.
-
-Удачи с красивыми и производительными строками таблицы! 📜

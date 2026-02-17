@@ -1,19 +1,19 @@
 **UICollectionViewCell** — это базовый класс для создания ячеек в **UICollectionView**.  
 Он выполняет роль **контейнера** для вашего контента (картинки, текст, кнопки, градиенты, кастомные вью и т.д.).
 
-В 2026 году это по-прежнему **единственный правильный** способ создавать ячейки для коллекций в UIKit.
+В 2026 году это по-прежнему **единственный правильный** способ создавать ячейки для коллекций в [[UIKit]].
 
-### Зачем нужен именно UICollectionViewCell (а не просто UIView)
+### Зачем нужен именно UICollectionViewCell (а не просто [[UIView]])
 
 - Автоматически поддерживает **переиспользование** (reuse) → экономия памяти  
 - Имеет встроенный `contentView` — всё UI добавляешь именно туда  
 - Поддерживает **выделение**, **выбранное состояние**, **фокус** (focus engine), **accessibility**  
-- Работает с **UICollectionViewDiffableDataSource** и **Compositional Layout**  
+- Работает с **[[UICollectionViewDiffableDataSource]]** и **Compositional Layout**  
 - Имеет встроенные методы для анимаций (selected/highlighted states)
 
 ### Самый современный и рекомендуемый способ в 2026 году
 
-#### 1. Программная ячейка (без xib/storyboard) — самый чистый вариант
+#### 1. Программная ячейка (без [[xib]]/storyboard) — самый чистый вариант
 
 ```swift
 final class PhotoCell: UICollectionViewCell {
@@ -78,7 +78,7 @@ final class PhotoCell: UICollectionViewCell {
 }
 ```
 
-#### 2. Регистрация ячейки (в viewDidLoad или раньше)
+#### 2. Регистрация ячейки (в [[viewDidLoad]] или раньше)
 
 ```swift
 collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: "PhotoCell")
@@ -97,10 +97,10 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 
 ### Лучшие практики UICollectionViewCell в Swift 2026
 
-- **Всегда final class** — экономия vtable, меньше overhead  
-- **lazy var** для UI-элементов — создаются только при первом обращении  
+- **Всегда [[final]] [[class]]** — экономия [[vtable]], меньше overhead  
+- **[[lazy]] [[var]]** для UI-элементов — создаются только при первом обращении  
 - **translatesAutoresizingMaskIntoConstraints = false** — обязательно  
-- **contentView** — добавляй все subviews именно туда (не в self)  
+- **contentView** — добавляй все subviews именно туда (не в [[self]])  
 - **configure(with:)** — отдельный метод для настройки контента (не в cellForItemAt)  
 - **prepareForReuse()** — сбрасывай состояние ячейки (изображения, текст, цвета)
 
@@ -112,13 +112,11 @@ override func prepareForReuse() {
 }
 ```
 
-- **@MainActor** — если ячейка обновляет UI из async-кода  
-- **Swift 6 strict concurrency** — UICollectionViewCell не Sendable по умолчанию → избегай передачи в Task без @MainActor  
+- **[[@MainActor]]** — если ячейка обновляет UI из [[async]]-кода  
+- **Swift 6 strict concurrency** — UICollectionViewCell не [[Sendable]] по умолчанию → избегай передачи в Task без @MainActor  
 - **Документируйте** — пиши комментарий «UICollectionViewCell — кастомная ячейка для фото с ленивой инициализацией»
 
 **Короткий девиз 2026**:
 > UICollectionViewCell — это **контейнер для одной карточки/элемента** в коллекции.  
 > Создаёшь подкласс, добавляешь UI в contentView, настраиваешь в configure(with:), регистрируешь один раз.  
-> В 2026 году — всегда programmatic + final + lazy + configure-метод.
-
-Удачи с красивыми и производительными ячейками! 📸
+> В 2026 году — всегда programmatic + [[final]] + [[lazy]] + configure-метод.

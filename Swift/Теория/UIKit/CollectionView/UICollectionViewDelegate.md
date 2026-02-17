@@ -1,6 +1,6 @@
-**UICollectionViewDelegate** — это протокол в UIKit, который отвечает за **взаимодействие пользователя** с коллекцией и **управление её поведением**.
+**UICollectionViewDelegate** — это протокол в [[UIKit]], который отвечает за **взаимодействие пользователя** с коллекцией и **управление её поведением**.
 
-Он дополняет **UICollectionViewDataSource** (который только даёт данные) и обрабатывает:
+Он дополняет **[[UICollectionViewDataSource]]** (который только даёт данные) и обрабатывает:
 
 - выбор/выделение ячеек  
 - размеры ячеек (если используешь Flow Layout)  
@@ -94,7 +94,7 @@ extension PhotosViewController: UICollectionViewDelegate {
 - **didHighlight / didUnhighlight** — для красивой анимации нажатия (scale 0.95, alpha 0.8)  
 - **shouldSelectItemAt** — если нужно запретить выбор некоторых ячеек  
 - **willDisplay / didEndDisplaying** — для prefetch изображений / отмены загрузки  
-- **@MainActor** — весь контроллер или методы делегата — на главном акторе  
+- **[[@MainActor]]** — весь контроллер или методы делегата — на главном акторе  
 - **Swift 6 strict concurrency** — UICollectionViewDelegate методы вызываются на главном потоке → безопасно  
 - **Документируйте** — пиши комментарий «UICollectionViewDelegate — обработка выбора и анимации нажатия»
 
@@ -103,5 +103,3 @@ extension PhotosViewController: UICollectionViewDelegate {
 > «что делать, когда пользователь нажал ячейку, подсветил её, начал скроллить или она появилась/исчезла с экрана».  
 > В 2026 году основные методы — didSelect, didHighlight/didUnhighlight и sizeForItemAt (для Flow Layout).  
 > Всё остальное — в DiffableDataSource или Compositional Layout.
-
-Удачи с отзывчивой и красивой коллекцией! 📱

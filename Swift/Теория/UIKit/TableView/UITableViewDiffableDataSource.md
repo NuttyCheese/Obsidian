@@ -1,4 +1,4 @@
-**UITableViewDiffableDataSource** — это современный класс из UIKit (с iOS 13, 2019), который радикально упрощает работу с данными в таблицах.
+**UITableViewDiffableDataSource** — это современный класс из [[UIKit]] (с iOS 13, 2019), который радикально упрощает работу с данными в таблицах.
 
 Он заменяет старый подход с `UITableViewDataSource` + `reloadData()` / `performBatchUpdates()` на **снимки данных** (snapshots) и **автоматический diff**.
 
@@ -123,8 +123,8 @@ final class TasksViewController: UIViewController {
 
 ### Короткий чек-лист «Что нужно сделать, чтобы DiffableDataSource заработал»
 
-1. Определить `Section` (enum Hashable)  
-2. Определить модель строки (struct Hashable)  
+1. Определить `Section` ([[enum]] [[Hashable]])  
+2. Определить модель строки ([[struct]] Hashable)  
 3. Создать `typealias DataSource` и `Snapshot`  
 4. Зарегистрировать ячейки  
 5. Создать dataSource с замыканием cellProvider  
@@ -134,7 +134,5 @@ final class TasksViewController: UIViewController {
 ### Короткий девиз 2026
 
 > UITableViewDiffableDataSource — это когда ты хочешь **автоматические анимации**, **меньше багов** и **меньше кода** при обновлении таблицы.  
-> В 2026 году это **единственный рекомендуемый** способ управлять данными в UITableView.  
+> В 2026 году это **единственный рекомендуемый** способ управлять данными в [[UITableView]].  
 > Забудь reloadData() и performBatchUpdates() — используй snapshots и apply().
-
-Удачи с плавными, красивыми и современными списками! 📜

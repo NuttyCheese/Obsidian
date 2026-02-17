@@ -1,4 +1,4 @@
-**UITableViewDataSource** — это протокол в UIKit, который отвечает за **предоставление данных** таблице (`UITableView`).
+**UITableViewDataSource** — это протокол в [[UIKit]], который отвечает за **предоставление данных** таблице ([[UITableView]]).
 
 Он говорит таблице:
 - сколько секций
@@ -121,7 +121,7 @@ final class SettingsViewController: UIViewController {
 
 1. Создать UITableView (style: .plain / .grouped / .insetGrouped)  
 2. Зарегистрировать ячейки  
-3. Назначить dataSource (self или отдельный объект)  
+3. Назначить dataSource ([[self]] или отдельный объект)  
 4. Реализовать минимум `numberOfRowsInSection` и `cellForRowAt`  
 5. Вызвать `reloadData()` или применить snapshot при изменении данных  
 
@@ -129,6 +129,4 @@ final class SettingsViewController: UIViewController {
 
 > UITableViewDataSource — это когда ты говоришь таблице:  
 > «сколько у меня строк и какую ячейку показать на этой строке».  
-> В 2026 году **рекомендуется** использовать **DiffableDataSource** — он даёт анимации, производительность и меньше багов.
-
-Удачи с быстрым и красивым списком в Swift! 📜
+> В 2026 году **рекомендуется** использовать **[[UITableViewDiffableDataSource|DiffableDataSource]]** — он даёт анимации, производительность и меньше багов.

@@ -1,4 +1,4 @@
-**UICollectionViewDataSource** — это протокол в UIKit, который отвечает за **предоставление данных** коллекционному представлению (`UICollectionView`).
+**UICollectionViewDataSource** — это протокол в [[UIKit]], который отвечает за **предоставление данных** коллекционному представлению ([[UICollectionView]]).
 
 Он говорит коллекции:
 - сколько у неё секций
@@ -123,9 +123,9 @@ class PhotosViewController: UIViewController {
 
 ### Короткий чек-лист «Что нужно сделать, чтобы UICollectionViewDataSource заработал»
 
-1. Создать UICollectionView  
+1. Создать [[UICollectionView]]  
 2. Зарегистрировать ячейки (обязательно!)  
-3. Назначить dataSource (self или отдельный объект)  
+3. Назначить dataSource ([[self]] или отдельный объект)  
 4. Реализовать минимум два метода:
    - `numberOfItemsInSection`  
    - `cellForItemAt`  
@@ -136,5 +136,3 @@ class PhotosViewController: UIViewController {
 > UICollectionViewDataSource — это когда ты говоришь коллекции:  
 > «сколько у меня элементов, и какую ячейку показать на этом месте».  
 > В 2026 году **рекомендуется** использовать **DiffableDataSource** — он даёт анимации, производительность и меньше багов.
-
-Удачи с быстрой и красивой коллекцией! 📸

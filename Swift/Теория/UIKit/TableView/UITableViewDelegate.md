@@ -1,4 +1,4 @@
-**UITableViewDelegate** — это протокол в UIKit, который отвечает за **взаимодействие пользователя** с таблицей и **управление её поведением** (в отличие от `UITableViewDataSource`, который только даёт данные).
+**UITableViewDelegate** — это протокол в UIKit, который отвечает за **взаимодействие пользователя** с таблицей и **управление её поведением** (в отличие от [[UITableViewDataSource]], который только даёт данные).
 
 Он обрабатывает:
 
@@ -14,17 +14,17 @@
 
 ### Самые важные методы в 2026 году (реальный топ)
 
-| Метод                                              | Когда вызывается                                  | Самый частый пример использования 2026 |
-|----------------------------------------------------|---------------------------------------------------|----------------------------------------|
-| `tableView(_:didSelectRowAt:)`                     | Пользователь нажал на строку                      | Открыть детальный экран, показать алерт |
-| `tableView(_:didDeselectRowAt:)`                   | Строка потеряла выделение                         | Снять выделение, обновить UI           |
-| `tableView(_:heightForRowAt:)`                     | Запрос высоты строки                              | Динамическая высота (UITableView.automaticDimension) |
-| `tableView(_:didHighlightRowAt:)` / `didUnhighlightRowAt:` | Строка нажата / отпущена (touch down/up)          | Анимация нажатия (scale 0.97, alpha 0.8) |
-| `tableView(_:willDisplay:forRowAt:)`               | Строка вот-вот появится на экране                 | Prefetch изображений, анимации входа   |
-| `tableView(_:didEndDisplaying:forRowAt:)`          | Строка ушла с экрана                              | Отменить загрузку изображений          |
-| `tableView(_:trailingSwipeActionsConfigurationForRowAt:)` | Swipe справа (удалить, редактировать)             | .delete, .edit, custom actions         |
-| `tableView(_:leadingSwipeActionsConfigurationForRowAt:)` | Swipe слева (архивировать, пометить)              | .archive, .flag                        |
-| `scrollViewDidScroll(_:)` (из UIScrollViewDelegate) | Прокрутка таблицы                                 | Parallax header, sticky sections       |
+| Метод                                                      | Когда вызывается                         | Самый частый пример использования 2026               |
+| ---------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------- |
+| `tableView(_:didSelectRowAt:)`                             | Пользователь нажал на строку             | Открыть детальный экран, показать алерт              |
+| `tableView(_:didDeselectRowAt:)`                           | Строка потеряла выделение                | Снять выделение, обновить UI                         |
+| `tableView(_:heightForRowAt:)`                             | Запрос высоты строки                     | Динамическая высота (UITableView.automaticDimension) |
+| `tableView(_:didHighlightRowAt:)` / `didUnhighlightRowAt:` | Строка нажата / отпущена (touch down/up) | Анимация нажатия (scale 0.97, alpha 0.8)             |
+| `tableView(_:willDisplay:forRowAt:)`                       | Строка вот-вот появится на экране        | Prefetch изображений, анимации входа                 |
+| `tableView(_:didEndDisplaying:forRowAt:)`                  | Строка ушла с экрана                     | Отменить загрузку изображений                        |
+| `tableView(_:trailingSwipeActionsConfigurationForRowAt:)`  | Swipe справа (удалить, редактировать)    | .delete, .edit, custom actions                       |
+| `tableView(_:leadingSwipeActionsConfigurationForRowAt:)`   | Swipe слева (архивировать, пометить)     | .archive, .flag                                      |
+| `scrollViewDidScroll(_:)` (из UIScrollViewDelegate)        | Прокрутка таблицы                        | Parallax header, sticky sections                     |
 
 ### Самый современный паттерн 2026 (с DiffableDataSource + @MainActor)
 
@@ -120,13 +120,13 @@ extension TasksViewController: UITableViewDelegate {
 
 ### Лучшие практики UITableViewDelegate в Swift 2026
 
-- **delegate = self** — чаще всего контроллер сам себе делегат  
+- **[[delegate]] = [[self]]** — чаще всего контроллер сам себе делегат  
 - **didSelectRowAt** — основной метод для обработки нажатия (всегда deselectRow)  
 - **didHighlight / didUnhighlight** — для красивой анимации нажатия (scale 0.97, alpha 0.85)  
 - **trailingSwipeActionsConfigurationForRowAt** — для swipe-to-delete / edit (iOS 11+)  
 - **heightForRowAt** — используй `UITableView.automaticDimension` для динамической высоты  
-- **@MainActor** — весь контроллер или методы делегата — на главном акторе  
-- **Swift 6 strict concurrency** — UITableViewDelegate методы вызываются на главном потоке → безопасно  
+- **[[@MainActor]]** — весь контроллер или методы делегата — на главном акторе  
+- **[[Swift]] 6 strict concurrency** — UITableViewDelegate методы вызываются на главном потоке → безопасно  
 - **Документируйте** — пиши комментарий «UITableViewDelegate — обработка выбора, swipe и анимации нажатия»
 
 **Короткий девиз 2026**:
@@ -134,5 +134,3 @@ extension TasksViewController: UITableViewDelegate {
 > «что делать, когда пользователь нажал строку, подсветил её, начал скроллить или строка появилась/исчезла».  
 > В 2026 году основные методы — didSelect, didHighlight/didUnhighlight, swipe actions и heightForRowAt.  
 > Всё остальное — в DiffableDataSource или Compositional Layout.
-
-Удачи с отзывчивым и красивым списком! 📱
