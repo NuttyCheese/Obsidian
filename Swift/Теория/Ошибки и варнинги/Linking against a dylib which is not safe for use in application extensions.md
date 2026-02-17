@@ -71,7 +71,7 @@ Linking against a dylib which is not safe for use in application extensions
         
     - `openURL(_:)`
         
-    - Некоторые функции [[UIKit]], [[CoreLocation]], [[AVFoundation]] и т.д.
+    - Некоторые функции [[UIKit]], [[Core Location]], [[AVFoundation]] и т.д.
         
 - Используйте безопасные альтернативы или передавайте данные через контейнер App Group.
     

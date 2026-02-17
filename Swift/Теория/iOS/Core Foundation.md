@@ -26,7 +26,7 @@
 
 ### Самые частые сценарии использования Core Foundation в Swift 2026
 
-1. **Работа с C-API библиотек** (Security, Audio, Core Graphics, Core Text, [[CoreLocation]] и т.д.)
+1. **Работа с C-API библиотек** (Security, Audio, Core Graphics, Core Text, [[Core Location]] и т.д.)
 
 ```swift
 import Security
