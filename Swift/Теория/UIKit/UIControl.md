@@ -1,188 +1,80 @@
-## 1. Что такое `UIControl`
+**UIControl** — это фундаментальный абстрактный класс в [[UIKit]], который лежит в основе **всех интерактивных элементов управления** в [[iOS]]-приложениях. Он наследуется от [[UIView]], поэтому может отображаться на экране, участвовать в [[Auto Layout]], иметь subviews и т.д., но его главная задача — **обрабатывать пользовательский ввод** и генерировать события.
 
-**`UIControl`** — это подкласс **[[Swift/Теория/UIKit/UIView]]**, предназначенный для обработки **событий пользовательского взаимодействия**.
+В 2026 году это **самый важный** класс для понимания, как работают кнопки, слайдеры, переключатели, текстовые поля и любые кастомные контролы в UIKit.
 
-- Все интерактивные элементы [[UIKit]] наследуются от [[UIControl]]:
-    
-    - **[[UIButton]]**
-        
-    - **[[UISlider]]**
-        
-    - **[[UISwitch]]**
-        
-    - **[[UITextField]]**
-        
-- С помощью **target-action** можно связывать события элемента с методами в коде
-    
-- Поддерживает множество событий: [[TouchDown]], [[TouchUpInside]], [[ValueChanged]], [[EditingChanged]] и др.
-    
+### 1. Зачем нужен UIControl (ключевые роли)
 
-> Проще говоря: `UIControl` = «базовый интерактивный элемент, который умеет реагировать на действия пользователя».
+| Роль                                      | Что делает UIControl                                    | Примеры классов-наследников |
+|-------------------------------------------|----------------------------------------------------------|-----------------------------|
+| **Генерация событий**                     | Преобразует касания, жесты, изменения значения в события | `.touchUpInside`, `.valueChanged`, `.editingChanged` |
+| **Target-Action механизм**                | Связывает событие с методом через `addTarget:action:for:` | Все кнопки, слайдеры, сегменты |
+| **Управление состояниями**                | `isEnabled`, `isHighlighted`, `isSelected` — меняет внешний вид | Кнопка становится серой при `isEnabled = false` |
+| **Поддержка нескольких состояний**        | Разные изображения/цвета/текст для `.normal`, `.highlighted`, `.selected`, `.disabled` | Кнопка "лайк" меняет иконку при нажатии |
+| **База для кастомных контроллов**         | Можно создать свой контрол с уникальными событиями       | Кастомный сегмент, слайдер с градиентом |
 
----
+### 2. Самые важные события (UIControl.Event) — топ-2026
 
-## 2. Основные термины
+| Событие                     | Когда срабатывает                                      | Самый частый контрол | Рекомендуемое использование 2026 |
+|-----------------------------|--------------------------------------------------------|----------------------|----------------------------------|
+| `.touchDown`                | Палец коснулся                                         | UIButton             | Эффект нажатия (scale, цвет)     |
+| `.touchUpInside`            | Палец отпущен **внутри** границ                        | UIButton             | **Основное действие** (логин, отправить) |
+| `.touchUpOutside`           | Палец отпущен **вне** границ                           | UIButton             | Отмена эффекта нажатия           |
+| `.touchCancel`              | Система отменила касание (звонок, жест назад)          | UIButton             | Откат состояния                  |
+| `.valueChanged`             | Значение изменилось (слайдер, переключатель)           | UISlider, UISwitch   | Live-обновление (громкость, тёмная тема) |
+| `.editingChanged`           | Текст в поле изменился (каждый символ)                 | UITextField          | Валидация в реальном времени, поиск |
+| `.editingDidBegin`          | Начали редактировать поле                              | UITextField          | Показать клавиатуру, подсветить поле |
+| `.editingDidEnd`            | Закончили редактировать (Return или тап вне поля)      | UITextField          | Финальная валидация, сохранение  |
 
-|Термин|Описание|
-|---|---|
-|**UIView**|Базовый класс для всех элементов интерфейса|
-|**UIControl**|Наследник UIView для интерактивных элементов|
-|**Target-Action**|Механизм связывания события с методом|
-|**UIControl.Event**|Тип события: нажатие, отпуск, изменение значения|
-|**addTarget / removeTarget**|Методы для программной привязки событий|
-|**isEnabled / isSelected / isHighlighted**|Состояния интерактивного элемента|
+### 3. Самый современный способ привязки действий (2026 стандарт)
 
----
-
-## 3. Основной синтаксис
-
-### Программное создание UIControl
+С iOS 14+ используй **UIAction** вместо старого `addTarget:action:`.
 
 ```swift
-let button = UIButton(type: .system) // UIButton наследуется от UIControl
-button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+let button = UIButton(configuration: .filled())
+button.configuration?.title = "Войти"
 
-@objc func buttonTapped(_ sender: UIButton) {
-    print("Button tapped!")
-}
-```
+button.addAction(UIAction { [weak self] _ in
+    self?.login()
+}, for: .touchUpInside)
 
-- Метод `addTarget(_:action:for:)` связывает событие с кодом
-    
-- Событие определяется через **UIControl.Event**
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. UIButton с событием TouchUpInside
-
-```swift
-let button = UIButton(type: .system)
-button.setTitle("Tap Me", for: .normal)
-button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-
-@objc func buttonTapped(_ sender: UIButton) {
-    print("Button tapped!")
-}
-```
-
-- Используем target-action для обработки нажатия
-    
-
----
-
-### Пример 2. UISlider с ValueChanged
-
-```swift
-let slider = UISlider()
-slider.minimumValue = 0
-slider.maximumValue = 100
-slider.addTarget(self, action: #selector(sliderChanged(_:)), for: .valueChanged)
-
-@objc func sliderChanged(_ sender: UISlider) {
-    print("Slider value: \(sender.value)")
-}
-```
-
-- Обработка изменения значения ползунка
-    
-
----
-
-### Пример 3. UISwitch с ValueChanged
-
-```swift
-let toggle = UISwitch()
-toggle.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
-
-@objc func switchChanged(_ sender: UISwitch) {
-    print("Switch is \(sender.isOn ? "ON" : "OFF")")
-}
-```
-
-- Реакция на переключение состояния
-    
-
----
-
-### Пример 4. UIButton с несколькими событиями
-
-```swift
-let button = UIButton(type: .system)
-button.addTarget(self, action: #selector(buttonEvent(_:)), for: [.touchDown, .touchUpInside, .touchUpOutside])
-
-@objc func buttonEvent(_ sender: UIButton) {
-    print("Event triggered for button!")
-}
-```
-
-- Один метод обрабатывает **несколько событий** одновременно
-    
-
----
-
-### Пример 5. UIControl кастомный
-
-```swift
-class CustomControl: UIControl {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .systemBlue
+// Эффект нажатия
+button.addAction(UIAction { _ in
+    UIView.animate(withDuration: 0.12) {
+        button.transform = CGAffineTransform(scaleX: 0.94, y: 0.94)
     }
+}, for: .touchDown)
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
+button.addAction(UIAction { _ in
+    UIView.animate(withDuration: 0.22, delay: 0, usingSpringWithDamping: 0.75) {
+        button.transform = .identity
     }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        sendActions(for: .touchDown)
-        backgroundColor = .gray
-    }
-
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        sendActions(for: .touchUpInside)
-        backgroundColor = .systemBlue
-    }
-}
+}, for: [.touchUpInside, .touchUpOutside, .touchCancel])
 ```
 
-- Создаём **свой кастомный UIControl**, который генерирует события вручную
-    
+### 4. Полный список самых полезных свойств и методов UIControl
 
----
+| Свойство / Метод                  | Тип / Возвращает                                | Что делает / Рекомендация 2026 |
+|-----------------------------------|-------------------------------------------------|---------------------------------|
+| `isEnabled`                       | `Bool`                                          | `false` → кнопка серая и неактивна |
+| `isHighlighted`                   | `Bool` (read-only)                              | Автоматически true при touchDown |
+| `isSelected`                      | `Bool`                                          | Для toggle-кнопок (лайк, избранное) |
+| `addAction(_:for:)`               | `UIAction` + `UIControl.Event`                  | Современный способ (замыкание) |
+| `removeAction(_:for:)`            | Удаление действия                               | Редко нужно |
+| `sendActions(for:)`               | Генерирует событие вручную                      | Для кастомных контроллов |
+| `allControlEvents`                | `UIControl.Event` (битовая маска)               | Отладка: какие события привязаны |
+| `actions(forTarget:forControlEvent:)` | Список селекторов                               | Отладка старого target-action |
 
-## 5. Особенности UIControl
+### 5. Лучшие практики UIControl в Swift 2026
 
-1. **Подкласс UIView**, поэтому можно размещать на экране и изменять frame
-    
-2. Поддерживает **target-action** для любого интерактивного действия
-    
-3. Поддерживает **состояния**: `isEnabled`, `isSelected`, `isHighlighted`
-    
-4. Можно использовать для **кнопок, слайдеров, переключателей и кастомных контролов**
-    
-5. Позволяет создавать **сложные интерактивные элементы с кастомной логикой**
-    
+- **Всегда используй [[UIAction]]** вместо target-action — это стандарт с iOS 14+  
+- **Не полагайся на `highlighted`** — делай кастомные анимации через `touchDown`/`touchUpInside`  
+- **Для кастомных контроллов** — переопределяй `beginTracking`, `continueTracking`, `endTracking`  
+- **Доступность** — обязательно задавай `accessibilityLabel`, `accessibilityHint`, `accessibilityTraits`  
+- **[[@MainActor]]** — все события и обновления UI — на главном акторе  
+- **Swift 6 strict concurrency** — UIControl полностью безопасен  
+- **Документируйте** — пиши комментарий «UIControl — обработка событий кнопки через UIAction»
 
----
-
-## 6. Итог
-
-- **UIControl** = базовый интерактивный элемент в UIKit
-    
-- Позволяет:
-    
-    - Обрабатывать нажатия, изменения значений, касания
-        
-    - Использовать target-action или @IBAction
-        
-    - Создавать кастомные интерактивные элементы
-        
-- Наследуется всеми стандартными интерактивными элементами: **UIButton, UISlider, UISwitch, UITextField**
-    
-
----
+**Короткий девиз 2026**:
+> UIControl — это **базовый класс для всех интерактивных элементов** UIKit: кнопки, слайдеры, переключатели, текстовые поля.  
+> В 2026 году используй **UIAction**, **состояния** (`isEnabled`, `isSelected`) и **события** (`touchUpInside`, `valueChanged`, `editingChanged`).  
+> Это **единственный правильный** фундамент для любого интерактивного UI в UIKit.

@@ -1,166 +1,101 @@
-## 1. Что такое `UIButton`
+**UIButton** — это основной класс в [[UIKit]] для создания **интерактивных кнопок** в [[iOS]]-приложениях. Это подкласс `UIControl`, поэтому он поддерживает **target-action** механизм, различные состояния (normal, highlighted, selected, disabled) и множество событий (touch, drag, value changed и т.д.).
 
-**`UIButton`** — это подкласс **[[UIControl]]** в [[UIKit]], предназначенный для создания кнопок с интерактивными событиями.
+В 2026 году это **самый распространённый** элемент управления для любых действий пользователя: отправить форму, перейти на экран, запустить процесс, лайкнуть, добавить в избранное и т.д.
 
-- Может отображать: **текст, изображение, комбинацию текста и изображения**
-    
-- Реагирует на различные **события пользователя** ([[TouchUpInside]], [[TouchDown]] и др.)
-    
-- Может быть **создан в Interface Builder или программно**
-    
+### 1. Почему UIButton — это основа интерфейса iOS
 
-> Проще говоря: `UIButton` = «кнопка, на которую можно нажать, чтобы вызвать действие».
+| Характеристика                            | Почему это важно в 2026 году                                                                  | Пример использования                                            |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Нативный внешний вид**                  | Автоматически адаптируется под iOS 18/19 дизайн (Dynamic Island, tinted icons, SF Symbols 6+) | Системные кнопки выглядят как в Settings, Photos, Messages      |
+| **Поддержка состояний**                   | `.normal`, `.highlighted`, `.selected`, `.disabled` — всё нативно                             | Кнопка "сжимается" при нажатии, становится серой при отключении |
+| **Гибкие события**                        | `.touchUpInside`, `.touchDown`, `.touchUpOutside`, `.touchCancel` и др.                       | Полный контроль над UX нажатия                                  |
+| **SF Symbols + tintColor**                | Полная поддержка цветовых тем, weight, scale, multicolor                                      | Кнопки с иконками адаптируются под light/dark/accent            |
+| **[[UIAction]] (iOS 14+)**                | Замыкания вместо `#selector` — чистый код без `@objc`                                         | Современный стандарт 2026 года                                  |
+| **Доступность (VoiceOver, Dynamic Type)** | Всё работает из коробки (accessibilityLabel, traits)                                          | Обязательно для App Store                                       |
 
----
+### 2. Основные способы создания UIButton в 2026 году
 
-## 2. Основные термины
+| Способ создания                               | Когда использовать                                   | Пример кода (коротко) |
+|-----------------------------------------------|------------------------------------------------------|-----------------------|
+| **Программно — .system**                      | Стандартные кнопки с синим текстом                   | `UIButton(type: .system)` |
+| **Программно — .custom**                      | Полный контроль (иконка без текста, фон, shadow)     | `UIButton(type: .custom)` |
+| **Storyboard / XIB**                          | Быстрый прототип, legacy-проекты                     | `@IBOutlet weak var button: UIButton!` |
+| **UIAction + primaryAction** (iOS 14+)        | Современный стиль без `#selector`                    | `button.addAction(UIAction { ... }, for: .touchUpInside)` |
+| **Кастомный подкласс UIButton**               | Сложная логика, анимации, кастомные состояния       | `class PrimaryButton: UIButton { ... }` |
 
-|Термин|Описание|
-|---|---|
-|**UIControl**|Базовый класс для интерактивных элементов (кнопки, слайдеры, переключатели)|
-|**Target-Action**|Механизм связывания кнопки с методом, вызываемым при событии|
-|**State**|Состояние кнопки: normal, highlighted, selected, disabled|
-|**Title / Image**|Свойства кнопки для текста и изображения|
-|**@IBAction / addTarget**|Способы обработать нажатие кнопки|
-
----
-
-## 3. Основной синтаксис
-
-### Через Interface Builder
+### 3. Полный современный паттерн 2026 года (рекомендуемый)
 
 ```swift
-@IBOutlet weak var myButton: UIButton!
-
-@IBAction func buttonTapped(_ sender: UIButton) {
-    print("Button tapped!")
+final class PrimaryButton: UIButton {
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+    
+    private func setup() {
+        // Внешний вид
+        backgroundColor = .systemBlue
+        setTitleColor(.white, for: .normal)
+        titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        layer.cornerRadius = 12
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.25
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 8
+        
+        // Современный способ привязки действия
+        addAction(UIAction { [weak self] _ in
+            self?.buttonTapped()
+        }, for: .touchUpInside)
+        
+        // Эффект нажатия (touchDown / touchUp)
+        addAction(UIAction { [weak self] _ in
+            UIView.animate(withDuration: 0.12) {
+                self?.transform = CGAffineTransform(scaleX: 0.94, y: 0.94)
+            }
+        }, for: .touchDown)
+        
+        addAction(UIAction { [weak self] _ in
+            UIView.animate(withDuration: 0.22, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.4) {
+                self?.transform = .identity
+            }
+        }, for: .touchUpInside)
+    }
+    
+    private func buttonTapped() {
+        print("Кнопка нажата!")
+        // Основное действие
+    }
 }
 ```
 
-- `IBOutlet` связывает кнопку с кодом
-    
-- `IBAction` реагирует на события, чаще всего **TouchUpInside**
-    
+### 4. Состояния кнопки и как их настраивать
 
-### Программно
+| Состояние         | Когда активно                                   | Как настроить в 2026 |
+|-------------------|-------------------------------------------------|----------------------|
+| `.normal`         | Обычное состояние                               | `setTitle("Tap", for: .normal)` |
+| `.highlighted`    | Пока палец нажат (touchDown)                    | `setTitleColor(.gray, for: .highlighted)` |
+| `.selected`       | Кнопка выбрана (toggle)                         | `isSelected = true` + `setImage(..., for: .selected)` |
+| `.disabled`       | `isEnabled = false`                             | `setTitleColor(.gray, for: .disabled)` |
 
-```swift
-let button = UIButton(type: .system)
-button.setTitle("Tap me", for: .normal)
-button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+### 5. Лучшие практики UIButton в Swift 2026
 
-@objc func buttonTapped(_ sender: UIButton) {
-    print("Button tapped programmatically!")
-}
-```
+- **Используй UIAction вместо target-action** — это стандарт с iOS 14+  
+- **Не используй .custom без необходимости** — `.system` уже адаптируется под тему  
+- **SF Symbols** — всегда с `weight` и `scale` для лучшей читаемости  
+- **Анимация нажатия** — scale 0.94–0.96 + лёгкий opacity + haptic (UIImpactFeedbackGenerator)  
+- **Доступность** — обязательно задавай `accessibilityLabel`, `accessibilityHint`  
+- **@MainActor** — все действия кнопок — на главном акторе  
+- **Swift 6 strict concurrency** — UIButton полностью безопасен  
+- **Документируйте** — пиши комментарий «PrimaryButton — кастомная кнопка с UIAction и анимацией нажатия»
 
-- Создание и настройка кнопки полностью через код
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простая кнопка с текстом
-
-```swift
-let button = UIButton(type: .system)
-button.setTitle("Press Me", for: .normal)
-```
-
-- Создаём кнопку с системным стилем и текстом
-    
-
----
-
-### Пример 2. Кнопка с изображением
-
-```swift
-let button = UIButton(type: .custom)
-button.setImage(UIImage(named: "icon"), for: .normal)
-```
-
-- Кнопка отображает картинку вместо текста
-    
-
----
-
-### Пример 3. Кнопка с изменением цвета при нажатии
-
-```swift
-let button = UIButton(type: .system)
-button.setTitle("Click Me", for: .normal)
-button.setTitleColor(.blue, for: .normal)
-button.setTitleColor(.gray, for: .highlighted)
-```
-
-- Используем **разные цвета текста** для состояний кнопки
-    
-
----
-
-### Пример 4. Кнопка с cornerRadius и shadow
-
-```swift
-let button = UIButton(type: .system)
-button.setTitle("Rounded", for: .normal)
-button.backgroundColor = .systemBlue
-button.layer.cornerRadius = 10
-button.layer.shadowColor = UIColor.black.cgColor
-button.layer.shadowOpacity = 0.3
-button.layer.shadowOffset = CGSize(width: 0, height: 2)
-```
-
-- Настройка внешнего вида кнопки через **[[CALayer]]**
-    
-
----
-
-### Пример 5. Кнопка с target-action программно
-
-```swift
-let button = UIButton(type: .system)
-button.setTitle("Tap Me", for: .normal)
-button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-
-@objc func buttonTapped(_ sender: UIButton) {
-    sender.setTitle("Tapped!", for: .normal)
-}
-```
-
-- Программная обработка нажатия кнопки и изменение текста при тапе
-    
-
----
-
-## 5. Особенности UIButton
-
-1. **Подкласс UIControl** → поддерживает target-action
-    
-2. Поддерживает **разные состояния**: `.normal`, `.highlighted`, `.disabled`, `.selected`
-    
-3. Может отображать **текст, изображение или оба**
-    
-4. Настраивается через **Interface Builder** или **код**
-    
-5. Поддерживает **анимации, cornerRadius, shadow** и другие визуальные эффекты
-    
-
----
-
-## 6. Итог
-
-- **UIButton** = интерактивная кнопка в [[UIKit]]
-    
-- Позволяет:
-    
-    - Отображать текст и изображение
-        
-    - Обрабатывать события через **@IBAction / addTarget**
-        
-    - Настраивать внешний вид (цвет, тень, скругление)
-        
-    - Использовать разные состояния кнопки
-        
-
----
+**Короткий девиз 2026**:
+> UIButton — это **универсальная кнопка** UIKit: текст, иконка, фон, состояния, анимации, действия.  
+> В 2026 году используй **UIAction**, **SF Symbols**, **кастомный подкласс** и **анимацию нажатия**.  
+> Это **единственный правильный** способ создать кнопку в UIKit.

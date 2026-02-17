@@ -1,19 +1,19 @@
-**UIAction** — это современный объект в UIKit (с iOS 13, 2019), который заменяет старый target-action механизм (`addTarget:action:for:`) и делает работу с событиями кнопок, меню, жестов и других элементов управления **гораздо чище, типобезопаснее и удобнее**.
+**UIAction** — это современный объект в [[UIKit]] (с iOS 13, 2019), который заменяет старый target-action механизм (`addTarget:action:for:`) и делает работу с событиями кнопок, меню, жестов и других элементов управления **гораздо чище, типобезопаснее и удобнее**.
 
 Это **замыкание + метаданные** в одном объекте, а не разрозненные `#selector` + `@objc func`.
 
 ### Когда и зачем использовать UIAction (2026 реальность)
 
-| Сценарий                                      | Старый способ (до UIAction)                     | Новый способ с UIAction (рекомендуемый 2026) | Почему UIAction лучше |
-|-----------------------------------------------|--------------------------------------------------|-----------------------------------------------|-----------------------|
-| Нажатие кнопки (основное действие)            | `addTarget(self, action: #selector(tapped), for: .touchUpInside)` | `button.addAction(UIAction { _ in ... }, for: .touchUpInside)` | Нет `#selector`, нет `@objc`, нет retain cycle |
-| Контекстное меню (UIMenu)                     | `UIMenu(title: "", children: [UICommand(...)])` с `#selector` | `UIAction(title: "Copy", handler: { _ in ... })` | Полностью замыкание, проще, типобезопасно |
-| Кастомные жесты (UIGestureRecognizer)         | `addTarget(self, action: #selector(handlePan))` | `UIGestureRecognizer.addAction(UIAction { ... })` | То же самое — чистый код |
-| Кнопка в navigation bar / toolbar             | `UIBarButtonItem(target: self, action: #selector(...))` | `UIBarButtonItem(title: "Save", primaryAction: UIAction { ... })` | Нет слабых ссылок, нет утечек |
-| Динамическое меню (contextMenuConfiguration)  | `#selector` + `canPerformAction`                 | `UIAction` напрямую в `UIContextMenuConfiguration` | Всё в одном месте |
+| Сценарий                                     | Старый способ (до UIAction)                                       | Новый способ с UIAction (рекомендуемый 2026)                      | Почему UIAction лучше                          |
+| -------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
+| Нажатие кнопки (основное действие)           | `addTarget(self, action: #selector(tapped), for: .touchUpInside)` | `button.addAction(UIAction { _ in ... }, for: .touchUpInside)`    | Нет `#selector`, нет `@objc`, нет retain cycle |
+| Контекстное меню ([[UIMenu]])                | `UIMenu(title: "", children: [UICommand(...)])` с `#selector`     | `UIAction(title: "Copy", handler: { _ in ... })`                  | Полностью замыкание, проще, типобезопасно      |
+| Кастомные жесты ([[UIGestureRecognizer]])    | `addTarget(self, action: #selector(handlePan))`                   | `UIGestureRecognizer.addAction(UIAction { ... })`                 | То же самое — чистый код                       |
+| Кнопка в navigation bar / toolbar            | `UIBarButtonItem(target: self, action: #selector(...))`           | `UIBarButtonItem(title: "Save", primaryAction: UIAction { ... })` | Нет слабых ссылок, нет утечек                  |
+| Динамическое меню (contextMenuConfiguration) | `#selector` + `canPerformAction`                                  | `UIAction` напрямую в `UIContextMenuConfiguration`                | Всё в одном месте                              |
 
 **Коротко**:  
-UIAction — это **замыкание**, которое можно привязать к любому событию `UIControl` или использовать в меню/контексте.  
+UIAction — это **замыкание**, которое можно привязать к любому событию [[UIControl]] или использовать в меню/контексте.  
 В 2026 году это **основной** способ работы с действиями в UIKit.
 
 ### Полный синтаксис и варианты (2026 стандарт)
@@ -99,5 +99,3 @@ navigationItem.rightBarButtonItem = saveButton
 > UIAction — это **замыкание + метаданные** для любого действия в UIKit.  
 > В 2026 году это **единственный рекомендуемый** способ привязывать действия к кнопкам, меню, жестам и UIBarButtonItem.  
 > Забудь `#selector` и `@objc func` для новых кнопок — пиши `UIAction { ... }`.
-
-Удачи с чистым и современным кодом в Swift! 🎛️

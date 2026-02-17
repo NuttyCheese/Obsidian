@@ -1,4 +1,4 @@
-**UIBackgroundExtensionView** — это **внутренний приватный класс** Apple в UIKit, который используется системой для реализации **расширения фона** (background extension) при работе с **UIRefreshControl**, **UIScrollView** и некоторыми другими механизмами, где нужно показать контент **над** или **под** основным контентом во время скролла/обновления.
+**UIBackgroundExtensionView** — это **внутренний приватный класс** Apple в [[UIKit]], который используется системой для реализации **расширения фона** (background extension) при работе с **[[UIRefreshControl]]**, **[[UIScrollView]]** и некоторыми другими механизмами, где нужно показать контент **над** или **под** основным контентом во время скролла/обновления.
 
 **Важно сразу уточнить (2026 год):**
 
@@ -10,13 +10,13 @@
 
 ### Где и зачем появляется UIBackgroundExtensionView
 
-| Компонент / Ситуация                           | Когда появляется UIBackgroundExtensionView | Что делает на самом деле |
-|------------------------------------------------|---------------------------------------------|---------------------------|
-| **UIRefreshControl** (pull-to-refresh)         | При pull вниз в UIScrollView/UITableView/UICollectionView | Создаёт слой/вью под контентом, чтобы показать спиннер и текст "Обновление..." |
-| **Custom refresh views** (свой UIRefreshControl подкласс) | При активации refresh                       | То же самое — фон для анимации |
-| **Parallax headers** / **stretchy headers**    | Когда header растягивается при скролле вверх | Иногда используется как промежуточный слой |
-| **Large title + refresh**                      | В navigation bar с large title + pull-to-refresh | Обеспечивает корректное поведение фона |
-| **iOS 18+ dynamic island / live activities**   | В редких случаях при overlay над scroll view | Внутренняя оптимизация |
+| Компонент / Ситуация                                      | Когда появляется UIBackgroundExtensionView                            | Что делает на самом деле                                                       |
+| --------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **UIRefreshControl** (pull-to-refresh)                    | При pull вниз в [[UIScrollView]]/[[UITableView]]/[[UICollectionView]] | Создаёт слой/вью под контентом, чтобы показать спиннер и текст "Обновление..." |
+| **Custom refresh views** (свой UIRefreshControl подкласс) | При активации refresh                                                 | То же самое — фон для анимации                                                 |
+| **Parallax headers** / **stretchy headers**               | Когда header растягивается при скролле вверх                          | Иногда используется как промежуточный слой                                     |
+| **Large title + refresh**                                 | В navigation bar с large title + pull-to-refresh                      | Обеспечивает корректное поведение фона                                         |
+| **iOS 18+ dynamic island / live activities**              | В редких случаях при overlay над scroll view                          | Внутренняя оптимизация                                                         |
 
 ### Типичная иерархия вью (что вы увидите в View Debugger)
 
@@ -113,6 +113,4 @@ tableView.refreshControl = CustomRefreshControl()
 
 > UIBackgroundExtensionView — это **внутренний приватный помощник** UIKit для pull-to-refresh и stretchy заголовков.  
 > В 2026 году вы **не должны** его трогать, подменять или от него зависеть.  
-> Если вам нужен кастомный refresh — делайте свой UIRefreshControl или используйте SwiftUI `Refreshable`.
-
-Удачи с чистым и поддерживаемым кодом без приватных хаков! 🚀
+> Если вам нужен кастомный refresh — делайте свой UIRefreshControl или используйте [[SwiftUI]] `Refreshable`.
