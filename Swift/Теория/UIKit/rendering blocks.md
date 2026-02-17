@@ -1,6 +1,6 @@
-**Rendering blocks** (или **блоки рендеринга**) — это современный и рекомендуемый способ выполнения операций рисования в UIKit, начиная с iOS 10 (2016 год). Они пришли на смену устаревшим функциям `UIGraphicsBeginImageContext` / `UIGraphicsEndImageContext`.
+**Rendering blocks** (или **блоки рендеринга**) — это современный и рекомендуемый способ выполнения операций рисования в [[UIKit]], начиная с iOS 10 (2016 год). Они пришли на смену устаревшим функциям `UIGraphicsBeginImageContext` / `UIGraphicsEndImageContext`.
 
-Это замыкания (closures), которые передаются в методы рендереров (`UIGraphicsImageRenderer`, `UIGraphicsPDFRenderer`, `UIGraphicsImageRendererFormat` и т.д.), и внутри них выполняется весь код рисования.
+Это замыкания ([[closure]]), которые передаются в методы рендереров (`UIGraphicsImageRenderer`, `UIGraphicsPDFRenderer`, `UIGraphicsImageRendererFormat` и т.д.), и внутри них выполняется весь код рисования.
 
 ### Почему rendering blocks — это стандарт 2026 года
 
@@ -98,12 +98,10 @@ let image = renderer.image { ctx in
 - **Передавай format** с правильным `scale` и `preferredRange` для поддержки современных экранов  
 - **Не делай тяжёлые вычисления внутри замыкания** — это выполняется синхронно на главном потоке  
 - **Асинхронный рендеринг** — если нужно рендерить много/сложно, используй `DispatchQueue.global().async` + `UIGraphicsImageRenderer`  
-- **@MainActor** — если рендеришь на главном потоке (для UI)  
-- **Документируйте** — пиши комментарий «UIGraphicsImageRenderer — генерация placeholder-аватарки с градиентом»
+- **[[@MainActor]]** — если рендеришь на главном потоке (для UI)  
+- **Документируйте** — пиши комментарий «[[UIGraphicsImageRenderer]] — генерация placeholder-аватарки с градиентом»
 
 **Короткий девиз 2026**:
 > Rendering blocks — это **единственный современный** способ рисовать изображения, PDF и графику в UIKit.  
 > `UIGraphicsImageRenderer.image { ctx in ... }` — твой основной инструмент.  
 > Забудь старые `UIGraphicsBeginImageContext` — они устарели с 2016 года и могут привести к утечкам памяти.
-
-Удачи с красивым и производительным рендерингом в Swift! 🎨
