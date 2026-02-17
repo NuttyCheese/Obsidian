@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/MemoryLayout.md",
+                "file": "Swift/Type … does not conform to protocol ….md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "MemoryLayout"
+              "title": "Type … does not conform to protocol …"
             }
           }
         ],
@@ -171,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/MemoryLayout.md",
+                "file": "Swift/Type … does not conform to protocol ….md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура MemoryLayout"
+              "title": "Структура Type … does not conform to protocol …"
             }
           },
           {
@@ -209,34 +209,34 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "d09e0fd108c70f40",
+  "active": "e407b43c27bfa155",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/Linked List.md",
-    "Swift/Теория/GIT/merge and rebase.md",
-    "Swift/Теория/Многопоточность/maxConcurrentOperationCount.md",
-    "Swift/MemoryLayout.md",
-    "Swift/Теория/Контроль памяти/Memory Leak.md",
-    "Swift/Теория/Общие вопросы/Memory Graph.md",
-    "Swift/Теория/Ошибки и варнинги/Main Thread Violation.md",
-    "Swift/Теория/Многопоточность/main thread.md",
-    "Swift/Теория/Многопоточность/main.md",
-    "Swift/Теория/Общие вопросы/Logging.md",
-    "Swift/Теория/Общие вопросы/LocalAuthentication.md",
-    "Swift/Теория/Общие вопросы/LLVM.md",
-    "Swift/Теория/Ошибки и варнинги/Linking against a dylib which is not safe for use in application extensions.md",
-    "Swift/Теория/iOS/layout cycle.md",
-    "Swift/Теория/Контроль памяти/KVO.md",
-    "Swift/Теория/Контроль памяти/KVC.md",
-    "Swift/Теория/Combine/Just.md",
-    "Swift/Теория/iOS/iOSSnapshotTestCase.md",
-    "Swift/Теория/Сторонние библиотеки и расширения/Jenkins.md",
-    "Swift/Теория/Многопоточность/isolation (expression macro).md",
-    "Swift/Теория/Многопоточность/isolated.md",
-    "Swift/Теория/Многопоточность/isAsynchronous.md",
-    "Swift/Теория/Монады/IO Monad.md",
-    "Swift/Теория/iOS/inout.md",
-    "Swift/Теория/Общие вопросы/Interface Builder.md",
-    "Swift/Теория/Контроль памяти/Inline.md",
+    "Swift/Теория/Combine/tryMap.md",
+    "Swift/Теория/Сетевое взаимодействие/TRACE-HTTP.md",
+    "Swift/Теория/iOS/TouchUpOutside.md",
+    "Swift/Теория/iOS/TouchID.md",
+    "Swift/Теория/Многопоточность/thread.md",
+    "Swift/Теория/iOS/subviews.md",
+    "Swift/Теория/iOS/tombstone.md",
+    "Swift/Теория/Многопоточность/throw.md",
+    "Swift/Теория/iOS/throws.md",
+    "Swift/Теория/Ошибки и варнинги/Thread Sanitizer.md",
+    "Swift/Теория/Testing/Three main unit test blocks.md",
+    "Swift/Теория/Ошибки и варнинги/Thread 1- EXC_BAD_ACCESS (code=1, address=0x…).md",
+    "Swift/Теория/Ошибки и варнинги/This application is modifying the autolayout engine from a background thread.md",
+    "Swift/Теория/Testing/Testing tools.md",
+    "Swift/Теория/Testing/TDD.md",
+    "Swift/Теория/Многопоточность/TaskGroup.md",
+    "Swift/Теория/Многопоточность/Task.md",
+    "Swift/Теория/iOS/Tagged pointer.md",
+    "Swift/Теория/Многопоточность/sync.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/swapAt.md",
+    "Swift/Теория/Combine/Subscriber.md",
+    "Swift/Теория/Testing/Stub.md",
+    "Swift/Теория/iOS/String.md",
+    "Swift/Теория/Сетевое взаимодействие/statelessness.md",
+    "Swift/Теория/Контроль памяти/Stack.md",
+    "Swift/Теория/iOS/safeAreaLayoutGuide.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",

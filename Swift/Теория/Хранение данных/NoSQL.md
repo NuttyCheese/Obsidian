@@ -35,7 +35,7 @@
 ### Самый популярный стек 2026 для мобильных приложений с NoSQL
 
 1. **Frontend** — [[SwiftUI]] + [[TCA]] / [[MVVM (Model-View-ViewModel) Architecture|MVVM]]  
-2. **Локальное хранение** — SwiftData / [[Core Data]] / [[Swift/Realm]] (для оффлайн)  
+2. **Локальное хранение** — SwiftData / [[Core Data]] / [[Swift/Теория/Сторонние библиотеки и расширения/Realm]] (для оффлайн)  
 3. **Облачная NoSQL** — **Firebase Firestore** (самый частый) / **Supabase** / **MongoDB Realm**  
 4. **Кэш / быстрые данные** — Redis / Dragonfly  
 5. **Аналитика / логи** — InfluxDB / TimescaleDB  

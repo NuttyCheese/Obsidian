@@ -174,7 +174,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
 - Поддержка silent push и data messages.
     
-- Легкая интеграция через Admin SDK и [[Swift/REST API]].
+- Легкая интеграция через Admin SDK и [[Swift/Теория/Сетевое взаимодействие/REST API]].
     
 - Возможность таргетинга и сегментации пользователей.
     
