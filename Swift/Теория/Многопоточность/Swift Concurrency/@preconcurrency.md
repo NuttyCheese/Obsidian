@@ -10,7 +10,7 @@
 
 **Самые частые места, где Apple использует @preconcurrency** (2026):
 
-- [[NotificationCenter]], [[URLSession]], [[FileManager]], [[Swift/UserDefaults]]  
+- [[NotificationCenter]], [[URLSession]], [[FileManager]], [[Swift/Теория/Хранение данных/UserDefaults]]  
 - большинство старых [[API]] в [[Foundation]], [[UIKit]], [[AppKit]]
 - `NSNotification.Name`, `Selector`, `NSKeyValueObserving`  
 - [[Objective-C]] протоколы и классы, импортируемые в [[Swift]]
