@@ -1,178 +1,139 @@
-**`any`** — ключевое слово [[Swift]], которое используется для **явного обозначения existential type**, то есть типа, который может содержать **любой объект, соответствующий протоколу**.
+**`any`** в Swift — это **явный маркер existential type** (экзистенциального типа), который говорит компилятору:  
+«Здесь может быть **любой** тип, который соответствует этому протоколу, но я не знаю (и мне не важно) какой именно».
 
-- Позволяет работать с **неопределёнными типами**, сохраняя информацию о протоколе
-    
-- В Swift 5.7+ использование `any` стало **явным**, раньше протоколы можно было использовать без него
-    
-- **Сравнение:**
-    
-    - `let value: Greetable` → раньше было implicit existential type
-        
-    - `let value: any Greetable` → современный явный синтаксис
-        
+С 2022–2023 годов (Swift 5.7 и особенно Swift 6) использование `any` стало **обязательным** в большинстве случаев, когда раньше протокол использовался как тип напрямую. Это одно из самых важных изменений в языке за последние годы.
 
-> Проще говоря: `any` = «любой тип, который соответствует этому протоколу».
+### 1. Почему ввели обязательный `any` (короткая история)
 
----
-
-## 2. Основные термины
-
-| Термин               | Описание                                                           |
-| -------------------- | ------------------------------------------------------------------ |
-| **Existential type** | Тип, который может хранить любой объект, соответствующий протоколу |
-| **[[Protocol]]**     | Определяет набор требований для типа (методы, свойства)            |
-| **any Protocol**     | Явный existential type                                             |
-| **Dynamic dispatch** | Вызов методов через протокол во время выполнения                   |
-| **Concrete type**    | Конкретная реализация протокола                                    |
-
----
-
-## 3. Основной синтаксис
-
-```swift
-protocol Greetable {
-    func greet()
-}
-
-struct Person: Greetable {
-    func greet() { print("Hello") }
-}
-
-let someone: any Greetable = Person()
-someone.greet() // Hello
-```
-
-- `any Greetable` → тип неизвестен на этапе компиляции, известны только методы протокола
-    
-- Методы вызываются через **dynamic dispatch**
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Basic any Protocol
+До Swift 5.7 протоколы можно было использовать как типы **неявно**:
 
 ```swift
 protocol Drawable {
     func draw()
 }
 
-struct Circle: Drawable {
-    func draw() { print("Drawing Circle") }
-}
-
-let shape: any Drawable = Circle()
-shape.draw() // Drawing Circle
+let shape: Drawable = Circle()  // OK в Swift 5.6 и раньше
 ```
 
-- `shape` может хранить **любой Drawable**
-    
+Это создавало **неявный existential type** — коробку, в которой может лежать любой Drawable.
 
----
+Но у такого подхода были проблемы:
+- **Производительность** — всегда dynamic dispatch (медленнее)
+- **Неоднозначность** — компилятор не знал, можно ли хранить несколько разных типов в массиве
+- **Сложности с generic** и **associated types**
+- **Проблемы со строгой конкурентностью** (Swift 6)
 
-### Пример 2. Массив any Protocol
+С Swift 5.7+ ввели правило:
+
+> Если вы хотите использовать протокол как **тип** (в переменной, параметре, возвращаемом значении, массиве) — **явно пишите `any`**.
+
+Без `any` теперь ошибка:
 
 ```swift
-struct Square: Drawable {
-    func draw() { print("Drawing Square") }
+let shape: Drawable = Circle()  
+// Ошибка: Protocol 'Drawable' can only be used as a generic constraint
+// because it has Self or associated type requirements
+```
+
+Правильно:
+
+```swift
+let shape: any Drawable = Circle()  // OK
+```
+
+### 2. Когда писать `any`, а когда нет (таблица 2026)
+
+| Ситуация                                      | Писать `any`? | Пример правильного кода                              | Почему |
+|-----------------------------------------------|---------------|------------------------------------------------------|--------|
+| Переменная / константа хранит значение        | **Да**        | `let shape: any Drawable = Circle()`                 | Existential type |
+| Параметр функции / возвращаемый тип           | **Да**        | `func draw(_ shape: any Drawable)`                   | Existential |
+| Массив / коллекция разных реализаций          | **Да**        | `[any Drawable]`                                     | Разные типы |
+| Generic constraint (обобщённый тип)           | **Нет**       | `func draw<T: Drawable>(_ shape: T)`                 | Concrete type, static dispatch |
+| Associated type в протоколе                   | **Нет**       | `associatedtype Shape: Drawable`                     | Constraint, не тип |
+| Self в протоколе                              | **Нет**       | `associatedtype Element: Equatable`                  | Constraint |
+| Протокол без Self / associatedtype            | **Да**        | `protocol Loggable { func log() }` → `any Loggable`  | Existential |
+
+### 3. Самые частые и важные примеры 2026 года
+
+#### Пример 1. Массив разных реализаций (самый популярный кейс)
+
+```swift
+protocol Drawable {
+    func draw()
 }
 
-let shapes: [any Drawable] = [Circle(), Square()]
+struct Circle: Drawable { func draw() { print("○") } }
+struct Square: Drawable { func draw() { print("□") } }
+
+let shapes: [any Drawable] = [Circle(), Square(), Circle()]
+
 for shape in shapes {
+    shape.draw()  // ○ □ ○
+}
+```
+
+Без `any` — ошибка компиляции.
+
+#### Пример 2. Функция с existential возвращаемым типом
+
+```swift
+func makeRandomShape() -> any Drawable {
+    Bool.random() ? Circle() : Square()
+}
+
+let random = makeRandomShape()
+random.draw()
+```
+
+#### Пример 3. Generic vs Existential (разница в производительности)
+
+```swift
+// Existential — dynamic dispatch (медленнее)
+func drawExistential(_ shape: any Drawable) {
+    shape.draw()
+}
+
+// Generic — static dispatch (быстрее)
+func drawGeneric<T: Drawable>(_ shape: T) {
     shape.draw()
 }
 ```
 
-- Массив может содержать **разные конкретные реализации протокола**
-    
+В 2026 году **рекомендуется** использовать generic, когда тип известен на этапе компиляции.
 
----
-
-### Пример 3. Any с return value
+#### Пример 4. `any` + `async` / `Sendable` (Swift 6)
 
 ```swift
-func getShape(type: String) -> any Drawable {
-    if type == "circle" { return Circle() }
-    else { return Square() }
-}
-
-let shape = getShape(type: "circle")
-shape.draw() // Drawing Circle
-```
-
-- Функция возвращает **любую реализацию протокола**
-    
-
----
-
-### Пример 4. Any + type casting
-
-```swift
-let shape: any Drawable = Circle()
-if let circle = shape as? Circle {
-    print("This is a Circle!")
-}
-```
-
-- Можно привести `any Protocol` к **конкретному типу**, если нужно
-    
-
----
-
-### Пример 5. Any + асинхронный код
-
-```swift
-protocol AsyncTask {
+protocol AsyncTask: Sendable {
     func execute() async
 }
 
-struct TaskA: AsyncTask {
-    func execute() async { print("Task A executed") }
-}
-
-struct TaskB: AsyncTask {
-    func execute() async { print("Task B executed") }
-}
-
-let tasks: [any AsyncTask] = [TaskA(), TaskB()]
-
-Task {
-    for task in tasks {
-        await task.execute()
+func runTasks(_ tasks: [any AsyncTask]) async {
+    await withTaskGroup(of: Void.self) { group in
+        for task in tasks {
+            group.addTask {
+                await task.execute()
+            }
+        }
     }
 }
 ```
 
-- Работает с асинхронными протоколами, конкретная реализация неизвестна
-    
+Здесь `any AsyncTask` работает, потому что протокол помечен `Sendable`.
 
----
+### 4. Лучшие практики использования `any` в Swift 2026
 
-## 5. Особенности any
+- **Пишите `any` явно** — это требование Swift 6 strict mode  
+- **Предпочитайте generic** (`<T: Protocol>`) там, где тип известен — быстрее и безопаснее  
+- **Используйте `any` только когда нужно хранить разные типы** (массивы, коллекции, возвращаемые значения)  
+- **Не злоупотребляйте existential** — они медленнее и ограничивают возможности (нельзя использовать associated types без type erasure)  
+- **Для протоколов с `Self` / `associatedtype`** — `any` запрещён, используйте generic или type erasure (AnyDrawable)  
+- **Документируйте** — пиши комментарий «[any Drawable] — массив разных фигур для рендеринга»
 
-1. **Existential type** → компилятору неизвестен конкретный тип
-    
-2. Методы вызываются через **dynamic dispatch**
-    
-3. Позволяет хранить **разные типы, соответствующие одному протоколу**
-    
-4. Можно использовать в **массивах, функциях, свойствах**
-    
-5. Любые операции, не объявленные в протоколе, **невозможны без type casting**
-    
+**Короткий девиз 2026**:
+> `any Protocol` — это **коробка**, в которой может лежать **любой** тип, соответствующий протоколу.  
+> В Swift 6+ писать `any` **обязательно**, когда протокол используется как тип.  
+> Если тип известен — используйте generic `<T: Protocol>`.  
+> `any` — для гибкости, generic — для скорости и безопасности.
 
----
-
-## 6. Итог
-
-- **any Protocol** = тип, который может содержать любую реализацию протокола
-    
-- Позволяет писать **универсальный, гибкий код**
-    
-- Работает с массивами, функциями, [[async]]/[[await]]
-    
-- Для конкретных операций нужен **type casting**
-    
-
----
+Удачи с типобезопасным и производительным кодом в Swift! 📦

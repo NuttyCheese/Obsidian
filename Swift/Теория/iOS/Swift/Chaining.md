@@ -1,255 +1,173 @@
-## 1. Введение
+**Связанные списки в хеш-таблицах** (chaining, метод цепочек) — это классический и до сих пор один из самых понятных способов разрешения коллизий в хеш-таблицах.
 
-**Связанные списки** — это одна из классических стратегий **разрешения коллизий в хеш-таблицах**.
+В 2026 году он **не используется** в стандартной реализации `Dictionary` и `Set` в Swift (там применяется **open addressing** с quadratic probing и Robin Hood hashing), но остаётся важным для:
 
-Когда два разных ключа попадают в одну ячейку хеш-таблицы:
+- понимания основ хеширования  
+- учебных проектов  
+- кастомных хеш-таблиц  
+- ситуаций, когда нужна простота и предсказуемость (а не максимальная производительность)
 
-```
-hash(key1) % tableSize == hash(key2) % tableSize
-```
+### 1. Как именно работает chaining (схема и принцип)
 
-- В **chaining** эта ячейка превращается в **список элементов**, все они сохраняются там.
-    
-
-> В отличие от **open addressing**, элементы не перемещаются по массиву, а «навешиваются» на один бакет.
-
----
-
-## 2. Основная идея
-
-Идея простая:
-
-- Каждая ячейка хеш-таблицы содержит **ссылку на связанный список** (или [[nil]], если пусто)
-    
-- Если возникает коллизия, элемент просто **добавляется в список**
-    
-- Поиск идёт по списку внутри бакета
-    
-
-### Визуально
-
-```
-table[3] → ("apple", 10) → ("banana", 20) → nil
-table[4] → ("orange", 5) → nil
-table[5] → nil
+```mermaid
+graph TD
+    A[Ключ → hash(key)] --> B[Индекс = hash(key) % tableSize]
+    B --> C[Бакет table[индекс]]
+    C --> D{Есть коллизия?}
+    D -- Да --> E[Добавляем в связный список бакета]
+    D -- Нет --> F[Создаём новый узел в бакете]
+    E --> G[Новый узел → next = старый head]
+    G --> H[head бакета = новый узел]
+    F --> H
 ```
 
-- Индекс 3 содержит **цепочку из двух элементов**, потому что `apple` и `banana` коллизировали.
-    
+**Ключевые моменты**:
+- Каждый бакет — это **голова** односвязного списка (`Node?`)
+- При коллизии новый элемент добавляется **в начало** списка (O(1))
+- Поиск / удаление — линейный перебор списка в бакете (O(длина цепочки))
+- Средняя длина цепочки при хорошем хеше ≈ **load factor** (α = count / capacity)
 
----
-
-## 3. Реализация в [[Swift]] (упрощённо)
-
-Сначала создадим узел списка:
+### 2. Полная, но понятная реализация chaining-хеш-таблицы (Swift 2026)
 
 ```swift
-class Node<Key: Hashable, Value> {
+final class Node<Key: Hashable, Value> {
     let key: Key
     var value: Value
     var next: Node?
-
+    
     init(key: Key, value: Value, next: Node? = nil) {
         self.key = key
         self.value = value
         self.next = next
     }
 }
-```
 
-Теперь хеш-таблица с chaining:
-
-```swift
-class ChainingHashTable<Key: Hashable, Value> {
+final class ChainingHashTable<Key: Hashable, Value> {
     private var buckets: [Node<Key, Value>?]
     private(set) var count = 0
-
-    init(capacity: Int) {
+    
+    init(capacity: Int = 16) {
+        precondition(capacity > 0, "Capacity must be positive")
         buckets = Array(repeating: nil, count: capacity)
     }
-
+    
     private func index(for key: Key) -> Int {
         abs(key.hashValue) % buckets.count
     }
-
+    
+    // O(1) в среднем, O(n) в худшем
     func insert(_ key: Key, value: Value) {
         let idx = index(for: key)
-        var node = buckets[idx]
-
-        // обновляем значение, если ключ уже есть
-        while let n = node {
-            if n.key == key {
-                n.value = value
+        var current = buckets[idx]
+        
+        // Проверяем, есть ли ключ уже
+        while let node = current {
+            if node.key == key {
+                node.value = value  // обновляем значение
                 return
             }
-            node = n.next
+            current = node.next
         }
-
-        // вставляем новый узел в голову списка
+        
+        // Новый ключ — вставляем в голову
         let newNode = Node(key: key, value: value, next: buckets[idx])
         buckets[idx] = newNode
         count += 1
+        
+        // Можно добавить resize при load factor > 0.75
+        if Double(count) / Double(buckets.count) > 0.75 {
+            resize()
+        }
     }
-
+    
     func value(for key: Key) -> Value? {
         let idx = index(for: key)
-        var node = buckets[idx]
-
-        while let n = node {
-            if n.key == key {
-                return n.value
+        var current = buckets[idx]
+        
+        while let node = current {
+            if node.key == key {
+                return node.value
             }
-            node = n.next
+            current = node.next
         }
         return nil
     }
-
+    
     func remove(_ key: Key) {
         let idx = index(for: key)
-        var node = buckets[idx]
-        var prev: Node<Key, Value>? = nil
-
-        while let n = node {
-            if n.key == key {
-                if let p = prev {
-                    p.next = n.next
+        var current = buckets[idx]
+        var previous: Node<Key, Value>? = nil
+        
+        while let node = current {
+            if node.key == key {
+                if let prev = previous {
+                    prev.next = node.next
                 } else {
-                    buckets[idx] = n.next
+                    buckets[idx] = node.next
                 }
                 count -= 1
                 return
             }
-            prev = node
-            node = n.next
+            previous = node
+            current = node.next
+        }
+    }
+    
+    private func resize() {
+        let oldBuckets = buckets
+        buckets = Array(repeating: nil, count: buckets.count * 2)
+        count = 0
+        
+        for case let node? in oldBuckets {
+            var current = node
+            while let n = current {
+                insert(n.key, value: n.value)
+                current = n.next
+            }
         }
     }
 }
 ```
 
----
+### 3. Плюсы и минусы chaining (реальная оценка 2026)
 
-## 4. Пример использования
+**Плюсы** (почему до сих пор используется в некоторых случаях):
+- Очень простая реализация (особенно без resize)
+- Удаление — O(1) в среднем (в отличие от open addressing)
+- Нет «плохих» сценариев с длинными пробами
+- Хорошо работает при высокой load factor (0.8–1.0)
+- Легко реализовать потокобезопасность (lock на бакет)
 
-```swift
-let table = ChainingHashTable<String, Int>(capacity: 5)
-table.insert("apple", value: 10)
-table.insert("banana", value: 20)
-table.insert("orange", value: 30)
+**Минусы** (почему Swift выбрал open addressing):
+- **Плохая локальность кэша** — узлы разбросаны по heap
+- **Много аллокаций** — каждый Node — отдельный объект (ARC overhead)
+- **Дольше работает** при большом количестве коллизий (O(n) в худшем)
+- **Сложнее оптимизировать** под современные CPU (branch prediction, prefetching)
 
-print(table.value(for: "banana")) // 20
-table.remove("banana")
-print(table.value(for: "banana")) // nil
-```
+### 4. Сравнение chaining vs open addressing (Swift Dictionary)
 
-- Если несколько ключей попали в один индекс, **они будут в цепочке**
-    
-- Lookup → перебор [[Linked List]] в бакете
-    
-- Insert → добавление в голову списка (или tail, по желанию)
-    
+| Характеристика                  | Chaining (Linked List)                     | Open Addressing (Swift Dict)               | Победитель в 2026 |
+|---------------------------------|--------------------------------------------|---------------------------------------------|-------------------|
+| Среднее время поиска            | O(1 + α)                                   | O(1) в среднем, хуже при высокой load       | Open addressing   |
+| Худший случай                   | O(n)                                       | O(n) (очень редко)                          | Chaining стабильнее |
+| Память                          | + overhead на каждый узел                  | Только массив бакетов                       | Open addressing   |
+| Локальность кэша                | Плохая (разбросанные узлы)                 | Отличная (линейный массив)                  | Open addressing   |
+| Удаление                        | Просто (перевязка указателей)              | Сложно (нужны tombstone или Robin Hood)     | Chaining проще    |
+| Реализация в Swift              | Почти не используется                      | Основной метод в Dictionary / Set           | Open addressing   |
 
----
+### 5. Когда стоит использовать chaining в 2026
 
-## 5. Плюсы связанных списков
+- Учебные проекты / алгоритмы  
+- Кастомные хеш-таблицы с потокобезопасностью (lock-free на бакет)  
+- Когда важна **предсказуемость** (нет резких деградаций при плохом хеше)  
+- Когда коллизий мало и load factor высокий  
+- В ситуациях, где аллокации не критичны (маленькие таблицы)
 
-1. **Простая реализация**
-    
-    - Никаких хитрых probing-алгоритмов
-        
-2. **Не нужно пересаживать элементы**
-    
-    - Элемент остаётся в своём бакете
-        
-3. **Поддержка динамического размера**
-    
-    - Бакеты можно расширять, не трогая уже вставленные элементы
-        
-4. **Высокая устойчивость к плохому хешу**
-    
-    - Даже если много коллизий, элементы корректно хранятся в списке
-        
+### Короткий девиз 2026
 
----
+> Chaining — это когда коллизии «навешиваются» в связный список в бакете.  
+> Просто, надёжно, но **дорого по памяти** и **плохо по кэшу**.  
+> Swift выбрал open addressing именно поэтому — лучше производительность и локальность.  
+> Но понимание chaining **обязательно** для любого, кто хочет глубоко понять хеш-таблицы.
 
-## 6. Минусы связанных списков
-
-1. **Снижение производительности при коллизиях**
-    
-    - Lookup становится O(n) внутри бакета
-        
-2. **Дополнительные аллокации в heap**
-    
-    - Каждый Node = отдельный объект → [[ARC]] [[retain]]/[[release]]
-        
-3. **Хуже локальность кэша**
-    
-    - Узлы могут быть разбросаны по памяти
-        
-4. **Сложность при параллельных вставках**
-    
-    - Нужна синхронизация при многопоточном доступе
-        
-
----
-
-## 7. Когда chaining используется
-
-- В классических хеш-таблицах (например, учебники, Java HashMap до JDK 8)
-    
-- В ситуациях, где **простота важнее cache performance**
-    
-- Когда **много элементов и плохой hash** — chaining более стабильный
-    
-
----
-
-## 8. Отличие от Open Addressing
-
-|                    | Chaining                      | [[open addressing]]             |
-| ------------------ | ----------------------------- | ------------------------------- |
-| Хранение           | Linked list в бакете          | Все в массиве бакетов           |
-| Удаление           | Легко                         | Сложно, нужна tombstone         |
-| Производительность | Хорошо при низкой load factor | Очень хорошо при cache-friendly |
-| Аллокации          | Требуются узлы                | Нет лишних аллокаций            |
-| Коллизии           | Разрешаются списком           | Разрешаются probing             |
-
-> Swift [[Dictionary]]/[[Set]] выбрали **open addressing**, потому что важна производительность и локальность кэша, а ARC лишние узлы не нужны.
-
----
-
-## 9. Коллизии в связных списках
-
-Пример коллизий:
-
-```
-table size = 5
-hash("apple") % 5 = 2
-hash("banana") % 5 = 2
-hash("cherry") % 5 = 2
-```
-
-```
-buckets[2] → ("cherry", ...) → ("banana", ...) → ("apple", ...) → nil
-```
-
-- Все ключи коллизировали → идут в цепочку
-    
-- Lookup → перебор списка
-    
-- В среднем lookup = O(1 + α) где α = load factor
-    
-
----
-
-## 10. Итог
-
-- **Chaining** — классический способ разрешения коллизий
-    
-- Все коллизии решаются через **связанный список в бакете**
-    
-- Прост в реализации, но **медленнее и дороже по памяти**
-    
-- Swift Dictionary/Set использует **open addressing**, но концепция chaining полезна для понимания и сравнения
-    
-
----
+Удачи с изучением хеш-таблиц и коллизий — это одна из самых красивых тем в алгоритмах! 🔗

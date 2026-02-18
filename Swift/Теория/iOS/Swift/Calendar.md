@@ -1,110 +1,105 @@
-**`Calendar`** — это структура, которая позволяет:
+**`Calendar`** в Swift — это мощный и очень часто используемый инструмент для работы с датами и временем. Он отвечает за всю «логику календаря»: компоненты даты (год, месяц, день, час...), часовые пояса, локали, разные календарные системы и математические операции над `Date`.
 
-- работать с **компонентами даты** (год, месяц, день, час, минута),
-    
-- выполнять **вычисления с датами** (добавление/вычитание дней, месяцев, лет),
-    
-- учитывать **локаль и часовой пояс**,
-    
-- поддерживать разные **календарные системы** (григорианский, буддийский, исламский и др.).
-    
+В 2026 году это **единственный рекомендуемый** способ выполнять любые серьёзные манипуляции с датами в UIKit и Foundation-приложениях.
 
-> Проще: `Calendar` = логика календаря для работы с [[Date]].
+### 1. Зачем нужен Calendar (ключевые задачи)
 
----
+| Задача / Сценарий                             | Почему без Calendar сложно                              | Как Calendar решает в 2026 |
+|-----------------------------------------------|----------------------------------------------------------|-----------------------------|
+| Получить день/месяц/год из Date               | `Date` — это просто timestamp, без компонентов           | `calendar.component(.day, from: date)` |
+| Добавить/вычесть дни, недели, месяцы, годы    | Учёт високосных лет, переходов месяцев, часовых поясов   | `calendar.date(byAdding: .month, value: 3, to: date)` |
+| Создать дату из компонентов (27 августа 2025) | Нужно учесть локаль, пояс, високосность                  | `calendar.date(from: components)` |
+| Посчитать разницу между датами                | Правильно учитывать дни/месяцы/годы                      | `calendar.dateComponents([.day, .month], from: start, to: end)` |
+| Работать с разными календарями                | Григорианский, исламский, еврейский, китайский и т.д.   | `Calendar(identifier: .islamic)` |
+| Учитывать локаль и часовой пояс               | Форматы даты, начало недели, DST                         | `Calendar.current` или `calendar.locale = Locale(identifier: "ru_RU")` |
 
-## 2. Получение календаря
-
-```swift
-let calendar = Calendar.current // локальный календарь пользователя
-let gregorian = Calendar(identifier: .gregorian) // григорианский календарь
-```
-
----
-
-## 3. Получение компонентов даты
+### 2. Самые важные способы получения Calendar
 
 ```swift
-let now = Date()
+// Самый частый — календарь пользователя (с учётом локали и пояса)
 let calendar = Calendar.current
 
-let year = calendar.component(.year, from: now)
-let month = calendar.component(.month, from: now)
-let day = calendar.component(.day, from: now)
-let hour = calendar.component(.hour, from: now)
-let minute = calendar.component(.minute, from: now)
+// Явно григорианский (самый распространённый в мире)
+let gregorian = Calendar(identifier: .gregorian)
 
-print("Сегодня: \(day).\(month).\(year) \(hour):\(minute)")
+// Исламский календарь (для хиджры)
+let islamic = Calendar(identifier: .islamic)
+
+// Еврейский календарь
+let hebrew = Calendar(identifier: .hebrew)
+
+// Китайский лунный календарь
+let chinese = Calendar(identifier: .chinese)
 ```
 
----
+**Рекомендация 2026**:  
+99% случаев — используйте `Calendar.current`.  
+Явный `identifier` нужен только для специфических задач (религиозные календари, исторические расчёты).
 
-## 4. Работа с [[DateComponents]]
-
-```swift
-// Создание даты через компоненты
-var components = DateComponents()
-components.year = 2025
-components.month = 8
-components.day = 27
-components.hour = 12
-components.minute = 30
-
-let date = calendar.date(from: components)
-print(date!) // 2025-08-27 12:30:00 +0000
-```
-
----
-
-## 5. Добавление и вычитание времени
+### 3. Получение компонентов даты — самый частый сценарий
 
 ```swift
 let now = Date()
+let cal = Calendar.current
 
-// Добавляем 1 день
-let tomorrow = calendar.date(byAdding: .day, value: 1, to: now)!
-
-// Вычитаем 7 дней
-let lastWeek = calendar.date(byAdding: .day, value: -7, to: now)!
-
-print("Завтра: \(tomorrow)")
-print("Неделю назад: \(lastWeek)")
+let year   = cal.component(.year,   from: now)   // 2026
+let month  = cal.component(.month,  from: now)   // 1–12
+let day    = cal.component(.day,    from: now)   // 1–31
+let hour   = cal.component(.hour,   from: now)   // 0–23
+let minute = cal.component(.minute, from: now)   // 0–59
+let weekday = cal.component(.weekday, from: now) // 1=воскресенье, 2=понедельник... (зависит от локали!)
 ```
 
----
+**Все доступные компоненты** (`.era`, `.year`, `.month`, `.day`, `.hour`, `.minute`, `.second`, `.nanosecond`, `.weekday`, `.weekdayOrdinal`, `.quarter`, `.weekOfMonth`, `.weekOfYear`, `.yearForWeekOfYear`, `.isLeapMonth`)
 
-## 6. Разница между датами
+### 4. Самый популярный паттерн: работа с DateComponents
 
 ```swift
-let startDate = Date()
-let endDate = calendar.date(byAdding: .hour, value: 3, to: startDate)!
+var components = DateComponents()
+components.year   = 2025
+components.month  = 12
+components.day    = 31
+components.hour   = 23
+components.minute = 59
 
-let components = calendar.dateComponents([.hour, .minute], from: startDate, to: endDate)
-print("Разница: \(components.hour!) часов, \(components.minute!) минут") // 3 часов, 0 минут
+// Создаём дату из компонентов
+if let newYearEve = Calendar.current.date(from: components) {
+    print("Новый год: \(newYearEve)")  // 2025-12-31 23:59:00 +0000
+}
+
+// Изменяем существующую дату
+let now = Date()
+if let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) {
+    print("Завтра: \(tomorrow)")
+}
 ```
 
----
+### 5. Разница между датами (самый частый вопрос)
 
-## 7. Особенности Calendar
+```swift
+let start = Date()
+let end = Calendar.current.date(byAdding: .day, value: 10, to: start)!
 
-- Работает с `Date` и `DateComponents`.
-    
-- Учитывает **локаль и часовой пояс**.
-    
-- Поддерживает разные типы календарей (`.gregorian`, `.buddhist`, `.islamic`, `.hebrew`).
-    
-- Позволяет выполнять операции **вычисления и сравнения** с датами.
-    
+let diff = Calendar.current.dateComponents([.day, .hour, .minute], from: start, to: end)
+print("Прошло: \(diff.day ?? 0) дней, \(diff.hour ?? 0) часов")
 
----
+// Только количество дней (игнорируя время)
+let days = Calendar.current.dateComponents([.day], from: start, to: end).day ?? 0
+```
 
-## 8. Итог
+### 6. Лучшие практики Calendar в Swift 2026
 
-- `Calendar` = инструмент для манипуляций с датами.
-    
-- Позволяет получать компоненты, создавать даты, добавлять/вычитать время.
-    
-- Используется вместе с `Date` и `DateComponents`.
-    
+- **Всегда** используйте `Calendar.current` — он учитывает локаль, пояс и настройки пользователя  
+- **Не храните `Calendar` как свойство** — создавайте заново при необходимости (`let cal = Calendar.current`)  
+- **Ограничивайте компоненты** — запрашивайте только нужные: `[.day, .month]` вместо всего  
+- **Для форматирования** — используйте `DateFormatter`, а не `Calendar` напрямую  
+- **Для диапазонов дат** — Swift 6+ имеет `DateInterval`, но `Calendar` всё ещё основной инструмент  
+- **Swift 6 strict concurrency** — `Calendar` полностью Sendable и безопасен  
+- **Документируйте** — пиши комментарий «Calendar.current — локальный календарь для вычисления разницы дат»
 
----
+**Короткий девиз 2026**:
+> `Calendar` — это **мозг всех операций с датами** в Swift: компоненты, добавление/вычитание, разница, локали, пояса.  
+> В 2026 году используйте `Calendar.current`, `DateComponents`, `date(byAdding:)`, `dateComponents(from:to:)` и забудьте ручной парсинг timestamp’ов.  
+> Это **единственный правильный** способ работать с датами в UIKit и Foundation.
+
+Удачи с точными и локализованными датами в твоём приложении! 📅

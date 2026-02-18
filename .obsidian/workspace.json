@@ -13,15 +13,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/any Protocol.md",
+                "file": "Swift/Теория/iOS/Swift/catch.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "any Protocol"
+              "title": "catch"
+            }
+          },
+          {
+            "id": "aa48df8cfcb7d215",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Теория/iOS/Swift/Character.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Character"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -156,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/any Protocol.md",
+                "file": "Swift/Теория/iOS/Swift/Character.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура any Protocol"
+              "title": "Структура Character"
             }
           },
           {
@@ -194,8 +209,26 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "066907940ac51ca3",
+  "active": "aa48df8cfcb7d215",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/Chaining.md",
+    "Swift/Теория/iOS/Swift/catch.md",
+    "Swift/Теория/iOS/Swift/Capture list.md",
+    "Swift/Теория/iOS/Swift/Capture.md",
+    "Swift/Теория/iOS/Swift/callback.md",
+    "Swift/Теория/iOS/Swift/Calendar.md",
+    "Swift/Теория/iOS/Swift/break.md",
+    "Swift/System Design/1. Основы проектирования систем/Архитектуры/Микросервисы.md",
+    "Swift/Теория/iOS/Swift/Bool.md",
+    "Swift/Теория/iOS/Swift/Atomic Operation.md",
+    "Swift/Теория/iOS/Swift/AssociatedType.md",
+    "Swift/Теория/iOS/Swift/Associated value.md",
+    "Swift/Теория/iOS/Swift/as.md",
+    "Swift/Теория/iOS/Swift/Array.md",
+    "Swift/Теория/iOS/Swift/AnyObject.md",
+    "Swift/Теория/iOS/Swift/AnyClass.md",
+    "Swift/Теория/iOS/Swift/Any vs AnyObject.md",
+    "Swift/Теория/iOS/Swift/any Protocol.md",
     "Swift/Теория/iOS/Swift/any.md",
     "Swift/Теория/Testing/Advantages and disadvantages of unit test.md",
     "Swift/Теория/Testing/iOSSnapshotTestCase.md",
@@ -204,24 +237,6 @@
     "Swift/Теория/Testing/TDD.md",
     "Swift/Теория/Testing/Testing tools.md",
     "Swift/Теория/Testing/Three main unit test blocks.md",
-    "Swift/Теория/Testing/UI-test.md",
-    "Swift/Теория/Testing/Unit-test.md",
-    "Swift/Теория/Testing/XCTest.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Экспоненциальный поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Hash-поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Бинарный поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/filter.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/Dictionary(grouping by).md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/contains.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/compactMap.md",
-    "Swift/Теория/Debug/Variables View (Просмотр переменных).md",
-    "Swift/Теория/Debug/Time Profiler (Профилировщик времени).md",
-    "Swift/Теория/Debug/Network Debugging (Отладка сети).md",
-    "Swift/Теория/Debug/Memory Graph Debugger (Отладчик графа памяти).md",
-    "Swift/Теория/Debug/LLDB (Low-Level Debugger).md",
-    "Swift/Теория/Debug/Debugging tools in Xcode.md",
-    "Swift/Теория/Debug/Debug Navigator (Отладочный навигатор).md",
-    "Swift/Теория/Debug/Core Data Debugging (Отладка Core Data).md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",

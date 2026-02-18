@@ -1,172 +1,89 @@
-**`AnyObject`** — это **тип, который может представлять любой экземпляр класса ([[Reference Type]])**.
+**`AnyObject`** — это специальный протокол в Swift, который ограничивает тип **только классами** (reference types).  
+Он используется, когда нужно работать с **объектами** (экземплярами классов), но конкретный класс неизвестен или не важен на этапе компиляции.
 
-- ==В отличие от `Any`, который может хранить **любой тип**, `AnyObject` ограничен **только классами**==
-    
-- Используется для **работы с коллекциями объектов, [[Objective-C]] [[API]], type casting**
-    
-- Применяется в **protocols, arrays, dictionaries**, где нужны только объекты
-    
+В 2026 году (Swift 6+) `AnyObject` остаётся важным, но его использование сильно сократилось по сравнению с ранними версиями Swift.  
+Большинство задач теперь решают **конкретные типы**, **generic** или **any Protocol**, а `AnyObject` нужен в основном для **Objective-C совместимости** и legacy-кода.
 
-> Проще говоря: `AnyObject` = «любой объект класса».
+### 1. Главные отличия AnyObject от Any (таблица 2026)
 
----
+| Характеристика                        | `Any`                                              | `AnyObject`                                          | Когда выбрать в 2026 |
+|---------------------------------------|----------------------------------------------------|------------------------------------------------------|----------------------|
+| Может хранить                         | **Любой** тип (struct, class, enum, tuple, func…) | **Только классы** (наследники NSObject или чистые Swift-классы) | `Any` — универсально, `AnyObject` — только объекты |
+| Поддерживает value types?             | Да (Int, String, Array, struct…)                   | Нет                                                  | `Any` для смешанных данных |
+| Поддерживает классы?                  | Да                                                 | Да                                                   | Оба подходят |
+| Dynamic dispatch?                     | Да (если протокол)                                 | Да (всегда, классы используют vtable)                | `AnyObject` чуть быстрее при вызове методов |
+| Можно использовать в массиве?         | Да `[Any]`                                         | Да `[AnyObject]`                                     | `Any` — если есть value types |
+| Можно привести к конкретному типу?    | Да (`as?`, `as!`)                                  | Да (`as?`, `as!`)                                    | Оба поддерживают |
+| Совместимость с Objective-C?          | Частичная (только классы преобразуются)            | Полная                                               | `AnyObject` — для ObjC API |
+| Можно использовать с `any`?           | Да (`any Protocol`)                                | Нет (не нужно, AnyObject уже existential)            | `any` — для протоколов, `AnyObject` — для классов |
+| Использование в Swift 6+              | Явно: `any Protocol`                               | Неявно (как раньше)                                  | `AnyObject` почти без изменений |
 
-## 2. Основные термины
+### 2. Когда использовать AnyObject в 2026 году (реальные кейсы)
 
-| Термин                          | Описание                                           |
-| ------------------------------- | -------------------------------------------------- |
-| **Reference type**              | Тип, который хранится по ссылке (классы)           |
-| **[[Value Type]]**              | Копируется при присваивании ([[struct]], [[enum]]) |
-| **Any**                         | Любой тип (value или reference)                    |
-| **AnyObject**                   | Любой класс (reference type)                       |
-| **Type casting (`as?`, `as!`)** | Приведение к конкретному классу                    |
-| **Existential type**            | Тип, который может содержать объект любого класса  |
+| Сценарий                                      | Почему именно `AnyObject`                              | Пример кода (коротко) |
+|-----------------------------------------------|--------------------------------------------------------|-----------------------|
+| Работа со старыми Objective-C API             | Многие Cocoa-фреймворки возвращают `AnyObject?`        | `let obj: AnyObject? = notification.object` |
+| Коллекции только объектов (legacy-код)        | Когда точно знаешь, что все элементы — классы          | `let objects: [AnyObject] = [vc1, vc2, vc3]` |
+| Динамический вызов методов без знания типа   | Нужно вызвать метод, который есть у всех объектов      | `anyObject.perform(#selector(doSomething))` |
+| KVO, notifications, delegates (старый код)    | Многие старые API используют `AnyObject`               | `observe(\.value) { (obj: AnyObject?, change) in ... }` |
+| Протокол с ограничением `AnyObject`           | Протокол может применяться только к классам            | `protocol Delegate: AnyObject { ... }` |
+| Оптимизация в горячих местах (редко)         | `AnyObject` быстрее при dynamic dispatch               | Профилирование → замена `Any` на `AnyObject` |
 
----
+### 3. Когда **НЕ** использовать AnyObject в 2026
 
-## 3. Основной синтаксис
+- Если у тебя есть **value types** (struct, enum) — используй `Any`  
+- Если тип известен — используй конкретный класс или generic `<T: SomeClass>`  
+- В новых чистых Swift-проектах — старайся вообще избегать `AnyObject`, это признак legacy или ObjC-взаимодействия  
+- В SwiftUI / Combine / async коде — почти никогда не нужен
 
-```swift
-class Person {
-    var name: String
-    init(name: String) { self.name = name }
-}
+### 4. Самые важные примеры и ловушки
 
-let obj: AnyObject = Person(name: "Alice")
-```
-
-- `obj` может хранить **любой объект класса**
-    
-- Методы и свойства класса можно вызывать через type casting
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. AnyObject с классом
+#### Пример 1. Коллекция разных объектов
 
 ```swift
-class Animal {
-    func speak() { print("Some sound") }
-}
+class Animal { func makeSound() { print("...") } }
+class Dog: Animal { override func makeSound() { print("Woof") } }
+class Cat: Animal { override func makeSound() { print("Meow") } }
 
-let pet: AnyObject = Animal()
-(pet as! Animal).speak() // Some sound
-```
-
-- Необходим **type casting** для доступа к методам
-    
-
----
-
-### Пример 2. Массив AnyObject
-
-```swift
-class Dog {
-    func bark() { print("Woof") }
-}
-class Cat {
-    func meow() { print("Meow") }
-}
-
-let pets: [AnyObject] = [Dog(), Cat()]
-
+let pets: [AnyObject] = [Dog(), Cat(), Animal()]
 for pet in pets {
-    if let dog = pet as? Dog { dog.bark() }
-    else if let cat = pet as? Cat { cat.meow() }
+    (pet as? Animal)?.makeSound()  // Woof, Meow, ...
 }
 ```
 
-- Позволяет хранить **разные классы в одном массиве**
-    
-
----
-
-### Пример 3. AnyObject и функции
+#### Пример 2. Работа с Objective-C API (NotificationCenter)
 
 ```swift
-func printNames(objects: [AnyObject]) {
-    for obj in objects {
-        if let person = obj as? Person {
-            print(person.name)
-        }
+NotificationCenter.default.addObserver(
+    forName: .UIApplicationDidBecomeActive,
+    object: nil,
+    queue: .main
+) { notification in
+    if let object = notification.object as AnyObject? {
+        print("Объект уведомления: \(object)")
     }
 }
-
-let people: [AnyObject] = [Person(name: "Alice"), Person(name: "Bob")]
-printNames(objects: people) // Alice Bob
 ```
 
-- Можно передавать **массив объектов разных классов**
-    
-
----
-
-### Пример 4. AnyObject и protocol conformance
+#### Пример 3. Ловушка: попытка положить struct в AnyObject
 
 ```swift
-protocol Greetable: AnyObject {
-    func greet()
-}
-
-class Person: Greetable {
-    func greet() { print("Hello") }
-}
-
-let greeter: AnyObject = Person()
-(greeter as! Greetable).greet() // Hello
+let value: AnyObject = "Hello" as NSString     // OK (NSString — класс)
+let value2: AnyObject = 42                     // Ошибка! Int — value type
 ```
 
-- Протокол с ограничением `AnyObject` может применяться только к классам
-    
+### 5. Лучшие практики AnyObject в Swift 2026
 
----
+- **Используй AnyObject только при необходимости** — в ObjC-взаимодействии, legacy-коде, KVO  
+- **Предпочитай конкретные типы или generic** — они безопаснее и быстрее  
+- **Не храни `AnyObject` в свойствах** — это часто приводит к ошибкам и утечкам  
+- **Приводи к конкретному типу** как можно раньше — `as?` или `as!`  
+- **Swift 6 strict concurrency** — `AnyObject` может быть проблемным в concurrent коде → используй `Sendable` классы  
+- **Документируйте** — пиши комментарий «[AnyObject] — массив объектов из Objective-C API»
 
-### Пример 5. AnyObject + Objective-C API
+**Короткий девиз 2026**:
+> `AnyObject` — это **коробка только для классов** (ссылочных типов).  
+> В 2026 году он нужен почти исключительно для **Objective-C совместимости** и legacy-кода.  
+> `Any` — универсально (всё подряд), `AnyObject` — только объекты, generic — для скорости и безопасности.
 
-```swift
-import Foundation
-
-let array: NSMutableArray = [NSString(string: "Hello"), NSString(string: "World")]
-for item in array as [AnyObject] {
-    print(item)
-}
-```
-
-- Часто используется для совместимости с **Objective-C коллекциями**
-    
-
----
-
-## 5. Особенности AnyObject
-
-1. Ограничен **reference type** → классы
-    
-2. Не поддерживает **struct или [[enum]]**
-    
-3. Часто используется для:
-    
-    - Arrays/Dictionaries с объектами
-        
-    - Protocol с ограничением `AnyObject`
-        
-    - Type casting и Objective-C API
-        
-4. Методы и свойства объектов доступны только после **приведения к конкретному типу**
-    
-
----
-
-## 6. Итог
-
-- **AnyObject** = тип, который может хранить любой объект класса
-    
-- Ограничен **reference types**
-    
-- Позволяет хранить **разные классы в коллекциях** и использовать **protocol с ограничением AnyObject**
-    
-- Часто применяется при **type casting и взаимодействии с Objective-C**
-    
-
----
+Удачи с правильным выбором типов в Swift! 🛡️

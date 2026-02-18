@@ -1,193 +1,161 @@
-**Associated Value** — это **данные, которые можно прикрепить к конкретному case enum**.
+**Associated Value** (ассоциированные значения) — это одна из самых мощных и часто недооценённых фич Swift-`enum`. Благодаря им перечисление превращается из простого списка вариантов в полноценную **типобезопасную модель данных** с параметрами.
 
-- Каждое перечисление ([[enum]]) может иметь **разные типы значений для разных кейсов**
-    
-- Это делает `enum` очень мощным для **моделирования данных с вариантами и параметрами**
-    
-- Отличие от raw value: raw value фиксирован для каждого case, а associated value **может быть разным при каждом создании экземпляра**
-    
+В 2026 году это **основной** инструмент для моделирования состояний, результатов операций, ошибок, событий и вариантов поведения. Почти все серьёзные Swift-приложения используют `enum` с associated values.
 
-> Проще говоря: Associated Value = «дополнительные данные, которые можно хранить вместе с кейсом enum».
+### 1. Почему associated values — это круто (2026 взгляд)
 
----
+| Задача / Сценарий                             | Без associated values (плохо)                     | С associated values (правильно)                     | Преимущества |
+|-----------------------------------------------|----------------------------------------------------|------------------------------------------------------|--------------|
+| Результат сетевого запроса                    | `enum NetworkResult { case success, failure }`     | `case success(statusCode: Int, data: Data)`          | Получаем код ответа и данные |
+| Ошибка с описанием                            | `case error`                                       | `case error(message: String, code: Int)`             | Конкретная информация об ошибке |
+| Состояние авторизации                         | `case loggedIn, loggedOut`                         | `case loggedIn(user: User, token: String)`           | Храним пользователя и токен |
+| Разные типы событий                           | `case tap, swipe, longPress`                       | `case tap(location: CGPoint), swipe(direction: Direction)` | Параметры события |
+| Фигуры / геометрия                            | `case circle, square`                              | `case circle(radius: Double), square(side: Double)`  | Можно считать площадь, периметр |
+| Операции / действия                           | `case add, multiply`                               | `case add(a: Int, b: Int), multiply(a: Int, b: Int)` | Можно сразу выполнить операцию |
 
-## 2. Основные термины
-
-|Термин|Описание|
-|---|---|
-|**Enum case**|Конкретный вариант перечисления|
-|**Associated Value**|Значение, привязанное к конкретному кейсу enum|
-|**Switch-case**|Структура для обработки enum и извлечения associated values|
-|**Tuple**|Часто используется для хранения нескольких associated values|
-|**Pattern matching**|Распаковка associated values через `case let` или `case var`|
-
----
-
-## 3. Основной синтаксис
+### 2. Базовый синтаксис и ключевые правила
 
 ```swift
-enum Result {
-    case success(value: Int)
-    case failure(error: String)
+enum NetworkResponse {
+    case success(statusCode: Int, data: Data)
+    case failure(error: Error, retryCount: Int)
+    case loading(progress: Double)
+    case cancelled
 }
-
-let result: Result = .success(value: 42)
 ```
 
-- `success` хранит [[Int]], `failure` хранит [[String]]
-    
-- При каждом создании экземпляра можно передать **разные значения**
-    
+- Каждый `case` может иметь **свои** ассоциированные значения (или вообще не иметь)
+- Типы могут быть **любые**: `Int`, `String`, `Data`, `Error`, `struct`, `class`, `enum`, tuple, `Any`, `any Protocol` и т.д.
+- Значения **задаются при создании** экземпляра enum
+- Значения **доступны только через pattern matching** (`switch`, `if case`, `guard case`, `for case`)
 
----
+### 3. Полный разбор всех способов работы с associated values (2026)
 
-## 4. Примеры от простого к сложному
-
-### Пример 1. Enum с одним associated value
+#### 3.1. Создание экземпляра
 
 ```swift
-enum NetworkResult {
-    case success(Int)
-    case failure(String)
-}
+let success = NetworkResponse.success(statusCode: 200, data: jsonData)
+let error   = NetworkResponse.failure(error: apiError, retryCount: 2)
+let loading = NetworkResponse.loading(progress: 0.75)
+let cancelled = NetworkResponse.cancelled
+```
 
-let response = NetworkResult.success(200)
+#### 3.2. Извлечение значений — switch (самый популярный)
 
+```swift
 switch response {
-case .success(let code):
-    print("Success with code \(code)")
-case .failure(let message):
-    print("Failed with message: \(message)")
+case .success(let code, let data):
+    print("Успех! Код: \(code), размер данных: \(data.count) байт")
+    
+case .failure(let error, let retries):
+    print("Ошибка: \(error.localizedDescription), попыток осталось: \(retries)")
+    
+case .loading(let progress):
+    print("Загрузка: \(Int(progress * 100))%")
+    
+case .cancelled:
+    print("Запрос отменён")
 }
 ```
 
-- Распаковка значений через `let`
-    
-
----
-
-### Пример 2. Enum с несколькими associated values
+#### 3.3. Короткий вариант — if case / guard case
 
 ```swift
-enum Barcode {
-    case upc(Int, Int, Int, Int)
-    case qrCode(String)
+if case .success(let code, _) = response, code == 200 {
+    // обработка успешного ответа
 }
 
-let productBarcode = Barcode.upc(8, 85909, 51226, 3)
-
-switch productBarcode {
-case .upc(let numberSystem, let manufacturer, let product, let check):
-    print("UPC: \(numberSystem)-\(manufacturer)-\(product)-\(check)")
-case .qrCode(let code):
-    print("QR: \(code)")
+guard case .success(_, let data) = response else {
+    print("Не успех")
+    return
 }
+// data доступна
 ```
 
-- Можно хранить несколько значений через **tuple**
-    
-
----
-
-### Пример 3. Использование с [[Optional]] и [[if case]]
+#### 3.4. for case — фильтрация в цикле
 
 ```swift
-enum LoginStatus {
-    case success(userID: String)
-    case failure(error: String)
-}
+let responses: [NetworkResponse] = [success, error, loading, success2]
 
-let status: LoginStatus? = .success(userID: "abc123")
-
-if case .success(let userID)? = status {
-    print("Logged in as \(userID)")
+for case .success(let code, _) in responses where code == 200 {
+    print("Нашёл успешный ответ с кодом 200")
 }
 ```
 
-- Позволяет компактно проверять кейс без полного [[switch]]
-    
-
----
-
-### Пример 4. Enum с ассоциированными типами разных структур
-
-```swift
-struct User {
-    let name: String
-    let age: Int
-}
-
-struct Admin {
-    let name: String
-    let permissions: [String]
-}
-
-enum Person {
-    case user(User)
-    case admin(Admin)
-}
-
-let person: Person = .admin(Admin(name: "Alice", permissions: ["edit", "delete"]))
-
-switch person {
-case .user(let u):
-    print("User: \(u.name)")
-case .admin(let a):
-    print("Admin: \(a.name), permissions: \(a.permissions)")
-}
-```
-
-- Associated Value может быть **структурой, классом, кортежем**
-    
-
----
-
-### Пример 5. Enum + функции внутри associated values
+#### 3.5. Associated values + enum с методами
 
 ```swift
 enum Operation {
-    case add(Int, Int)
-    case multiply(Int, Int)
+    case add(a: Int, b: Int)
+    case multiply(a: Int, b: Int)
+    case divide(a: Double, b: Double)
     
-    func perform() -> Int {
+    func perform() -> Double {
         switch self {
-        case .add(let a, let b): return a + b
-        case .multiply(let a, let b): return a * b
+        case .add(let a, let b):     return Double(a + b)
+        case .multiply(let a, let b): return Double(a * b)
+        case .divide(let a, let b):  return b != 0 ? a / b : .nan
         }
     }
 }
 
-let op: Operation = .add(3, 5)
-print(op.perform()) // 8
+let op = Operation.add(a: 5, b: 3)
+print(op.perform()) // 8.0
 ```
 
-- Associated Value позволяет **хранить параметры для функции или действия**
-    
+### 4. Самые полезные паттерны 2026 года
 
----
+#### 4.1. Result + associated values (самый популярный)
 
-## 5. Особенности Associated Value
+```swift
+enum Result<Value, Failure: Error> {
+    case success(Value)
+    case failure(Failure)
+    
+    var value: Value? {
+        if case .success(let v) = self { return v }
+        return nil
+    }
+    
+    var error: Failure? {
+        if case .failure(let e) = self { return e }
+        return nil
+    }
+}
+```
 
-1. **Каждый case может хранить свой тип данных**
-    
-2. Значения задаются при создании экземпляра enum
-    
-3. Используется **switch-case или if-case** для извлечения данных
-    
-4. Можно хранить **кортежи, структуры, классы, функции, опционалы**
-    
-5. Отличие от raw value: raw value фиксирован для case, associated value динамический
-    
+#### 4.2. Состояние загрузки (Loading, Success, Failure)
 
----
+```swift
+enum LoadState<T> {
+    case idle
+    case loading
+    case success(T)
+    case failure(Error)
+}
+```
 
-## 6. Итог
+#### 4.3. Координаты + тип точки
 
-- **Associated Value** = дополнительные данные, привязанные к case enum
-    
-- Позволяет создавать **гибкие, типобезопасные модели**
-    
-- Широко используется для **результатов, ошибок, действий с параметрами**
-    
+```swift
+enum Point {
+    case cartesian(x: Double, y: Double)
+    case polar(radius: Double, angle: Double)
+}
+```
 
----
+### 5. Лучшие практики associated values в Swift 2026
+
+- **Используйте enum вместо class/struct** для моделирования состояний с вариантами  
+- **Давайте осмысленные имена** associated values: `userID: String` лучше, чем `value: String`  
+- **Используйте tuple** для нескольких значений, если они логически связаны  
+- **Добавляйте методы** к enum — `perform()`, `value`, `error`, `isSuccess` и т.д.  
+- **Swift 6 strict concurrency** — enum с associated values полностью безопасен, если `Value` и `Failure` — `Sendable`  
+- **Документируйте** — пиши комментарий «NetworkResponse.success — успешный ответ с кодом и данными»
+
+**Короткий девиз 2026**:
+> Associated values — это когда enum становится **не просто списком вариантов**, а **полноценной моделью данных** с параметрами.  
+> В 2026 году это **основной** инструмент для Result, LoadState, Operation, Event, Response, Error и любых состояний с разными данными.  
+> Используй `switch`, `if case`, `guard case` — и твой код станет типобезопасным, читаемым и мощным.
+
+Удачи с выразительными и безопасными enum в твоём коде! 🚀

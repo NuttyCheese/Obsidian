@@ -1,118 +1,138 @@
-`catch` — часть конструкции обработки ошибок в [[Swift]].  
-Используется вместе с `do` и `try` для перехвата и обработки ошибок, выбрасываемых методами или функциями.  
-Позволяет реагировать на разные типы ошибок и предотвращает аварийное завершение программы.
+**`catch`** — это ключевая часть конструкции **обработки ошибок** в Swift (`do-try-catch`), которая **перехватывает** и позволяет **реагировать** на ошибки, выброшенные с помощью `throw`.
 
----
+Без `catch` любая ошибка, выброшенная через `try`, привела бы к **аварийному завершению программы** (fatal error).  
+С `catch` ты получаешь полный контроль: можешь обработать конкретные типы ошибок, показать пользователю сообщение, повторить попытку, записать в лог или просто проигнорировать.
 
-## 🔹 Примеры кода
+### 1. Как работает `do-try-catch` (самая важная схема)
 
-### 1. Базовый пример `do–try–catch`
+```mermaid
+flowchart TD
+    A[do] --> B[try ...]
+    B -->|успех| C[код после try]
+    B -->|throw Error| D[catch блок]
+    D -->|соответствует ошибке| E[обработка конкретной ошибки]
+    D -->|не соответствует| F[универсальный catch]
+    E --> G[код после catch]
+    F --> G
+```
+
+- `do` — начало блока, в котором может быть выброшена ошибка
+- `try` — перед вызовом функции/метода, которая может выбросить ошибку
+- `catch` — перехватывает ошибку и даёт возможность её обработать
+
+### 2. Полный разбор всех вариантов catch (2026 актуально)
+
+#### Вариант 1: Простой универсальный catch (самый частый)
 
 ```swift
-enum FileError: Error {
-    case notFound
-}
-
-func loadFile() throws {
-    throw FileError.notFound
-}
-
 do {
-    try loadFile()
+    try fileManager.removeItem(at: url)
 } catch {
-    print("Ошибка: \(error)")
+    print("Не удалось удалить файл: \(error.localizedDescription)")
 }
 ```
 
----
+- `error` — это **любая** ошибка, соответствующая протоколу `Error`
+- Очень удобно для быстрого прототипа и логирования
 
-### 2. Несколько блоков `catch` для разных ошибок
+#### Вариант 2: Ловим конкретный тип ошибки (рекомендуемый стиль)
 
 ```swift
-enum LoginError: Error {
+enum AuthError: Error {
     case wrongPassword
     case userNotFound
-}
-
-func login() throws {
-    throw LoginError.wrongPassword
+    case networkTimeout
 }
 
 do {
-    try login()
-} catch LoginError.wrongPassword {
-    print("Неверный пароль")
-} catch LoginError.userNotFound {
-    print("Пользователь не найден")
+    try authenticate()
+} catch AuthError.wrongPassword {
+    showAlert("Неверный пароль")
+} catch AuthError.userNotFound {
+    showAlert("Пользователь не найден")
+} catch AuthError.networkTimeout {
+    showAlert("Нет соединения с сервером")
+} catch {
+    showAlert("Неизвестная ошибка: \(error)")
 }
 ```
 
----
+**Золотое правило 2026**:  
+Всегда ставь **универсальный `catch`** последним — он ловит всё, что не поймали выше.
 
-### 3. `catch` с привязкой значения
+#### Вариант 3: Catch с распаковкой associated values (очень мощно)
 
 ```swift
 enum APIError: Error {
-    case server(code: Int)
-}
-
-func request() throws {
-    throw APIError.server(code: 500)
+    case server(statusCode: Int, message: String)
+    case decodingFailed
 }
 
 do {
-    try request()
-} catch APIError.server(let code) {
-    print("Ошибка сервера: \(code)")
-}
-```
-
----
-
-### 4. Универсальный `catch` после точечных
-
-```swift
-do {
-    try request()
-} catch APIError.server {
-    print("Серверная ошибка")
+    try fetchUser()
+} catch APIError.server(let code, let message) {
+    print("Сервер ответил \(code): \(message)")
 } catch {
     print("Другая ошибка: \(error)")
 }
 ```
 
----
-
-### 5. Преобразование ошибки через `try?` (без throw, catch не обязателен)
+#### Вариант 4: Catch в async/await (самый частый в 2026)
 
 ```swift
-func parse(_ text: String) throws -> Int {
-    guard let number = Int(text) else { throw NSError() }
-    return number
-}
-
-let result = try? parse("abc") // nil вместо ошибки
-```
-
----
-
-### 6. Ловим ошибку в асинхронном коде ([[async]]/[[await]])
-
-```swift
-enum NetworkError: Error { case timeout }
-
-func loadData() async throws -> String {
-    throw NetworkError.timeout
-}
-
 Task {
     do {
-        let value = try await loadData()
-        print(value)
+        let data = try await network.fetchUser()
+        await MainActor.run {
+            updateUI(with: data)
+        }
+    } catch NetworkError.timeout {
+        await showTimeoutAlert()
     } catch {
-        print("Ошибка загрузки: \(error)")
+        await showGenericError(error)
     }
 }
 ```
 
----
+**Важно**: в `async` функциях `catch` работает точно так же, но почти всегда оборачивается в `Task {}` или `await`.
+
+#### Вариант 5: try? и try! — когда catch не нужен
+
+```swift
+// try? — возвращает Optional, ошибка превращается в nil
+let data = try? JSONDecoder().decode(User.self, from: jsonData)
+if let user = data {
+    // успех
+} else {
+    // ошибка, но мы не знаем какая
+}
+
+// try! — force try, если ошибка — краш
+let user = try! JSONDecoder().decode(User.self, from: jsonData) // опасно!
+```
+
+**Рекомендация 2026**:  
+`try?` — только когда ошибка не критична и не нужно её обрабатывать.  
+`try!` — **только** в тестах или когда ты на 100% уверен (очень редко).
+
+### 3. Лучшие практики catch в Swift 2026
+
+- **Всегда** ставь универсальный `catch` последним — ловит всё непредвиденное  
+- **Лови конкретные ошибки первыми** — `catch SpecificError` перед `catch`  
+- **Используй `localizedDescription`** для показа пользователю  
+- **Логируй** неизвестные ошибки: `print(error)` или Crashlytics  
+- **В UI** — показывай алерт только в `catch`, а не внутри `try`  
+- **В async** — оборачивай в `Task {}` и обновляй UI через `await MainActor.run`  
+- **Swift 6 strict concurrency** — `catch` безопасен, но весь блок `do-try-catch` должен быть на одном акторе  
+- **Документируйте** — пиши комментарий «catch — обработка ошибок авторизации»
+
+**Короткий девиз 2026**:
+> `catch` — это когда ты говоришь: «если что-то пойдёт не так — я готов».  
+> В 2026 году:  
+> - конкретные ошибки → сверху  
+> - универсальный `catch` → снизу  
+> - `try?` — когда ошибка не важна  
+> - `try!` — почти никогда  
+> Это **единственный правильный** способ безопасно работать с `throws` в Swift.
+
+Удачи с надёжной и понятной обработкой ошибок в твоём коде! 🛡️

@@ -1,185 +1,117 @@
-**`Array`** — это **коллекция элементов одного типа**, которая:
+**Array** в Swift — это **упорядоченная коллекция элементов одного типа**, которая хранит значения последовательно и позволяет обращаться к ним по индексу (начиная с 0).
 
-- Хранит **значения в упорядоченном виде**
-    
-- Поддерживает **индексацию и итерацию**
-    
-- Может быть **mutable** ([[var]]) или **[[immutable]]** ([[let]])
-    
-- Является **[[Value Type]]**, то есть копируется при присваивании
-    
+Это один из самых часто используемых типов в Swift — почти в каждом приложении есть десятки массивов: списки пользователей, товары в корзине, сообщения в чате, координаты маршрута, результаты поиска и т.д.
 
-> Проще говоря: `Array` = «упорядоченный список значений одного типа».
+### 1. Основные свойства и особенности Array (2026 актуально)
 
----
+| Свойство / Поведение                        | Описание                                                                 | Важные детали 2026 |
+|---------------------------------------------|--------------------------------------------------------------------------|---------------------|
+| **Тип элементов**                           | Все элементы одного типа `Element`                                       | `Array<Int>`, `Array<String>`, `Array<UIView>` и т.д. |
+| **Value Type**                              | Копируется при присваивании или передаче                                 | `var a = [1,2,3]`<br>`var b = a` → b — независимая копия |
+| **Mutable / Immutable**                     | `var` — можно менять, `let` — только читать                              | `let names = ["Anna"]`<br>`names.append("Bob")` → ошибка |
+| **Индексация**                              | От 0 до `count-1`                                                        | `array[0]`, `array[array.count-1]` |
+| **Пустой массив**                           | `[]` или `Array<Element>()`                                              | `var tasks: [String] = []` |
+| **Динамический размер**                     | Автоматически растёт/сжимается при append/remove                        | Нет фиксированного размера как в C |
+| **Copy-on-write (COW)**                     | Копирование происходит только при изменении                              | Очень эффективно в Swift 6 |
+| **Thread-safety**                           | Не является thread-safe — требует `@MainActor` или `DispatchQueue`       | В Swift 6 строже проверяется |
 
-## 2. Основные термины
-
-|Термин|Описание|
-|---|---|
-|**Element**|Тип элементов массива (`Array<Element>`)|
-|**Mutable / Immutable**|Можно изменять (`var`) или нет (`let`)|
-|**Index**|Позиция элемента в массиве (начинается с 0)|
-|**Count**|Количество элементов|
-|**Appending / Removing**|Добавление и удаление элементов|
-|**Iteration**|Проход по массиву через `for-in`, `forEach` или методы higher-order функций|
-|**Higher-order functions**|map, filter, reduce, sorted, compactMap и др.|
-
----
-
-## 3. Основной синтаксис
+### 2. Создание и базовые операции (самые частые в 2026)
 
 ```swift
-var numbers: [Int] = [1, 2, 3, 4, 5]
-let names: [String] = ["Alice", "Bob", "Eve"]
+// 1. Пустой массив
+var scores: [Int] = []
+var names = [String]()           // то же самое
+
+// 2. С начальными значениями
+let colors = ["red", "green", "blue"]
+var numbers = [1, 2, 3, 4, 5]
+
+// 3. Явный тип (полезно при пустом массиве)
+var upcomingEvents: [Event] = []
+
+// 4. Доступ и изменение
+print(colors[0])                 // "red"
+numbers[2] = 10                  // [1, 2, 10, 4, 5]
+
+// 5. Добавление элементов
+scores.append(95)                // добавляет в конец
+scores += [88, 92]               // добавляет несколько
+scores.insert(100, at: 0)        // вставляет в начало
+
+// 6. Удаление
+scores.remove(at: 1)             // удаляет по индексу
+scores.removeLast()              // удаляет последний
+scores.removeAll()               // очищает массив
 ```
 
-- Тип можно указать явно [[Int]], [[String]]
-    
-- Swift может вывести тип автоматически `var arr = [1, 2, 3]`
-    
+### 3. Самые полезные методы и свойства (топ-2026)
 
----
+| Метод / Свойство              | Что возвращает / делает                                 | Пример использования 2026 |
+|-------------------------------|----------------------------------------------------------|---------------------------|
+| `count` / `isEmpty`           | Количество элементов / пустой ли массив                  | `if users.isEmpty { showEmptyState() }` |
+| `append(_:)` / `append(contentsOf:)` | Добавляет один элемент или коллекцию                    | `cart.append(newProduct)` |
+| `insert(_:at:)`               | Вставляет элемент по индексу                             | `tasks.insert(urgentTask, at: 0)` |
+| `remove(at:)` / `removeLast()` / `removeAll()` | Удаляет по индексу / последний / всё                   | `cart.remove(at: index)` |
+| `first` / `last`              | Первый / последний элемент (опционально)                | `let latest = messages.last` |
+| `map`, `filter`, `reduce`     | Высокоуровневые функции (самые популярные)              | `let names = users.map { $0.name }` |
+| `sorted`, `sorted(by:)`       | Возвращает отсортированную копию                        | `tasks.sorted { $0.priority > $1.priority }` |
+| `contains`, `contains(where:)`| Проверяет наличие элемента / условия                    | `if tasks.contains(where: { $0.isUrgent }) { ... }` |
+| `compactMap`                  | map + фильтрация nil                                     | `let ages = strings.compactMap { Int($0) }` |
+| `joined(separator:)`          | Объединяет элементы в строку                             | `let csv = values.map(String.init).joined(separator: ",")` |
 
-## 4. Примеры от простого к сложному
-
-### Пример 1. Создание и доступ к элементам
-
-```swift
-var numbers = [10, 20, 30, 40]
-print(numbers[0]) // 10
-numbers[1] = 25
-print(numbers) // [10, 25, 30, 40]
-```
-
-- Доступ по индексу начинается с 0
-    
-- Изменять элементы можно только если массив mutable (`var`)
-    
-
----
-
-### Пример 2. Добавление и удаление элементов
+### 4. Полный реальный пример 2026 года (современный стиль)
 
 ```swift
-var fruits = ["Apple", "Banana"]
-fruits.append("Orange")
-fruits += ["Mango", "Pineapple"]
-fruits.remove(at: 1)
-print(fruits) // ["Apple", "Orange", "Mango", "Pineapple"]
-```
-
-- Методы: `append`, `+=`, `remove`, `insert`
-    
-
----
-
-### Пример 3. Итерация и [[forEach]]
-
-```swift
-let colors = ["Red", "Green", "Blue"]
-for color in colors {
-    print(color)
+struct Task {
+    let title: String
+    let priority: Int
+    let isCompleted: Bool
 }
 
-colors.forEach { print($0) }
+class TaskManager {
+    private var tasks: [Task] = []
+    
+    func addTask(_ title: String, priority: Int = 0) {
+        tasks.append(Task(title: title, priority: priority, isCompleted: false))
+    }
+    
+    func completeTask(at index: Int) {
+        guard tasks.indices.contains(index) else { return }
+        tasks[index].isCompleted = true
+    }
+    
+    var sortedTasks: [Task] {
+        tasks.sorted { $0.priority > $1.priority }  // по убыванию приоритета
+    }
+    
+    var pendingTasks: [Task] {
+        tasks.filter { !$0.isCompleted }
+    }
+    
+    func search(_ query: String) -> [Task] {
+        tasks.filter { $0.title.localizedCaseInsensitiveContains(query) }
+    }
+    
+    func exportToCSV() -> String {
+        let headers = "Title,Priority,Completed"
+        let rows = tasks.map { "\($0.title),\($0.priority),\($0.isCompleted)" }
+        return ([headers] + rows).joined(separator: "\n")
+    }
+}
 ```
 
-- Можно использовать **[[for-in]]** или **`forEach`**
-    
+### 5. Лучшие практики Array в Swift 2026
 
----
+- **Используй `let`, когда массив не меняется** — это даёт больше оптимизаций компилятору  
+- **Предпочитай `Array` над `NSMutableArray`** — `Array` быстрее и безопаснее  
+- **Для больших массивов** — используй `reserveCapacity(_:)` перед массовым append  
+- **Избегай force unwrap** — используй `first`, `last`, `safe subscript`  
+- **Для многопоточности** — массивы **не thread-safe** — используй `DispatchQueue`, `actor` или `@MainActor`  
+- **Swift 6 strict concurrency** — массивы полностью безопасны, но операции изменения — на одном акторе  
+- **Документируйте** — пиши комментарий «[Task] — список задач, отсортированный по приоритету»
 
-### Пример 4. Higher-order functions
+**Короткий девиз 2026**:
+> Array — это **упорядоченный, копируемый, динамический список** элементов одного типа.  
+> В 2026 году используй `let` для неизменяемых массивов, `map/filter/reduce` для обработки, `UIAction`/`@MainActor` для UI, и помни: **копируется только при изменении** (Copy-on-Write).
 
-```swift
-let numbers = [1, 2, 3, 4, 5]
-let squares = numbers.map { $0 * $0 }
-let even = numbers.filter { $0 % 2 == 0 }
-let sum = numbers.reduce(0, +)
-
-print(squares) // [1, 4, 9, 16, 25]
-print(even)    // [2, 4]
-print(sum)     // 15
-```
-
-- `map` → трансформация
-    
-- `filter` → фильтрация
-    
-- `reduce` → свёртка/суммирование
-    
-
----
-
-### Пример 5. Массивы [[any]] и [[AnyObject]]
-
-```swift
-var mixed: [Any] = [1, "Hello", 3.14]
-mixed.append(Person(name: "Alice")) // можно добавлять любые типы
-
-var objects: [AnyObject] = [Person(name: "Bob"), Person(name: "Eve")]
-```
-
-- `Array<Any>` → любой тип
-    
-- `Array<AnyObject>` → только объекты классов
-    
-
----
-
-### Пример 6. Multidimensional Array
-
-```swift
-let matrix: [[Int]] = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
-]
-
-print(matrix[1][2]) // 6
-```
-
-- Массив массивов → удобен для матриц, таблиц
-    
-
----
-
-### Пример 7. [[Optional]] и [[compactMap]]
-
-```swift
-let strings: [String?] = ["1", nil, "3"]
-let numbers = strings.compactMap { $0.flatMap(Int.init) }
-print(numbers) // [1, 3]
-```
-
-- `compactMap` → превращает и фильтрует [[nil]]
-    
-
----
-
-## 5. Особенности Array
-
-1. **Value type** → копируется при присваивании
-    
-2. **Mutable/Immutable**: `var` можно менять, `let` — нет
-    
-3. Поддерживает **индексацию, итерацию, сортировку, фильтрацию, [[map]]/[[reduce]]/[[filter]]**
-    
-4. Может хранить **любой тип**, включая `Any` и `AnyObject`
-    
-5. Можно делать **многомерные массивы**
-    
-
----
-
-## 6. Итог
-
-- **Array** = упорядоченный список элементов одного типа
-    
-- Поддерживает **доступ по индексу, добавление/удаление, итерацию, higher-order функции**
-    
-- Используется для хранения данных, работы с коллекциями, матриц, моделей и др.
-    
-
----
+Удачи с мощными и эффективными списками в твоём коде! 📋
