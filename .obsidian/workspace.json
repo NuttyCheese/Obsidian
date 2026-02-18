@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Debug/Debugging tools in Xcode.md",
+                "file": "Swift/Теория/Debug/Debug Navigator (Отладочный навигатор).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Debugging tools in Xcode"
+              "title": "Debug Navigator (Отладочный навигатор)"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Debug/Debugging tools in Xcode.md",
+                "file": "Swift/Теория/Debug/Debug Navigator (Отладочный навигатор).md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура Debugging tools in Xcode"
+              "title": "Структура Debug Navigator (Отладочный навигатор)"
             }
           },
           {
@@ -196,6 +196,16 @@
   },
   "active": "2630296341ab3b1b",
   "lastOpenFiles": [
+    "Swift/Теория/Debug/Debugging tools in Xcode.md",
+    "Swift/Теория/Debug/Variables View (Просмотр переменных).md",
+    "Swift/Теория/Debug/Console (Консоль).md",
+    "Swift/Теория/Debug/Debug Navigator (Отладочный навигатор).md",
+    "Swift/Теория/Debug/Memory Graph Debugger (Отладчик графа памяти).md",
+    "Swift/Теория/Debug/Time Profiler (Профилировщик времени).md",
+    "Swift/Теория/Debug/Network Debugging (Отладка сети).md",
+    "Swift/Теория/Debug/Core Data Debugging (Отладка Core Data).md",
+    "Swift/Теория/Debug/Breakpoints (Точки останова).md",
+    "Swift/Теория/Debug/LLDB (Low-Level Debugger).md",
     "Swift/Теория/iOS/Swift/any Protocol.md",
     "Swift/Теория/iOS/Swift/Unwrapping.md",
     "Swift/Теория/iOS/UIKit/TouchID.md",
@@ -212,16 +222,6 @@
     "Swift/Теория/iOS/UIKit/CADisplayLink.md",
     "Swift/Теория/iOS/UIKit/hitTest vs. Responder Chain.md",
     "Swift/Теория/iOS/UIKit/Responder Chain.md",
-    "Swift/Теория/iOS/UNUserNotificationCenterDelegate.md",
-    "Swift/Теория/iOS/Swift/mutex.md",
-    "Swift/Теория/iOS/Swift/Swizzling.md",
-    "Swift/Теория/iOS/Swift/Mirror.md",
-    "Swift/Теория/iOS/Swift/MemoryLayout.md",
-    "Swift/Теория/iOS/Swift/Linked List.md",
-    "Swift/Теория/iOS/Swift/lazy.md",
-    "Swift/Теория/iOS/Swift/layout cycle.md",
-    "Swift/Теория/iOS/Swift/ExpressibleByStringLiteral.md",
-    "Swift/Теория/iOS/Swift/Optional.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",
