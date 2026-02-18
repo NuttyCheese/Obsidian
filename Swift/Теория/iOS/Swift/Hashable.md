@@ -1,4 +1,4 @@
-**`Hashable`** — это протокол в стандартной библиотеке Swift, который позволяет типу участвовать в **хэш-таблицах** (`Set`, ключи `Dictionary`).  
+**`Hashable`** — это протокол в стандартной библиотеке [[Swift]], который позволяет типу участвовать в **хэш-таблицах** ([[Set]], ключи [[Dictionary]]).  
 Он наследуется от `Equatable` и требует реализации метода `hash(into:)`.
 
 ### Основное требование протокола (2026)
@@ -14,20 +14,20 @@ public protocol Hashable : Equatable {
 
 ### Когда тип обязан быть Hashable
 
-| Коллекция / сценарий               | Требование к элементу / ключу | Что происходит без Hashable |
-|------------------------------------|-------------------------------|-----------------------------|
-| `Set<T>`                           | `T: Hashable`                 | Не скомпилируется           |
-| `Dictionary<Key, Value>` (ключ)    | `Key: Hashable`               | Не скомпилируется           |
-| `Dictionary` с кастомным ключом    | `Key: Hashable`               | —                           |
-| `NSSet`, `NSOrderedSet` (редко)    | `Hashable` + `NSObject`       | —                           |
-| `Identifiable` в SwiftUI (id)      | `ID: Hashable`                | SwiftUI требует             |
+| Коллекция / сценарий            | Требование к элементу / ключу | Что происходит без Hashable |
+| ------------------------------- | ----------------------------- | --------------------------- |
+| `Set<T>`                        | `T: Hashable`                 | Не скомпилируется           |
+| `Dictionary<Key, Value>` (ключ) | `Key: Hashable`               | Не скомпилируется           |
+| `Dictionary` с кастомным ключом | `Key: Hashable`               | —                           |
+| `NSSet`, `NSOrderedSet` (редко) | `Hashable` + `NSObject`       | —                           |
+| `Identifiable` в SwiftUI (id)   | `ID: Hashable`                | [[SwiftUI]] требует         |
 
 ### Автоматическая реализация (самый частый случай)
 
 Swift **автоматически** синтезирует `Hashable` для:
 
-- **структур**  
-- **перечислений** (enum)  
+- **структур** ([[struct]])  
+- **перечислений** ([[enum]])  
 если **все** их свойства / ассоциированные значения сами соответствуют `Hashable`.
 
 ```swift
@@ -48,7 +48,7 @@ enum NetworkStatus: Hashable {
 }
 ```
 
-**Правило**: если все поля/associated values — `Hashable`, компилятор сам напишет `==` и `hash(into:)`.
+**Правило**: если все поля/[[associated value]]s — `Hashable`, компилятор сам напишет `==` и `hash(into:)`.
 
 ### Ручная реализация (когда нужно управлять)
 
@@ -99,7 +99,7 @@ struct Post: Hashable, Identifiable {
 }
 ```
 
-#### 2. Hashable + Codable (модели API)
+#### 2. Hashable + [[Codable]] (модели [[API]])
 
 ```swift
 struct Product: Codable, Hashable, Identifiable {
@@ -155,7 +155,7 @@ enum PaymentMethod: Hashable {
 - Реализуй вручную **только** если нужно игнорировать какие-то поля (например, только по `id`)  
 - **Согласованность** — если `a == b`, то **обязательно** `a.hashValue == b.hashValue`  
 - **Не используй** изменяемые свойства в `hash(into:)` — это приведёт к багам в `Set`/`Dictionary`  
-- **Swift 6 strict concurrency** — типы `Hashable` должны быть `Sendable` (enum и struct обычно ок)  
+- **Swift 6 strict concurrency** — типы `Hashable` должны быть [[Sendable]] (enum и struct обычно ок)  
 - **Документируйте** — пиши комментарий «Hashable — равенство и хэш только по id»
 
 **Короткий девиз 2026**:
@@ -165,5 +165,3 @@ enum PaymentMethod: Hashable {
 > - пиши вручную, если важен только ID / ключ  
 > - всегда держи `==` и `hash(into:)` согласованными  
 > Это **основа** эффективных коллекций и уникальности в Swift.
-
-Удачи с быстрыми и надёжными `Set` и `Dictionary` в твоём коде! ⚡

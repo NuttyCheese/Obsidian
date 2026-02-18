@@ -1,4 +1,4 @@
-**`let`** — ключевое слово в Swift для объявления **константы** (неизменяемого значения).  
+**`let`** — ключевое слово в [[Swift]] для объявления **константы** (неизменяемого значения).  
 После присвоения значения изменить его уже **нельзя** — попытка это сделать вызовет ошибку компиляции.
 
 Это один из самых важных элементов языка, который лежит в основе **безопасного**, **предсказуемого** и **производительного** кода в Swift.
@@ -26,7 +26,7 @@ let defaultTimeout: TimeInterval = 30
 let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
 ```
 
-#### 2.2 Модели данных (Codable, Identifiable)
+#### 2.2 Модели данных ([[Codable]], [[Identifiable]])
 
 ```swift
 struct User: Codable, Identifiable {
@@ -48,7 +48,7 @@ func processUser(_ user: User, with discount: Double = 0.1) {
 }
 ```
 
-#### 2.4 Immutable коллекции
+#### 2.4 [[Immutable]] коллекции
 
 ```swift
 let allowedRoles = Set(["admin", "moderator", "editor"])
@@ -122,5 +122,3 @@ print(value)                // 10 — внешняя осталась нетро
 > - параметры функций → `let`  
 > - изменяй только то, что действительно должно меняться  
 > Это **основа** безопасного, предсказуемого и быстрого кода в Swift.
-
-Удачи с чистым, неизменяемым и надёжным кодом! 🛡️
