@@ -8,35 +8,20 @@
         "type": "tabs",
         "children": [
           {
-            "id": "2630296341ab3b1b",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/Debug/Debugging tools in Xcode.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Debugging tools in Xcode"
-            }
-          },
-          {
             "id": "066907940ac51ca3",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Debug/Variables View (Просмотр переменных).md",
+                "file": "Swift/Теория/iOS/Swift/any Protocol.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Variables View (Просмотр переменных)"
+              "title": "any Protocol"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -171,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Debug/Variables View (Просмотр переменных).md",
+                "file": "Swift/Теория/iOS/Swift/any Protocol.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура Variables View (Просмотр переменных)"
+              "title": "Структура any Protocol"
             }
           },
           {
@@ -209,8 +194,27 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e407b43c27bfa155",
+  "active": "066907940ac51ca3",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/any.md",
+    "Swift/Теория/Testing/Advantages and disadvantages of unit test.md",
+    "Swift/Теория/Testing/iOSSnapshotTestCase.md",
+    "Swift/Теория/Testing/Mock.md",
+    "Swift/Теория/Testing/Stub.md",
+    "Swift/Теория/Testing/TDD.md",
+    "Swift/Теория/Testing/Testing tools.md",
+    "Swift/Теория/Testing/Three main unit test blocks.md",
+    "Swift/Теория/Testing/UI-test.md",
+    "Swift/Теория/Testing/Unit-test.md",
+    "Swift/Теория/Testing/XCTest.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Экспоненциальный поиск.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Hash-поиск.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Бинарный поиск.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/filter.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/Dictionary(grouping by).md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/contains.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/compactMap.md",
+    "Swift/Теория/Debug/Variables View (Просмотр переменных).md",
     "Swift/Теория/Debug/Time Profiler (Профилировщик времени).md",
     "Swift/Теория/Debug/Network Debugging (Отладка сети).md",
     "Swift/Теория/Debug/Memory Graph Debugger (Отладчик графа памяти).md",
@@ -218,25 +222,6 @@
     "Swift/Теория/Debug/Debugging tools in Xcode.md",
     "Swift/Теория/Debug/Debug Navigator (Отладочный навигатор).md",
     "Swift/Теория/Debug/Core Data Debugging (Отладка Core Data).md",
-    "Swift/Теория/Debug/Console (Консоль).md",
-    "Swift/Теория/Debug/Breakpoints (Точки останова).md",
-    "README.md",
-    "Swift/Теория/Debug/Variables View (Просмотр переменных).md",
-    "Swift/Теория/iOS/Swift/any Protocol.md",
-    "Swift/Теория/iOS/Swift/Unwrapping.md",
-    "Swift/Теория/iOS/UIKit/TouchID.md",
-    "Swift/Теория/iOS/UIKit/rendering blocks.md",
-    "Swift/Теория/iOS/Swift/required init.md",
-    "Swift/Теория/iOS/Swift/repeat-while.md",
-    "Swift/Теория/Фреймворк Apple/OSLog.md",
-    "Swift/Теория/iOS/os_unfair_lock.md",
-    "Swift/Теория/Testing/iOSSnapshotTestCase.md",
-    "Swift/Теория/Фреймворк Apple/Core Audio.md",
-    "Swift/Теория/Фреймворк Apple/Core Foundation.md",
-    "Swift/Теория/Фреймворк Apple/Core Location.md",
-    "Swift/Теория/iOS/AVPlayer.md",
-    "Swift/Теория/iOS/UIKit/CADisplayLink.md",
-    "Swift/Теория/iOS/UIKit/hitTest vs. Responder Chain.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",

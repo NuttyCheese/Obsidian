@@ -99,11 +99,11 @@ XCTAssertEqual(viewModel.users.first?.name, "Test")
 
 - **Stub только для изоляции** — не проверяй в нём вызовы (для этого Mock)  
 - **Делай stub настраиваемым** — свойства `stubbedResult`, `shouldThrow`, `delay` и т.д.  
-- **Async/await** — всегда используй `async throws` в протоколах и стабоах  
-- **@MainActor** — если тестируешь ViewModel → тест тоже `@MainActor`  
+- **[[Async]]/[[await]]** — всегда используй `async throws` в протоколах и стабоах  
+- **[[@MainActor]]** — если тестируешь ViewModel → тест тоже `@MainActor`  
 - **Swift Testing** (Xcode 16+) — используй `#expect(await vm.users.count == 5)`  
 - **Не мокай/стаби простые типы** ([[String]], [[Int]], [[Date]], [[URL]]) — используй реальные  
-- **YAGNI в тестах** — не пиши stub на то, что не используется в тесте  
+- **[[YAGNI]] в тестах** — не пиши stub на то, что не используется в тесте  
 - **Именование** — `NetworkServiceHappyPathStub`, `NetworkServiceErrorStub`, `EmptyUsersStub`  
 - **Swift 6 strict concurrency** — stub должен быть [[Sendable]] или actor-safe
 
