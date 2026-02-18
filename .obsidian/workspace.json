@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/any Protocol.md",
+                "file": "Swift/Теория/Debug/Debugging tools in Xcode.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "any Protocol"
+              "title": "Debugging tools in Xcode"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/any Protocol.md",
+                "file": "Swift/Теория/Debug/Debugging tools in Xcode.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура any Protocol"
+              "title": "Структура Debugging tools in Xcode"
             }
           },
           {
@@ -194,8 +194,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e407b43c27bfa155",
+  "active": "2630296341ab3b1b",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/any Protocol.md",
     "Swift/Теория/iOS/Swift/Unwrapping.md",
     "Swift/Теория/iOS/UIKit/TouchID.md",
     "Swift/Теория/iOS/UIKit/rendering blocks.md",
@@ -221,7 +222,6 @@
     "Swift/Теория/iOS/Swift/layout cycle.md",
     "Swift/Теория/iOS/Swift/ExpressibleByStringLiteral.md",
     "Swift/Теория/iOS/Swift/Optional.md",
-    "Swift/Теория/iOS/Swift/open addressing.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",
