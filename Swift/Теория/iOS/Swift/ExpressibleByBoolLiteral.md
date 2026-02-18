@@ -1,4 +1,4 @@
-**`ExpressibleByBoolLiteral`** — это протокол стандартной библиотеки Swift, который позволяет типу **инициализироваться напрямую литералами `true` и `false`**.
+**`ExpressibleByBoolLiteral`** — это протокол стандартной библиотеки [[Swift]], который позволяет типу **инициализироваться напрямую литералами `true` и `false`**.
 
 ```swift
 public protocol ExpressibleByBoolLiteral {
@@ -139,26 +139,26 @@ let z: Permission = true   // → Permission(booleanLiteral: true)
 ### 5. Можно ли сделать так, чтобы `true` значило что-то другое?
 
 **Нет.**  
-`true` и `false` — это **встроенные литералы** типа `Bool.BooleanLiteralType`.  
+`true` и `false` — это **встроенные литералы** типа [[Bool]]`.BooleanLiteralType`.  
 Вы не меняете смысл `true`, вы лишь говорите компилятору:  
 «когда увидишь `true` в контексте моего типа — вызови мой `init(booleanLiteral:)`».
 
 ### 6. Сравнение с другими ExpressibleBy… протоколами
 
-| Литерал       | Протокол                            | Пример использования                     |
-|---------------|-------------------------------------|------------------------------------------|
-| `true`/`false`| ExpressibleByBoolLiteral            | FeatureFlag, Permission, ToggleState     |
-| `nil`         | ExpressibleByNilLiteral             | Optional, custom optional-like типы      |
-| `42`          | ExpressibleByIntegerLiteral         | BigInt, CustomNumber                     |
-| `"text"`      | ExpressibleByStringLiteral          | LocalizedString, URL, Regex              |
-| `[1, 2, 3]`   | ExpressibleByArrayLiteral           | CustomArray, OrderedSet                  |
-| `["a": 1]`    | ExpressibleByDictionaryLiteral      | CustomDict, CaseInsensitiveDict          |
+| Литерал        | Протокол                           | Пример использования                    |
+| -------------- | ---------------------------------- | --------------------------------------- |
+| `true`/`false` | ExpressibleByBoolLiteral           | FeatureFlag, Permission, ToggleState    |
+| [[nil]]        | [[ExpressibleByNilLiteral]]        | [[Optional]], custom optional-like типы |
+| `42`           | [[ExpressibleByIntegerLiteral]]    | BigInt, CustomNumber                    |
+| `"text"`       | [[ExpressibleByStringLiteral]]     | LocalizedString, [[URL]], Regex         |
+| `[1, 2, 3]`    | [[ExpressibleByArrayLiteral]]      | CustomArray, OrderedSet                 |
+| `["a": 1]`     | [[ExpressibleByDictionaryLiteral]] | CustomDict, CaseInsensitiveDict         |
 
 ### 7. Лучшие практики ExpressibleByBoolLiteral в 2026 году
 
 - **Используйте**, когда хотите **улучшить читаемость** и **добавить семантику**  
 - **Не заменяйте** `Bool` повсеместно — это антипаттерн  
-- **Лучше всего работает** в DSL, конфигурациях, declarative API  
+- **Лучше всего работает** в DSL, конфигурациях, declarative [[API]]  
 - **Называйте типы осмысленно**: `FeatureEnabled`, `PermissionGranted`, `DarkModeActive`  
 - **Добавляйте ExpressibleByNilLiteral**, если тип может быть «выключен» через `nil`  
 - **Swift 6 strict concurrency** — типы, реализующие протокол, должны быть `Sendable`  
@@ -168,5 +168,3 @@ let z: Permission = true   // → Permission(booleanLiteral: true)
 > `ExpressibleByBoolLiteral` — это когда ты превращаешь `true` / `false` в **смысл**, а не просто в `Bool`.  
 > Используй его для **декларативного** и **читаемого** кода: флаги, разрешения, состояния, конфигурации.  
 > Но **не злоупотребляй** — `Bool` всё ещё король для простой логики.
-
-Удачи с выразительным и семантически богатым кодом! 🚩
