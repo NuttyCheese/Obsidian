@@ -1,4 +1,4 @@
-**`Fallback`** в контексте iOS и Swift — это **резервный (запасной) механизм аутентификации**, который активируется, когда основной метод (обычно биометрия — Face ID / Touch ID) недоступен, не сработал или пользователь явно выбрал его.
+**`Fallback`** в контексте [[iOS]] и [[Swift]] — это **резервный (запасной) механизм аутентификации**, который активируется, когда основной метод (обычно биометрия — [[FaceID]] / Touch ID) недоступен, не сработал или пользователь явно выбрал его.
 
 Это **не просто кнопка**, а важная часть **LocalAuthentication** фреймворка, которая обеспечивает:
 
@@ -133,8 +133,8 @@ class LoginViewController: UIViewController {
 - **Не скрывай** кнопку fallback — это нарушает HIG (Human Interface Guidelines)
 - **Обрабатывай** `.userFallback` отдельно — пользователь **явно выбрал** пароль
 - **Используй** `.deviceOwnerAuthentication` вместо `.deviceOwnerAuthenticationWithBiometrics`, если хочешь **всегда** давать fallback
-- **В async** — оборачивай в `Task` и обновляй UI через `await MainActor.run`
-- **Swift 6 strict concurrency** — `LAContext` безопасен, но используй `@MainActor` для UI-обновлений
+- **В [[async]]** — оборачивай в `Task` и обновляй UI через `await MainActor.run`
+- **[[Swift]] 6 strict concurrency** — `LAContext` безопасен, но используй `@MainActor` для UI-обновлений
 - **Документируйте** — пиши комментарий «fallback на пароль при неудачной биометрии»
 
 **Короткий девиз 2026**:
@@ -144,5 +144,3 @@ class LoginViewController: UIViewController {
 > - явно обрабатывай `.userFallback`  
 > - используй `.deviceOwnerAuthentication` для максимальной надёжности  
 > - обновляй UI только на главном акторе
-
-Удачи с безопасной и удобной аутентификацией в твоём приложении! 🔐

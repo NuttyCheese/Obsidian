@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/generic.md",
+                "file": "Swift/Теория/iOS/Swift/extension.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "generic"
+              "title": "extension"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/generic.md",
+                "file": "Swift/Теория/iOS/Swift/extension.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура generic"
+              "title": "Структура extension"
             }
           },
           {
@@ -194,8 +194,19 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "c2edb47d47520656",
+  "active": "aa48df8cfcb7d215",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/fallback.md",
+    "Swift/Теория/iOS/Swift/fileprivate.md",
+    "Swift/Теория/iOS/Swift/final.md",
+    "Swift/Теория/iOS/Swift/Float.md",
+    "Swift/Теория/iOS/Swift/for-in.md",
+    "Swift/Теория/iOS/Swift/For-in vs forEach.md",
+    "Swift/Теория/iOS/Swift/Force unwrap.md",
+    "Swift/Теория/iOS/Swift/frame.md",
+    "Swift/Теория/iOS/Swift/func.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/sort.md",
+    "Swift/Теория/iOS/Swift/generic.md",
     "Swift/Теория/iOS/Swift/get.md",
     "Swift/Теория/iOS/Swift/get set.md",
     "Swift/Теория/iOS/Swift/guard let.md",
@@ -211,17 +222,6 @@
     "Swift/Теория/iOS/Swift/internal.md",
     "Swift/Теория/iOS/Swift/layout cycle.md",
     "Swift/Теория/iOS/Swift/lazy.md",
-    "Swift/Теория/iOS/Swift/let.md",
-    "Identifiable.md",
-    "Swift/Теория/iOS/Swift/Linked List.md",
-    "Swift/Теория/iOS/Swift/MemoryLayout.md",
-    "Swift/Теория/iOS/Swift/Mirror.md",
-    "Swift/Теория/iOS/Swift/mutable.md",
-    "Swift/Теория/iOS/Swift/mutating method.md",
-    "Swift/Теория/iOS/Swift/mutex.md",
-    "Swift/Теория/iOS/Swift/nil.md",
-    "Swift/Теория/iOS/Swift/non-optional.md",
-    "Swift/Теория/iOS/Swift/NotificationCenter.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",
