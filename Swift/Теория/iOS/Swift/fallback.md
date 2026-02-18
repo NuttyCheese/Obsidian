@@ -1,91 +1,148 @@
-**Fallback** — механизм или вариант резервного действия, используемый, когда основной метод не сработал.  
-В [[iOS]] и [[Swift]] часто применяется вместе с **[[FaceID]] / [[TouchID]]**: если биометрическая аутентификация не удалась или недоступна, используется **резервный метод** (например, пароль или PIN-код).
+**`Fallback`** в контексте iOS и Swift — это **резервный (запасной) механизм аутентификации**, который активируется, когда основной метод (обычно биометрия — Face ID / Touch ID) недоступен, не сработал или пользователь явно выбрал его.
 
----
+Это **не просто кнопка**, а важная часть **LocalAuthentication** фреймворка, которая обеспечивает:
 
-## 🔹 Примеры кода
+- безопасность (если биометрия сломана или отключена — есть запасной путь)
+- удобство (пользователь может быстро переключиться на пароль/PIN)
+- соответствие требованиям Apple Human Interface Guidelines
 
-### 1. Простое использование fallback в [[LocalAuthentication]]
+### 1. Когда и почему срабатывает fallback
+
+| Ситуация                                      | Fallback активируется? | Что видит пользователь |
+|-----------------------------------------------|-------------------------|-------------------------|
+| Устройство **не поддерживает** биометрию     | Да                      | Только пароль/PIN       |
+| Биометрия **отключена** в настройках         | Да                      | Только пароль/PIN       |
+| Пользователь **5 раз ввёл неверно** биометрию| Да                      | Только пароль/PIN       |
+| Пользователь **явно нажал** кнопку fallback  | Да                      | Переход к паролю/PIN    |
+| Устройство в **режиме Guided Access**        | Да                      | Только пароль/PIN       |
+| Биометрия **временно заблокирована** (после нескольких неудач) | Да              | Только пароль/PIN       |
+
+### 2. Самый современный и рекомендуемый паттерн 2026 года
 
 ```swift
 import LocalAuthentication
+import UIKit
 
-let context = LAContext()
-context.localizedFallbackTitle = "Введите пароль" // текст кнопки fallback
+final class AuthManager {
+    
+    private let context = LAContext()
+    private var error: NSError?
+    
+    /// Пытается аутентифицироваться через биометрию с fallback на пароль/PIN
+    func authenticate(reason: String, fallbackTitle: String? = nil) async -> Result<Void, AuthError> {
+        context.localizedFallbackTitle = fallbackTitle ?? "Ввести пароль"
+        
+        // Проверяем, доступна ли биометрия вообще
+        var authError: NSError?
+        let canUseBiometry = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError)
+        
+        // Если биометрия недоступна — сразу идём на fallback (пароль/PIN)
+        let policy: LAPolicy = canUseBiometry ? .deviceOwnerAuthenticationWithBiometrics : .deviceOwnerAuthentication
+        
+        do {
+            try await context.evaluatePolicy(policy, localizedReason: reason)
+            return .success(())
+        } catch let laError as LAError {
+            switch laError.code {
+            case .userCancel:
+                return .failure(.userCancelled)
+            case .userFallback:
+                return .failure(.userChoseFallback)
+            case .authenticationFailed:
+                return .failure(.biometryFailed)
+            case .biometryNotAvailable:
+                return .failure(.biometryNotAvailable)
+            case .biometryNotEnrolled:
+                return .failure(.biometryNotEnrolled)
+            case .biometryLockout:
+                return .failure(.biometryLockedOut)
+            default:
+                return .failure(.unknown(laError))
+            }
+        } catch {
+            return .failure(.system(error))
+        }
+    }
+}
 
-context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Авторизация") { success, error in
-    DispatchQueue.main.async {
-        if success {
-            print("Аутентификация прошла")
-        } else {
-            print("Ошибка или fallback:", error?.localizedDescription ?? "")
+enum AuthError: Error, LocalizedError {
+    case userCancelled
+    case userChoseFallback
+    case biometryFailed
+    case biometryNotAvailable
+    case biometryNotEnrolled
+    case biometryLockedOut
+    case system(Error)
+    
+    var errorDescription: String? {
+        switch self {
+        case .userCancelled:        return "Аутентификация отменена"
+        case .userChoseFallback:    return "Выбран вход по паролю"
+        case .biometryFailed:       return "Не удалось распознать лицо/отпечаток"
+        case .biometryNotAvailable: return "Биометрия недоступна на этом устройстве"
+        case .biometryNotEnrolled:  return "Биометрия не настроена"
+        case .biometryLockedOut:    return "Биометрия временно заблокирована"
+        case .system(let error):    return error.localizedDescription
         }
     }
 }
 ```
 
----
-
-### 2. Проверка, почему сработал fallback
+### 3. Как правильно показать fallback в UI (рекомендации Apple 2026)
 
 ```swift
-context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Авторизация") { success, error in
-    DispatchQueue.main.async {
-        if success {
-            print("Аутентификация через Face ID / Touch ID")
-        } else if let laError = error as? LAError, laError.code == .userFallback {
-            print("Пользователь выбрал fallback (например, пароль)")
-        } else {
-            print("Ошибка:", error?.localizedDescription ?? "")
-        }
-    }
-}
-```
-
----
-
-### 3. Обработка fallback в UI
-
-```swift
-class ViewController: UIViewController {
-    let context = LAContext()
-
-    func authenticate() {
-        context.localizedFallbackTitle = "Использовать пароль"
-        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Доступ к данным") { success, error in
-            DispatchQueue.main.async {
-                if let laError = error as? LAError, laError.code == .userFallback {
-                    self.showPasswordPrompt()
+class LoginViewController: UIViewController {
+    
+    private let authManager = AuthManager()
+    
+    @IBAction func loginTapped(_ sender: UIButton) {
+        Task {
+            let result = await authManager.authenticate(
+                reason: "Войдите, чтобы увидеть свои заметки",
+                fallbackTitle: "Ввести пароль"
+            )
+            
+            switch result {
+            case .success:
+                navigateToMainScreen()
+            case .failure(let error):
+                switch error {
+                case .userChoseFallback:
+                    showPasswordLogin()
+                case .biometryLockedOut:
+                    showBiometryLockedAlert()
+                default:
+                    showErrorAlert(error.localizedDescription ?? "Неизвестная ошибка")
                 }
             }
         }
     }
-
-    func showPasswordPrompt() {
-        print("Показываем UI для ввода пароля")
+    
+    private func showPasswordLogin() {
+        // Показываем экран ввода пароля / PIN
+        let alert = UIAlertController(title: "Вход по паролю", message: nil, preferredStyle: .alert)
+        // ...
+        present(alert, animated: true)
     }
 }
 ```
 
----
+### 4. Лучшие практики fallback в 2026
 
-### 4. Fallback на стандартную аутентификацию
+- **Всегда** задавай `localizedFallbackTitle` — это текст кнопки fallback
+- **Не скрывай** кнопку fallback — это нарушает HIG (Human Interface Guidelines)
+- **Обрабатывай** `.userFallback` отдельно — пользователь **явно выбрал** пароль
+- **Используй** `.deviceOwnerAuthentication` вместо `.deviceOwnerAuthenticationWithBiometrics`, если хочешь **всегда** давать fallback
+- **В async** — оборачивай в `Task` и обновляй UI через `await MainActor.run`
+- **Swift 6 strict concurrency** — `LAContext` безопасен, но используй `@MainActor` для UI-обновлений
+- **Документируйте** — пиши комментарий «fallback на пароль при неудачной биометрии»
 
-```swift
-context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Авторизация") { success, error in
-    if success {
-        print("Аутентификация успешна (биометрия или пароль)")
-    } else {
-        print("Ошибка:", error?.localizedDescription ?? "")
-    }
-}
-```
+**Короткий девиз 2026**:
+> Fallback — это **не ошибка**, а **нормальный путь**.  
+> В 2026 году:  
+> - всегда показывай кнопку fallback  
+> - явно обрабатывай `.userFallback`  
+> - используй `.deviceOwnerAuthentication` для максимальной надёжности  
+> - обновляй UI только на главном акторе
 
----
-
-### 5. Настройка fallback текста
-
-```swift
-let context = LAContext()
-context.localizedFallbackTitle = "Использовать PIN"
-```
+Удачи с безопасной и удобной аутентификацией в твоём приложении! 🔐

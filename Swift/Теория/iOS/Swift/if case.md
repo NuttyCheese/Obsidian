@@ -1,169 +1,134 @@
-**`if case`** — это конструкция, которая позволяет **сравнивать значение с паттерном и извлекать [[Associated value]]**.
+**`if case`** — это мощная и очень часто используемая конструкция в Swift для **pattern matching** (соответствия шаблону) в условном операторе `if`.  
+Она позволяет одновременно:
 
-- Часто используется с **enum**, Optional и другими структурами, поддерживающими pattern matching
-    
-- Позволяет **сократить вложенные [[switch]] или [[if let]] конструкции**
-    
-- Можно комбинировать с **[[let]]** для извлечения значений
-    
+- проверить, соответствует ли значение определённому шаблону (case)  
+- извлечь **associated values** (ассоциированные значения)  
+- сразу использовать их в блоке кода  
 
-> Проще говоря: `if case` = «если значение совпадает с паттерном, то выполнить блок».
+Это особенно удобно с `enum`, `Optional` и любыми типами, поддерживающими pattern matching.
 
----
+> Проще говоря:  
+> `if case` = «если значение подходит под этот шаблон — извлеки данные и работай с ними, иначе пропусти или выйди».
 
-## 2. Основные термины
+### 1. Почему `if case` так любят в 2025–2026
 
-| Термин               | Описание                                                                |
-| -------------------- | ----------------------------------------------------------------------- |
-| **Pattern Matching** | Сравнение значения с паттерном, извлечение associated values            |
-| **[[enum]]**         | Перечисление с кейсами, которые могут иметь associated values           |
-| **Associated Value** | Дополнительное значение, хранящееся в кейсе enum                        |
-| **Optional Pattern** | Проверка [[Optional]] через `.some(let value)` или `if case let value?` |
-| **Let binding**      | Извлечение значения через `let` внутри паттерна                         |
+| Ситуация / Проблема                          | Классический `switch` или `if let`              | `if case` (современный стиль)                    | Почему `if case` выигрывает |
+|----------------------------------------------|--------------------------------------------------|--------------------------------------------------|-----------------------------|
+| Хочу проверить только один case из enum      | Нужно писать полный `switch`                     | Одна строка `if case`                            | Краткость + читаемость      |
+| Извлечь associated value из Optional         | `if let value = optional`                        | `if case let value? = optional`                  | Более выразительно          |
+| Проверка + условие на значение               | `if let x = optional, x > 10`                    | `if case let x? = optional, x > 10`              | Логика в одной строке       |
+| Хочу избежать глубокой вложенности           | Много `if let` подряд → пирамида                 | `if case` + `guard` или цепочка условий          | Код остаётся плоским        |
+| Работа с enum в цепочках или замыканиях      | Требует `switch` или отдельный метод             | `if case` внутри замыкания — компактно           | Функциональный стиль        |
 
----
+### 2. Полный синтаксис и все популярные варианты
 
-## 3. Основной синтаксис
+#### Вариант 1 — Базовый `if case` с enum
 
 ```swift
-enum Result {
-    case success(String)
+enum NetworkResponse {
+    case success(statusCode: Int, data: Data)
+    case loading(progress: Double)
     case failure(Error)
 }
 
-let result = Result.success("Data loaded")
+let response = NetworkResponse.success(statusCode: 200, data: Data())
 
-if case .success(let message) = result {
-    print("Success: \(message)")
+if case .success(let code, let data) = response {
+    print("Успех! Код: \(code), размер данных: \(data.count) байт")
+} else {
+    print("Не успех")
 }
 ```
 
-- `if case .success(let message) = result` → проверяем, что `result` соответствует кейсу `success` и извлекаем `message`
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Enum с associated value
+#### Вариант 2 — `if case let` с Optional (альтернатива `if let`)
 
 ```swift
-enum Status {
-    case online
-    case offline
-    case message(String)
+let optionalUser: User? = fetchUser()
+
+if case let user? = optionalUser {
+    print("Пользователь найден: \(user.name)")
+} else {
+    print("Пользователь не найден")
 }
 
-let currentStatus = Status.message("Hello!")
-
-if case .message(let text) = currentStatus {
-    print("Received message: \(text)")
+// Эквивалентно:
+if let user = optionalUser {
+    print("Пользователь найден: \(user.name)")
 }
-// Output: Received message: Hello!
 ```
 
-- Извлекаем associated value из enum кейса
-    
-
----
-
-### Пример 2. Optional с `if case let`
+#### Вариант 3 — `if case` + дополнительные условия через `,`
 
 ```swift
-let number: Int? = 42
+let event: UIEvent? = getLatestEvent()
 
-if case let value? = number {
-    print("Number is \(value)")
+if case .click(let x, let y) = event, x > 100, y < 200 {
+    print("Клик в правой верхней области: \(x),\(y)")
 }
-// Output: Number is 42
 ```
 
-- Альтернатива `if let value = number`
-    
-- Работает с **Optional Pattern** (`value?`)
-    
-
----
-
-### Пример 3. Несколько паттернов через `,`
+#### Вариант 4 — `if case` внутри замыкания / цепочки (очень популярно)
 
 ```swift
-enum Event {
-    case click(x: Int, y: Int)
-    case swipe(direction: String)
+results.forEach { result in
+    if case .success(let data) = result {
+        process(data)
+    }
 }
 
-let event = Event.click(x: 10, y: 20)
-
-if case .click(let x, let y) = event, x > 5 {
-    print("Clicked at \(x), \(y)")
+// Или в map/filter
+let successfulData = results.compactMap { result -> Data? in
+    if case .success(let data) = result {
+        return data
+    }
+    return nil
 }
-// Output: Clicked at 10, 20
 ```
 
-- Можно добавлять **дополнительные условия** через `,`
-    
-
----
-
-### Пример 4. Паттерн с диапазоном
+#### Вариант 5 — `if case` с диапазонами и паттернами
 
 ```swift
 let score = 85
 
 if case 80...100 = score {
-    print("Excellent score!")
+    print("Отлично!")
 }
-// Output: Excellent score!
+
+let temperature = 38.5
+
+if case 38... = temperature {
+    print("Повышенная температура")
+}
 ```
 
-- Можно использовать **диапазоны** или другие паттерны, не только enum
-    
+### 3. `if case` vs `switch` vs `if let` — когда что выбрать
 
----
+| Задача / Сценарий                            | Лучший выбор в 2026                              | Почему |
+|----------------------------------------------|--------------------------------------------------|--------|
+| Проверяю только один case из enum            | `if case`                                        | Кратко, без полного switch |
+| Нужно обработать несколько case              | `switch`                                         | Полная проверка, exhaustiveness |
+| Просто разворачиваю Optional без условий     | `if let` или `guard let`                         | Классика, привычно |
+| Разворачиваю Optional + сразу условие        | `if case let value?, value > 10`                 | Более выразительно |
+| В цепочке методов (map, filter, forEach)     | `if case` внутри замыкания                       | Компактно и функционально |
+| Много вложенных проверок Optional            | `guard let` + `if case`                          | Плоский код |
+| Хочу ранний выход при nil                    | `guard let` или `guard case let`                 | Early exit — лучший стиль |
 
-### Пример 5. Паттерн с switch и if case
+### 4. Лучшие практики `if case` в Swift 2026
 
-```swift
-enum Direction {
-    case north, south, east, west
-}
+- **Используй `if case`** вместо `switch`, когда тебе нужен **только один case**  
+- **Комбинируй** с `,` для дополнительных условий — это очень читаемо  
+- **В замыканиях** (`map`, `filter`, `forEach`) — `if case` часто короче и яснее  
+- **Для Optional** — `if case let value? = optional` — современная альтернатива `if let`  
+- **Не злоупотребляй** — если case-ов больше 2–3, лучше `switch`  
+- **Swift 6 strict concurrency** — `if case` полностью безопасен  
+- **Документируйте** — пиши комментарий «if case .success — обработка успешного ответа»
 
-let dir: Direction? = .north
+**Короткий девиз 2026**:
+> `if case` — это «если значение подходит под этот шаблон — вот что с ним делать».  
+> В 2026 году используй его:  
+> - когда нужен только один case из enum  
+> - для компактного разворачивания Optional с условиями  
+> - внутри замыканий и цепочек методов  
+> Это **самый выразительный** способ pattern matching в простых случаях.
 
-if case .north? = dir {
-    print("Heading north!")
-}
-// Output: Heading north!
-```
-
-- С Optional enum можно использовать `?` в паттерне
-    
-
----
-
-## 5. Особенности `if case`
-
-1. **Работает с паттернами**, не только с конкретными значениями
-    
-2. Позволяет **извлекать associated values** из enum и Optional
-    
-3. Можно использовать **несколько условий через `,`**
-    
-4. Подходит для **сокращения switch/if-let вложенности**
-    
-5. Альтернатива `switch` для **одного кейса или проверки**
-    
-
----
-
-## 6. Итог
-
-- **`if case`** = проверка значения на соответствие паттерну
-    
-- Особенно полезно с **enum, Optional и associated values**
-    
-- Позволяет **извлекать данные и добавлять условия** в компактной форме
-    
-
----
+Удачи с чистым, компактным и мощным кодом! 🔍

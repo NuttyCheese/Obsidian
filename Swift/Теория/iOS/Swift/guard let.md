@@ -1,176 +1,127 @@
-**`guard let`** — это способ **безопасного извлечения [[Optional]]**.
+**`guard let`** — это конструкция в Swift, которая **безопасно разворачивает Optional** и **немедленно выходит** из текущей области видимости (функции, метода, цикла, замыкания), если значение оказалось `nil`.
 
-- Используется для **раннего выхода из функции**, если значение [[nil]]
-    
-- Работает с **Optional**
-    
-- Обеспечивает **сразу доступ к извлечённой переменной вне блока guard**
-    
-- Всегда требует **`else`** с `return`, `throw`, `break`, `continue` или `fatalError()`
-    
+Это один из самых любимых и рекомендуемых паттернов в современном Swift (2025–2026), потому что он:
 
-> Проще говоря: `guard let` = «проверяем, есть ли значение, если нет — выходим, если есть — используем дальше».
+- резко уменьшает вложенность кода  
+- делает логику линейной и читаемой  
+- заставляет обрабатывать `nil`-случай **сразу**, а не откладывать  
 
----
+> Проще говоря:  
+> «Если значение есть — идём дальше с развёрнутым значением.  
+> Если нет — выходим прямо сейчас и делаем что-то в else».
 
-## 2. Основные термины
+### 1. Почему `guard let` лучше, чем `if let` (главные преимущества)
 
-| Термин              | Описание                                                                     |
-| ------------------- | ---------------------------------------------------------------------------- |
-| **[[Optional]]**    | Тип, который может быть `nil` (`Int?`, `String?`)                            |
-| **[[Unwrapping]]**  | Извлечение значения из Optional                                              |
-| **Guard Statement** | Условие, которое проверяет выражение и требует else блок                     |
-| **Early Exit**      | Немедленный выход из функции при невыполнении условия                        |
-| **Scope**           | Область видимости: переменная, извлечённая через guard, доступна после блока |
+| Ситуация / Проблема                          | `if let` (старый стиль)                          | `guard let` (современный стиль)                  | Почему `guard` выигрывает |
+|----------------------------------------------|--------------------------------------------------|--------------------------------------------------|---------------------------|
+| Много проверок в начале функции              | Глубокая вложенность if-ов                       | Все проверки на одном уровне                     | Код линейный, читаемость ×10 |
+| Ранний возврат при ошибке                    | Приходится писать else с return в каждом if      | Один else на все guard-ы                         | Меньше дублирования       |
+| Длинная функция с валидацией                 | Логика «сдвигается вправо»                       | Логика остаётся на левом краю                    | Легче читать и поддерживать |
+| Обязательность обработки nil                 | Можно забыть else                                | `else` обязателен (компилятор заставляет)        | Меньше багов              |
 
----
+### 2. Полный синтаксис и все варианты (2026 стандарт)
 
-## 3. Основной синтаксис
+#### Вариант 1 — Классический guard let
 
 ```swift
 func greet(name: String?) {
-    guard let name = name else {
-        print("No name provided")
+    guard let name else {
+        print("Имя не указано")
         return
     }
-    print("Hello, \(name)")
+    
+    print("Привет, \(name)!")
 }
-
-greet(name: "Alice") // Hello, Alice
-greet(name: nil)     // No name provided
 ```
 
-- `guard let` проверяет Optional
-    
-- Если `nil` → выполняется `else` и выход из функции
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простое использование
+#### Вариант 2 — Несколько guard let подряд (самый популярный паттерн)
 
 ```swift
-func printAge(_ age: Int?) {
-    guard let age = age else {
-        print("Age is missing")
+func login(user: String?, password: String?, deviceToken: String?) throws {
+    guard let user else {
+        throw AuthError.missingCredentials("user")
+    }
+    guard let password else {
+        throw AuthError.missingCredentials("password")
+    }
+    guard let deviceToken else {
+        throw AuthError.missingDeviceToken
+    }
+    
+    // здесь уже все значения точно не nil
+    print("Логин:", user, "Пароль:", password, "Токен:", deviceToken)
+}
+```
+
+#### Вариант 3 — guard let + условие (очень мощно)
+
+```swift
+func processAge(_ age: Int?) {
+    guard let age, age >= 18 else {
+        print("Доступ запрещён: возраст < 18 или не указан")
         return
     }
-    print("Age is \(age)")
+    
+    print("Добро пожаловать! Возраст:", age)
 }
-
-printAge(25) // Age is 25
-printAge(nil) // Age is missing
 ```
 
----
-
-### Пример 2. Несколько Optional
+#### Вариант 4 — guard let в цикле (часто используется с коллекциями)
 
 ```swift
-func login(user: String?, password: String?) {
-    guard let user = user, let password = password else {
-        print("Missing credentials")
-        return
+let optionalNumbers: [Int?] = [1, nil, 3, nil, 5, 7]
+
+for number in optionalNumbers {
+    guard let number else { continue }
+    
+    if number % 2 == 0 {
+        print("Чётное:", number)
+        continue
     }
-    print("Logging in \(user)")
+    
+    print("Нечётное:", number)
 }
-
-login(user: "Alice", password: "123") // Logging in Alice
-login(user: nil, password: "123")     // Missing credentials
 ```
 
-- Можно извлекать **несколько Optional одновременно**
-    
-
----
-
-### Пример 3. Guard + условие
+#### Вариант 5 — guard в async-функциях (самый частый сценарий 2026)
 
 ```swift
-func checkNumber(_ num: Int?) {
-    guard let num = num, num > 0 else {
-        print("Invalid number")
-        return
+func fetchUserProfile(id: String?) async throws -> User {
+    guard let id else {
+        throw AuthError.missingUserID
     }
-    print("Valid number: \(num)")
+    
+    let (data, _) = try await URLSession.shared.data(from: userURL(for: id))
+    return try JSONDecoder().decode(User.self, from: data)
 }
-
-checkNumber(10) // Valid number: 10
-checkNumber(-5) // Invalid number
-checkNumber(nil) // Invalid number
 ```
 
-- Guard позволяет проверять **условия после извлечения**
-    
+### 3. Лучшие практики guard let в Swift 2026
 
----
+- **Пиши guard в начале функции** — все проверки и early exit идут сразу  
+- **Используй guard для всех входных Optional** — это резко снижает вложенность  
+- **Комбинируй** несколько условий в одном guard:
 
-### Пример 4. Guard в функциях с throw
+  ```swift
+  guard let user = user,
+        let email = user.email,
+        !email.isEmpty,
+        email.contains("@") else {
+      throw ValidationError.invalidEmail
+  }
+  ```
 
-```swift
-enum LoginError: Error { case invalidCredentials }
+- **В async** — guard + `throw` — золотой стандарт  
+- **В циклах** — `guard ... else { continue }` или `break`  
+- **Swift 6 strict concurrency** — guard полностью безопасен, но код после guard должен учитывать актор  
+- **Документируйте** — пиши комментарий «guard let — проверка и извлечение userID»
 
-func login(user: String?, password: String?) throws {
-    guard let user = user, let password = password else {
-        throw LoginError.invalidCredentials
-    }
-    print("Logged in \(user)")
-}
+**Короткий девиз 2026**:
+> `guard let` — это «если что-то не так — выходим сразу, иначе идём дальше с развёрнутым значением».  
+> В 2026 году используй его **везде**, где есть Optional:  
+> - в начале каждой функции  
+> - перед использованием Optional  
+> - в async-коде с throws  
+> Это **самый читаемый** и **самый безопасный** способ работы с Optional.
 
-try? login(user: "Alice", password: "123") // Logged in Alice
-try? login(user: nil, password: "123")     // nil, error thrown
-```
-
-- Guard может использоваться с **throw** вместо return
-    
-
----
-
-### Пример 5. Guard в циклах
-
-```swift
-let numbers: [Int?] = [1, nil, 3, nil, 5]
-
-for num in numbers {
-    guard let num = num else { continue }
-    print(num)
-}
-
-// Output:
-// 1
-// 3
-// 5
-```
-
-- Guard можно использовать для **пропуска nil значений** внутри цикла
-    
-
----
-
-## 5. Особенности `guard let`
-
-1. Используется для **раннего выхода** (`early exit`)
-    
-2. Извлечённая переменная доступна **после блока guard**
-    
-3. Требует **обязательный `else`**
-    
-4. Работает с **несколькими Optional и условиями**
-    
-5. Часто применяется для **входных проверок в функциях**
-    
-
----
-
-## 6. Итог
-
-- **`guard let`** = безопасное извлечение Optional с немедленным выходом при nil
-    
-- Позволяет **уменьшить вложенность if-let**
-    
-- Улучшает читаемость и безопасность кода
-    
-
----
+Удачи с линейным, чистым и надёжным кодом без пирамид if-let! 🛡️

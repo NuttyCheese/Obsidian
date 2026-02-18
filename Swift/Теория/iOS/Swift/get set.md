@@ -1,34 +1,22 @@
-**`get set`** — это часть **вычисляемого свойства**, которая определяет:
+**`get set`** — это синтаксис **вычисляемого свойства** (computed property) в Swift, который позволяет:
 
-- **[[Swift/Теория/Swift/Standart Library/get]]** — как получить значение
-    
-- **[[Set]]** — как установить новое значение
-    
-- ==Используется только с [[var]]==
-    
-- Позволяет вычислять значение **на лету** и управлять изменением зависимых свойств
-    
+- **`get`** — определять, как **получать** (читать) значение свойства  
+- **`set`** — определять, как **устанавливать** (записывать) новое значение  
 
-> Проще говоря: `get set` = «как прочитать и записать значение свойства».
+Такое свойство **не хранит** данные само по себе — оно **вычисляется** и **обновляет** другие хранимые свойства.
 
----
+> Проще говоря:  
+> `get` — «что вернуть, когда к свойству обратились»  
+> `set` — «что сделать, когда кто-то присвоил новое значение»
 
-## 2. Основные термины
+### 1. Полный синтаксис и варианты (2025–2026 стандарт)
 
-| Термин                  | Описание                                                                       |
-| ----------------------- | ------------------------------------------------------------------------------ |
-| **Computed Property**   | Свойство, которое вычисляется на лету через `get` и/или `set`                  |
-| **Read-write Property** | Свойство, которое можно читать и изменять                                      |
-| **newValue**            | Специальная переменная в `set`, содержит новое присваиваемое значение          |
-| **Property Observer**   | [[willSet]] и [[didSet]] работают только с хранимыми свойствами, не с computed |
-
----
-
-## 3. Основной синтаксис
+#### Вариант 1 — Классический (самый понятный)
 
 ```swift
 struct Circle {
-    var radius: Double
+    var radius: Double = 0.0
+    
     var diameter: Double {
         get {
             return radius * 2
@@ -39,179 +27,126 @@ struct Circle {
     }
 }
 
-var circle = Circle(radius: 5)
-print(circle.diameter) // 10
-circle.diameter = 20
-print(circle.radius)   // 10
+var c = Circle()
+c.diameter = 20     // → set → radius становится 10
+print(c.radius)     // 10.0
+print(c.diameter)   // 20.0 (get)
 ```
 
-- `get` вычисляет значение на основе `radius`
-    
-- `set` обновляет `radius` через `newValue`
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простое read-write свойство
-
-```swift
-struct Rectangle {
-    var width: Double
-    var height: Double
-    var area: Double {
-        get {
-            return width * height
-        }
-        set {
-            width = sqrt(newValue) // меняем width для простоты
-            height = sqrt(newValue)
-        }
-    }
-}
-
-var rect = Rectangle(width: 3, height: 4)
-print(rect.area) // 12
-rect.area = 16
-print(rect.width, rect.height) // 4.0 4.0
-```
-
-- Свойство можно **читать и писать**
-    
-
----
-
-### Пример 2. Сокращённая запись get/set
+#### Вариант 2 — Сокращённая запись (самый популярный стиль)
 
 ```swift
 struct Square {
     var side: Double
+    
     var perimeter: Double {
         get { side * 4 }
         set { side = newValue / 4 }
     }
-}
-
-var square = Square(side: 5)
-print(square.perimeter) // 20
-square.perimeter = 40
-print(square.side)      // 10
-```
-
-- Однострочные вычисления через `{ get { … } set { … } }`
     
-
----
-
-### Пример 3. get/set с [[Optional]]
-
-```swift
-struct User {
-    var firstName: String?
-    var lastName: String?
-    
-    var fullName: String {
-        get { "\(firstName ?? "No") \(lastName ?? "Name")" }
-        set {
-            let components = newValue.split(separator: " ")
-            firstName = String(components.first ?? "No")
-            lastName = String(components.last ?? "Name")
-        }
+    // или ещё короче — только get (read-only)
+    var area: Double {
+        side * side
     }
 }
-
-var user = User(firstName: "Alice", lastName: nil)
-print(user.fullName) // Alice Name
-user.fullName = "Bob Marley"
-print(user.firstName!, user.lastName!) // Bob Marley
 ```
 
-- Сеттер разбивает строку и обновляет свойства
-    
+**Правило 2026**:  
+Если тело `get` помещается в одну строку — **опускай** `get {}` и `return`.
 
----
-
-### Пример 4. get/set с логикой проверки
+#### Вариант 3 — С валидацией в `set` (очень частый паттерн)
 
 ```swift
 struct Temperature {
-    var celsius: Double
-    var fahrenheit: Double {
-        get { celsius * 9 / 5 + 32 }
+    private var _celsius: Double = 0
+    
+    var celsius: Double {
+        get { _celsius }
         set {
-            if newValue >= -459.67 { // проверка на абсолютный ноль
-                celsius = (newValue - 32) * 5 / 9
-            }
+            // Валидация абсолютного нуля (−273.15 °C)
+            _celsius = max(newValue, -273.15)
+        }
+    }
+    
+    var fahrenheit: Double {
+        get { _celsius * 9/5 + 32 }
+        set {
+            _celsius = (newValue - 32) * 5/9
         }
     }
 }
 
-var temp = Temperature(celsius: 25)
-print(temp.fahrenheit) // 77
-temp.fahrenheit = -500 // не изменится
-print(temp.celsius)    // 25
+var t = Temperature()
+t.fahrenheit = -500   // не упадёт ниже −273.15 °C
+print(t.celsius)      // −273.15
 ```
 
-- Можно добавить **валидацию в сеттер**
-    
+### 2. Самые частые реальные сценарии (2025–2026)
 
----
+| Сценарий                              | Типичный код                                      | Почему `get set` здесь идеален |
+|---------------------------------------|---------------------------------------------------|---------------------------------|
+| Зависимые вычисляемые значения        | `area`, `diameter`, `perimeter`, `fullName`       | Не нужно хранить — всегда актуально |
+| Валидация / нормализация при записи   | `age`, `percentage`, `temperature`                | Защита от некорректных значений |
+| Преобразование единиц измерения       | `celsius ↔ fahrenheit`, `kg ↔ lbs`               | Логика в одном месте |
+| Форматирование / маскировка           | `phoneNumber`, `creditCard` (только чтение)       | Скрывает детали реализации |
+| Доступ к вложенным свойствам          | `user.fullName`, `order.totalPrice`               | Упрощает API |
+| SwiftUI / Combine — реактивные свойства | `@Published var radius` + `var diameter: Double`  | Автоматическое обновление UI |
 
-### Пример 5. Класс с get/set
+### 3. get/set vs хранимое свойство + observers
 
-```swift
-class Circle {
-    var radius: Double
-    var diameter: Double {
-        get { radius * 2 }
-        set { radius = newValue / 2 }
-    }
-    
-    init(radius: Double) { self.radius = radius }
-}
+| Ситуация                              | Хранимое + willSet/didSet                     | Вычисляемое get/set                             | Что лучше в 2026 |
+|---------------------------------------|-----------------------------------------------|--------------------------------------------------|------------------|
+| Значение независимо                      | Да                                            | Нет (зависит от других)                          | Хранимое         |
+| Нужно хранить значение                   | Да                                            | Нет (только вычисляется)                         | Хранимое         |
+| Нужно мгновенно реагировать на запись    | `didSet`                                      | `set`                                            | Оба ок           |
+| Значение всегда должно быть актуальным   | Нужно вручную синхронизировать                | Автоматически                                    | `get set`        |
+| Экономия памяти                          | Хранит значение                               | Не хранит                                        | `get set`        |
+| Сложная логика чтения                    | Отдельный метод                               | `get` выглядит как свойство                      | `get set`        |
 
-let circle = Circle(radius: 5)
-print(circle.diameter) // 10
-circle.diameter = 20
-print(circle.radius)   // 10
-```
+**Золотое правило 2026**:  
+Если значение **зависит** от других свойств и должно быть **всегда актуальным** → **вычисляемое** (`get`/`set`).  
+Если значение **самостоятельно** и его нужно **хранить** → **хранимое** + `didSet` (если нужны побочные эффекты).
 
-- `get/set` одинаково работает в **классах и структурах**
-    
+### 4. Лучшие практики get/set в Swift 2026
 
----
+- **Сокращённая запись** — твой лучший друг:
 
-## 5. Особенности get/set
+  ```swift
+  var fullName: String { "\(firstName) \(lastName)" }
+  ```
 
-1. **get** всегда обязателен, **set** — по желанию
-    
-2. `set` использует `newValue` для присваивания
-    
-3. Свойства могут быть read-only (только `get`) или read-write (`get set`)
-    
-4. Можно добавлять **валидацию или вычисления** в сеттер
-    
-5. Работает с **структурами, классами и optional**
-    
+- **Скрывай** хранимые свойства с `_` (underscore):
 
----
+  ```swift
+  private var _temperature: Double = 0
+  var temperature: Double {
+      get { _temperature }
+      set { _temperature = max(newValue, -273.15) }
+  }
+  ```
 
-## 6. Итог
+- **Не делай** тяжёлые вычисления в `get` — это может замедлить UI  
+  (лучше кэшировать в хранимом свойстве + `didSet`)
 
-- **get set** = вычисляемое свойство с чтением и записью
-    
-- Позволяет **инкапсулировать логику получения и установки значения**
-    
-- Можно использовать:
-    
-    - Для вычисляемых значений (`diameter`, `area`)
-        
-    - Для строк и optional
-        
-    - Для классов и структур
-        
-    - Для проверки/валидации внутри set
-        
+- **В SwiftUI** — очень часто комбинируй `@Published` + `get/set`:
 
----
+  ```swift
+  @Published var celsius: Double = 0
+  var fahrenheit: Double {
+      get { celsius * 9/5 + 32 }
+      set { celsius = (newValue - 32) * 5/9 }
+  }
+  ```
+
+- **Swift 6 strict concurrency** — `get/set` безопасны, если зависимости `Sendable` или на том же акторе  
+- **Документируйте** — пиши комментарий «get/set — преобразование температуры между °C и °F»
+
+**Короткий девиз 2026**:
+> `get set` — это когда свойство **выглядит** как обычное, но **на самом деле** вычисляется и синхронизирует другие данные.  
+> Используй его для:  
+> - зависимых значений (`area`, `fullName`, `fahrenheit`)  
+> - валидации / нормализации при записи  
+> - красивого и безопасного API  
+> Сокращённая запись `{ ... }` — стандарт индустрии.
+
+Удачи с чистыми, эффективными и выразительными свойствами в твоём коде! 🔄

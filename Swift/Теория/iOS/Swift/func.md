@@ -1,209 +1,156 @@
-**`func`** — ключевое слово для определения **функции** в [[Swift]].
+**`func`** — ключевое слово в Swift для объявления **функции** (или метода).  
+Функция — это именованный блок кода, который выполняет задачу, может принимать параметры, возвращать значение и выбрасывать ошибки.
 
-- Функция — это **блок кода, который выполняет определённую задачу**
-    
-- Может принимать **параметры**, возвращать **значение** и выбрасывать **ошибки**
-    
-- Может быть **связан с типом** (метод класса/структуры/[[enum]]) или **глобальной**
-    
+> Проще говоря: `func` = «даёшь имя куску кода, чтобы потом его можно было вызвать много раз».
 
-> Проще говоря: func = «инструкция, которую можно вызвать с аргументами и получить результат».
+### 1. Основные формы функций в Swift (2026 актуально)
 
----
+| Тип функции                          | Синтаксис (кратко)                               | Когда использовать (самые частые кейсы 2026) |
+|--------------------------------------|--------------------------------------------------|-----------------------------------------------|
+| Простая без параметров и возврата    | `func sayHello() { ... }`                        | Логирование, сайд-эффекты, утилиты            |
+| С параметрами и возвратом            | `func add(a: Int, b: Int) -> Int { ... }`        | Математика, преобразования, бизнес-логика     |
+| С inout-параметром                   | `func increment(value: inout Int) { ... }`       | Изменение внешней переменной                  |
+| Throws-функция                       | `func fetch() throws -> Data { ... }`            | Работа с сетью, файлами, парсингом            |
+| Async-функция                        | `func load() async throws -> User { ... }`       | Асинхронные операции (сеть, диск, API)        |
+| Generic-функция                      | `func swap<T>(_ a: inout T, _ b: inout T) { ... }` | Универсальные алгоритмы (swap, sort, map)     |
+| Метод в типе                         | `func greet() { ... }` внутри struct/class/enum  | Поведение объекта                             |
+| Closure как параметр                 | `func asyncTask(completion: @escaping () -> Void)` | Колбэки, completion handlers                  |
 
-## 2. Основные термины
+### 2. Полный синтаксис и все ключевые возможности (примеры)
 
-| Термин                    | Описание                                                                  |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Parameter**             | Входные данные функции (`name: String`)                                   |
-| **Return type**           | Тип возвращаемого значения (`-> Int`)                                     |
-| **Void**                  | Функция не возвращает значение                                            |
-| **[[throws]] / rethrows** | Функция может выбрасывать ошибку                                          |
-| **[[inout]]**             | Позволяет изменять переданный параметр                                    |
-| **Escaping closure**      | Closure, переданный в функцию, который может сохраняться для вызова позже |
-| **[[generic]] function** | Функция с параметром типа (`<T>`)                                         |
-|                           |                                                                           |
-
----
-
-## 3. Основной синтаксис
+#### 2.1. Базовая функция
 
 ```swift
 func greet(name: String) -> String {
-    return "Hello, \(name)!"
+    return "Привет, \(name)!"
 }
 
-let message = greet(name: "Alice")
-print(message) // Hello, Alice!
+let message = greet(name: "Алексей")
+print(message) // Привет, Алексей!
 ```
 
-- Функция принимает `name: String` и возвращает [[String]]
-    
-- Можно вызывать несколько раз с разными аргументами
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейшая функция без параметров
+#### 2.2. Функция без возврата (Void)
 
 ```swift
-func sayHello() {
-    print("Hello!")
+func logEvent(_ event: String) {
+    print("Событие: \(event)")
+    // или Analytics.track(event)
+}
+```
+
+#### 2.3. Функция с несколькими параметрами и метками
+
+```swift
+func move(from start: CGPoint, to end: CGPoint, duration: TimeInterval) {
+    // анимация
 }
 
-sayHello() // Hello!
+move(from: CGPoint(x: 0, y: 0), to: CGPoint(x: 100, y: 200), duration: 0.3)
 ```
 
-- Функция без параметров и без возвращаемого значения (`Void`)
-    
-
----
-
-### Пример 2. Функция с параметрами и возвращаемым значением
+#### 2.4. Inout-параметры (изменение внешней переменной)
 
 ```swift
-func add(a: Int, b: Int) -> Int {
-    return a + b
+func increment(by value: Int, _ number: inout Int) {
+    number += value
 }
 
-let result = add(a: 2, b: 3)
-print(result) // 5
+var count = 10
+increment(by: 5, &count)
+print(count) // 15
 ```
 
-- Возвращает значение через [[return]]
-    
-
----
-
-### Пример 3. Функция с inout параметром
+#### 2.5. Throws + do-catch (самый частый паттерн 2026)
 
 ```swift
-func increment(value: inout Int) {
-    value += 1
+enum NetworkError: Error {
+    case offline
+    case timeout(statusCode: Int)
 }
 
-var number = 10
-increment(value: &number)
-print(number) // 11
-```
-
-- `inout` позволяет изменять **переменную из внешнего контекста**
-    
-
----
-
-### Пример 4. Функция с [[throws]] и [[do-catch]]
-
-```swift
-enum MyError: Error { case failed }
-
-func riskyFunction() throws -> String {
-    if Bool.random() { return "Success" }
-    else { throw MyError.failed }
+func fetchUser(id: String) throws -> User {
+    if Bool.random() { throw NetworkError.offline }
+    // ...
+    return User(id: id)
 }
 
 do {
-    let result = try riskyFunction()
-    print(result)
+    let user = try fetchUser(id: "123")
+    print("Пользователь:", user.name)
+} catch NetworkError.offline {
+    print("Нет интернета")
+} catch let error as NetworkError where error == .timeout(statusCode: 504) {
+    print("Таймаут сервера")
 } catch {
-    print("Error:", error)
+    print("Неизвестная ошибка:", error.localizedDescription)
 }
 ```
 
-- Функция может **выбрасывать ошибки**
-    
-- Используется вместе с [[try]] и `do-catch`
-    
-
----
-
-### Пример 5. Функция с [[closure]] ([[completion handler]])
+#### 2.6. Async + throws (современный стандарт)
 
 ```swift
-func performTask(completion: @escaping (String) -> Void) {
-    DispatchQueue.global().async {
-        completion("Task finished")
+func fetchUserAsync(id: String) async throws -> User {
+    let (data, _) = try await URLSession.shared.data(from: url)
+    return try JSONDecoder().decode(User.self, from: data)
+}
+
+Task {
+    do {
+        let user = try await fetchUserAsync(id: "123")
+        await MainActor.run {
+            updateUI(with: user)
+        }
+    } catch {
+        await showError(error.localizedDescription)
     }
 }
-
-performTask { message in
-    print(message)
-}
 ```
 
-- Параметр функции — closure
-    
-- Escaping closure для асинхронного вызова
-    
-
----
-
-### Пример 6. [[generic]] функция
+#### 2.7. Generic-функция (очень мощно)
 
 ```swift
-func swapValues<T>(a: inout T, b: inout T) {
-    let temp = a
-    a = b
-    b = temp
+func first<T: Equatable>(_ items: [T], matching target: T) -> T? {
+    items.first { $0 == target }
 }
 
-var x = 1, y = 2
-swapValues(a: &x, b: &y)
-print(x, y) // 2 1
-```
-
-- Позволяет работать с **любыми типами** через `<T>`
-    
-
----
-
-### Пример 7. Функция как метод класса
-
-```swift
-class Person {
-    var name: String
-    init(name: String) { self.name = name }
-    
-    func greet() {
-        print("Hello, my name is \(name)")
-    }
+let numbers = [1, 2, 3, 4, 5]
+if let found = first(numbers, matching: 3) {
+    print("Нашли:", found)
 }
-
-let alice = Person(name: "Alice")
-alice.greet() // Hello, my name is Alice
 ```
 
-- Методы класса работают через **экземпляр объекта**
-    
+### 3. Лучшие практики func в Swift 2026
 
----
+- **Назови функцию так**, чтобы её вызов читался как предложение:
+  - `fetchUser(id:)` → хорошо
+  - `getUserById(id:)` → хуже
+  - `user(withId:)` → ещё лучше (SwiftUI-стиль)
 
-## 5. Особенности `func`
+- **Используй метки параметров** — улучшают читаемость вызова
 
-1. Может быть **глобальной или метод класса/структуры/enum**
-    
-2. Может **принимать параметры и возвращать значения**
-    
-3. Может использовать **inout** для изменения внешних переменных
-    
-4. Может **выбрасывать ошибки** (`throws`)
-    
-5. Может работать с **closure** и быть асинхронной
-    
-6. Поддерживает **generics** для универсальности
-    
+- **Делай функции короткими** — идеально 5–15 строк, максимум 30
 
----
+- **Одна ответственность** — функция должна делать **одну** вещь
 
-## 6. Итог
+- **Throws** — только если ошибка реально возможна и должна быть обработана
 
-- **func** — блок кода для выполнения задачи
-    
-- Может иметь **параметры, возвращаемое значение, ошибки, closure и generics**
-    
-- Используется для **структурирования кода, повторного использования и безопасного программирования**
-    
+- **Async** — используй `async throws` для всех I/O-операций (сеть, диск, база данных)
 
----
+- **Generics** — применяй, когда функция может работать с разными типами
+
+- **Inout** — используй осторожно, лучше возвращать новое значение
+
+- **Swift 6 strict concurrency** — помечай функции `@MainActor`, если обновляют UI, или делай их `nonisolated`
+
+- Документируй — пиши комментарий «Возвращает пользователя по ID или выбрасывает AuthError»
+
+**Короткий девиз 2026**:
+> `func` — это именованный кусок логики, который можно вызвать снова и снова.  
+> В 2026 году:  
+> - делай короткие, читаемые функции с понятными именами  
+> - используй `async throws` для асинхронных операций  
+> - `throws` — только если ошибка реально нужна наверху  
+> - generics и inout — мощные, но используй с умом  
+> Это **основа** чистого и надёжного кода в Swift.
+
+Удачи с красивыми и мощными функциями в твоём проекте! 🚀
