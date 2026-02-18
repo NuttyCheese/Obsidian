@@ -1,5 +1,3 @@
-## 🖥 Console (Консоль в Xcode)
-
 ![Image](https://i.sstatic.net/rWhcM.png)
 
 ![Image](https://a11y-guidelines.orange.com/en/mobile/images/iOSdev/wwdc21-xcodeLLDB-ViewDebuggingTips_1.png)
@@ -8,15 +6,15 @@
 
 ## Что такое Console
 
-**Console** — это область отладки в Xcode, где:
+**Console** — это область отладки в [[Xcode]], где:
 
 - выводятся логи приложения
     
 - отображаются runtime-ошибки
     
-- показываются системные сообщения iOS
+- показываются системные сообщения [[iOS]]
     
-- выполняются команды LLDB
+- выполняются команды [[LLDB (Low-Level Debugger)|LLDB]]
     
 - анализируется стек вызовов
     
@@ -55,7 +53,7 @@ debugPrint(model)
 
 ---
 
-### 2️⃣ OSLog / Logger (современный способ)
+### 2️⃣ [[OSLog]] / Logger (современный способ)
 
 ```swift
 import os
@@ -77,7 +75,7 @@ logger.info("Request started")
 
 ### 3️⃣ Системные сообщения
 
-- AutoLayout warnings
+- [[Auto Layout]] warnings
     
 - Main Thread Checker
     
@@ -314,7 +312,7 @@ Debugger — текущее состояние.
     
 - отладка бизнес-логики
     
-- поиск race condition
+- поиск [[race condition]]
     
 - проверка жизненного цикла ViewController
     
@@ -322,17 +320,3 @@ Debugger — текущее состояние.
     
 
 ---
-
-Если хочешь — дальше можем разобрать:
-
-- OSLog и Logger глубже
-    
-- Unified Logging System
-    
-- Debug Memory Graph
-    
-- Instruments
-    
-- Unit/UI тестирование
-    
-- Или следующий инструмент из списка

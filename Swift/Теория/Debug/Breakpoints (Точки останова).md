@@ -1,4 +1,4 @@
-## 🛑 Breakpoints (Точки останова в Xcode)
+## 🛑 Breakpoints (Точки останова в [[Xcode]])
 
 ![Image](https://belief-driven-design.com/images/2023/2023-08-22-xcode-breakpoints-101-navigator.png)
 
@@ -23,7 +23,7 @@
 - найти причину бага
     
 
-Работают они через встроенный отладчик (LLDB).
+Работают они через встроенный отладчик ([[LLDB (Low-Level Debugger)|LLDB]]).
 
 Проще говоря:
 
@@ -67,7 +67,7 @@ isAuthorized == false
 
 - больших циклах
     
-- UITableView / CollectionView
+- [[UITableView]] / [[UICollectionView|CollectionView]]
     
 - сложной бизнес-логике
     
@@ -89,24 +89,24 @@ isAuthorized == false
 
 Используется для:
 
-- ловли AutoLayout ошибок
+- ловли [[Auto Layout]] ошибок
     
-- поиска runtime exception
+- поиска [[runtime]] exception
     
-- диагностики force unwrap crash
+- диагностики [[force unwrap]] crash
     
 
 ---
 
 ## 4️⃣ Exception Breakpoint
 
-Останавливает выполнение при любом throw / crash.
+Останавливает выполнение при любом [[throw]] / crash.
 
 Есть два типа:
 
-- Objective-C Exception
+- [[Objective-C]] Exception
     
-- Swift Error
+- [[Swift]] Error
     
 
 Полезен когда:
@@ -173,7 +173,7 @@ view == nil
 
 ---
 
-# 🎯 Практические сценарии в iOS
+# 🎯 Практические сценарии в [[iOS]]
 
 ---
 
@@ -209,12 +209,12 @@ po previousVC
 
 - данные пришли?
     
-- не nil ли они?
+- не [[nil]] ли они?
     
 
 ---
 
-## 🧩 3. Поиск retain cycle
+## 🧩 3. Поиск [[retain cycle]]
 
 Ставим breakpoint в:
 
@@ -226,9 +226,9 @@ deinit
 
 ---
 
-## 🧩 4. Отладка async / completion
+## 🧩 4. Отладка [[async]] / completion
 
-Ставим breakpoint внутри closure:
+Ставим breakpoint внутри [[closure]]:
 
 ```swift
 networkService.fetch { result in
@@ -300,7 +300,7 @@ po model
 
 Можно ограничить:
 
-- main thread
+- [[main thread]]
     
 - background queue
     
@@ -313,7 +313,7 @@ po model
 
 Работает для:
 
-- UIViewController lifecycle
+- [[UIViewController]] lifecycle
     
 - delegate методов
     
@@ -377,15 +377,3 @@ po model
 Так работали и 10 лет назад, и сейчас — меняются фреймворки, но дисциплина отладки остаётся прежней.
 
 ---
-
-Если хочешь — можем дальше разобрать:
-
-- Exception Breakpoints глубже
-    
-- Symbolic Breakpoints на практике
-    
-- Memory Debugger
-    
-- Instruments
-    
-- Unit Testing в iOS
