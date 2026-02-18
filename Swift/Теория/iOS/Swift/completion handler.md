@@ -1,189 +1,108 @@
-**Completion handler** — это **[[closure]]**, который передаётся в функцию и вызывается **после завершения операции**, чтобы передать результат или сигнализировать о завершении.
+**Completion handler** (или просто **completion**) — это **замыкание** (closure), которое передаётся в функцию как последний аргумент и вызывается **после завершения** какой-либо операции (обычно асинхронной), чтобы сообщить результат, успех/ошибку или просто факт завершения.
 
-- Чаще всего используется в **асинхронных задачах**
-    
-- Позволяет функции **сообщить результат** без блокировки потока
-    
+В 2026 году completion handler всё ещё очень часто встречается в UIKit, Foundation и legacy-коде, хотя большинство новых API уже перешли на **async/await**.
 
-> Проще говоря: completion handler = «callback, который срабатывает, когда задача закончилась».
+### 1. Почему completion handler до сих пор важен
 
----
+| Сценарий                                      | Почему completion всё ещё используется                   | Современная альтернатива (2026)                     |
+|-----------------------------------------------|----------------------------------------------------------|------------------------------------------------------|
+| UIKit анимации                                | `UIView.animate` и `UIView.transition`                   | `withAnimation { ... }` + `Task`                     |
+| URLSession (старый API)                       | `dataTask`, `uploadTask`, `downloadTask`                 | `URLSession.shared.data(from:)` — async версия       |
+| Core Location, Core Motion, Core Bluetooth    | `requestLocation`, `startUpdatingLocation` и т.д.        | Некоторые методы уже async, но большинство — completion |
+| FileManager, PHPhotoLibrary, AVFoundation     | `moveItem`, `requestAuthorization`, `exportAsynchronously` | Частично async, частично completion                  |
+| Legacy-библиотеки и SDK (Firebase, Alamofire до 5.x) | Большинство SDK до сих пор на completion                | Новые версии — async/await                           |
+| Кастомные асинхронные операции                 | Когда пишешь свою асинхронную функцию на GCD/Operation   | Переписывай на `async throws`                        |
 
-## 2. Основные термины
+### 2. Самый современный и рекомендуемый паттерн 2026 года
 
-|Термин|Описание|
-|---|---|
-|**Completion handler**|Closure, переданный в функцию для уведомления о завершении|
-|**Escaping closure**|Completion handler почти всегда escaping, т.к. вызывается позже|
-|**Result type**|Стандартный тип `Result<Success, Error>` для передачи результата или ошибки|
-|**Non-escaping closure**|Иногда вызывается сразу, но для async обычно escaping|
-
----
-
-## 3. Основной синтаксис
+#### Вариант 1: Классический completion handler (ещё очень живой в UIKit)
 
 ```swift
-func performTask(completion: () -> Void) {
-    print("Task started")
-    completion() // вызываем после выполнения
-}
-
-performTask {
-    print("Task finished")
-}
-```
-
-- Closure передаётся в функцию как аргумент
-    
-- Вызывается после выполнения операции
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейший completion handler
-
-```swift
-func greet(name: String, completion: () -> Void) {
-    print("Hello, \(name)!")
-    completion()
-}
-
-greet(name: "Alice") {
-    print("Greeting finished")
-}
-```
-
-- Output:
-    
-
-```
-Hello, Alice!
-Greeting finished
-```
-
----
-
-### Пример 2. Completion handler с параметром
-
-```swift
-func fetchData(completion: (String) -> Void) {
-    let data = "Server data"
-    completion(data)
-}
-
-fetchData { result in
-    print("Received:", result)
-}
-```
-
-- Completion handler передаёт результат операции
-    
-
----
-
-### Пример 3. Escaping completion handler для асинхронного кода
-
-```swift
-func asyncTask(completion: @escaping (Int) -> Void) {
-    DispatchQueue.global().async {
-        let result = 42
-        completion(result)
-    }
-}
-
-asyncTask { value in
-    print("Result:", value)
-}
-```
-
-- `@escaping` нужен, чтобы closure можно было вызвать **после выхода из функции**
-    
-
----
-
-### Пример 4. Completion handler с [[Result]] для ошибок
-
-```swift
-enum NetworkError: Error { case failed }
-
-func downloadData(completion: @escaping (Result<String, Error>) -> Void) {
-    DispatchQueue.global().async {
+func loadUserProfile(userId: String, completion: @escaping (Result<User, Error>) -> Void) {
+    // Симуляция сетевого запроса
+    DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
         if Bool.random() {
-            completion(.success("Data received"))
+            let user = User(id: userId, name: "Alice")
+            completion(.success(user))
         } else {
-            completion(.failure(NetworkError.failed))
+            completion(.failure(NSError(domain: "Auth", code: -1009)))
         }
     }
 }
 
-downloadData { result in
-    switch result {
-    case .success(let data):
-        print(data)
-    case .failure(let error):
-        print("Error:", error)
+// Использование в UIViewController
+class ProfileViewController: UIViewController {
+    
+    func fetchProfile() {
+        showLoadingIndicator()
+        
+        loadUserProfile(userId: "123") { [weak self] result in
+            guard let self else { return }
+            
+            DispatchQueue.main.async {
+                self.hideLoadingIndicator()
+                
+                switch result {
+                case .success(let user):
+                    self.updateUI(with: user)
+                case .failure(let error):
+                    self.showError(error.localizedDescription)
+                }
+            }
+        }
     }
 }
 ```
 
-- Используется `Result` для безопасной передачи ошибки или успеха
-    
-
----
-
-### Пример 5. Несколько completion handlers / chaining
+#### Вариант 2: Обёртка старого completion в async/await (золотой стандарт миграции)
 
 ```swift
-func step1(completion: @escaping (Int) -> Void) {
-    DispatchQueue.global().async { completion(1) }
-}
-
-func step2(input: Int, completion: @escaping (Int) -> Void) {
-    DispatchQueue.global().async { completion(input + 1) }
-}
-
-func step3(input: Int, completion: @escaping (Int) -> Void) {
-    DispatchQueue.global().async { completion(input * 2) }
-}
-
-step1 { result1 in
-    step2(input: result1) { result2 in
-        step3(input: result2) { result3 in
-            print("Final result:", result3)
+func loadUserProfile(userId: String) async throws -> User {
+    try await withCheckedThrowingContinuation { continuation in
+        loadUserProfile(userId: userId) { result in
+            switch result {
+            case .success(let user):
+                continuation.resume(returning: user)
+            case .failure(let error):
+                continuation.resume(throwing: error)
+            }
         }
+    }
+}
+
+// Использование — чистый и линейный код
+Task {
+    do {
+        let user = try await loadUserProfile(userId: "123")
+        await updateUI(with: user)
+    } catch {
+        await showError(error.localizedDescription)
     }
 }
 ```
 
-- Демонстрирует **“callback hell”** при последовательных асинхронных операциях
-    
+**Преимущества обёртки**:
+- Код становится линейным (без вложенности)
+- Можно использовать `try await`, `async let`, `TaskGroup`
+- Легко тестировать с `XCTest` + `async`
+- Совместимо с Swift 6 strict concurrency
 
----
+### 3. Лучшие практики completion handler в Swift 2026
 
-## 5. Особенности completion handler
+- **Всегда используй `[weak self]`** в escaping completion (иначе retain cycle)
+- **Передавай результат через `Result<Success, Error>`** — это стандарт де-факто
+- **Диспатчи на главный поток** для обновления UI: `DispatchQueue.main.async` или `await MainActor.run`
+- **Не забывай отменять операции** при `deinit` или уходе с экрана (особенно таймеры, запросы, location)
+- **Оборачивай legacy-API в async** с помощью `withCheckedThrowingContinuation` — это must-have для новых проектов
+- **Swift 6 strict concurrency** — completion handler должен захватывать `self` явно (`[weak self]`), иначе предупреждение/ошибка
+- **Документируйте** — пиши комментарий «@escaping completion — вызывается после загрузки профиля на фоне»
 
-1. **Всегда closure** — callback-функция
-    
-2. **Escaping** — почти всегда вызывается позже, поэтому нужно `@escaping`
-    
-3. **Передача результата и ошибки** — через параметры или `Result`
-    
-4. **Удобство [[async]]/[[await]]** — современные функции заменяют completion handler на `async` функции
-    
+**Короткий девиз 2026**:
+> Completion handler — это **closure**, который говорит функции: «когда закончишь — позвони мне и скажи результат».  
+> В 2026 году:  
+> - используй `Result` + `@escaping`  
+> - всегда `[weak self]` + `guard let self`  
+> - оборачивай старые API в `async throws`  
+> - новый код пиши на `async/await` — callback hell мёртв.
 
----
-
-## 6. Итог
-
-- **Completion handler** = closure, вызываемый после завершения операции
-    
-- Передаёт результат, ошибки или сигнал завершения
-    
-- Escaping closure для асинхронного вызова
-    
-- Используется в **network requests, animations, file operations, timers**
-    
-
----
+Удачи с чистым и современным асинхронным кодом без вложенных замыканий! 🚀

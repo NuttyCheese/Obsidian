@@ -1,195 +1,130 @@
-**`do-catch`** — блок кода, в котором можно вызывать функции, которые **могут выбросить ошибку ([[throws]])**, и безопасно её обрабатывать.
+**`do-catch`** — это основная конструкция в Swift для **безопасной обработки ошибок**, которые могут быть выброшены функциями с ключевым словом `throws`.
 
-- `do` — блок, где выполняется код
-    
-- `catch` — блоки для отлова ошибок
-    
-- Позволяет отделить **ошибки от основной логики**
-    
+Она позволяет:
+- Выполнить потенциально опасный код внутри `do`
+- Перехватить и обработать любую ошибку в блоках `catch`
+- Отделить **основную логику** от **обработки ошибок**
 
-> Проще говоря: `do-catch` = «попробуй выполнить код и поймай ошибки, если они возникнут».
+Это **единственный правильный** способ работать с `throws` в современном Swift (2026 год).
 
----
+### 1. Полный синтаксис и все варианты (самые актуальные в 2026)
 
-## 2. Основные термины
-
-| Термин            | Описание                                               |
-| ----------------- | ------------------------------------------------------ |
-| `do`              | Блок, где выполняется потенциально опасный код         |
-| [[try]]           | Используется для вызова функций с `throws`             |
-| `catch`           | Блок для обработки ошибки                              |
-| `catch ErrorType` | Можно ловить конкретный тип ошибки                     |
-| `try?`            | Превращает результат в Optional, без падения программы |
-| `try!`            | Принудительный вызов, ошибка приведёт к краху          |
-
----
-
-## 3. Основной синтаксис
+#### Вариант 1: Базовый do-catch (самый частый)
 
 ```swift
 do {
-    try riskyFunction()
+    try riskyOperation()
+    print("Всё прошло успешно")
 } catch {
-    print("Error:", error)
+    print("Произошла ошибка: \(error.localizedDescription)")
 }
 ```
 
-- Любая ошибка, выброшенная `riskyFunction`, попадёт в `catch`
-    
+- `error` — это **любая** ошибка, соответствующая протоколу `Error`
+- Блок `catch` ловит **всё**, что не было обработано выше
 
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простое использование
+#### Вариант 2: Ловля конкретных ошибок (рекомендуемый стиль)
 
 ```swift
-enum MyError: Error {
-    case failed
-}
-
-func riskyFunction() throws {
-    throw MyError.failed
+enum AuthError: Error {
+    case wrongCredentials
+    case networkFailure
+    case serverError(statusCode: Int)
 }
 
 do {
-    try riskyFunction()
+    try authenticateUser()
+} catch AuthError.wrongCredentials {
+    showAlert("Неверный логин или пароль")
+} catch AuthError.networkFailure {
+    showAlert("Нет соединения с интернетом")
+} catch AuthError.serverError(let code) {
+    showAlert("Ошибка сервера: \(code)")
 } catch {
-    print("Caught an error:", error)
+    showAlert("Неизвестная ошибка: \(error)")
 }
 ```
 
-- Output: `"Caught an error: failed"`
-    
+**Золотое правило 2026**:
+- Конкретные `catch` → сверху
+- Универсальный `catch` → **всегда последний**
 
----
-
-### Пример 2. Несколько `catch` для разных ошибок
-
-```swift
-enum NetworkError: Error {
-    case offline
-    case timeout
-}
-
-func fetchData() throws {
-    if Bool.random() {
-        throw NetworkError.offline
-    } else {
-        throw NetworkError.timeout
-    }
-}
-
-do {
-    try fetchData()
-} catch NetworkError.offline {
-    print("Offline")
-} catch NetworkError.timeout {
-    print("Timeout")
-} catch {
-    print("Other error")
-}
-```
-
-- Позволяет **разделить обработку разных ошибок**
-    
-
----
-
-### Пример 3. try? и [[Optional]]
+#### Вариант 3: do-catch + async/await (самый частый сценарий сейчас)
 
 ```swift
-let result = try? fetchData()
-// result = nil, если выброшена ошибка
-```
-
-- Не выбрасывает ошибку, превращает результат в Optional
-    
-
----
-
-### Пример 4. try! — принудительный вызов
-
-```swift
-try! riskyFunction() // если выбросит ошибку — падение приложения
-```
-
-- Используется только если вы **абсолютно уверены**, что ошибки не будет
-    
-
----
-
-### Пример 5. do-catch с [[async]]/[[await]]
-
-```swift
-func asyncFetch() async throws -> String {
-    if Bool.random() {
-        return "Data"
-    } else {
-        throw NetworkError.timeout
-    }
-}
-
 Task {
     do {
-        let data = try await asyncFetch()
-        print(data)
+        let user = try await api.fetchCurrentUser()
+        await MainActor.run {
+            updateUI(with: user)
+        }
+    } catch NetworkError.timeout {
+        await showTimeoutAlert()
+    } catch APIError.unauthorized {
+        await navigateToLogin()
     } catch {
-        print("Error in async fetch:", error)
+        await showGenericError(error.localizedDescription)
     }
 }
 ```
 
-- Для асинхронных функций используется **`try await`** внутри `do-catch`
-    
-
----
-
-### Пример 6. Rethrow + do-catch
+#### Вариант 4: try? и try! — когда catch не нужен
 
 ```swift
-func performTask(task: () throws -> Void) rethrows {
-    try task()
-}
+// try? — ошибка → nil, без throw
+let user = try? JSONDecoder().decode(User.self, from: jsonData)
 
+// try! — если ошибка → краш (fatal error)
+let config = try! PropertyListDecoder().decode(Config.self, from: data)
+```
+
+**Когда использовать**:
+- `try?` — когда ошибка не критична и обработка не нужна
+- `try!` — **только** в тестах или когда 100% уверен (очень редко)
+
+### 2. Полный разбор всех catch-вариантов (2026 топ)
+
+```swift
 do {
-    try performTask {
-        throw MyError.failed
+    try complexOperation()
+} catch let error as NSError where error.code == -1009 {
+    // Специфическая ошибка сети
+    print("Нет соединения")
+} catch let error as DecodingError {
+    // Ошибки декодирования JSON
+    switch error {
+    case .keyNotFound(let key, _):
+        print("Отсутствует ключ: \(key.stringValue)")
+    default:
+        print("Ошибка декодирования: \(error)")
     }
+} catch let error as CustomError where error.isRecoverable {
+    // Восстанавливаемая ошибка
+    retryOperation()
 } catch {
-    print("Caught rethrown error:", error)
+    // Всё остальное
+    print("Необработанная ошибка: \(error)")
 }
 ```
 
-- `rethrows` позволяет функции выбрасывать ошибку **только если [[closure]] выбросит**
-    
+### 3. Лучшие практики do-catch в Swift 2026
 
----
+- **Лови конкретные ошибки первыми** — порядок catch имеет значение
+- **Всегда оставляй универсальный catch последним** — для неизвестных ошибок
+- **Используй `localizedDescription`** для показа пользователю
+- **Логируй неизвестные ошибки** — Crashlytics, Sentry, print или os_log
+- **В async** — оборачивай в `Task {}` и обновляй UI через `await MainActor.run`
+- **Не используй try! в production** — лучше `try?` + обработка nil
+- **Swift 6 strict concurrency** — весь блок `do-try-catch` должен быть на одном акторе
+- **Документируйте** — пиши комментарий «do-catch — обработка ошибок авторизации»
 
-## 5. Особенности do-catch
+**Короткий девиз 2026**:
+> `do-catch` — это когда ты говоришь: «попробуй, а если что-то пойдёт не так — я готов».  
+> В 2026 году:  
+> - конкретные ошибки → сверху  
+> - универсальный `catch` → снизу  
+> - `try?` — когда ошибка не важна  
+> - `try!` — почти никогда  
+> Это **единственный безопасный** способ работать с `throws` и `async throws`.
 
-1. Используется с функциями `throws`
-    
-2. Позволяет ловить **конкретные ошибки**
-    
-3. Можно использовать `try?` и `try!` для удобства
-    
-4. Совместим с **async/await**
-    
-5. Позволяет безопасно разделять **логическую обработку** и **ошибки**
-    
-
----
-
-## 6. Итог
-
-- **do-catch** = блок для безопасного вызова функций с `throws`
-    
-- `try` — вызов функции
-    
-- `catch` — обработка ошибки
-    
-- Можно ловить разные типы ошибок и комбинировать с `async/await`
-    
-
----
+Удачи с надёжной обработкой ошибок в твоём коде! 🛡️

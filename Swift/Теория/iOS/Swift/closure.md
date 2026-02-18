@@ -1,182 +1,124 @@
-**Closure** — это **самостоятельный блок кода**, который можно передавать и использовать как **значение**.
+**Closure** в Swift — это **самостоятельный блок кода**, который можно передавать как значение, присваивать переменной, возвращать из функции или использовать как аргумент.  
+По сути, это **анонимная функция**, которая может **захватывать** (capture) переменные и константы из окружающего контекста.
 
-- Функционально похожи на функции
-    
-- Могут захватывать и хранить значения из внешнего контекста (**capture values**)
-    
-- Используются как **[[callback]]**, аргументы функций, возвращаемые значения
-    
+В 2026 году closure — один из самых часто используемых инструментов Swift: они лежат в основе **async/await**, **Combine**, **SwiftUI**, **higher-order functions** (`map`, `filter`, `reduce`), **completion handlers** и многого другого.
 
-> Проще говоря: closure = «анонимная функция, которую можно передать как переменную».
+### 1. Зачем нужны closure (реальные сценарии 2026)
 
----
+| Сценарий                                      | Почему closure идеален                                   | Пример использования |
+|-----------------------------------------------|----------------------------------------------------------|----------------------|
+| Completion handler (callback)                 | Асинхронная операция сообщает о завершении               | `URLSession`, `UIView.animate`, `CLLocationManager` |
+| Higher-order functions                        | Передача логики обработки коллекций                      | `array.map { $0 * 2 }`, `filter { $0 > 0 }` |
+| SwiftUI / Combine                             | `@State`, `@Binding`, `Publisher.sink`, `onReceive`      | `Button(action: { ... }) { Text("Tap") }` |
+| Async/await обёртки                           | Преобразование старого callback API в async              | `withCheckedContinuation`, `withTaskGroup` |
+| Захват состояния (stateful closure)           | Замыкание хранит переменные между вызовами               | `makeCounter()`, `lazy var expensive` |
+| Event handling                                | Обработка жестов, уведомлений, KVO                       | `addAction(UIAction { ... })`, `NotificationCenter` |
 
-## 2. Основные термины
+### 2. Полный синтаксис closure (все варианты)
 
-| Термин                       | Описание                                                                           |
-| ---------------------------- | ---------------------------------------------------------------------------------- |
-| **Closure expression**       | Синтаксис для объявления closure (`{ (params) -> ReturnType in code }`)            |
-| **[[Capture list]]**         | Список значений, которые closure захватывает из внешнего контекста (`[weak self]`) |
-| **Trailing closure**         | Closure, переданный после скобок функции, если это последний аргумент              |
-| **Escaping closure**         | Closure, который сохраняется и вызывается позже (например, в async коде)           |
-| **Non-escaping closure**     | Closure вызывается сразу внутри функции                                            |
-| **Shorthand argument names** | `$0`, `$1` и т.д. для краткой записи параметров                                    |
-
----
-
-## 3. Основной синтаксис
+#### Вариант 1: Полный синтаксис (самый подробный)
 
 ```swift
-let greeting = { (name: String) -> String in
-    return "Hello, \(name)!"
-}
-
-print(greeting("Alice")) // Hello, Alice!
-```
-
-- Closure присваивается переменной `greeting`
-    
-- Можно вызывать как функцию
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейший closure
-
-```swift
-let add = { (a: Int, b: Int) -> Int in
+let add: (Int, Int) -> Int = { (a: Int, b: Int) -> Int in
     return a + b
 }
-
-print(add(2, 3)) // 5
+print(add(3, 5)) // 8
 ```
 
-- Closure принимает параметры и возвращает результат
-    
-
----
-
-### Пример 2. Closure без параметров и возвращаемого значения
+#### Вариант 2: Упрощённый (самый частый)
 
 ```swift
-let sayHello = {
-    print("Hello!")
-}
-
-sayHello() // Hello!
+let multiply = { a, b in a * b }
+print(multiply(4, 6)) // 24
 ```
 
----
-
-### Пример 3. Trailing closure в функции
+#### Вариант 3: Shorthand argument names (`$0`, `$1`)
 
 ```swift
-func performTask(completion: () -> Void) {
-    print("Task started")
-    completion()
-}
+let numbers = [1, 2, 3, 4]
+let doubled = numbers.map { $0 * 2 }          // [2, 4, 6, 8]
+let even = numbers.filter { $0 % 2 == 0 }     // [2, 4]
+let sum = numbers.reduce(0, +)                // 10
+```
 
-performTask {
-    print("Task finished")
+#### Вариант 4: Trailing closure (самый читаемый)
+
+```swift
+UIView.animate(withDuration: 0.3) {
+    self.view.alpha = 0.5
+} completion: { _ in
+    self.view.removeFromSuperview()
 }
 ```
 
-- Closure передан **после скобок функции** (trailing closure)
-    
-
----
-
-### Пример 4. Escaping closure (асинхронный код)
+#### Вариант 5: Escaping closure + capture list (самый важный в 2026)
 
 ```swift
-func asyncTask(completion: @escaping (String) -> Void) {
-    DispatchQueue.global().async {
-        completion("Async result")
-    }
-}
-
-asyncTask { result in
-    print(result) // Async result
-}
-```
-
-- `@escaping` нужен, если closure вызывается после выхода из функции
+class ViewModel {
+    var data: String?
     
-
----
-
-### Пример 5. Capture values (замыкание захватывает переменные)
-
-```swift
-func makeIncrementer(amount: Int) -> () -> Int {
-    var total = 0
-    return {
-        total += amount
-        return total
-    }
-}
-
-let incrementByTwo = makeIncrementer(amount: 2)
-print(incrementByTwo()) // 2
-print(incrementByTwo()) // 4
-print(incrementByTwo()) // 6
-```
-
-- Closure захватывает `total` и `amount` из внешнего контекста
-    
-- `total` сохраняет своё значение между вызовами
-    
-
----
-
-### Пример 6. [[Weak self]] и capture list
-
-```swift
-class MyClass {
-    var value = 10
-    
-    func doSomething() {
-        DispatchQueue.global().async { [weak self] in
-            guard let self = self else { return }
-            print(self.value)
-        }
+    func fetch() {
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.data = String(data: data ?? Data(), encoding: .utf8)
+            }
+        }.resume()
     }
 }
 ```
 
-- `[weak self]` предотвращает **retain cycle** при захвате self внутри closure
-    
+### 3. Capture List — сердце безопасности closure
 
----
+```swift
+// Опасно — retain cycle
+Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+    self.counter += 1  // self удерживается closure → closure удерживает timer → timer удерживает self
+}
 
-## 5. Особенности closure
+// Безопасно — 2026 стандарт
+Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+    guard let self else {
+        timer.invalidate()
+        return
+    }
+    self.counter += 1
+}
+```
 
-1. **Анонимность** — можно использовать без имени
-    
-2. **Capture values** — closure может хранить ссылки на внешние переменные
-    
-3. **Escaping vs Non-escaping** — важно для async кода
-    
-4. **Trailing closure** — удобная запись, когда closure последний аргумент
-    
-5. **Shorthand arguments** — `$0`, `$1` для краткой записи
-    
-6. **Reference semantics** — closure захватывает переменные как ссылки (для классов)
-    
+**Золотые правила capture list 2026**:
+- `[weak self]` — в **любом escaping** closure (async, completion, Timer, Notification)
+- `guard let self else { return }` — сразу после входа в closure
+- `[unowned self]` — **только** если уверен, что `self` живее closure (редко!)
+- `[value]` — захват по значению (snapshot) для констант, параметров, immutable данных
+- `[weak delegate, weak dataSource]` — для нескольких объектов
 
----
+### 4. Closure vs async/await (2026 реальность)
 
-## 6. Итог
+| Ситуация                                      | Старый стиль (closure)                               | Новый стиль (async/await)                            | Рекомендация |
+|-----------------------------------------------|-------------------------------------------------------|------------------------------------------------------|--------------|
+| Сетевой запрос                                | `dataTask` + completion                               | `try await URLSession.shared.data(from:)`            | async/await |
+| Анимация                                      | `animate` + completion                                | `withAnimation { ... }` + `Task`                     | withAnimation |
+| Таймер                                        | `Timer` + escaping closure                            | `Task { try await Task.sleep(...) }`                 | Task + sleep |
+| Несколько операций                            | Callback hell (вложенные closure)                     | `async let`, `TaskGroup`, `actor`                    | Structured Concurrency |
+| Legacy API                                    | Completion handler                                    | `withCheckedContinuation`, `withCheckedThrowingContinuation` | Обёртка в async |
 
-- **Closure** = функция без имени, которую можно присвоить переменной или передать в функцию
-    
-- Используется для **callback**, **[[async]] кода**, **замыканий состояния**
-    
-- Можно захватывать переменные и использовать `@escaping` для сохранения после выхода из функции
-    
-- Современный [[Swift]] активно использует closure в UI, async и коллекциях
-    
+### 5. Лучшие практики closure в Swift 2026
 
----
+- **Всегда** `[weak self]` + `guard let self` в escaping closure  
+- **Используй trailing closure** — читаемость кода растёт на 200%  
+- **Shorthand `$0`, `$1`** — в простых `map`/`filter`, но с именами в сложных closure  
+- **Избегай capture list в non-escaping** — компилятор сам подскажет, если нужен  
+- **Для UI** — все обновления через `await MainActor.run` или `@MainActor`  
+- **Swift 6 strict concurrency** — closure должен захватывать `self` явно, иначе ошибка  
+- **Документируйте** — пиши комментарий «[weak self] — escaping closure для загрузки данных»
+
+**Короткий девиз 2026**:
+> Closure — это **анонимная функция**, которую можно передать, вернуть, сохранить и вызвать позже.  
+> В 2026 году:  
+> - `[weak self]` + `guard let self` — в каждом escaping closure  
+> - trailing closure — для читаемости  
+> - `async/await` + `Task` — вместо callback hell  
+> Это **основа** асинхронного кода, UI и функционального программирования в Swift.
+
+Удачи с чистыми, безопасными и современными замыканиями в твоём коде! 🚀

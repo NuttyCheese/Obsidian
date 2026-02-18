@@ -1,189 +1,145 @@
-**`deinit`** — это **деинициализатор класса**, который вызывается **один раз перед удалением объекта из памяти**.
+**`deinit`** — это специальный метод в классах Swift, который **автоматически вызывается** системой **непосредственно перед тем**, как объект будет удалён из памяти (после того, как ARC обнулил последнюю сильную ссылку на него).
 
-- Используется только в **классах**, т.к. [[struct]] и [[enum]] — **[[Value Type]]**, у которых нет деинициализации
-    
-- Позволяет **освободить ресурсы**, закрыть файлы, отменить таймеры, разорвать связи (например, [[weak]] ссылки)
-    
-- Не принимает параметров и не возвращает значения
-    
+Это **единственный** способ в Swift гарантированно выполнить финальную очистку ресурсов именно в момент уничтожения объекта.
 
-> Проще говоря: `deinit` = «метод, который вызывается автоматически, когда объект уничтожается».
+### 1. Ключевые факты о deinit (2026 актуально)
 
----
+| Характеристика                        | Значение / Особенность                                      | Важные детали |
+|---------------------------------------|-------------------------------------------------------------|---------------|
+| Где можно использовать                | **Только в классах** (class)                                | struct и enum не имеют deinit |
+| Сколько раз вызывается                | **Ровно один раз** на экземпляр                            | Даже если объект создавался много раз |
+| Параметры и возвращаемое значение     | Нет — `deinit { ... }` без скобок и return                 | Просто тело блока |
+| Когда точно вызывается                | Когда ARC обнуляет последнюю сильную ссылку                 | После вызова deinit память освобождается |
+| Что НЕ вызывается deinit              | При retain cycle (замкнутый цикл сильных ссылок)            | Самая частая причина утечек памяти |
+| Можно ли вызвать вручную              | Нет — `deinit` запрещено вызывать вручную                  | Компилятор выдаст ошибку |
+| Можно ли переопределить в подклассе   | Да — `override deinit { ... }`                              | Вызывается после deinit родителя |
+| Связь с concurrency                   | Вызывается на том же потоке/акторе, где обнулилась ссылка   | В Swift 6 строже проверяется |
 
-## 2. Основные термины
+### 2. Самые важные и рекомендуемые паттерны использования deinit в 2026 году
 
-| Термин                                     | Описание                                                                       |
-| ------------------------------------------ | ------------------------------------------------------------------------------ |
-| **[[class]]**                              | [[Reference Type]], объект которого живёт в памяти, пока на него есть ссылки   |
-| **Deinitializer**                          | Метод `deinit`, вызывается перед удалением объекта                             |
-| **[[ARC]] (Automatic Reference Counting)** | Система автоматического подсчёта ссылок в [[Swift]], которая вызывает `deinit` |
-| **Strong / Weak references**               | Сильные ссылки удерживают объект в памяти, слабые не удерживают                |
-| **[[retain cycle]]**                      | Цикл сильных ссылок, препятствующий вызову `deinit`                            |
-
----
-
-## 3. Основной синтаксис
+#### Паттерн 1: Логирование жизненного цикла (отладка)
 
 ```swift
-class MyClass {
-    var name: String
-    init(name: String) {
-        self.name = name
-        print("\(name) инициализирован")
+class ProfileViewModel {
+    init() {
+        print("ProfileViewModel создан")
     }
     
     deinit {
-        print("\(name) деинициализирован")
+        print("ProfileViewModel уничтожен")
     }
 }
-
-var obj: MyClass? = MyClass(name: "Alice")
-obj = nil // "Alice деинициализирован"
 ```
 
-- `deinit` вызывается **автоматически при удалении последней сильной ссылки**
-    
-- Можно использовать для **очистки ресурсов или логирования**
-    
+Очень полезно при поиске утечек памяти — если deinit не вызывается → retain cycle.
 
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простой deinit
+#### Паттерн 2: Отмена таймеров и задач (самый частый в UIKit)
 
 ```swift
-class Person {
-    let name: String
-    init(name: String) { self.name = name }
-    deinit { print("\(name) удалён") }
+class TimerViewController: UIViewController {
+    private var timer: Timer?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.updateTimer()
+        }
+    }
+    
+    deinit {
+        timer?.invalidate()
+        print("Таймер остановлен при уничтожении контроллера")
+    }
 }
-
-var p: Person? = Person(name: "Bob")
-p = nil // Bob удалён
 ```
 
-- После присвоения [[nil]] последней ссылки объект уничтожается
-    
+Без deinit таймер будет тикать даже после ухода с экрана → retain cycle.
 
----
-
-### Пример 2. Deinit с ресурсами
+#### Паттерн 3: Отписка от уведомлений / KVO
 
 ```swift
-class FileHandler {
-    let fileName: String
-    init(fileName: String) { self.fileName = fileName; print("Открыт файл \(fileName)") }
-    deinit { print("Закрыт файл \(fileName)") }
+class NotificationObserver {
+    init() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleNotification),
+                                               name: .UIApplicationDidBecomeActive,
+                                               object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+        print("Отписка от уведомлений завершена")
+    }
+    
+    @objc func handleNotification() { ... }
 }
-
-var handler: FileHandler? = FileHandler(fileName: "data.txt")
-handler = nil // Закрыт файл data.txt
 ```
 
-- Используется для **закрытия файлов, соединений, таймеров**
-    
-
----
-
-### Пример 3. С retain cycle
+#### Паттерн 4: Закрытие файлов / соединений / потоков
 
 ```swift
-class Node {
-    var next: Node?
-    deinit { print("Node удалён") }
+class FileProcessor {
+    private var fileHandle: FileHandle?
+    
+    init(path: String) throws {
+        fileHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: path))
+    }
+    
+    deinit {
+        try? fileHandle?.close()
+        print("Файл закрыт при уничтожении объекта")
+    }
 }
-
-var node1: Node? = Node()
-var node2: Node? = Node()
-node1?.next = node2
-node2?.next = node1
-
-node1 = nil
-node2 = nil
-// Deinit не вызывается из-за retain cycle
 ```
 
-- Проблема **retain cycle** мешает вызову `deinit`
-    
-- Решение: использовать `weak` или `unowned`
-    
-
----
-
-### Пример 4. Weak ссылка для исправления retain cycle
+### 3. Самые опасные ловушки retain cycle (и как их ловить через deinit)
 
 ```swift
-class Node {
-    weak var next: Node?
-    deinit { print("Node удалён") }
+// Классический retain cycle (deinit НЕ вызовется)
+class Parent {
+    var child: Child?
+    deinit { print("Parent deinit") }
 }
 
-var node1: Node? = Node()
-var node2: Node? = Node()
-node1?.next = node2
-node2?.next = node1
+class Child {
+    var parent: Parent?          // сильная ссылка!
+    deinit { print("Child deinit") }
+}
 
-node1 = nil // Node удалён
-node2 = nil // Node удалён
+var p: Parent? = Parent()
+var c = Child()
+p?.child = c
+c.parent = p
+p = nil
+c = nil
+// НИЧЕГО НЕ ВЫВЕДЕТСЯ — объекты живы вечно
 ```
 
-- `weak` ссылка не удерживает объект в памяти → `deinit` вызывается
-    
-
----
-
-### Пример 5. Deinit + [[closure]]
+Решение — **weak** или **unowned**:
 
 ```swift
-class TimerClass {
-    var timer: (() -> Void)?
-    deinit { print("TimerClass удалён") }
+class Child {
+    weak var parent: Parent?     // или unowned, если уверен в жизненном цикле
+    deinit { print("Child deinit") }
 }
-
-var t: TimerClass? = TimerClass()
-t?.timer = { [weak t] in
-    print("Timer fired for \(t?.description ?? "nil")")
-}
-t = nil // TimerClass удалён
 ```
 
-- `weak` нужен, чтобы замыкание не удерживало объект и `deinit` вызывался
-    
+Теперь deinit вызовется.
 
----
+### 4. Лучшие практики deinit в Swift 2026
 
-## 5. Особенности deinit
+- **Всегда** добавляй `deinit { print(...) }` в классы, которые держат ресурсы (таймеры, observers, файлы, сетевые задачи)  
+- **Пиши deinit в самом конце класса** — сразу видно, что происходит при уничтожении  
+- **Не выполняй тяжёлую работу в deinit** — только быструю очистку (invalidate, removeObserver, close)  
+- **Не полагайся на deinit для критической логики** — это не finally из других языков  
+- **В SwiftUI / Combine** — используй `.onDisappear` или `.task {}` вместо deinit  
+- **Swift 6 strict concurrency** — deinit вызывается на том же акторе, где обнулилась последняя ссылка  
+- **Документируйте** — пиши комментарий «deinit — отмена таймера и отписка от уведомлений»
 
-1. **Вызывается автоматически при удалении последней сильной ссылки**
-    
-2. Используется только в **классах**
-    
-3. Полезен для:
-    
-    - Освобождения ресурсов
-        
-    - Отмены таймеров
-        
-    - Логирования жизненного цикла объектов
-        
-4. **Не принимает аргументы и не возвращает значения**
-    
-5. Если есть **retain cycle**, deinit **не вызывается**
-    
+**Короткий девиз 2026**:
+> `deinit` — это **последний шанс** класса сказать «прощай» перед уходом из памяти.  
+> В 2026 году используй его **только** для очистки ресурсов: invalidate таймеров, removeObserver, close файлов/соединений.  
+> Если deinit не вызывается → 99% случаев это retain cycle.  
+> Пиши `deinit` в каждом классе, который держит что-то внешнее — это спасёт от утечек.
 
----
-
-## 6. Итог
-
-- **deinit** = метод-деинициализатор класса
-    
-- Позволяет **очистить ресурсы и освободить память**
-    
-- Работает с ARC, вызывается автоматически при удалении последней ссылки
-    
-- Важно контролировать **retain cycles**, иначе `deinit` не вызовется
-    
-
----
+Удачи с чистой памятью и гарантированной очисткой в твоём приложении! 🧹

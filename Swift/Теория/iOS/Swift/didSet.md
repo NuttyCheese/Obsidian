@@ -1,184 +1,155 @@
-**`didSet`** — это **наблюдатель свойства**, который вызывается **сразу после того, как свойство получило новое значение**.
+**`didSet`** — это **наблюдатель свойства** (property observer) в Swift, который автоматически вызывается **сразу после** того, как свойство получило **новое значение** (после присваивания).
 
-- Используется только с **хранимыми свойствами ([[var]])**
-    
-- Не вызывается при инициализации свойства в момент объявления, а только при последующих изменениях
-    
-- Можно использовать для **обновления интерфейса, валидации или логирования изменений**
-    
+Это один из самых удобных и часто используемых инструментов для реакции на изменения свойств — особенно в UIKit, SwiftUI (через `@Published`) и ViewModel’ах.
 
-> Проще говоря: `didSet` = «что делать после того, как свойство изменилось».
+### 1. Ключевые правила didSet (запомни навсегда)
 
----
+| Правило                                      | Что значит                                                                 | Пример / Последствие |
+|----------------------------------------------|-----------------------------------------------------------------------------|----------------------|
+| Работает **только** с **хранимыми свойствами** (`var`) | Не работает с `let`, computed properties (`get/set`), lazy | `var count = 0 { didSet { ... } }` — OK |
+| **Не вызывается** при **инициализации** свойства | При `init` или объявлении значения `didSet` не срабатывает | `var score = 0 { didSet { print("changed") } }` — при создании не печатает |
+| Вызывается **после** присваивания нового значения | `oldValue` — это значение **до** изменения | `score = 10` → `oldValue` = предыдущее, `score` = 10 |
+| Можно использовать **несколько наблюдателей** | `willSet` + `didSet` в одном свойстве | `willSet` → до, `didSet` → после |
+| Доступ к `oldValue` и `newValue`             | `oldValue` — встроенная переменная в `didSet`                             | `didSet { print("from \(oldValue) to \(score)") }` |
+| Можно **изменять само свойство** внутри `didSet` | Но это вызовет **ещё один** `didSet` (рекурсия!)                          | Опасно — легко получить бесконечный цикл |
 
-## 2. Основные термины
-
-| Термин                | Описание                                                                      |
-| --------------------- | ----------------------------------------------------------------------------- |
-| **Property Observer** | Наблюдатель свойства: [[willSet]] (до изменения) и `didSet` (после изменения) |
-| **Old Value**         | Предыдущее значение свойства, доступное через ключевое слово `oldValue`       |
-| **Хранимое свойство** | Переменная, которая реально хранит данные, не вычисляемое свойство            |
-| **Computed Property** | Свойство с [[Swift/Теория/Swift/Standart Library/get]]/[[Set]], не может использовать `didSet`                    |
-
----
-
-## 3. Основной синтаксис
+### 2. Самый рекомендуемый паттерн 2026 года (золотой стандарт)
 
 ```swift
-var score: Int = 0 {
-    didSet {
-        print("Score changed from \(oldValue) to \(score)")
+@MainActor
+class ProfileViewModel: ObservableObject {
+    
+    @Published private(set) var username: String = "" {
+        didSet {
+            // Автоматическое обновление UI или валидация
+            updateGreeting()
+            validateUsername()
+        }
+    }
+    
+    @Published var greeting: String = "Привет, гость!"
+    
+    private func updateGreeting() {
+        greeting = username.isEmpty ? "Привет, гость!" : "Привет, \(username)!"
+    }
+    
+    private func validateUsername() {
+        if username.count > 20 {
+            username = String(username.prefix(20))  // обрезаем
+            // или показать ошибку
+        }
     }
 }
-
-score = 10
-// Output: Score changed from 0 to 10
 ```
 
-- `oldValue` — встроенная переменная, содержащая предыдущее значение
+### 3. Полный разбор всех популярных сценариев didSet
+
+#### Сценарий 1: Автоматическое обновление UI (UIKit)
+
+```swift
+class ProfileViewController: UIViewController {
     
+    @IBOutlet private weak var nameLabel: UILabel!
+    
+    var userName: String = "" {
+        didSet {
+            nameLabel.text = userName.isEmpty ? "Гость" : userName
+        }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        userName = "Алексей"  // → label обновится
+    }
+}
+```
 
----
+#### Сценарий 2: Валидация и коррекция значения
 
-## 4. Примеры от простого к сложному
+```swift
+class Settings {
+    var volume: Double = 0.5 {
+        didSet {
+            // Ограничиваем диапазон 0...1
+            if volume < 0 {
+                volume = 0
+            } else if volume > 1 {
+                volume = 1
+            }
+            
+            applyVolumeToPlayer(volume)
+        }
+    }
+}
+```
 
-### Пример 1. Логирование изменений
+#### Сценарий 3: Логирование и отладка
+
+```swift
+class Counter {
+    var value = 0 {
+        didSet {
+            print("Counter changed: \(oldValue) → \(value)")
+        }
+    }
+}
+```
+
+#### Сценарий 4: didSet + willSet вместе (полный контроль)
 
 ```swift
 var temperature: Double = 20.0 {
-    didSet {
-        print("Temperature changed from \(oldValue) to \(temperature)")
-    }
-}
-
-temperature = 25.0
-// Output: Temperature changed from 20.0 to 25.0
-```
-
-- Простое отслеживание изменений значения
-    
-
----
-
-### Пример 2. Обновление UI через didSet
-
-```swift
-class ViewController: UIViewController {
-    var labelText: String = "" {
-        didSet {
-            myLabel.text = labelText
-        }
-    }
-    
-    @IBOutlet weak var myLabel: UILabel!
-}
-```
-
-- Когда `labelText` меняется, автоматически обновляется [[UILabel]]
-    
-
----
-
-### Пример 3. Валидация значения
-
-```swift
-var percentage: Int = 0 {
-    didSet {
-        if percentage > 100 {
-            percentage = 100
-        } else if percentage < 0 {
-            percentage = 0
-        }
-        print("Percentage is now \(percentage)")
-    }
-}
-
-percentage = 120
-// Output: Percentage is now 100
-```
-
-- Можно автоматически **корректировать значение свойства**
-    
-
----
-
-### Пример 4. didSet с optional свойством
-
-```swift
-var username: String? {
-    didSet {
-        if let name = username {
-            print("Hello, \(name)!")
-        } else {
-            print("Username is empty")
-        }
-    }
-}
-
-username = "Alice"
-// Output: Hello, Alice!
-username = nil
-// Output: Username is empty
-```
-
-- Можно работать с **[[Optional]] значениями**
-    
-
----
-
-### Пример 5. didSet и willSet вместе
-
-```swift
-var score: Int = 0 {
     willSet {
-        print("Score will change from \(score) to \(newValue)")
+        print("Температура будет изменена на \(newValue)°C")
     }
     didSet {
-        print("Score changed from \(oldValue) to \(score)")
+        if temperature > 30 {
+            print("Внимание: жарко! Было \(oldValue)°C")
+        }
     }
 }
-
-score = 50
-// Output:
-// Score will change from 0 to 50
-// Score changed from 0 to 50
 ```
 
-- `willSet` вызывается **до присваивания**, `didSet` — **после**
-    
+### 4. Важные ловушки и антипаттерны (2026)
 
----
+- **Рекурсия в didSet**  
+  ```swift
+  var score = 0 {
+      didSet { score += 1 }  // Бесконечный цикл!
+  }
+  ```
 
-## 5. Особенности didSet
+- **didSet в computed property** — **запрещено** компилятором  
+  ```swift
+  var fullName: String {
+      get { firstName + " " + lastName }
+      set { /* ... */ }
+      didSet { }  // Ошибка компиляции
+  }
+  ```
 
-1. Работает **только с хранимыми свойствами (`var`)**
-    
-2. Не вызывается при **инициализации значения**
-    
-3. Доступно **oldValue** — предыдущие данные
-    
-4. Можно использовать вместе с **willSet** для полного контроля изменений
-    
-5. Часто используется для **обновления UI, логирования, валидации**
-    
+- **Забыли [weak self] в замыканиях внутри didSet** → retain cycle  
+- **didSet вызывается даже при присваивании того же значения**  
+  ```swift
+  score = score  // didSet всё равно сработает!
+  ```
 
----
+### 5. Лучшие практики didSet в Swift 2026
 
-## 6. Итог
+- **Используй didSet для побочных эффектов**: UI-обновление, логи, валидация, запуск анимаций  
+- **Не делай тяжёлую работу** в didSet — это может замедлить интерфейс  
+- **В SwiftUI** — предпочитай `@Published` + `.onChange` или `didSet` внутри `@Published`  
+- **В Combine** — используй `.sink` или `.assign` вместо didSet  
+- **Swift 6 strict concurrency** — didSet выполняется на том же акторе, что и присваивание  
+- **Документируйте** — пиши комментарий «didSet — автоматическое обновление лейбла при изменении имени»
 
-- **didSet** = наблюдатель свойства после изменения
-    
-- Позволяет:
-    
-    - Логировать изменения
-        
-    - Обновлять UI автоматически
-        
-    - Делать валидацию или коррекцию данных
-        
-    - Работать с Optional и обычными типами
-        
-- Можно комбинировать с **willSet** для контроля до и после изменения
-    
+**Короткий девиз 2026**:
+> `didSet` — это «после того, как свойство изменилось — сделай вот это».  
+> В 2026 году используй его для:  
+> - автообновления UI  
+> - валидации и коррекции значения  
+> - логирования изменений  
+> - запуска побочных эффектов  
+> Но помни: **не вызывается при инициализации**, **может быть рекурсивным**, **работает только с var**.
 
----
+Удачи с автоматической реакцией на изменения свойств в твоём коде! 🔄

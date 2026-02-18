@@ -1,221 +1,136 @@
-**`Collection`** — это базовый протокол для всех последовательностей элементов в [[Swift]], который расширяет **[[protocol Sequence]]** и добавляет возможности доступа по индексу, подсчёта количества элементов и безопасной итерации.
+**Collection** — это фундаментальный протокол в Swift, который лежит в основе всех упорядоченных коллекций языка: массивов, строк, словарей, множеств, диапазонов и пользовательских типов.
 
-> Проще говоря: `Collection` = «любая упорядоченная последовательность элементов, доступная по индексу».
+Он расширяет протокол **Sequence** и добавляет возможность **доступа по индексу**, **подсчёта элементов** и **безопасной итерации**.
 
----
+В 2026 году `Collection` — это один из самых важных протоколов стандартной библиотеки, и почти весь код, работающий с последовательностями, опирается именно на него.
 
-## 🔹 1. Основные термины
+### 1. Что делает тип Collection-ом (минимальные требования)
 
-| Термин                      | Описание                                                                             |
-| --------------------------- | ------------------------------------------------------------------------------------ |
-| **Element**                 | Тип элемента коллекции (`Collection.Element`)                                        |
-| **Index**                   | Тип индекса для доступа к элементам (может отличаться от Int, например у LinkedList) |
-| **startIndex / endIndex**   | Границы коллекции для итерации                                                       |
-| **Subscript**               | Доступ к элементам через `collection[index]`                                         |
-| **count**                   | Количество элементов в коллекции                                                     |
-| **Mutable / Immutable**     | Можно изменять коллекцию (`var`) или нет (`let`)                                     |
-| **Indices**                 | Диапазон всех индексов коллекции                                                     |
-| **first / last**            | Первый и последний элемент коллекции                                                 |
-| **Sequence**                | `Collection` наследует протокол `Sequence`, поэтому поддерживает `for-in` и `map`    |
-| **[[Copy-On-Write]] (COW)** | Оптимизация для массивов и строк: буфер может быть общий до модификации              |
-
----
-
-## 🔹 2. Основной синтаксис
+Чтобы тип соответствовал протоколу `Collection`, он должен реализовать:
 
 ```swift
-let array: [Int] = [1, 2, 3]
-let set: Set<String> = ["A", "B", "C"]
-
-func printCollection<C: Collection>(_ collection: C) {
-    for element in collection {
-        print(element)
-    }
-}
-```
-
-- Протокол `Collection` **обобщённый**: поддерживает любой тип `Element`
-    
-- Все массивы, строки, словари, множества в Swift соответствуют `Collection`
-    
-
----
-
-## 🔹 3. Минимальные требования для реализации Collection
-
-Чтобы свой тип соответствовал `Collection`, нужно реализовать:
-
-1. Типы:
-    
-    ```swift
+protocol Collection: Sequence {
     associatedtype Element
     associatedtype Index: Comparable
-    ```
     
-2. Свойства:
-    
-    ```swift
     var startIndex: Index { get }
     var endIndex: Index { get }
-    ```
     
-3. Методы:
-    
-    ```swift
     func index(after i: Index) -> Index
+    
     subscript(position: Index) -> Element { get }
-    ```
-    
-
-- После этого вы автоматически получаете:
-    
-    - [[for-in]] циклы
-        
-    - [[map]], [[filter]], [[reduce]]
-        
-    - Свойства `first`, `last`, `count` (через default реализацию)
-        
-
----
-
-## 🔹 4. Примеры
-
-### Пример 1. [[Array]] как Collection
-
-```swift
-let numbers = [10, 20, 30]
-print(numbers.startIndex) // 0
-print(numbers.endIndex)   // 3
-print(numbers[numbers.startIndex]) // 10
-```
-
-- `Array` реализует `Collection`, поэтому `startIndex` и `endIndex` доступны
-    
-- Индексы массива — это `Int`
-    
-
----
-
-### Пример 2. Строка как Collection
-
-```swift
-let text = "Hello"
-for index in text.indices {
-    print(text[index])
 }
-// H e l l o
 ```
 
-- [[String]] тоже Collection, но **индексы не Int**, а `String.Index`
-    
-- Безопасно для юникода и сложных символов
-    
+После этого автоматически становятся доступны:
 
----
+- `count`, `isEmpty`
+- `first`, `last`
+- `indices` (диапазон всех индексов)
+- `for-in` итерация
+- `map`, `filter`, `reduce`, `sorted`, `compactMap` и многие другие методы
 
-### Пример 3. Свой тип Collection
+### 2. Сравнение Collection с Sequence (самое частое заблуждение)
+
+| Характеристика                  | Sequence                                       | Collection                                      | Когда использовать в 2026 |
+|---------------------------------|------------------------------------------------|-------------------------------------------------|---------------------------|
+| Доступ по индексу               | Нет (только последовательный проход)           | Да (startIndex, subscript)                      | Collection — если нужен индекс |
+| count / isEmpty                 | Нет (нужно пройтись)                           | Да (O(1) в большинстве случаев)                | Collection — для быстрого подсчёта |
+| first / last                    | Да (O(1) в массивах, O(n) в других)            | Да (O(1) гарантировано)                         | Collection — если важен O(1) доступ |
+| Многократная итерация           | Да (но может быть дорогой)                     | Да (и эффективнее)                              | Collection — для многократного прохода |
+| Примеры типов                   | `AnySequence`, `StrideSequence`, генераторы    | `Array`, `String`, `Set`, `Dictionary`, `Range` | — |
+
+**Правило 2026**:  
+Если тебе нужен **доступ по индексу** или **быстрый count** — требуй `Collection`.  
+Если достаточно **однократного прохода** (map, reduce, for-in) — достаточно `Sequence`.
+
+### 3. Самые популярные типы, conforming к Collection (2026)
+
+| Тип              | Index тип          | Элемент тип       | Особенности 2026                          | Самый частый сценарий |
+|------------------|--------------------|-------------------|-------------------------------------------|-----------------------|
+| `Array<Element>` | `Int`              | `Element`         | Copy-on-Write, contiguous memory          | Всё подряд            |
+| `String`         | `String.Index`     | `Character`       | Unicode-safe, grapheme clusters           | Текст, эмодзи         |
+| `Set<Element>`   | Специальный        | `Element`         | Неупорядоченный, хэш-таблица              | Уникальные элементы   |
+| `Dictionary<Key, Value>` | Специальный   | `(key: Key, value: Value)` | Неупорядоченный, хэш-таблица       | Ключ-значение         |
+| `Range<Bound>`   | `Bound`            | `Bound`           | Ленивый диапазон                          | Индексы, итерации     |
+| `ClosedRange<Bound>` | `Bound`        | `Bound`           | Закрытый диапазон                         | Валидация границ      |
+| `ClosedRange<Int>` | `Int`            | `Int`             | Самый частый диапазон                     | Циклы, слайсы         |
+
+### 4. Полный пример кастомной коллекции (2026 стиль)
 
 ```swift
-struct SimpleRange: Collection {
-    var start: Int
-    var end: Int
+struct SimpleLinkedList<Element> {
+    private class Node {
+        var value: Element
+        var next: Node?
+        init(value: Element) { self.value = value }
+    }
     
-    var startIndex: Int { start }
-    var endIndex: Int { end }
+    private var head: Node?
+    private var tail: Node?
+    private(set) var count = 0
+}
+
+// MARK: - Collection conformance
+extension SimpleLinkedList: Collection {
+    var startIndex: Int { 0 }
+    var endIndex: Int { count }
     
     func index(after i: Int) -> Int {
-        return i + 1
+        i + 1
     }
     
-    subscript(position: Int) -> Int {
-        return position
+    subscript(position: Int) -> Element {
+        var current = head
+        for _ in 0..<position {
+            current = current?.next
+        }
+        return current!.value
     }
 }
 
-let range = SimpleRange(start: 1, end: 5)
-for i in range {
-    print(i) // 1 2 3 4
+// MARK: - Mutable operations
+extension SimpleLinkedList {
+    mutating func append(_ element: Element) {
+        let node = Node(value: element)
+        if let tail {
+            tail.next = node
+        } else {
+            head = node
+        }
+        tail = node
+        count += 1
+    }
 }
+
+// Использование
+var list = SimpleLinkedList<Int>()
+list.append(10)
+list.append(20)
+list.append(30)
+
+for value in list {
+    print(value) // 10, 20, 30
+}
+
+print(list[1]) // 20
+print(list.count) // 3
+print(list.isEmpty) // false
 ```
 
-- Создали свою **коллекцию**, которая поддерживает `for-in`
-    
+### 5. Лучшие практики Collection в Swift 2026
 
----
+- **Требуй Collection**, если нужен доступ по индексу или count — это даёт больше возможностей  
+- **Используй Sequence**, если достаточно однократного прохода (map, reduce, for-in)  
+- **Не полагайся на Int как индекс** — у `String` индекс — `String.Index`, у `Dictionary` — специальный тип  
+- **Для кастомных коллекций** — реализуй `Collection` минимально (startIndex, endIndex, index(after:), subscript) — остальное дастся бесплатно  
+- **Copy-on-Write** — в `Array`, `String`, `Set`, `Dictionary` — копирование происходит только при мутации  
+- **Swift 6 strict concurrency** — коллекции полностью `Sendable`, если их элементы `Sendable`  
+- **Документируйте** — пиши комментарий «[User] — коллекция пользователей, conforming к Collection»
 
-### Пример 4. Collection и операции высшего порядка
+**Короткий девиз 2026**:
+> `Collection` — это когда тебе нужна **упорядоченная последовательность с доступом по индексу**.  
+> В 2026 году это **основа** всех массивов, строк, диапазонов, множеств и словарей.  
+> Требуй `Collection`, если нужен `count`, индексация или многократный проход — это даёт компилятору и тебе больше безопасности и оптимизаций.
 
-```swift
-let numbers = [1, 2, 3, 4, 5]
-let doubled = numbers.map { $0 * 2 }
-let evens = numbers.filter { $0 % 2 == 0 }
-let sum = numbers.reduce(0, +)
-
-print(doubled) // [2, 4, 6, 8, 10]
-print(evens)   // [2, 4]
-print(sum)     // 15
-```
-
-- Все методы доступны благодаря тому, что `Collection` наследует `Sequence`
-    
-
----
-
-## 🔹 5. Под капотом: как разные коллекции реализуют Collection
-
-- `Collection` **определяет контракт доступа по индексу**, а не конкретное хранение
-    
-- Массивы, строки, словари и множества имеют **разные реализации индексов и хранения**, но conforming к Collection позволяет использовать их одинаково
-    
-
-```mermaid
-flowchart TD
-    A[Protocol Collection] --> B[Array<Element>]
-    A --> C[String]
-    A --> D[Set<Element>]
-    
-    B --> E[Реализация: стек + буфер в куче COW]
-    C --> F[Реализация: UTF-16/Unicode буфер COW]
-    D --> G[Реализация: хэш-таблица COW]
-```
-
-- **Array**: struct на stack с указателем на heap buffer, copy-on-write при изменении
-    
-- **String**: аналогично Array, но индекс = `String.Index`, поддерживает Unicode
-    
-- **Set**: hash table, индекс = специальный внутренний тип, порядок не гарантирован
-    
-
----
-
-## 🔹 6. Особенности Collection
-
-1. Все коллекции имеют **startIndex / endIndex**
-    
-2. Индексы **не обязательно Int**
-    
-3. Поддерживает **итерацию, map, filter, reduce, first, last, count**
-    
-4. Может быть **mutable или immutable**
-    
-5. Наследует **Sequence**, поэтому совместима со всеми методами Sequence
-    
-6. Позволяет писать **обобщённый код**, работающий с массивами, строками, словарями, сетами и пользовательскими коллекциями
-    
-7. Copy-On-Write: массивы и строки могут делить буфер до модификации
-    
-
----
-
-## 🔹 7. Итог
-
-- **Collection** = базовый протокол для всех упорядоченных последовательностей
-    
-- Позволяет работать **с элементами по индексу**, безопасно итерировать и использовать высшего порядка функции
-    
-- Обеспечивает **унифицированный интерфейс** для разных коллекций, скрывая внутреннюю реализацию
-    
-- Позволяет писать **обобщённый код**, совместимый с любыми коллекциями Swift
-    
-
----
+Удачи с мощными и типобезопасными коллекциями в твоём коде! 📚

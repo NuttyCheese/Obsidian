@@ -1,208 +1,136 @@
-**`Error`** — это **протокол**, которому должен соответствовать тип, чтобы его можно было **выбрасывать ([[throws]]) и ловить (`catch`)** в [[Swift]].
+**`Error`** — это **протокол** в Swift, который маркирует тип как **возможную ошибку**, которую можно **выбрасывать** (`throw`) из функций с модификатором `throws` и **ловить** в блоках `do-catch` или через `Result`.
 
-- Используется для **обработки ошибок в функциях и методах**
-    
-- Любой тип ([[struct]], [[enum]], [[class]]), соответствующий протоколу `Error`, можно выбросить с `throw`
-    
-- В сочетании с `do-catch` позволяет писать безопасный код
-    
+> Проще говоря: если тип соответствует `Error` → его можно `throw`, а потом поймать и обработать.
 
-> Проще говоря: Error = «тип ошибки, который можно бросить и поймать».
+### 1. Почему именно протокол, а не класс или struct?
 
----
+`Error` — это **маркерный протокол** (marker protocol) без требований (пустой).  
+Это сделано намеренно:
 
-## 2. Основные термины
-
-| Термин                    | Описание                                                   |
-| ------------------------- | ---------------------------------------------------------- |
-| **Error**                 | Протокол для создания типов ошибок                         |
-| **throws**                | Ключевое слово для функции, которая может выбросить ошибку |
-| **throw**                 | Выброс конкретной ошибки                                   |
-| **[[do-catch]]**          | Блок для безопасного вызова функции с `throws`             |
-| **[[try]] / try? / try!** | Вызов функции с обработкой ошибки или без неё              |
-
----
-
-## 3. Основной синтаксис
+- Любой тип (struct, enum, class) может быть ошибкой  
+- Не нужно наследоваться от конкретного класса (гибкость)  
+- Минимальные накладные расходы  
+- Легко комбинировать с `Result`, `throws`, `async throws`
 
 ```swift
-enum MyError: Error {
-    case failed
-}
-
-func riskyFunction() throws {
-    throw MyError.failed
-}
-
-do {
-    try riskyFunction()
-} catch {
-    print("Caught error:", error)
-}
+public protocol Error : Sendable { }
 ```
 
-- Enum `MyError` соответствует `Error`
-    
-- Ошибка выбрасывается через `throw` и ловится в `catch`
-    
+(в Swift 6+ `Error` наследует `Sendable` → все ошибки потокобезопасны)
 
----
+### 2. Самые популярные способы создания Error (2026 стандарт)
 
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейший enum с Error
+#### Вариант 1 — enum с cases (99% всех ошибок в реальных проектах)
 
 ```swift
 enum NetworkError: Error {
     case offline
     case timeout
-}
-
-func fetchData() throws {
-    throw NetworkError.offline
-}
-
-do {
-    try fetchData()
-} catch {
-    print(error) // offline
+    case server(statusCode: Int, message: String?)
+    case decodingFailed(underlying: DecodingError)
 }
 ```
 
-- Enum с разными вариантами ошибок
-    
-
----
-
-### Пример 2. Struct как Error
+#### Вариант 2 — enum с associated values (самый мощный)
 
 ```swift
-struct ValidationError: Error {
+enum AuthError: Error {
+    case wrongCredentials(username: String)
+    case accountLocked(until: Date)
+    case biometryFailed(reason: BiometryFailureReason)
+}
+```
+
+#### Вариант 3 — struct с дополнительными полями (когда нужна богатая информация)
+
+```swift
+struct ValidationError: Error, CustomStringConvertible {
     let field: String
-    let message: String
-}
-
-func validateName(_ name: String) throws {
-    if name.isEmpty {
-        throw ValidationError(field: "name", message: "Name cannot be empty")
+    let rule: String
+    let value: String?
+    
+    var description: String {
+        "Неверное значение в поле '\(field)': \(rule)"
     }
-}
-
-do {
-    try validateName("")
-} catch let error as ValidationError {
-    print("\(error.field): \(error.message)")
 }
 ```
 
-- Структуры тоже могут быть типом ошибки
-    
-
----
-
-### Пример 3. Error с [[Associated value]]
+#### Вариант 4 — использование Foundation-ошибок (NSError)
 
 ```swift
-enum FileError: Error {
-    case notFound(String)
-    case permissionDenied(String)
-}
-
-func openFile(_ name: String) throws {
-    throw FileError.notFound(name)
-}
-
-do {
-    try openFile("data.txt")
-} catch FileError.notFound(let fileName) {
-    print("File not found:", fileName)
-} catch {
-    print("Other error")
-}
+let error = NSError(domain: "com.myapp.auth", code: -1001, userInfo: [
+    NSLocalizedDescriptionKey: "Нет соединения с сервером"
+])
+throw error
 ```
 
-- Associated values позволяют хранить **дополнительную информацию об ошибке**
-    
-
----
-
-### Пример 4. Error и Result type
+### 3. Полный пример реального использования (2026 стиль — async + do-catch + Result)
 
 ```swift
-enum NetworkError: Error { case offline, timeout }
-
-func fetchData() -> Result<String, Error> {
-    if Bool.random() {
-        return .success("Data loaded")
-    } else {
-        return .failure(NetworkError.offline)
+@MainActor
+class AuthViewModel: ObservableObject {
+    
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    
+    enum AuthError: Error, LocalizedError {
+        case wrongCredentials
+        case networkUnavailable
+        case server(statusCode: Int)
+        
+        var errorDescription: String? {
+            switch self {
+            case .wrongCredentials:    return "Неверный логин или пароль"
+            case .networkUnavailable:  return "Нет соединения с интернетом"
+            case .server(let code):    return "Ошибка сервера (\(code))"
+            }
+        }
     }
-}
-
-let result = fetchData()
-switch result {
-case .success(let data): print(data)
-case .failure(let error): print(error)
+    
+    func login(email: String, password: String) async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let user = try await authService.login(email: email, password: password)
+            await handleSuccessfulLogin(user)
+        } catch AuthError.wrongCredentials {
+            errorMessage = "Неверный логин или пароль"
+        } catch AuthError.networkUnavailable {
+            errorMessage = "Нет интернета. Проверьте соединение"
+        } catch let error as NSError where error.code == NSURLErrorNotConnectedToInternet {
+            errorMessage = "Нет соединения с интернетом"
+        } catch {
+            errorMessage = "Произошла неизвестная ошибка: \(error.localizedDescription)"
+            // Логируем в Crashlytics / Sentry
+            logger.error("Login failed: \(error)")
+        }
+        
+        isLoading = false
+    }
 }
 ```
 
-- Result type можно использовать как альтернативу `do-catch` для асинхронного кода
-    
+### 4. Лучшие практики Error в Swift 2026
 
----
+- **Предпочитайте enum** — он самый читаемый и поддерживает exhaustive switch  
+- **Добавляйте LocalizedError** — чтобы `error.localizedDescription` был понятен пользователю  
+- **Используйте associated values** для передачи контекста (код ошибки, поле, сообщение)  
+- **Ловите конкретные ошибки первыми** — порядок catch имеет значение  
+- **Оставляйте универсальный catch последним** — для неизвестных ошибок  
+- **В async** — всегда `try await` внутри `do-catch`  
+- **Для UI** — показывайте `error.localizedDescription` или кастомное сообщение  
+- **Логируйте** неизвестные ошибки (os_log, Crashlytics, Sentry)  
+- **Swift 6 strict concurrency** — все типы `Error` должны быть `Sendable` (enum и struct по умолчанию)  
+- **Документируйте** — пиши комментарий «AuthError.wrongCredentials — неверные логин/пароль»
 
-### Пример 5. [[async]]/[[await]] и Error
+**Короткий девиз 2026**:
+> `Error` — это маркер: «это можно throw и поймать в catch».  
+> В 2026 году:  
+> - enum + associated values — основной способ  
+> - LocalizedError — для понятных сообщений пользователю  
+> - конкретные catch → сверху, универсальный catch → снизу  
+> - логируй неизвестные ошибки  
+> Это **единственный безопасный** способ обрабатывать `throws` и `async throws`.
 
-```swift
-enum NetworkError: Error { case offline, timeout }
-
-func asyncFetch() async throws -> String {
-    if Bool.random() {
-        return "Data"
-    } else {
-        throw NetworkError.timeout
-    }
-}
-
-Task {
-    do {
-        let data = try await asyncFetch()
-        print(data)
-    } catch {
-        print("Async error:", error)
-    }
-}
-```
-
-- Async функции тоже используют `throws` и `Error`
-    
-
----
-
-## 5. Особенности Error
-
-1. **Протокол** — любой тип, который соответствует `Error`, можно выбросить
-    
-2. **Сочетается с throws / try / do-catch**
-    
-3. **Enum** — наиболее часто используемый способ, особенно с associated values
-    
-4. **Struct и class** — тоже могут быть Error
-    
-5. Позволяет писать **безопасный код и обрабатывать ошибки с контекстом**
-    
-
----
-
-## 6. Итог
-
-- **Error** = протокол для создания типов ошибок
-    
-- Используется с **throws / try / do-catch / Result**
-    
-- Enum с case и associated values — основной способ моделирования ошибок
-    
-- Позволяет писать безопасный, читаемый и предсказуемый код
-    
-
----
+Удачи с надёжной и понятной обработкой ошибок в твоём коде! 🛡️
