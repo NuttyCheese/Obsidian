@@ -1,6 +1,6 @@
 **UserNotifications** — это фреймворк в [[iOS]], iPadOS, macOS, watchOS и tvOS, который отвечает за работу с **локальными** и **push-уведомлениями** (remote notifications) начиная с iOS 10.
 
-Центральный класс фреймворка — **`UNUserNotificationCenter`**.
+Центральный класс фреймворка — **[[UNUserNotificationCenter]]**.
 
 ### Основные возможности UserNotifications (актуально на 2026 год)
 
@@ -134,10 +134,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 ### Лучшие практики UNUserNotificationCenter в 2026
 
 - **Запрашивайте разрешение** **один раз** (лучше при первом запуске или при первой необходимости)  
-- **Используйте** `async/await` версию `requestAuthorization` (iOS 15+) — современный и чистый стиль  
+- **Используйте** [[async]]/[[await]] версию `requestAuthorization` (iOS 15+) — современный и чистый стиль  
 - **Обязательно** реализуйте делегат и оба метода (`willPresent` и `didReceive`)  
 - **Держите делегат** как отдельный объект (singleton или сервис-класс)  
-- **Для SwiftUI** — создавайте `@ObservableObject` обёртку и используйте `.task` / `.onReceive`  
+- **Для [[SwiftUI]]** — создавайте `@ObservableObject` обёртку и используйте `.task` / `.onReceive`  
 - **Для фоновой обработки** — используйте `UNNotificationServiceExtension` и `UNNotificationContentExtension`  
 - **Privacy Manifest** (PrivacyInfo.xcprivacy) — обязательно с iOS 17+ для всех функций UserNotifications  
 - **Документируйте** — пишите комментарий «UNUserNotificationCenterDelegate — обработка локальных и push-уведомлений»
@@ -150,5 +150,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 > - используйте `async/await` для запроса разрешения  
 > - всегда проверяйте `canSendMail()` аналогично — `authorizationStatus`  
 > Это **единственный** способ полноценно работать с уведомлениями на iOS.
-
-Удачи с надёжными, timely и user-friendly уведомлениями в твоём приложении! 🔔

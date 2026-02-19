@@ -59,7 +59,7 @@ extension PhotosViewController: UICollectionViewDataSource {
 }
 ```
 
-#### Вариант 2 — Самый рекомендуемый в 2026: **UICollectionViewDiffableDataSource** (снимки + анимации)
+#### Вариант 2 — Самый рекомендуемый в 2026: **[[UICollectionViewDiffableDataSource]]** (снимки + анимации)
 
 ```swift
 class PhotosViewController: UIViewController {

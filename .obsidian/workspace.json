@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "UserNotifications.md",
+                "file": "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIScreenEdgePanGestureRecognizer.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UserNotifications"
+              "title": "UIScreenEdgePanGestureRecognizer"
             }
           }
         ]
@@ -176,11 +176,12 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 2
       }
     ],
     "direction": "horizontal",
-    "width": 425.5
+    "width": 425.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -196,34 +197,35 @@
   },
   "active": "674d8be54ba96312",
   "lastOpenFiles": [
-    "UNUserNotificationCenter.md",
-    "UIScrollViewDelegate.md",
-    "UIImagePickerControllerDelegate.md",
-    "UIFont.md",
-    "README.md",
-    "MKMapView.md",
-    "MapKit.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIRotationGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIPinchGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIPanGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UILongPressGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewFlowLayout.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewDiffableDataSource.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewDelegate.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewDataSource.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewController.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewCell.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableView.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewLayout.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewFlowLayout.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewDiffableDataSource.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewDelegate.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewDataSource.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewController.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewCompositionalLayout.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewCell.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIScreenEdgePanGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UISwipeGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UITapGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/didMove.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/awakeFromNib.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
     "Swift/Теория/iOS/MapKit",
-    "Swift/Теория/iOS/MessageUI/MFMailComposeViewControllerDelegate.md",
-    "Swift/Теория/iOS/MessageUI/MFMailComposeViewController.md",
     "Swift/Теория/iOS/MessageUI",
-    "Swift/Теория/iOS/Swift/Identifiable.md",
-    "Swift/Теория/iOS/Swift/metatype.md",
-    "Swift/Теория/iOS/Swift/ExpressibleByDictionaryLiteral.md",
-    "Swift/Теория/iOS/Swift/ExpressibleByArrayLiteral.md",
-    "Swift/Теория/iOS/Core Location/CLLocationManager.md",
-    "Swift/Теория/iOS/Core Location/CLLocationManagerDelegate.md",
     "Swift/Теория/iOS/Core Location",
-    "UserNotifications.md",
-    "WKWebView.md",
-    "Swift/Теория/iOS/Swift/NSDate.md",
-    "Swift/Теория/iOS/Swift/NSDictionary.md",
-    "Swift/Теория/iOS/Swift/NSLayoutAnchor.md",
-    "Swift/Теория/iOS/Swift/NSLayoutConstraint.md",
-    "Swift/Теория/iOS/Swift/NSLayoutDimension.md",
-    "Swift/Теория/iOS/Swift/NSLayoutXAxisAnchor.md",
-    "Swift/Теория/iOS/Swift/NSLayoutYAxisAnchor.md",
-    "Swift/Теория/Хранение данных/Core Data/NSPredicate.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",

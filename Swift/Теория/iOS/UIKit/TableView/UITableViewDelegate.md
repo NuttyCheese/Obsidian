@@ -1,4 +1,4 @@
-**UITableViewDelegate** — это протокол в UIKit, который отвечает за **взаимодействие пользователя** с таблицей и **управление её поведением** (в отличие от [[UITableViewDataSource]], который только даёт данные).
+**UITableViewDelegate** — это протокол в [[UIKit]], который отвечает за **взаимодействие пользователя** с таблицей и **управление её поведением** (в отличие от [[UITableViewDataSource]], который только даёт данные).
 
 Он обрабатывает:
 
@@ -26,7 +26,7 @@
 | `tableView(_:leadingSwipeActionsConfigurationForRowAt:)`   | Swipe слева (архивировать, пометить)     | .archive, .flag                                      |
 | `scrollViewDidScroll(_:)` (из UIScrollViewDelegate)        | Прокрутка таблицы                        | Parallax header, sticky sections                     |
 
-### Самый современный паттерн 2026 (с DiffableDataSource + @MainActor)
+### Самый современный паттерн 2026 (с [[UITableViewDiffableDataSource|DiffableDataSource]] + [[@MainActor]])
 
 ```swift
 @MainActor

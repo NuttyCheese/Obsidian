@@ -101,7 +101,7 @@ extension PhotosCollectionViewController {
 - **override init(collectionViewLayout:)** — основной способ создания  
 - **Не забывай super.init(collectionViewLayout:)** — иначе коллекция не инициализируется  
 - **collectionView** — уже существует и настроено, используй его напрямую  
-- **@MainActor** — весь контроллер — на главном акторе  
+- **[[@MainActor]]** — весь контроллер — на главном акторе  
 - **DiffableDataSource** — **обязательно** для новых проектов (анимации, производительность)  
 - **Swift 6 strict concurrency** — UICollectionViewController полностью безопасен (@MainActor)  
 - **Документируйте** — пиши комментарий «UICollectionViewController — экран с коллекцией фото»

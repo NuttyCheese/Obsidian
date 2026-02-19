@@ -1,18 +1,18 @@
-**`WKWebView`** — это основной и рекомендуемый компонент в iOS/macOS для отображения веб-контента внутри приложения (замена устаревшему `UIWebView`).
+**`WKWebView`** — это основной и рекомендуемый компонент в [[iOS]]/macOS для отображения веб-контента внутри приложения (замена устаревшему `UIWebView`).
 
 Он входит в фреймворк **WebKit** и представляет собой мощный, производительный и безопасный браузерный движок, основанный на **Safari**.
 
 ### Ключевые преимущества WKWebView (актуально на 2026 год)
 
-| Характеристика                     | Описание                                                                 | Важные замечания 2026 |
-|------------------------------------|--------------------------------------------------------------------------|------------------------|
-| **Производительность**             | Использует тот же движок, что и Safari (WebKit)                          | Быстрее и экономичнее `UIWebView` в 10+ раз |
-| **Поддержка современных стандартов**| HTML5, CSS3, JavaScript (ES2023+), WebAssembly, WebRTC, WebGL и т.д.     | Полная поддержка PWA и современных веб-приложений |
-| **Безопасность**                   | Sandbox, App Transport Security, Content Blocker, Intelligent Tracking Prevention | Строгие требования к ATS и HTTPS |
-| **JavaScript ↔ Native**            | `evaluateJavaScript`, `WKScriptMessageHandler`, `WKUserScript`           | Двусторонняя коммуникация |
-| **Навигация и история**            | `goBack`, `goForward`, `reload`, `navigationDelegate`                    | Полный контроль навигации |
-| **Конфигурация**                   | `WKWebViewConfiguration` — всё настраивается до создания                | `WKPreferences`, `WKWebsiteDataStore`, `WKProcessPool` |
-| **Поддержка**                      | iOS 8+, macOS 10.10+, watchOS 4+, tvOS 9+                                | Полностью поддерживается в iOS 18+ |
+| Характеристика                       | Описание                                                                          | Важные замечания 2026                                  |
+| ------------------------------------ | --------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| **Производительность**               | Использует тот же движок, что и Safari (WebKit)                                   | Быстрее и экономичнее `UIWebView` в 10+ раз            |
+| **Поддержка современных стандартов** | HTML5, CSS3, JavaScript (ES2023+), WebAssembly, WebRTC, WebGL и т.д.              | Полная поддержка PWA и современных веб-приложений      |
+| **Безопасность**                     | Sandbox, App Transport Security, Content Blocker, Intelligent Tracking Prevention | Строгие требования к ATS и [[HTTPS]]                   |
+| **JavaScript ↔ Native**              | `evaluateJavaScript`, `WKScriptMessageHandler`, `WKUserScript`                    | Двусторонняя коммуникация                              |
+| **Навигация и история**              | `goBack`, `goForward`, `reload`, `navigationDelegate`                             | Полный контроль навигации                              |
+| **Конфигурация**                     | `WKWebViewConfiguration` — всё настраивается до создания                          | `WKPreferences`, `WKWebsiteDataStore`, `WKProcessPool` |
+| **Поддержка**                        | iOS 8+, macOS 10.10+, watchOS 4+, tvOS 9+                                         | Полностью поддерживается в iOS 18+                     |
 
 ### Минимальный рабочий пример (современный стиль 2026)
 
@@ -108,10 +108,10 @@ extension WebViewController: WKScriptMessageHandler {
 
 - **Всегда** устанавливайте `navigationDelegate` и обрабатывайте `didFailProvisionalNavigation`  
 - **Используйте** `WKWebViewConfiguration` для настройки до создания экземпляра  
-- **Для JavaScript** — `evaluateJavaScript` (async/await) или `WKScriptMessageHandler`  
+- **Для JavaScript** — `evaluateJavaScript` ([[async]]/[[await]]) или `WKScriptMessageHandler`  
 - **Для кастомных схем** (`myapp://`) — перехватывайте в `decidePolicyFor navigationAction`  
 - **Для оффлайн-контента** — используйте `WKWebsiteDataStore` + `loadHTMLString`  
-- **В SwiftUI** — оборачивайте в `UIViewRepresentable` + `Coordinator` (делегат)  
+- **В [[SwiftUI]]** — оборачивайте в `UIViewRepresentable` + [[Coordinator]] (делегат)  
 - **Privacy Manifest** (PrivacyInfo.xcprivacy) — обязательно с iOS 17+ для WebKit  
 - **Документируйте** — пишите комментарий «WKWebView — отображение веб-контента с обработкой навигации и ошибок»
 
@@ -123,5 +123,3 @@ extension WebViewController: WKScriptMessageHandler {
 > - для JS ↔ Native — `WKScriptMessageHandler` или `evaluateJavaScript`  
 > - всегда проверяйте разрешения и обрабатывайте ошибки  
 > Это **единственный** рекомендуемый способ показывать веб-контент в iOS-приложениях.
-
-Удачи с гибкими и производительными веб-вью в твоём проекте! 🌐

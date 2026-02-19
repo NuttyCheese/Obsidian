@@ -9,7 +9,7 @@
 | Производительность на больших данных | Хорошая, но легко ошибиться                 | Лучше (diff считает минимальные изменения) | **Diffable** |
 | Обработка состояний (loading, empty) | Ручная логика                               | Легко через разные snapshots               | **Diffable** |
 | Код и читаемость                     | Много boilerplate                           | Минимум кода, декларативно                 | **Diffable** |
-| Поддержка Swift Concurrency          | Требует осторожности                        | Полностью безопасен (+ [[Sendable]])       | **Diffable** |
+| Поддержка [[Swift Concurrency]]      | Требует осторожности                        | Полностью безопасен (+ [[Sendable]])       | **Diffable** |
 | Сложность                            | Проще для очень маленьких коллекций         | Чуть сложнее на старте, но окупается       | **Diffable** |
 
 ### Самый современный и рекомендуемый паттерн 2026 года
@@ -99,9 +99,9 @@ class PhotosViewController: UIViewController {
 
 ### Короткий чек-лист «Что нужно сделать, чтобы DiffableDataSource заработал»
 
-1. Определить `Section` (enum Hashable)  
-2. Определить модель элемента (struct Hashable)  
-3. Создать `typealias DataSource` и `Snapshot`  
+1. Определить `Section` ([[enum]] [[Hashable]])  
+2. Определить модель элемента ([[struct]] [[Hashable]])  
+3. Создать [[typealias]] `DataSource` и `Snapshot`  
 4. Зарегистрировать ячейки  
 5. Создать dataSource с замыканием cellProvider  
 6. Создать snapshot, добавить секции и элементы  
