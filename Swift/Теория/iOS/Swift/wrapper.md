@@ -104,7 +104,7 @@ actor SecureNetworkWrapper: NetworkService {
 }
 ```
 
-### 5. Wrapper для тестирования / моков (Mock Wrapper)
+### 5. Wrapper для тестирования / моков ([[Mock]] Wrapper)
 
 ```swift
 struct MockAnalytics: AnalyticsService {
@@ -126,7 +126,7 @@ let service = AnalyticsWrapper(real: AmplitudeService(), mock: mock)
 - **Используй some вместо any** — когда wrapper возвращает протокол  
 - **actor + wrapper** — для безопасного shared state  
 - **[[final]] [[class]] + @unchecked Sendable** — для [[Singleton]]-wrapper’ов  
-- **Swift 6 strict concurrency** — wrapper должен быть [[Sendable]] или изолирован (@MainActor / actor)  
+- **Swift 6 strict concurrency** — wrapper должен быть [[Sendable]] или изолирован ([[@MainActor]] / [[actor]])  
 - **Не злоупотребляй** — каждый wrapper добавляет сложность → используй только когда реально нужно скрыть детали  
 - **Документируйте** — пиши комментарий «Wrapper — добавляет токен авторизации и логирование»
 

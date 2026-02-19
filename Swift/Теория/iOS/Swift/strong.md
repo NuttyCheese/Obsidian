@@ -1,86 +1,86 @@
-**`strong`** — термин, используемый в [[Swift]] и [[Objective-C]] для описания **сильной ссылки (strong reference)** на объект.  
-Сильная ссылка **удерживает объект в памяти**, предотвращая его деинициализацию, пока ссылка существует.  
-Относится к **Memory Management / [[ARC]] (Automatic Reference Counting)**.
+**`strong`** — это **тип владения** (ownership qualifier) в системе **ARC** (Automatic Reference Counting) в Swift и Objective-C.
 
----
+Когда вы объявляете переменную, свойство или параметр как `strong` (по умолчанию), это означает:
 
-## 🔹 Примеры кода
+- переменная **удерживает сильную ссылку** на объект
+- пока существует хотя бы **одна сильная ссылка**, объект **не будет освобождён** из памяти
+- как только **все сильные ссылки** исчезают (становятся `nil` или выходят из области видимости), объект получает сообщение `deinit` и освобождается
 
-### 1. Простая сильная ссылка
+### Ключевые правила strong в 2026 году
 
-```swift
-class Person {
-    var name: String
-    init(name: String) { self.name = name }
-}
+| Ситуация                                      | Что происходит с объектом                              | Пример |
+|-----------------------------------------------|--------------------------------------------------------|--------|
+| Обычное свойство класса                       | По умолчанию `strong` (если не указано `weak`/`unowned`) | `var manager: Manager?` |
+| Локальная переменная в функции                | Всегда `strong` (нельзя сделать weak локально)         | `let person = Person()` |
+| Массив / словарь / Set                        | Хранит **сильные** ссылки на все элементы              | `[Person]` удерживает всех людей |
+| Замыкание (closure)                           | По умолчанию захватывает `self` как `strong`           | `[self]` в замыкании |
+| Делегирование (delegate)                      | Почти всегда `weak`, чтобы избежать retain cycle       | `weak var delegate: Delegate?` |
 
-var person1: Person? = Person(name: "Alice")
-var person2 = person1 // strong reference
+### Самые частые retain cycle (циклические ссылки) и их исправление
 
-person1 = nil
-print(person2?.name) // "Alice", объект всё ещё в памяти
-```
-
----
-
-### 2. Сильные ссылки в массиве
+#### Классический retain cycle (очень частая ошибка)
 
 ```swift
-var people: [Person] = []
-let person = Person(name: "Bob")
-people.append(person) // массив удерживает сильную ссылку
+class Parent {
+    var child: Child?
+}
 
-// Объект не будет деинициализирован, пока существует массив
+class Child {
+    var parent: Parent?     // ← strong по умолчанию
+}
+
+var p: Parent? = Parent()
+var c: Child? = Child()
+
+p?.child = c
+c?.parent = p
+
+p = nil
+c = nil
+// → объекты НЕ освободятся (retain cycle)
 ```
 
----
-
-### 3. Проблема циклических ссылок
+**Решение** — сделать одну из ссылок `weak` или `unowned`:
 
 ```swift
-class Employee {
-    var manager: Manager?
-    deinit { print("Employee deinit") }
+class Child {
+    weak var parent: Parent?     // ← weak разрывает цикл
 }
-
-class Manager {
-    var employee: Employee?
-    deinit { print("Manager deinit") }
-}
-
-var emp: Employee? = Employee()
-var mgr: Manager? = Manager()
-
-emp?.manager = mgr // strong
-mgr?.employee = emp // strong
-
-emp = nil
-mgr = nil
-// Обе переменные не освобождаются из-за цикла strong references
 ```
 
----
+Теперь при `p = nil` и `c = nil` оба объекта корректно вызовут `deinit`.
 
-### 4. Решение через [[weak]] / [[unowned]]
+### Таблица сравнения strong / weak / unowned (2026 стандарт)
 
-```swift
-class Employee {
-    weak var manager: Manager? // слабая ссылка
-    deinit { print("Employee deinit") }
-}
+| Квалификатор   | Сильная ссылка? | Может быть nil? | Когда объект освобождается?                  | Самый частый сценарий 2026 |
+|----------------|-----------------|------------------|----------------------------------------------|----------------------------|
+| `strong`       | Да              | Да (если Optional) | Когда все strong ссылки исчезнут             | Обычные свойства, массивы, локальные переменные |
+| `weak`         | Нет             | Да (всегда Optional) | Может стать `nil` при освобождении объекта   | Делегирование, parent-child, observers |
+| `unowned`      | Да (неявно)     | Нет (crash при nil) | Предполагается, что объект живёт дольше      | Когда точно знаешь, что объект не освободится раньше |
 
-class Manager {
-    var employee: Employee?
-    deinit { print("Manager deinit") }
-}
+### Лучшие практики strong / weak в 2026
 
-var emp: Employee? = Employee()
-var mgr: Manager? = Manager()
+1. **По умолчанию** — используй `strong` (или ничего не пиши)  
+2. **Делегирование** — почти всегда `weak var delegate`  
+3. **Parent-child** — делай ссылку на parent `weak`  
+4. **Замыкания** — захватывай `[weak self]` или `[unowned self]`  
+   ```swift
+   button.addAction { [weak self] in
+       self?.handleTap()
+   }
+   ```
+5. **KVO / NotificationCenter observers** — всегда `weak` или токен  
+6. **Избегай** `unowned`, если не уверен на 100%, что объект живёт дольше  
+7. **Swift 6 strict concurrency** — `weak` и `unowned` безопасны, но `unowned` может привести к крашу при race condition  
+8. **Документируйте** — пиши комментарий `weak var delegate: Delegate? // предотвращает retain cycle`
 
-emp?.manager = mgr
-mgr?.employee = emp
+**Короткий девиз 2026**:
+> `strong` — это «я держу объект живым, пока я существую».  
+> В 2026 году:  
+> - `strong` — по умолчанию для большинства свойств  
+> - `weak` — для делегатов, parent, observers, замыканий  
+> - `unowned` — только если 100% уверен в жизненном цикле  
+> - retain cycle — самая частая причина утечек памяти в UIKit-приложениях  
+> Это **основа** правильного управления памятью в ARC.
 
-emp = nil
-mgr = nil
-// Теперь объекты освобождаются корректно
-```
+Удачи с чистой памятью и отсутствием утечек в твоём проекте! 🧠

@@ -1,4 +1,4 @@
-**`Result`** — это **[[enum]] с двумя кейсами**, который описывает результат операции:
+**`Result`** — это **стандартный enum** в Swift (добавлен в Swift 5), который предназначен для **явного возврата** либо успешного значения, либо ошибки.
 
 ```swift
 enum Result<Success, Failure: Error> {
@@ -7,192 +7,125 @@ enum Result<Success, Failure: Error> {
 }
 ```
 
-- `Success` — тип значения в случае успеха
-    
-- `Failure` — тип ошибки, обязательно соответствует [[Error]]
-    
-- Позволяет безопасно **возвращать результат или ошибку** вместо [[Optional]] или кидания исключений
-    
+Это наиболее популярный и рекомендуемый способ возвращать результат операции в 2025–2026 годах, особенно в **синхронном** и **асинхронном** коде, когда нужно **явно** показать, что может быть либо успех, либо конкретная ошибка.
 
-> Проще говоря: Result = «операция либо успешна с результатом, либо ошибка».
+### Почему Result лучше, чем альтернативы (2026 взгляд)
 
----
+| Альтернатива                  | Плюсы Result над ней                                      | Когда всё ещё используют альтернативу |
+|-------------------------------|------------------------------------------------------------|----------------------------------------|
+| `T?` (Optional) + throws      | Один тип возврата → легче читать, меньше вложенности       | Когда ошибка не нужна (просто успех/не успех) |
+| `throws` напрямую             | Нет необходимости в do-catch на каждом вызове             | Когда ошибка должна быть обработана немедленно |
+| Tuple `(T?, Error?)`          | Типобезопасно: нельзя одновременно success и failure      | —                                      |
+| Custom enum                   | Стандартизировано, есть map/flatMap, совместимо с async    | Когда нужны дополнительные кейсы (loading, cancelled) |
 
-## 2. Основные термины
+### Самые популярные паттерны Result в 2026 году
 
-| Термин                 | Описание                                                          |
-| ---------------------- | ----------------------------------------------------------------- |
-| **Success**            | Значение, возвращаемое при успешной операции                      |
-| **Failure**            | Ошибка, возвращаемая при неудаче (Error)                          |
-| **Enum**               | Result — перечисление с кейсами `.success` и `.failure`           |
-| **Pattern Matching**   | Использование [[switch]] или [[if case]] для обработки результата |
-| **Throwing Functions** | Альтернатива Result — функции, которые кидают ошибки              |
-
----
-
-## 3. Основной синтаксис
+#### 1. Простой синхронный Result (самый частый)
 
 ```swift
-func divide(_ a: Int, by b: Int) -> Result<Int, Error> {
-    if b == 0 {
-        return .failure(NSError(domain: "DivideError", code: 1))
-    } else {
-        return .success(a / b)
-    }
+enum ValidationError: Error {
+    case empty
+    case tooShort(min: Int)
 }
 
-let result = divide(10, by: 2)
+func validateUsername(_ username: String) -> Result<String, ValidationError> {
+    guard !username.isEmpty else {
+        return .failure(.empty)
+    }
+    
+    guard username.count >= 3 else {
+        return .failure(.tooShort(min: 3))
+    }
+    
+    return .success(username)
+}
+
+let result = validateUsername("al")
 switch result {
-case .success(let value):
-    print("Result: \(value)")
+case .success(let name):
+    print("Валидное имя:", name)
 case .failure(let error):
-    print("Error: \(error.localizedDescription)")
+    print("Ошибка:", error)
 }
 ```
 
-- `Result<Int, Error>` → операция возвращает либо [[Int]], либо ошибку
-    
-- `switch` используется для **обработки кейсов**
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простое использование
+#### 2. Обёртка throwing-функции в Result (очень популярно)
 
 ```swift
-enum SimpleError: Error {
-    case somethingWentWrong
+func fetchUser(id: UUID) throws -> User {
+    // ... сетевой запрос или Core Data
 }
 
-func doTask(_ succeed: Bool) -> Result<String, SimpleError> {
-    succeed ? .success("Task completed") : .failure(.somethingWentWrong)
+func safeFetchUser(id: UUID) -> Result<User, Error> {
+    Result { try fetchUser(id: id) }  // Swift 5.5+ синтаксис
 }
 
-let taskResult = doTask(true)
-
-if case let .success(message) = taskResult {
-    print(message) // Task completed
-}
-```
-
-- Простейший пример с `if case` для извлечения success
-    
-
----
-
-### Пример 2. Использование switch
-
-```swift
-let failureResult: Result<String, SimpleError> = .failure(.somethingWentWrong)
-
-switch failureResult {
-case .success(let message):
-    print(message)
-case .failure(let error):
-    print("Failed with error: \(error)")
-}
-```
-
-- Обработка success и failure через `switch`
-    
-
----
-
-### Пример 3. [[map]] и [[flatMap]]
-
-```swift
-let result: Result<Int, SimpleError> = .success(10)
-let doubled = result.map { $0 * 2 }
-print(doubled) // success(20)
-```
-
-- `map` позволяет **трансформировать Success** без изменения Failure
-    
-
----
-
-### Пример 4. Throwing function с Result
-
-```swift
-func fetchData(from url: String) -> Result<Data, Error> {
-    guard let data = url.data(using: .utf8) else {
-        return .failure(NSError(domain: "URL", code: 404))
-    }
-    return .success(data)
-}
-
-let dataResult = fetchData(from: "Hello")
-switch dataResult {
-case .success(let data):
-    print(String(data: data, encoding: .utf8)!) // Hello
-case .failure(let error):
-    print(error)
-}
-```
-
-- Можно использовать для **синхронных операций, которые могут упасть**
-    
-
----
-
-### Пример 5. Обработка с `try?` и Result
-
-```swift
-enum FileError: Error {
-    case notFound
-}
-
-func readFile(_ path: String) throws -> String {
-    if path == "exists.txt" { return "File content" }
-    else { throw FileError.notFound }
-}
-
-func safeRead(_ path: String) -> Result<String, Error> {
+// или классически
+func safeFetchUser(id: UUID) -> Result<User, Error> {
     do {
-        let content = try readFile(path)
-        return .success(content)
+        return .success(try fetchUser(id: id))
+    } catch {
+        return .failure(error)
+    }
+}
+```
+
+#### 3. Async + Result (самый частый паттерн в 2026)
+
+```swift
+func fetchPosts() async -> Result<[Post], Error> {
+    do {
+        let (data, _) = try await URLSession.shared.data(from: postsURL)
+        let posts = try JSONDecoder().decode([Post].self, from: data)
+        return .success(posts)
     } catch {
         return .failure(error)
     }
 }
 
-let fileResult = safeRead("exists.txt")
-if case let .success(text) = fileResult {
-    print(text) // File content
+Task {
+    let result = await fetchPosts()
+    switch result {
+    case .success(let posts):
+        updateUI(with: posts)
+    case .failure(let error):
+        showError(error)
+    }
 }
 ```
 
-- Result может **оборачивать throwing функции**
-    
+#### 4. map / flatMap / recover (функциональный стиль)
 
----
+```swift
+let result: Result<Int, Error> = .success(10)
 
-## 5. Особенности Result
+let doubled = result.map { $0 * 2 }              // success(20)
+let string  = result.map { String($0) }          // success("10")
 
-1. **Enum с кейсами success и failure**
-    
-2. Позволяет **явно возвращать ошибку или результат**
-    
-3. Совместим с **map, flatMap, [[try]]?**
-    
-4. Альтернатива Optional + [[throws]]
-    
-5. Удобен для **синхронных и асинхронных операций**
-    
+let recovered = result.recover { _ in 0 }        // success(10) или success(0) при ошибке
 
----
+let flatMapped = result.flatMap { value in
+    Result { value + 1 }                         // можно возвращать другой Result
+}
+```
 
-## 6. Итог
+### 5. Лучшие практики Result в Swift 2026
 
-- **Result** = тип для безопасной работы с успехом и ошибкой
-    
-- Используется вместо `Optional` + `throw` для явного контроля ошибок
-    
-- Подходит для **синхронного кода, сетевых запросов, вычислений и обёртки throwing функций**
-    
-- Работает с **switch, if case, map, flatMap**
-    
+- **Используй `Result { try ... }`** (Swift 5.5+) — самый чистый способ оборачивать throwing-код  
+- **Предпочитай `Result` над `throws`** в публичных API, если вызывающий код хочет обрабатывать ошибки позже  
+- **Не возвращай `Result<Void, Error>`** — лучше `Result<Bool, Error>` или просто `throws`  
+- **Для loading / cancelled / partial states** — создавай свой enum (не Result)  
+- **В SwiftUI** — часто комбинируй с `@State` / `@Published` и `.task { await ... }`  
+- **Swift 6 strict concurrency** — `Result` полностью `Sendable`, если `Success` и `Failure` — `Sendable`  
+- **Документируйте** — пиши комментарий «Result — успех с данными или ошибка валидации»
 
----
+**Короткий девиз 2026**:
+> `Result` — это когда ты хочешь **явно** сказать: «либо успех с данными, либо конкретная ошибка».  
+> В 2026 году:  
+> - `Result { try ... }` — золотой стандарт обёртки throwing-функций  
+> - `switch` / `if case` — для обработки  
+> - `map` / `flatMap` / `recover` — для функционального стиля  
+> - в async-коде → `await` + `Result` — основной паттерн  
+> Это **основа** читаемого и безопасного кода с ошибками.
+
+Удачи с ясной и предсказуемой обработкой результатов в твоём проекте! ✅❌

@@ -1,126 +1,64 @@
-## 1. Введение
+**Open Addressing** (открытая адресация) — это метод разрешения коллизий в хеш-таблицах, при котором **все элементы хранятся непосредственно в массиве бакетов**, а при коллизии ищется **следующая свободная ячейка** по определённому правилу (probing).
 
-**Open Addressing** — это метод разрешения коллизий в хеш-таблицах.
+Это **основной метод**, который использует **стандартный `Dictionary`** и **`Set`** в Swift начиная с Swift 4+ (и по сей день в 2026 году).
 
-Напомню, коллизия — это ситуация, когда два разных ключа попадают в одну и ту же ячейку (индекс) хеш-таблицы.
+### Почему Swift выбрал именно Open Addressing (а не Chaining)
 
-Open addressing отличается от **связанных списков ([[Chaining]])** тем, что:
+| Аспект                          | Open Addressing (Swift Dictionary/Set) | Chaining (связные списки в бакетах) | Победитель в Swift |
+|---------------------------------|----------------------------------------|--------------------------------------|---------------------|
+| Кэш-дружественность             | Очень высокая (всё в одном массиве)    | Низкая (разбросанные узлы в heap)    | Open Addressing     |
+| Количество аллокаций            | Только один массив + ресайз            | Много маленьких узлов (ARC overhead) | Open Addressing     |
+| Средняя скорость lookup/insert  | O(1) при хорошем hash и load factor < 0.7–0.8 | O(1) + overhead на списки            | Open Addressing     |
+| Удаление                        | Сложнее (нужны tombstones)             | Просто (удаляем из списка)           | Chaining            |
+| Память при низкой загрузке      | Меньше overhead                        | Больше (каждый узел — объект)        | Open Addressing     |
+| Простота реализации             | Сложнее                                | Проще                                | Chaining            |
 
-- Все элементы **хранятся прямо в массиве бакетов**,
-    
-- Если ячейка занята, ищем **следующую свободную ячейку** по определённому правилу,
-    
-- **Списков нет** — только один массив.
-    
+**Вывод Apple**:  
+Open Addressing даёт **лучшую производительность** на реальных нагрузках iOS/macOS благодаря отличной **cache locality** и меньшему количеству аллокаций.  
+Chaining чаще используется в Java, Python, Ruby.
 
-Именно этот подход использует [[Swift]] для [[Dictionary]] и [[Set]].
+### Основные стратегии probing (поиск свободной ячейки)
 
----
+| Стратегия              | Формула поиска следующего индекса                  | Плюсы                              | Минусы                              | Используется в Swift? |
+|------------------------|-----------------------------------------------------|------------------------------------|-------------------------------------|-----------------------|
+| Linear Probing         | `(hash + i) % size`                                 | Очень просто, хорошая кэш-локальность | Кластеры (primary clustering)       | **Да** (основной)     |
+| Quadratic Probing      | `(hash + i²) % size` или `(hash + i + i²) % size`   | Меньше кластеров                   | Вторичные кластеры, сложнее         | Нет                   |
+| Double Hashing         | `(hash1(key) + i × hash2(key)) % size`              | Отличное распределение             | Дороже вычисления                   | Нет                   |
 
-## 2. Основная идея
+**Swift использует Linear Probing + tombstones + quadratic-подобные оптимизации** (внутренняя реализация сложнее, чем чистый linear).
 
-Хеш-таблица с open addressing хранит элементы так:
+### Как работает удаление (tombstones)
 
-```
-table = [bucket0, bucket1, bucket2, bucket3, bucket4]
-```
+При удалении элемента **нельзя просто поставить nil**, иначе поиск других коллидирующих элементов может прерваться.
 
-Каждый bucket может быть:
+Решение — **tombstone** (надгробие):
 
-- пустым ([[nil]] / empty)
-    
-- занятым (`occupied`)
-    
-- помеченным как удалённый ([[tombstone]])
-    
-
-### Пример:
-
-```text
-table: [nil, nil, nil, nil, nil]
-insert "apple" → hash = 1 → table[1] = "apple"
-insert "banana" → hash = 1 → table[1] занят → ищем следующий свободный → table[2] = "banana"
-```
-
----
-
-## 3. Методы поиска свободной ячейки (probes)
-
-### 3.1 Linear probing (линейный пробинг)
-
-Идём по массиву по порядку:
+- При удалении: ставим специальный маркер (deleted)
+- При поиске: tombstone считается «занято» — продолжаем probing
+- При вставке: можно перезаписать tombstone новым элементом
 
 ```text
-index, index+1, index+2, ...
+До удаления:
+bucket: [k1, k2, k3, nil, nil]   (k2 и k3 коллидировали → попали в 1 и 2)
+
+Удаляем k1:
+bucket: [deleted, k2, k3, nil, nil]
+
+Поиск k3:
+начинаем с hash(k3)=1 → deleted → продолжаем → 2 → k3 → нашли
 ```
 
-Плюсы:
+Без tombstones поиск k3 бы остановился на позиции 1.
 
-- очень просто
-    
-- легко реализовать
-    
-
-Минусы:
-
-- формируются **кластеры**
-    
-- lookup может замедлиться
-    
-
----
-
-### 3.2 Quadratic probing (квадратичный пробинг)
-
-```text
-index + 1², index + 2², index + 3², ...
-```
-
-- уменьшает «кластеры»
-    
-- но сложнее вычислять
-    
-
----
-
-### 3.3 Double hashing
-
-```text
-index + hash2(key)
-```
-
-- каждая коллизия использует **другую хеш-функцию**
-    
-- минимизирует кластеры
-    
-- чуть дороже в вычислениях
-    
-
----
-
-## 4. Tombstones (надгробия)
-
-При удалении элемента в open addressing **нельзя просто очистить ячейку**, иначе поиск других элементов, которые коллизировали в этом районе, может сломаться.
-
-Решение:
-
-- ставим специальный маркер: **tombstone**
-    
-- при вставке новый элемент может занять эту ячейку
-    
-- при поиске tombstone считается «занято», чтобы не остановить поиск
-    
-
----
-
-## 5. Пример на Swift (упрощённая реализация)
+### Упрощённая реализация (для понимания)
 
 ```swift
-struct OpenAddressingHashTable<Key: Hashable, Value> {
-    private var buckets: [(Key, Value)?]
-    private(set) var count = 0
+struct SimpleHashTable<Key: Hashable, Value> {
+    private var buckets: [(key: Key, value: Value)?]
+    private var count = 0
+    private let loadFactorThreshold = 0.7
     
-    init(capacity: Int) {
+    init(capacity: Int = 8) {
         buckets = Array(repeating: nil, count: capacity)
     }
     
@@ -130,155 +68,64 @@ struct OpenAddressingHashTable<Key: Hashable, Value> {
     
     mutating func insert(_ key: Key, value: Value) {
         var idx = index(for: key)
+        var firstDeleted: Int?
         
         while let bucket = buckets[idx] {
-            if bucket.0 == key {
-                buckets[idx] = (key, value)
+            if bucket.key == key {
+                buckets[idx] = (key, value) // обновляем
                 return
             }
-            idx = (idx + 1) % buckets.count // linear probing
-        }
-        buckets[idx] = (key, value)
-        count += 1
-    }
-    
-    func value(for key: Key) -> Value? {
-        var idx = index(for: key)
-        
-        while let bucket = buckets[idx] {
-            if bucket.0 == key {
-                return bucket.1
+            if bucket.key == nil { // tombstone или пусто
+                if firstDeleted == nil { firstDeleted = idx }
             }
             idx = (idx + 1) % buckets.count
         }
-        return nil
+        
+        // Вставляем в первую найденную tombstone или пустую ячейку
+        let insertIdx = firstDeleted ?? idx
+        buckets[insertIdx] = (key, value)
+        count += 1
+        
+        // Ресайз при высокой загрузке
+        if Double(count) / Double(buckets.count) > loadFactorThreshold {
+            resize()
+        }
     }
+    
+    // ... (get, remove, resize опущены для краткости)
 }
 ```
 
-Пример использования:
+### 5. Как Swift Dictionary использует Open Addressing (внутренности 2026)
 
-```swift
-var table = OpenAddressingHashTable<String, Int>(capacity: 5)
-table.insert("apple", value: 1)
-table.insert("banana", value: 2)
-table.insert("cherry", value: 3)
+- Массив бакетов хранит **кортежи** `(key, value)` + метаданные (occupied / deleted / empty)
+- **Linear Probing** с оптимизациями (не чистый +1, а более сложная последовательность)
+- **Tombstones** при удалении
+- **Ресайз** происходит при load factor ≈ 0.75–0.8 (удваивает размер, rehash всех элементов)
+- **Ключи** хранятся **strong**, значения — **strong**
+- **Хороший hash** критичен — если hash плохой → все коллизии → O(n)
 
-print(table.value(for: "banana")) // 2
-```
+### 6. Советы Swift-разработчику
 
----
+1. **Делай хорошую реализацию Hashable**  
+   → `==` и `hash(into:)` должны быть согласованы  
+   → не используй изменяемые свойства в `hash(into:)`
 
-## 6. Преимущества open addressing
+2. **Не бойся удалять ключи**  
+   Swift Dictionary сам обрабатывает tombstones
 
-1. **Отличная cache locality**
-    
-    - Все элементы находятся в одном массиве
-        
-    - Быстрее, чем связанные списки ([[ARC]] + [[Heap]])
-        
-2. **Нет дополнительных аллокаций**
-    
-    - [[Linked List]] требует выделения узлов в heap
-        
-3. **Высокая производительность**
-    
-    - Lookup, insert и delete обычно O(1)
-        
+3. **Не пытайся реализовать Dictionary вручную**  
+   → встроенная реализация очень оптимизирована
 
----
+4. **Для очень больших данных** — рассмотри `OrderedDictionary` из swift-collections (если нужен порядок)
 
-## 7. Минусы open addressing
+**Короткий итог 2026**:
+> Open Addressing — это когда коллизии разрешаются **внутри массива бакетов**, без списков.  
+> Именно так работает **Dictionary** и **Set** в Swift.  
+> Ключ к скорости:  
+> - хороший hash  
+> - низкий load factor  
+> - tombstones при удалении  
+> - ресайз при росте  
 
-1. **Сложнее реализация**
-    
-2. **Падение производительности при высокой загрузке**
-    
-    - Load factor > 0.7 → больше коллизий → больше probing
-        
-3. **Удаление сложнее**
-    
-    - Требуются tombstones
-        
-4. **Требует качественной хеш-функции**
-    
-
----
-
-## 8. Как Swift Dictionary использует open addressing
-
-- Swift `Dictionary` хранит элементы **непосредственно в массиве бакетов**
-    
-- Коллизии разрешаются через **linear probing** + tombstones
-    
-- При достижении load factor → **ресайз и rehashing**
-    
-- Для стандартных типов ([[Int]], [[String]]) используется **встроенный качественный хеш**
-    
-
----
-
-## 9. Коллизии и производительность
-
-При качественном hash:
-
-- lookup: O(1) среднее
-    
-- insert: O(1) среднее
-    
-- delete: O(1) среднее
-    
-
-При плохом hash или высокой load factor:
-
-- все операции могут деградировать до O(n)
-    
-- Swift [[Dictionary]] автоматически ресайзит массив и перераспределяет элементы
-    
-
----
-
-## 10. Советы для Swift-разработчика
-
-1. **Использовать качественные [[Hashable]] типы**  
-    Не делайте:
-    
-    ```swift
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(0)
-    }
-    ```
-    
-2. **Не бояться коллизий**
-    
-    - Swift гарантирует корректное поведение через `==`
-        
-3. **Понимать, что ARC может влиять**
-    
-    - Все элементы [[Reference Type]] → [[retain]]/[[release]]
-        
-4. **Не пытаться реализовывать chaining в Swift**
-    
-    - Open addressing быстрее и оптимизирована
-        
-
----
-
-## 11. Короткий итог
-
-- Open addressing — метод разрешения коллизий **без списков**
-    
-- Все элементы хранятся в массиве
-    
-- При коллизии ищем следующую свободную ячейку (probing)
-    
-- Tombstones решают проблему удаления
-    
-- Swift [[Dictionary]]/[[Set]] используют именно его
-    
-- Хороший hash → почти всегда O(1)
-    
-- Плохой hash → коллизии → падение производительности
-    
-
----
+Удачи с пониманием и оптимизацией хеш-таблиц в твоём коде! 🗄️

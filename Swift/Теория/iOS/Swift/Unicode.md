@@ -1,113 +1,85 @@
-**Unicode** — это **стандарт кодирования символов**, который позволяет представлять **текст на любом языке мира**.
+**Unicode** — это универсальный стандарт кодирования символов, который позволяет компьютерам корректно представлять и обрабатывать текст **на любом языке мира**, включая редкие письменности, эмодзи, математические символы и специальные знаки.
 
-- Каждый символ (буква, цифра, знак) имеет уникальный **код (code point)**.
-    
-- Unicode поддерживает тысячи символов: латиницу, кириллицу, иероглифы, эмодзи и специальные знаки.
-    
+В Swift поддержка Unicode реализована **очень глубоко** и является одной из сильнейших сторон языка.
 
-В [[Swift]] все строки ([[String]]) **используют Unicode**, что позволяет работать с многоязычным текстом корректно.
+### 1. Основные уровни Unicode в Swift (как это устроено внутри)
 
----
+| Уровень               | Тип в Swift              | Что представляет                              | Кол-во кодовых точек на символ | Пример (флаг России 🇷🇺) |
+|-----------------------|--------------------------|-----------------------------------------------|--------------------------------|---------------------------|
+| Unicode Scalar        | `Unicode.Scalar`         | Одна кодовая точка (code point)               | 1                              | две scalars: U+1F1F7 + U+1F1FA |
+| Grapheme Cluster      | `Character`              | Один видимый символ (может состоять из нескольких scalars) | 1+                             | 1 `Character`             |
+| String                | `String`                 | Последовательность `Character`                | —                              | 1 `String`                |
+| UTF-8 / UTF-16 / UTF-32 | внутренние представления | Как строка хранится в памяти                  | —                              | UTF-8 (8 байт для 🇷🇺)     |
 
-## 2. Unicode в Swift
+**Ключевой момент 2026 года**:  
+Swift всегда работает с текстом на уровне **grapheme clusters** (`Character`), а не на уровне отдельных кодовых точек.  
+Поэтому `"🇷🇺".count == 1`, а не 2.
 
-В Swift `String` и `Character` полностью поддерживают Unicode:
+### 2. Самые важные и часто используемые возможности Unicode в Swift
 
-```swift
-let latin: Character = "A"       // латиница
-let cyrillic: Character = "Б"    // кириллица
-let emoji: Character = "😀"       // смайлик
-let arabic: Character = "ع"       // арабский
-```
-
-### Строка с разными символами:
+#### 2.1 Подсчёт символов (самый частый вопрос на собеседованиях)
 
 ```swift
-let greeting = "Hello, Привет, 你好, 😀"
-print(greeting)
+let text = "café 👨‍💻 🇷🇺"
+print(text.count)                    // 6 (графем / видимых символов)
+print(text.unicodeScalars.count)     // 10 (отдельные кодовые точки)
+print(text.utf8.count)               // 22 байта в UTF-8
+print(text.utf16.count)              // 12 единиц в UTF-16
 ```
 
----
-
-## 3. Unicode Scalar
-
-**Unicode scalar** — это базовый элемент Unicode.  
-В Swift его тип — `Unicode.Scalar`.
+#### 2.2 Корректная работа с эмодзи и комбинированными символами
 
 ```swift
-let letter: Unicode.Scalar = "A"
-print(letter.value) // 65 — код символа в Unicode
+let skinTones = "👨🏻‍💻👨🏼‍💻👨🏽‍💻👨🏾‍💻👨🏿‍💻"
+print(skinTones.count)               // 5 (каждый — отдельный символ)
+
+let eWithAcute = "é"                 // один символ
+let ePlusAcute = "e\u{0301}"         // тоже один символ
+print(eWithAcute == ePlusAcute)      // true (Unicode-нормализация)
 ```
 
-- Для кириллицы: `"Б".unicodeScalars.first!.value` → 1041
-    
-- Для эмодзи: `"😀".unicodeScalars.first!.value` → 128512
-    
-
----
-
-## 4. Работа со строками и Unicode
-
-### Доступ к Unicode scalar
+#### 2.3 Безопасные срезы строк (самый частый баг у новичков)
 
 ```swift
-let text = "Привет"
-for scalar in text.unicodeScalars {
-    print(scalar.value)  // код каждого символа
-}
+let greeting = "Привет, мир!"
+let start = greeting.index(greeting.startIndex, offsetBy: 7)
+let end   = greeting.index(start, offsetBy: 3)
+
+let substring = greeting[start..<end]   // "мир"
+print(substring)
+
+// НЕ ДЕЛАЙТЕ ТАК:
+let wrong = greeting[7..<10]            // Ошибка компиляции — Int не String.Index
 ```
 
-### Символы и их подсчёт
+#### 2.4 Поиск и замена с учётом Unicode
 
 ```swift
-let flag = "🇷🇺" // флаг России состоит из двух символов
-print(flag.count)           // 1 character
-print(flag.unicodeScalars.count) // 2 scalars
+let text = "Приве́т, ми́р! 😊"
+let normalized = text.folding(options: .diacriticInsensitive, locale: .current)
+print(normalized)  // "Привет, мир! 😊" (без акутов)
+
+let hasSmile = text.contains("😊")          // true
+let hasRussian = text.range(of: "мир") != nil // true
 ```
 
-> Важно: один символ (`Character`) может состоять из нескольких Unicode scalar.
+### 3. Лучшие практики работы с Unicode в Swift 2026
 
----
+- **Всегда** используйте `Character` и `.count` для подсчёта видимых символов  
+- **Никогда** не используйте `.utf8.count` / `.utf16.count` для отображения длины текста пользователю  
+- **Для сравнения без учёта регистра/акцентов** — `.folding(options: .caseInsensitive + .diacriticInsensitive)` или `.localizedStandardCompare`  
+- **Для нормализации** — `.precomposedStringWithCanonicalMapping` / `.decomposedStringWithCanonicalMapping`  
+- **Для безопасного среза** — всегда через `index(_:offsetBy:)` или `prefix(_:)` / `suffix(_:)`  
+- **В SwiftUI** — `Text` автоматически корректно отображает все Unicode-символы  
+- **Документируйте** — пишите комментарий «строка в NFC-нормализации (для корректного сравнения)»
 
-## 5. Преобразование к коду и обратно
+**Короткий итог 2026**:
+> Swift — один из лучших языков по поддержке Unicode «из коробки».  
+> Главные правила:  
+> - `count` — это количество видимых символов (`Character`), а не байтов  
+> - эмодзи и комбинированные символы обрабатываются корректно  
+> - индексация только через `String.Index` — никогда не используйте `Int`  
+> - для сравнения и поиска — используйте `.folding`, `.localizedStandardCompare`  
+> - срезы — через `prefix`, `suffix`, `index(_:offsetBy:)`  
 
-```swift
-// Код символа → Character
-let scalar = Unicode.Scalar(0x1F600)! // 😀
-let char = Character(scalar)
-print(char)
-
-// Character → Unicode
-let code = "😀".unicodeScalars.first!.value
-print(code) // 128512
-```
-
----
-
-## 6. Особенности Swift и Unicode
-
-- Строки Swift — **Unicode корректные** (поддерживают emoji, диакритические знаки).
-    
-- Символы с разными кодами могут визуально совпадать (например, é = e + accent).
-    
-- Методы `.count` для строки считаются **Character**, а не Unicode scalar.
-    
-
----
-
-## 7. Итог
-
-- **Unicode** = стандарт для кодирования символов.
-    
-- Swift `String` полностью его поддерживает.
-    
-- Можно работать на уровне:
-    
-    - `Character` → отдельный видимый символ
-        
-    - `Unicode.Scalar` → базовый код символа
-        
-- Поддержка emoji и разных языков встроена "из коробки".
-    
-
----
+Удачи с корректной и красивой работой с любым текстом мира в твоём приложении! 🌍✨

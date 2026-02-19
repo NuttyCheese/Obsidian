@@ -1,114 +1,117 @@
-**`Timer`** (ранее `NSTimer`) — это класс (`Foundation`), который позволяет:
+**`Timer`** (ранее `NSTimer`) — это класс из **Foundation**, который позволяет запускать код **через заданный интервал времени** (однократно или повторно). Он интегрируется с **RunLoop** и работает в том потоке, в котором был создан (обычно главный поток для UI-задач).
 
-- запускать код **через заданный интервал времени**,
-    
-- выполнять задачи **однократно или повторно**,
-    
-- интегрироваться с **[[RunLoop]]** для автоматического срабатывания в нужном потоке.
-    
+### Ключевые особенности Timer в 2026 году
 
-> Проще: `Timer` = будильник в коде, который вызывает функцию через заданное время.
+- **Блок-версия** (`scheduledTimer(withTimeInterval:repeats:)`): самый рекомендуемый и безопасный способ с iOS 10+
+- **Selector-версия** (`scheduledTimer(timeInterval:target:selector:...)`): всё ещё используется в legacy-коде
+- **Не блокирует поток** — работает асинхронно через RunLoop
+- **Требует явной остановки** (`invalidate()`) для повторяющихся таймеров
+- **Не точен до миллисекунд** — реальное время срабатывания может отличаться на ±50–100 мс (зависит от RunLoop и нагрузки)
 
----
+### Сравнение способов создания Timer (2026 стандарт)
 
-## 2. Создание таймера
+| Способ создания                              | Преимущества                                          | Недостатки / ограничения                          | Когда использовать в 2026 |
+|----------------------------------------------|-------------------------------------------------------|---------------------------------------------------|----------------------------|
+| `Timer.scheduledTimer(withTimeInterval:repeats:)` с блоком | Чистый синтаксис, нет `#selector`, захват `[weak self]` | Нет `userInfo` (но можно использовать замыкание)  | **Основной и рекомендуемый** способ |
+| `Timer.scheduledTimer(timeInterval:target:selector:...)` | Есть `userInfo`, совместим с Obj-C                    | Требует `@objc`, `#selector`, retain cycle риск   | Только в legacy-коде       |
+| `Timer(timeInterval:repeats:)` + `RunLoop.add` | Полный контроль над RunLoop и режимом                 | Нужно вручную добавлять в RunLoop                 | Редко (специфические случаи) |
 
-### 2.1 Повторяющийся таймер
+### Самые популярные и рекомендуемые паттерны 2026
 
-```swift
-let timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { timer in
-    print("Таймер сработал")
-}
-```
-
-- `withTimeInterval` — интервал в секундах ([[TimeInterval]])
-    
-- `repeats` — повторять ли
-    
-- блок/selector — что выполнять
-    
-
-### 2.2 Однократный таймер
+#### 1. Повторяющийся таймер с блоком (самый частый)
 
 ```swift
-let oneTimeTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { _ in
-    print("Таймер сработал один раз через 5 секунд")
-}
-```
-
----
-
-## 3. Таймер с selector
-
-```swift
-let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
-
-@objc func timerFired() {
-    print("Таймер сработал через selector")
-}
-```
-
-- `userInfo` можно передать любые данные.
+class GameViewController: UIViewController {
+    private var gameTimer: Timer?
     
-- Таймер автоматически добавляется в **RunLoop** главного потока.
+    func startGameLoop() {
+        gameTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.updateGameState()
+        }
+    }
     
-
----
-
-## 4. Остановка таймера
-
-```swift
-timer.invalidate() // останавливает таймер
-```
-
-> После вызова `invalidate()` таймер больше не сработает.
-
----
-
-## 5. Пример использования с отсчетом
-
-```swift
-var count = 10
-
-let countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-    print(count)
-    count -= 1
-    if count < 0 {
-        timer.invalidate()
-        print("Отсчет завершен")
+    func stopGameLoop() {
+        gameTimer?.invalidate()
+        gameTimer = nil
+    }
+    
+    private func updateGameState() {
+        // обновление физики, анимации и т.д. 60 раз в секунду
     }
 }
 ```
 
-- Каждую секунду выводит число.
-    
-- После завершения — останавливает таймер.
-    
+#### 2. Однократная задержка (замена `asyncAfter`)
 
----
+```swift
+func showToastAfterDelay() {
+    Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
+        self.showToast("Операция завершена")
+    }
+}
+```
 
-## 6. Особенности
+#### 3. Отсчёт обратного отсчёта (очень часто в UI)
 
-- Таймеры работают **через RunLoop**, поэтому их нужно создавать в основном потоке, если нужен UI.
+```swift
+class VerificationViewController: UIViewController {
+    private var countdownTimer: Timer?
+    private var secondsLeft = 60
     
-- Использование блоков (`scheduledTimer(withTimeInterval:)`) удобнее, чем селекторов.
-    
-- Если не вызвать `invalidate()`, повторяющийся таймер будет жить до завершения приложения.
-    
-- Можно передавать **userInfo** для передачи данных в блок или selector.
-    
+    func startCountdown() {
+        secondsLeft = 60
+        countdownLabel.text = "Осталось: 60 сек"
+        
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self else { return }
+            
+            self.secondsLeft -= 1
+            self.countdownLabel.text = "Осталось: \(self.secondsLeft) сек"
+            
+            if self.secondsLeft <= 0 {
+                timer.invalidate()
+                self.resendButton.isEnabled = true
+                self.countdownLabel.text = "Можно отправить повторно"
+            }
+        }
+    }
+}
+```
 
----
+#### 4. Таймер с userInfo (старый стиль, но иногда встречается)
 
-## 7. Итог
+```swift
+let timer = Timer.scheduledTimer(timeInterval: 5.0,
+                                 target: self,
+                                 selector: #selector(handleTimer),
+                                 userInfo: ["taskID": 42],
+                                 repeats: true)
 
-- `Timer` = средство для выполнения кода через интервалы.
-    
-- Поддерживает **повторяющиеся и однократные** таймеры.
-    
-- Интегрируется с RunLoop.
-    
-- Управляется через `invalidate()`.
-    
+@objc func handleTimer(_ timer: Timer) {
+    if let taskID = timer.userInfo as? [String: Int], let id = taskID["taskID"] {
+        print("Таймер для задачи \(id)")
+    }
+}
+```
 
----
+### 5. Лучшие практики Timer в Swift 2026
+
+- **Всегда** сохраняй ссылку на таймер (`var timer: Timer?`) и вызывай `invalidate()` при уходе с экрана / завершении работы  
+- **Всегда** захватывай `[weak self]` в замыкании — предотвращает retain cycle  
+- **Не используй** `Timer` для анимаций — лучше `CADisplayLink` или `UIViewPropertyAnimator`  
+- **Не используй** `Timer` для очень точных интервалов (< 50 мс) — погрешность может быть большой  
+- **Для SwiftUI / async** — предпочтительнее `Task { try await Task.sleep(...) }` или `.onReceive(Timer.publish(...))`  
+- **Swift 6 strict concurrency** — `Timer` должен создаваться и инвалидироваться на том же акторе (обычно `@MainActor`)  
+- **Документируйте** — пиши комментарий «Timer — обновление каждые 1/60 сек, invalidate в deinit / viewWillDisappear»
+
+**Короткий итог 2026**:
+> `Timer` — это «будильник в коде»: запускает код через интервалы в RunLoop.  
+> В 2026 году:  
+> - используй **блочную версию** с `[weak self]`  
+> - всегда сохраняй и инвалидируй таймер  
+> - для UI и повторяющихся задач — основной инструмент в UIKit  
+> - в SwiftUI / async — чаще `Task.sleep` или `Timer.publish`  
+> Это **надёжный**, но **не самый точный** способ периодических задач.
+
+Удачи с плавными таймерами и без утечек памяти в твоём приложении! ⏲️

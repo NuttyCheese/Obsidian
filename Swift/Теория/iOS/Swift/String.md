@@ -1,189 +1,117 @@
-**`String`** — это **тип данных в [[Swift]] для хранения текста**.
+**`String`** — это **основной тип** в Swift для работы с **текстом**.  
+Это **структура** (`struct`), **value type**, полностью **Unicode-совместимая** и оптимизированная для современных приложений.
 
-- Представляет собой **последовательность символов** ([[Character]])
-    
-- Поддерживает **[[Unicode]]**, включая эмодзи, специальные символы и разные языки
-    
-- [[Value Type]] — **копируется при присваивании** ([[struct]])
-    
+В 2025–2026 годах `String` остаётся одним из самых часто используемых типов, и его API продолжает улучшаться (особенно в Swift 5.5+ и Swift 6).
 
-> Проще говоря: String = «текстовая последовательность символов».
+### 1. Ключевые характеристики String (актуально 2026)
 
----
+| Характеристика                  | Значение / Особенность                                      | Почему это важно |
+|---------------------------------|-------------------------------------------------------------|------------------|
+| Тип                                 | `struct` (value type)                                       | Копируется при присваивании (Copy-on-Write) |
+| Кодировка                           | UTF-8 (внутренне)                                           | Экономия памяти + быстрая работа с emoji |
+| Элемент                             | `Character` (графемный кластер)                             | Корректно считает emoji и комбинированные символы |
+| Индексация                          | `String.Index` (не Int!)                                    | Безопасный доступ, защита от ошибок |
+| Immutable по умолчанию              | `let str = "text"` — нельзя изменить                        | Безопасность + оптимизация |
+| Mutable через `var`                 | `var str = "text"` → можно `+=`, `append`, `remove`         | Гибкость |
+| Интерполяция                        | `"Hello, \(name)"`                                          | Самый читаемый способ |
+| Многострочные строки                | `""" ... """`                                               | Удобно для JSON, HTML, SQL |
+| Поддержка Unicode                   | Полная (emoji, RTL, комбинированные символы)                | Работает с любым языком |
 
-## 2. Основные термины
+### 2. Самые важные свойства и методы String (топ-2026)
 
-|Термин|Описание|
-|---|---|
-|**Character**|Один символ строки|
-|**Unicode**|Стандарт кодирования символов, который поддерживает Swift|
-|**Interpolation**|Вставка переменных в строку через `\(variable)`|
-|**Concatenation**|Склеивание строк через `+`|
-|**Substring**|Часть строки, получаемая срезом|
-|**Index**|Позиция символа в строке (String.Index)|
-|**Count**|Количество символов в строке|
-|**Multiline string**|Строка, занимающая несколько строк (`"""`)|
+| Свойство / Метод                  | Что возвращает / делает                                      | Пример 2026 |
+|-----------------------------------|--------------------------------------------------------------|-------------|
+| `count`                           | Количество **символов** (графем)                             | `"👨‍💻".count` → 1 |
+| `isEmpty`                         | Пустая ли строка                                             | `text.isEmpty` |
+| `startIndex`, `endIndex`          | Начало и конец строки                                        | `text.startIndex` |
+| `index(_:offsetBy:)`              | Получение индекса со смещением                               | `text.index(text.startIndex, offsetBy: 5)` |
+| `prefix(_:)` / `suffix(_:)`       | Первые/последние N символов                                  | `text.prefix(5)` → Substring |
+| `uppercased()`, `lowercased()`    | Верхний/нижний регистр                                       | `text.uppercased()` |
+| `trimmingCharacters(in:)`         | Удаление пробелов и символов                                 | `text.trimmingCharacters(in: .whitespacesAndNewlines)` |
+| `contains(_:)`                    | Содержит ли подстроку / символ                               | `text.contains("Swift")` |
+| `replacingOccurrences(of:with:)`  | Замена подстрок                                              | `text.replacingOccurrences(of: "old", with: "new")` |
+| `split(separator:maxSplits:)`     | Разбиение по разделителю                                     | `text.split(separator: " ")` → [Substring] |
+| `appending(_:)` / `+=`            | Добавление строки                                            | `var s = "Hello"; s += " World"` |
+| `joined(separator:)`              | Объединение коллекции строк                                  | `["a", "b"].joined(separator: "-")` → "a-b" |
 
----
+### 3. Самые популярные паттерны String в 2026
 
-## 3. Основной синтаксис
-
-```swift
-let greeting: String = "Hello, World!"
-let name = "Alice"
-let message = "Hello, \(name)!"
-```
-
-- Тип можно указать явно или использовать **type inference**
-    
-- Поддерживается **интерполяция строк**
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейшая строка
+#### 3.1 Интерполяция и многострочные строки (самый частый)
 
 ```swift
-let greeting = "Hello"
-print(greeting) // Hello
-```
+let name = "Алекс"
+let age = 28
 
-- Immutable — [[let]] нельзя менять
-    
-- Для изменяемой строки используем [[var]]
-    
-
----
-
-### Пример 2. Конкатенация и интерполяция
-
-```swift
-let firstName = "John"
-let lastName = "Doe"
-let fullName = firstName + " " + lastName
-let greeting = "Hello, \(fullName)!"
-print(greeting) // Hello, John Doe!
-```
-
-- `+` для склеивания строк
-    
-- `\(variable)` для вставки значения в строку
-    
-
----
-
-### Пример 3. Многострочная строка
-
-```swift
-let poem = """
-Roses are red,
-Violets are blue,
-Swift is fun,
-And so are you.
+let greeting = """
+Привет, \(name)!
+Тебе \(age) лет.
 """
-print(poem)
 ```
 
-- Строки можно переносить на несколько строк
-    
-- Сохраняются переносы и форматирование
-    
-
----
-
-### Пример 4. Работа с символами и индексами
+#### 3.2 Безопасное извлечение подстроки (индексы)
 
 ```swift
-let text = "Hello"
-for char in text {
-    print(char)
-}
-
-let startIndex = text.startIndex
-let firstChar = text[startIndex]
-print(firstChar) // H
-```
-
-- Строка — последовательность `Character`
-    
-- Доступ к символу через `String.Index`
-    
-
----
-
-### Пример 5. Срезы (Substring)
-
-```swift
-let text = "Hello, World!"
+let text = "Hello, Swift!"
 let start = text.index(text.startIndex, offsetBy: 7)
-let end = text.index(text.startIndex, offsetBy: 11)
-let substring = text[start...end]
-print(substring) // World
+let end = text.index(start, offsetBy: 5)
+let word = text[start..<end]     // "Swift"
+let substring = String(word)     // если нужен полноценный String
 ```
 
-- Срез строки создаёт `Substring`
-    
-- Можно преобразовать обратно в `String`
-    
-
----
-
-### Пример 6. Методы String
+#### 3.3 Обработка пользовательского ввода (очень часто)
 
 ```swift
-let message = "  Hello Swift  "
-print(message.uppercased())      // HELLO SWIFT
-print(message.lowercased())      //   hello swift  
-print(message.trimmingCharacters(in: .whitespaces)) // Hello Swift
-print(message.contains("Swift")) // true
-```
+var input = readLine()?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+input = input.lowercased()
 
-- Поддерживаются **uppercased, lowercased, trimming, contains** и многие другие методы
-    
-
----
-
-### Пример 7. Unicode и Emoji
-
-```swift
-let emoji = "👩‍💻"
-print(emoji.count) // 1
-for char in emoji {
-    print(char)
+if input.isEmpty {
+    print("Пустой ввод")
+} else if input.hasPrefix("hello") {
+    print("Привет!")
 }
 ```
 
-- Swift корректно обрабатывает **Unicode символы и emoji**
-    
-- `count` учитывает символы, а не байты
-    
+#### 3.4 Форматирование текста (UI, логи, API)
 
----
+```swift
+let price = 1299.99
+let formatted = String(format: "%.2f ₽", price)  // "1299.99 ₽"
 
-## 5. Особенности String
+let attributed = NSMutableAttributedString(string: "Скидка 20%")
+attributed.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: 7, length: 3))
+```
 
-1. **Value type (struct)** — копируется при присваивании
-    
-2. **Unicode корректность** — работает с разными языками и emoji
-    
-3. **Immutable по умолчанию** — для изменения нужно `var`
-    
-4. Поддерживает **интерполяцию, конкатенацию и методы**
-    
-5. Используется для **всего текстового контента, логов, UI, сетевых данных**
-    
+#### 3.5 Работа с emoji и Unicode
 
----
+```swift
+let emojiText = "👨‍💻 Swift ❤️"
+print(emojiText.count)           // 4 (графемных кластера)
+print(emojiText.unicodeScalars.count)  // больше (байты)
 
-## 6. Итог
+for char in emojiText {
+    print(char)  // 👨‍💻, " ", S, w, i, f, t, " ", ❤️
+}
+```
 
-- **String** = тип для текста, последовательность символов
-    
-- Поддерживает **Unicode, интерполяцию, конкатенацию, срезы, методы**
-    
-- Основной инструмент работы с текстом в Swift
-    
+### 4. Лучшие практики String в Swift 2026
 
----
+- **Используй интерполяцию** (`\(…)`) вместо `+` — читаемее и быстрее  
+- **Для больших строк** — используй многострочные `"""`  
+- **Для ввода** — всегда `trimmingCharacters(in: .whitespacesAndNewlines)` + `.lowercased()`  
+- **Для индексации** — **никогда** не используй `Int` напрямую — только `String.Index`  
+- **Для производительности** — избегай многократного `+=` в цикле — лучше `String` + `append` или `join`  
+- **Для форматирования** — `String(format:)` или `NumberFormatter` / `DateFormatter`  
+- **В SwiftUI** — часто комбинируй с `AttributedString` (iOS 15+)  
+- **Swift 6 strict concurrency** — `String` полностью `Sendable`  
+- **Документируйте** — пиши комментарий «String — отформатированное сообщение с именем пользователя»
+
+**Короткий девиз 2026**:
+> `String` — это **текстовая суперсила** Swift: Unicode, интерполяция, безопасные срезы, emoji без проблем.  
+> В 2026 году:  
+> - интерполяция и многострочные строки — основной способ  
+> - `String.Index` — только через `index(_:offsetBy:)`  
+> - `trim`, `contains`, `replacingOccurrences` — для очистки и поиска  
+> - `+=` в цикле — антипаттерн, используй `join` или builder  
+> Это **самый часто используемый** тип после `Int` и `Bool`.
+
+Удачи с чистым, быстрым и красивым текстом в твоём приложении! 📝

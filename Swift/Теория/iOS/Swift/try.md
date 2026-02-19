@@ -1,189 +1,132 @@
-**`try`** — ключевое слово [[Swift]], которое используется для **вызова функции или метода, объявленного с [[throws]]**.
+**`try`** — ключевое слово в Swift, которое **обязательно** используется при вызове функции, помеченной как **`throws`** (или **`async throws`**).
 
-- Функция `throws` может выбросить ошибку, и её нужно **обрабатывать**
-    
-- `try` сообщает компилятору: «я осознаю, что эта функция может выбросить ошибку»
-    
-- Есть три варианта использования:
-    
-    1. **`try`** — обычный вызов в [[do-catch]]
-        
-    2. **`try?`** — возвращает Optional, если произошла ошибка → [[nil]]
-        
-    3. **`try!`** — принудительно, краш при ошибке
-        
+Оно говорит компилятору: «я понимаю, что эта функция может выбросить ошибку, и я готов это обработать».
 
-> Проще говоря: `try` = «попробовать выполнить функцию, которая может выбросить ошибку».
+Существует **три варианта** использования `try`:
 
----
+| Вариант   | Что происходит при успехе                  | Что происходит при ошибке                     | Когда использовать в 2026 году (рекомендация) |
+|-----------|--------------------------------------------|-----------------------------------------------|-----------------------------------------------|
+| `try`     | Возвращает обычное значение                | Выбрасывает ошибку (нужен `do-catch`)         | Основной и самый безопасный способ            |
+| `try?`    | Возвращает `Optional<Success>` (не `nil`)  | Возвращает `nil`                              | Когда ошибка = «не получилось, и ладно»       |
+| `try!`    | Возвращает обычное значение                | **Краш приложения** (fatal error)             | Только когда 100% уверен, что ошибки не будет |
 
-## 2. Основные термины
-
-| Термин       | Описание                                             |
-| ------------ | ---------------------------------------------------- |
-| **throws**   | Функция может выбросить ошибку                       |
-| **throw**    | Бросить ошибку                                       |
-| **try**      | Вызов функции с обработкой ошибки                    |
-| **try?**     | Преобразует результат в [[Optional]], nil при ошибке |
-| **try!**     | Принудительный вызов, падение приложения при ошибке  |
-| **do-catch** | Блок для перехвата ошибок                            |
-
----
-
-## 3. Основной синтаксис
-
-```swift
-enum MyError: Error {
-    case failed
-}
-
-func riskyFunction() throws -> String {
-    throw MyError.failed
-}
-
-do {
-    let result = try riskyFunction()
-} catch {
-    print("Caught error:", error)
-}
-```
-
-- `riskyFunction` объявлена с `throws`
-    
-- Вызов через `try` обязательно внутри `do-catch`
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Базовое использование `try`
+### 1. try — классический и самый рекомендуемый способ (2026 стандарт)
 
 ```swift
 enum NetworkError: Error {
-    case offline
+    case noConnection
+    case timeout
 }
 
-func fetchData() throws -> String {
-    throw NetworkError.offline
+func fetchUser(id: String) throws -> User {
+    // ... сетевой запрос
+    if Bool.random() { throw NetworkError.noConnection }
+    return User(id: id, name: "Test")
 }
 
 do {
-    let data = try fetchData()
+    let user = try fetchUser(id: "123")
+    print("Пользователь:", user.name)
+} catch NetworkError.noConnection {
+    print("Нет интернета")
+} catch NetworkError.timeout {
+    print("Таймаут")
 } catch {
-    print("Error:", error)
+    print("Неизвестная ошибка:", error)
 }
 ```
 
-- Обычное использование `try` с `do-catch`
-    
+**Почему это лучший вариант:**
+- Полный контроль над всеми видами ошибок
+- Компилятор заставляет обработать ошибку
+- Легко расширять обработку конкретных ошибок
 
----
-
-### Пример 2. try? → Optional
-
-```swift
-func risky() throws -> Int {
-    if Bool.random() { return 10 }
-    else { throw NetworkError.offline }
-}
-
-let value = try? risky()
-print(value) // Optional(10) или nil
-```
-
-- Если функция выбросила ошибку → результат `nil`
-    
-
----
-
-### Пример 3. try! → принудительный вызов
+### 2. try? — когда ошибка не критична
 
 ```swift
-func alwaysSuccess() throws -> String {
-    return "Success"
-}
+let user = try? fetchUser(id: "123")
 
-let result = try! alwaysSuccess()
-print(result) // Success
-```
-
-- Используется, когда точно известно, что ошибки не будет
-    
-- ❌ Если ошибка произойдёт → краш приложения
-    
-
----
-
-### Пример 4. Использование try в chained вызовах
-
-```swift
-enum FileError: Error {
-    case notFound
-}
-
-func readFile() throws -> String { throw FileError.notFound }
-func parseFile(_ content: String) throws -> Int { return content.count }
-
-do {
-    let count = try parseFile(try readFile())
-} catch {
-    print(error) // notFound
+if let user {
+    print("Получен:", user.name)
+} else {
+    print("Не удалось получить пользователя")
 }
 ```
 
-- Можно вызывать несколько `throws` функций внутри одной строки
-    
+**Когда использовать try?:**
+- Ошибка — это просто «не получилось», и дальше можно продолжить
+- Не хочется писать `do-catch` для каждой операции
+- Результат можно обработать как `nil` (например, показать placeholder)
 
----
+**Антипаттерн** — использовать `try?` везде, где нужна конкретная обработка ошибки.
 
-### Пример 5. [[async]]/[[await]] + try
+### 3. try! — только когда ошибка невозможна
 
 ```swift
-enum NetworkError: Error { case timeout }
+// Мы точно знаем, что файл существует
+let jsonData = try! Data(contentsOf: Bundle.main.url(forResource: "config", withExtension: "json")!)
+let config = try! JSONDecoder().decode(Config.self, from: jsonData)
+```
 
-func asyncFetch() async throws -> String {
-    if Bool.random() { return "Data" }
-    else { throw NetworkError.timeout }
+**Когда try! оправдан в 2026 году:**
+- Ресурс из бандла (файл в приложении) — он гарантированно есть
+- Константы / конфиги, которые проверены на этапе сборки
+- Тесты / playground / mock-данные
+- После явной проверки (`guard let url else { fatalError() }`)
+
+**Никогда не используйте try!** для:
+- сетевых запросов
+- работы с файлами пользователя
+- парсинга JSON из API
+- любых внешних данных
+
+### 4. try в асинхронном коде (самый частый сценарий 2026)
+
+```swift
+func fetchPosts() async throws -> [Post] {
+    let (data, _) = try await URLSession.shared.data(from: url)
+    return try JSONDecoder().decode([Post].self, from: data)
 }
 
 Task {
     do {
-        let data = try await asyncFetch()
-        print(data)
+        let posts = try await fetchPosts()
+        updateUI(with: posts)
     } catch {
-        print("Async error:", error)
+        showError(error)
     }
 }
 ```
 
-- Асинхронные функции, которые могут выбросить ошибку, тоже используют `try`
-    
+Или ещё короче (Swift 5.5+):
 
----
+```swift
+Task {
+    if let posts = try? await fetchPosts() {
+        updateUI(with: posts)
+    } else {
+        showError("Не удалось загрузить посты")
+    }
+}
+```
 
-## 5. Особенности try
+### 5. Лучшие практики try / try? / try! в 2026
 
-1. Используется **только с функциями, которые имеют `throws`**
-    
-2. Три варианта: `try`, `try?`, `try!`
-    
-3. Позволяет безопасно обрабатывать ошибки с `do-catch`
-    
-4. Может использоваться в **асинхронных функциях** с `await`
-    
-5. Необязательно оборачивать в `do-catch` при `try?` или `try!`
-    
+- **Основной выбор** — `try` + `do-catch` (или `try await` в async)  
+- **`try?`** — только когда ошибка = «просто не получилось» и не нужна детальная обработка  
+- **`try!`** — **очень редко**, только когда `nil`/ошибка = критический баг приложения  
+- **Не пишите** цепочки `try? try? try?` — лучше один `do-catch`  
+- **В SwiftUI** — чаще используйте `Task { try await ... }` + `@State` / `@Published`  
+- **Swift 6 strict concurrency** — `try` / `throws` полностью безопасны, ошибки могут быть `Sendable`  
+- **Документируйте** — пиши комментарий «try — загрузка данных из сети, обрабатываем все ошибки»
 
----
+**Короткий девиз 2026**:
+> `try` — это когда ты говоришь: «я знаю, что здесь может быть ошибка, и я готов её поймать».  
+> В 2026 году:  
+> - `try` + `do-catch` — основной и самый безопасный стиль  
+> - `try?` — для «не получилось — ничего страшного»  
+> - `try!` — только когда краш = осознанный баг (ресурсы бандла, тесты)  
+> - в async-коде — `try await` — стандарт  
+> Это **основа** надёжного error handling в Swift.
 
-## 6. Итог
-
-- **try** = попытка вызвать функцию, которая может выбросить ошибку
-    
-- Позволяет **обрабатывать ошибки безопасно или преобразовать результат в Optional**
-    
-- Ключевой инструмент для **error handling** в Swift
-    
-
----
+Удачи с безопасной и понятной обработкой ошибок в твоём коде! 🛡️

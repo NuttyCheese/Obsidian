@@ -1,212 +1,104 @@
-**`Set`** — это коллекция, которая хранит **только уникальные значения**.
+**`Set`** — это **неупорядоченная коллекция уникальных элементов** в Swift.
 
-- Порядок элементов **не гарантирован**
-    
-- Элементы должны быть **[[Hashable]]** (иметь уникальный хэш)
-    
-- Поддерживает **операции множеств**: объединение, пересечение, разность, симметрическую разность
-    
+Ключевые характеристики (актуально на 2026 год):
 
-> Проще говоря: Set = «коллекция без дубликатов, для быстрой проверки принадлежности».
+- **Уникальность** — дубликаты автоматически игнорируются
+- **Порядок не гарантирован** — элементы хранятся в хеш-таблице (open addressing)
+- **Элементы должны быть Hashable** (Int, String, UUID, struct/enum с Hashable и т.д.)
+- **Средняя сложность операций** — O(1) для insert, remove, contains (при хорошем hash)
+- **Mutable** через `var`, **immutable** через `let`
+- **Value type** — копируется при присваивании (Copy-on-Write)
 
----
+### Основные операции и методы (самые используемые в 2026)
 
-## 🔹 1. Основные термины
+| Операция / Метод                  | Синтаксис / Пример                                           | Сложность | Комментарий 2026 |
+|-----------------------------------|--------------------------------------------------------------|-----------|------------------|
+| Создание                          | `Set([1, 2, 3])` или `Set<Int>()`                            | —         | —                |
+| Добавление                        | `set.insert(42)`                                             | O(1)      | Возвращает `(inserted: Bool, memberAfterInsert: T)` |
+| Удаление                          | `set.remove(42)`                                             | O(1)      | Возвращает удалённое значение или nil |
+| Проверка наличия                  | `set.contains(42)`                                           | O(1)      | Самый быстрый способ проверки |
+| Объединение (union)               | `a.union(b)` или `a.formUnion(b)` (in-place)                 | O(n)      | Возвращает новый Set или меняет существующий |
+| Пересечение (intersection)        | `a.intersection(b)`                                          | O(n)      | Элементы, которые есть в обоих |
+| Вычитание (subtracting)           | `a.subtracting(b)`                                           | O(n)      | Элементы, которые есть в a, но нет в b |
+| Симметричная разность             | `a.symmetricDifference(b)`                                   | O(n)      | Элементы, которые есть только в одном множестве |
+| Пустота                           | `set.isEmpty`                                                | O(1)      | —                |
+| Количество элементов              | `set.count`                                                  | O(1)      | —                |
+| Итерация                          | `for item in set { ... }`                                    | O(n)      | Порядок случайный |
+| map / filter / reduce             | `set.map { $0 * 2 }` → возвращает **Array**                  | O(n)      | Set → Array после трансформации |
+| sorted                            | `set.sorted()`                                               | O(n log n)| Возвращает Array |
 
-| Термин                     | Описание                                                                                 |
-| -------------------------- | ---------------------------------------------------------------------------------------- |
-| **Hashable**               | Элемент Set должен поддерживать хэширование ([[String]], [[Int]], [[struct]] с Hashable) |
-| **Unique values**          | Set хранит только уникальные элементы                                                    |
-| **Operations**             | union, intersection, subtracting, symmetricDifference                                    |
-| **Mutable / Immutable**    | [[var]] → можно добавлять/удалять; [[let]] → immutable                                   |
-| **Contains**               | Быстрая проверка наличия элемента в множестве                                            |
-| **Higher-order functions** | [[map]], [[filter]], [[reduce]], [[compactMap]], [[sort]], [[forEach]]                   |
+### Самые популярные паттерны Set в 2026 году
 
----
-
-## 🔹 2. Основной синтаксис
+#### 1. Удаление дубликатов из массива (самый частый кейс)
 
 ```swift
-var numbers: Set<Int> = [1, 2, 3, 3, 2]
-print(numbers) // [2, 3, 1] порядок не гарантирован
+let duplicates = [1, 2, 2, 3, 3, 4, 1]
+let unique = Set(duplicates)          // → Set<Int> с уникальными значениями
+let sortedUnique = Array(unique).sorted()  // если нужен порядок
 ```
 
-- Дубликаты **удаляются автоматически**
-    
-- Используем **`var` для mutable**, `let` для immutable
-    
-
----
-
-## 🔹 3. Примеры использования
-
-### Пример 1. Создание и добавление
+#### 2. Быстрая проверка принадлежности (O(1) вместо O(n))
 
 ```swift
-var fruits: Set<String> = ["Apple", "Banana"]
-fruits.insert("Orange")
-fruits.insert("Apple") // не добавится, уже есть
-print(fruits) // ["Banana", "Apple", "Orange"]
-```
+let allowedUsers: Set<String> = ["alice", "bob", "charlie"]
 
-- `insert` добавляет элемент только если его ещё нет
-    
-
----
-
-### Пример 2. Удаление и проверка наличия
-
-```swift
-fruits.remove("Banana")
-print(fruits) // ["Apple", "Orange"]
-
-if fruits.contains("Apple") {
-    print("Apple is in the set")
+func canAccess(_ username: String) -> Bool {
+    allowedUsers.contains(username.lowercased())
 }
 ```
 
-- `remove` удаляет элемент
-    
-- `contains` проверяет наличие элемента **очень быстро**
-    
-
----
-
-### Пример 3. Операции множеств
+#### 3. Операции над множествами (очень полезно в бизнес-логике)
 
 ```swift
-let a: Set = [1, 2, 3, 4]
-let b: Set = [3, 4, 5, 6]
+let admins: Set<String> = ["alice", "bob"]
+let moderators: Set<String> = ["bob", "charlie"]
 
-let union = a.union(b)                 // [1, 2, 3, 4, 5, 6]
-let intersection = a.intersection(b)   // [3, 4]
-let difference = a.subtracting(b)      // [1, 2]
-let symmetric = a.symmetricDifference(b) // [1, 2, 5, 6]
-
-print(union, intersection, difference, symmetric)
+let allPrivileged = admins.union(moderators)              // {"alice", "bob", "charlie"}
+let bothRoles = admins.intersection(moderators)           // {"bob"}
+let onlyAdmins = admins.subtracting(moderators)           // {"alice"}
+let xorRoles = admins.symmetricDifference(moderators)     // {"alice", "charlie"}
 ```
 
-- Полезно для **математических операций над множествами**
-    
-
----
-
-### Пример 4. Итерация
+#### 4. Set с кастомными типами (Hashable обязателен)
 
 ```swift
-for fruit in fruits {
-    print(fruit)
-}
-```
-
-- Порядок **не гарантирован**
-    
-
----
-
-### Пример 5. Set с кастомной структурой
-
-```swift
-struct Point: Hashable {
-    var x: Int
-    var y: Int
+struct UserID: Hashable {
+    let value: String
 }
 
-var points: Set<Point> = [Point(x:1, y:2), Point(x:2, y:3)]
-points.insert(Point(x:1, y:2)) // не добавится, дубликат
-print(points) // [Point(x: 2, y: 3), Point(x: 1, y: 2)]
+let activeUsers: Set<UserID> = [UserID(value: "u123"), UserID(value: "u456")]
 ```
 
-- Структуры должны соответствовать `Hashable`
-    
-
----
-
-### Пример 6. Операции высшего порядка
+#### 5. Set + lazy / функциональные методы
 
 ```swift
-let numbers: Set = [1, 2, 3, 4, 5]
+let numbers: Set = [1, 2, 3, 4, 5, 6]
 
-// map
-let squared = numbers.map { $0 * $0 } // [1, 4, 9, 16, 25]
+let evenSquared = numbers.lazy
+    .filter { $0 % 2 == 0 }
+    .map { $0 * $0 }
+    .sorted()
 
-// filter
-let evenNumbers = numbers.filter { $0 % 2 == 0 } // [2, 4]
-
-// reduce
-let sum = numbers.reduce(0, +) // 15
-
-// sorted
-let sortedNumbers = numbers.sorted() // [1, 2, 3, 4, 5]
+// Результат — массив [4, 16, 36]
 ```
 
-- Set поддерживает **map, filter, reduce, sorted, compactMap, forEach**
-    
-- Обратите внимание: `map` и `filter` возвращают **массив**, а не Set
-    
+### 5. Лучшие практики Set в Swift 2026
 
----
+- **Используй Set** именно тогда, когда тебе нужна **уникальность** + **быстрая проверка contains**  
+- **Не используй Set**, если важен порядок → бери `Array` или `OrderedSet` (swift-collections)  
+- **Не используй Set**, если часто нужен индекс → `Array` быстрее  
+- **Для очень больших множеств** — рассмотри `Set` с хорошим `Hashable` (плохой hash → деградация до O(n))  
+- **В SwiftUI** — Set идеален для хранения выбранных ID (`Set<UUID>`)  
+- **Swift 6 strict concurrency** — `Set` полностью `Sendable` при `Element: Sendable`  
+- **Документируйте** — пиши комментарий «Set<UserID> — активные пользователи (уникальные ID)»
 
-## 🔹 4. Под капотом
+**Короткий девиз 2026**:
+> `Set` — это когда тебе нужны **уникальные элементы** и **мгновенная проверка наличия**.  
+> В 2026 году:  
+> - удаление дубликатов → `Set(array)`  
+> - быстрая проверка `contains` → `Set` вместо `Array.contains`  
+> - операции над множествами (union, intersection и т.д.)  
+> - для порядка → `Array(sorted(set))` или `OrderedSet`  
+> Это **самый быстрый** способ гарантировать уникальность в Swift.
 
-- **Set хранит элементы в виде хэш-таблицы**
-    
-- Каждый элемент имеет **уникальный хэш**
-    
-- Дубликаты не добавляются, так как проверка по хэшу происходит быстро (O(1) в среднем)
-    
-- Порядок элементов **не гарантирован**, так как внутреннее расположение зависит от хэш-значений
-    
-
-### Memory layout (упрощённо)
-
-```mermaid
-flowchart TD
-    A[Set struct в стеке] --> B[Хэш-таблица в куче]
-    B --> C[Элемент 1]
-    B --> D[Элемент 2]
-    B --> E[Элемент 3]
-    
-    C --> F[Хэш -> Значение]
-    D --> G[Хэш -> Значение]
-    E --> H[Хэш -> Значение]
-```
-
-- Структура Set хранится на **[[Stack]]**, а элементы и хэш-таблица — на **[[Heap]]**
-    
-- При вставке или удалении Set **перестраивает хэш-таблицу**, если необходимо
-    
-
----
-
-### 5. Особенности Set
-
-1. **Уникальные значения** — дубликаты игнорируются
-    
-2. **Hashable** — элементы должны поддерживать хэширование
-    
-3. **Порядок не гарантирован**
-    
-4. Поддерживает **операции множеств**: union, intersection, subtracting, symmetricDifference
-    
-5. Mutable через `var`, immutable через `let`
-    
-6. **Высшего порядка функции**: map, filter, reduce, sorted, compactMap, forEach
-    
-7. Быстрая проверка `contains` — O(1) в среднем
-    
-
----
-
-## 🔹 6. Итог
-
-- **Set** = коллекция уникальных элементов без гарантии порядка
-    
-- Идеально подходит для **проверки уникальности и операций над множествами**
-    
-- Поддерживает **арифметику множеств и кастомные структуры через Hashable**
-    
-- Можно использовать **операции высшего порядка** для удобной работы с элементами
-    
-
----
+Удачи с быстрыми и уникальными коллекциями в твоём коде! 🚀

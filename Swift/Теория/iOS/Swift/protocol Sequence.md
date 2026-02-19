@@ -1,187 +1,154 @@
-**`Sequence`** — это **протокол**, который описывает тип, значения которого можно **перебирать по одному элементу за раз**.
+**`Sequence`** — это фундаментальный протокол в Swift, который определяет типы, элементы которых **можно перебирать по одному за раз** (итерировать).
 
-- Все стандартные коллекции в [[Swift]] ([[Array]], [[Set]], [[Dictionary]], [[Range]]) соответствуют протоколу `Sequence`
-    
-- Для перебора используется метод `makeIterator()`, который возвращает **Iterator**
-    
-- Позволяет использовать [[for-in]] цикл для итерации
-    
+Все стандартные коллекции Swift соответствуют `Sequence`:
 
-> Проще говоря: Sequence = «что-то, что можно перебирать элемент за элементом».
+- `Array`
+- `Set`
+- `Dictionary`
+- `String`
+- `Range`
+- `ClosedRange`
+- `StrideThrough`, `StrideTo`, `StrideThrough` и т.д.
 
----
+> Проще говоря: если тип можно использовать в цикле `for-in`, значит он соответствует `Sequence`.
 
-## 2. Основные термины
-
-| Термин                              | Описание                                      |
-| ----------------------------------- | --------------------------------------------- |
-| **Sequence**                        | Протокол для типов, которые можно перебирать  |
-| **Iterator**                        | Объект, который возвращает элементы по одному |
-| **Element**                         | Тип элементов, которые содержит Sequence      |
-| **for-in**                          | Цикл для перебора Sequence                    |
-| **[[lazy]]**                        | Позволяет ленивую обработку элементов         |
-| **[[map]], [[filter]], [[reduce]]** | Методы для работы с Sequence                  |
-
----
-
-## 3. Основной синтаксис
+### 1. Основное требование протокола (2026 актуально)
 
 ```swift
-let numbers: [Int] = [1, 2, 3]
-for number in numbers {
-    print(number)
+public protocol Sequence {
+    associatedtype Element
+    associatedtype Iterator : IteratorProtocol
+    
+    func makeIterator() -> Iterator
+    
+    // ... + множество default-имплементаций
 }
 ```
 
-- `Array` — Sequence
-    
-- Цикл `for-in` автоматически использует `makeIterator()`
-    
+Главное — метод `makeIterator()`, который возвращает **итератор** (объект, умеющий выдавать элементы по одному через `next()`).
 
----
+### 2. Почему Sequence важен (ключевые преимущества)
 
-## 4. Примеры от простого к сложному
+| Возможность                              | Что даёт в 2026 году                                      | Пример |
+|------------------------------------------|-----------------------------------------------------------|--------|
+| `for-in` цикл                            | Самый читаемый способ перебора                             | `for item in collection { ... }` |
+| `map`, `filter`, `reduce`, `compactMap`  | Функциональный стиль обработки                            | `numbers.filter { $0 > 0 }.map { $0 * 2 }` |
+| `lazy` обработка                         | Экономия памяти для больших/бесконечных последовательностей | `1...1_000_000.lazy.filter { $0 % 2 == 0 }` |
+| `allSatisfy`, `contains`, `min`, `max`   | Удобные агрегатные операции                               | `users.allSatisfy { $0.isActive }` |
+| `joined`, `flatMap`, `zip`               | Комбинирование последовательностей                        | `zip(names, ages)` |
+| Пользовательские бесконечные последовательности | Генераторы, стримы, Fibonacci, случайные числа и т.д.     | `FibonacciSequence()` |
 
-### Пример 1. Простейший Array как Sequence
+### 3. Самые важные идиомы Sequence в 2026
+
+#### 3.1 Базовый перебор
 
 ```swift
-let numbers = [1, 2, 3, 4, 5]
-for number in numbers {
-    print(number)
+let fruits = ["яблоко", "банан", "апельсин"]
+
+for fruit in fruits {
+    print(fruit)
 }
 ```
 
-- Все элементы перебираются по порядку
-    
-
----
-
-### Пример 2. Set как Sequence
+#### 3.2 Ленивая обработка (самый популярный паттерн для больших данных)
 
 ```swift
-let letters: Set = ["a", "b", "c"]
-for letter in letters {
-    print(letter)
-}
-```
+let hugeRange = 1...1_000_000
 
-- Порядок не гарантирован, но Set тоже Sequence
-    
-
----
-
-### Пример 3. Dictionary как Sequence
-
-```swift
-let dict = ["one": 1, "two": 2]
-for (key, value) in dict {
-    print("\(key): \(value)")
-}
-```
-
-- Перебираются пары `(key, value)`
-    
-
----
-
-### Пример 4. Создание собственного Sequence
-
-```swift
-struct Countdown: Sequence {
-    let start: Int
-    
-    func makeIterator() -> some IteratorProtocol {
-        var value = start
-        return AnyIterator {
-            if value >= 0 {
-                defer { value -= 1 }
-                return value
-            } else {
-                return nil
-            }
-        }
-    }
-}
-
-for i in Countdown(start: 3) {
-    print(i)
-}
-```
-
-- Пользовательский Sequence с IteratorProtocol
-    
-
----
-
-### Пример 5. Ленивый Sequence и методы map/filter
-
-```swift
-let numbers = [1, 2, 3, 4, 5]
-let result = numbers.lazy
+let evenDoubled = hugeRange.lazy
+    .filter { $0 % 2 == 0 }
     .map { $0 * 2 }
-    .filter { $0 > 5 }
+    .prefix(10)  // берём только первые 10
 
-for value in result {
-    print(value)
+for value in evenDoubled {
+    print(value) // 4, 8, 12, ..., 40
 }
 ```
 
-- `lazy` позволяет обрабатывать элементы **по мере перебора**, экономя память
-    
+→ память не расходуется на весь миллион элементов
 
----
-
-### Пример 6. Sequence с генератором (Infinite Sequence)
+#### 3.3 Пользовательский Sequence (бесконечный генератор)
 
 ```swift
-struct FibonacciSequence: Sequence {
-    func makeIterator() -> AnyIterator<Int> {
-        var a = 0, b = 1
-        return AnyIterator {
-            let next = a
-            (a, b) = (b, a + b)
-            return next
-        }
+struct FibonacciSequence: Sequence, IteratorProtocol {
+    private var a = 0
+    private var b = 1
+    
+    mutating func next() -> Int? {
+        let next = a
+        (a, b) = (b, a + b)
+        return next
+    }
+    
+    func makeIterator() -> FibonacciSequence {
+        self
     }
 }
 
 for num in FibonacciSequence() {
-    if num > 50 { break }
-    print(num)
+    if num > 1000 { break }
+    print(num) // 0, 1, 1, 2, 3, 5, 8, ...
 }
 ```
 
-- Генерация бесконечной последовательности
-    
-- Цикл `for-in` можно прерывать вручную
-    
+#### 3.4 Sequence + async/await (Swift 5.5+)
 
----
+```swift
+struct AsyncNumbers: AsyncSequence {
+    typealias Element = Int
+    
+    struct AsyncIterator: AsyncIteratorProtocol {
+        var current = 0
+        
+        mutating func next() async -> Int? {
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 сек
+            current += 1
+            return current <= 5 ? current : nil
+        }
+    }
+    
+    func makeAsyncIterator() -> AsyncIterator {
+        AsyncIterator()
+    }
+}
 
-## 5. Особенности Sequence
+Task {
+    for await number in AsyncNumbers() {
+        print("Получено:", number)
+    }
+}
+```
 
-1. **Одноразовая итерация** — Sequence можно перебрать несколько раз, но некоторые пользовательские Sequence могут быть одноразовыми
-    
-2. Все стандартные коллекции Swift соответствуют Sequence
-    
-3. Sequence предоставляет **базу для map, filter, reduce и других функций**
-    
-4. Можно создавать свои Sequence через **makeIterator и AnyIterator**
-    
-5. Ленивая обработка (`lazy`) позволяет экономить память на больших или бесконечных коллекциях
-    
+### 4. Sequence vs Collection — главное отличие
 
----
+| Характеристика                  | Sequence                                      | Collection (наследует Sequence)               |
+|---------------------------------|-----------------------------------------------|-----------------------------------------------|
+| Доступ по индексу               | Нет                                           | Да (`collection[index]`)                      |
+| `count`                         | Нет (может быть бесконечным)                  | Да                                            |
+| Многократный перебор            | Не гарантируется                              | Гарантируется                                 |
+| Примеры                         | `AsyncSequence`, генераторы, `AnySequence`    | `Array`, `Set`, `Dictionary`, `String`        |
 
-## 6. Итог
+**Правило 2026**:  
+Если нужен только однократный перебор (или ленивость) → достаточно `Sequence`.  
+Если нужен индекс, `count`, многократный проход → нужен `Collection`.
 
-- **Sequence** = протокол для перебираемых коллекций
-    
-- Любой тип, соответствующий Sequence, можно использовать в **for-in цикле**
-    
-- Поддерживает **map, filter, reduce, lazy**
-    
-- Можно создавать **пользовательские и бесконечные последовательности**
-    
+### 5. Лучшие практики Sequence в Swift 2026
 
----
+- **Используй `lazy`** перед `map`/`filter` на больших или бесконечных последовательностях  
+- **Создавай свои Sequence** через `AnyIterator` или реализацию `IteratorProtocol`  
+- **Для бесконечных последовательностей** — всегда добавляй `prefix(_:)` или `take(while:)`  
+- **В async** — используй `AsyncSequence` и `for await`  
+- **Не храни** результат `lazy` последовательности в свойстве без необходимости — пусть остаётся ленивым  
+- **Swift 6 strict concurrency** — `Sequence` полностью безопасен, но итераторы должны учитывать акторы  
+- **Документируйте** — пиши комментарий «Sequence — ленивая генерация чисел Фибоначчи до лимита»
+
+**Короткий девиз 2026**:
+> `Sequence` — это всё, что можно **перебрать по одному элементу**.  
+> В 2026 году:  
+> - `for-in` — базовый способ  
+> - `lazy` + `map/filter/reduce` — для экономии памяти  
+> - пользовательские Sequence — для генераторов и бесконечных потоков  
+> - `AsyncSequence` — для асинхронных потоков  
+> Это **основа** функционального и ленивого программирования в Swift.
+
+Удачи с элегантным и эффективным перебором данных в твоём коде! 🔄

@@ -1,188 +1,158 @@
-**`switch`** — это оператор ветвления, который **сравнивает значение с набором паттернов** и выполняет соответствующий блок кода.
+**`switch`** — это один из самых мощных и выразительных операторов ветвления в Swift.  
+Он не просто «альтернатива if-else», а полноценный инструмент **pattern matching**, который позволяет сравнивать значение с шаблонами, извлекать данные и добавлять условия.
 
-- Поддерживает **любые типы, которые соответствуют [[Equatable]]**
-    
-- Каждое значение должно быть **обработано**, иначе требуется `default`
-    
-- Поддерживает **pattern matching, where условия, диапазоны и перечисления**
-    
+В 2025–2026 годах `switch` — это **основной способ** обработки enum, кортежей, диапазонов, опционалов и любых типов с богатой структурой.
 
-> Проще говоря: `switch` = «выбираем ветку кода в зависимости от значения».
+### 1. Почему switch в Swift — это суперсила (ключевые преимущества)
 
----
+| Преимущество                              | Пример преимущества в 2026                                  | Когда switch выигрывает у if-else |
+|-------------------------------------------|-------------------------------------------------------------|------------------------------------|
+| Полное покрытие (exhaustiveness checking) | Компилятор требует обработать все кейсы enum                | enum, Result, Optional             |
+| Pattern matching                          | Автоматическая деструктуризация, where, let binding        | enum с associated values           |
+| Нет fallthrough по умолчанию              | Не нужно писать `break` в каждом case                       | Читаемость кода                    |
+| Поддержка диапазонов и кортежей           | `case 0..<50`, `case (let x, 0)`                            | Оценки, координаты                 |
+| Легко комбинировать несколько значений    | `case .north, .south`                                       | Объединение похожих кейсов         |
+| Безопасная работа с Optional              | `case .some(let x)`                                         | Извлечение без if let              |
 
-## 2. Основные термины
+### 2. Самые популярные и рекомендуемые паттерны switch в 2026
 
-|Термин|Описание|
-|---|---|
-|**Case**|Один вариант в switch с соответствующим блоком кода|
-|**Default**|Обязительный кейс, если не все значения обработаны|
-|**Pattern Matching**|Сравнение значения с шаблоном, включая диапазоны и enum|
-|**Fallthrough**|Позволяет переходить к следующему case (редко используется)|
-|**Where Clause**|Дополнительное условие для case|
-
----
-
-## 3. Основной синтаксис
+#### 2.1 Полное покрытие enum (самый частый случай)
 
 ```swift
-let number = 2
+enum NetworkState {
+    case idle
+    case loading(progress: Double)
+    case success(statusCode: Int)
+    case failure(error: Error)
+}
 
-switch number {
-case 1:
-    print("One")
-case 2:
-    print("Two")
-case 3:
-    print("Three")
-default:
-    print("Other")
+func handle(state: NetworkState) {
+    switch state {
+    case .idle:
+        showIdleUI()
+    case .loading(let progress):
+        showProgress(progress)
+    case .success(let code):
+        showSuccess(code)
+    case .failure(let error):
+        showError(error)
+    }
 }
 ```
 
-- `number` сравнивается с каждым кейсом
-    
-- `default` обязателен, если не все значения перечислены
-    
+**Компилятор гарантирует**, что все кейсы обработаны → `default` не нужен.
 
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. [[enum]] + switch
+#### 2.2 Switch по диапазонам (оценки, возраст, температура)
 
 ```swift
-enum Direction {
-    case north, south, east, west
-}
-
-let dir = Direction.north
-
-switch dir {
-case .north:
-    print("Go up")
-case .south:
-    print("Go down")
-case .east:
-    print("Go right")
-case .west:
-    print("Go left")
+func grade(for score: Int) -> String {
+    switch score {
+    case 90...100:
+        return "A"
+    case 80..<90:
+        return "B"
+    case 70..<80:
+        return "C"
+    case 60..<70:
+        return "D"
+    case 0..<60:
+        return "F"
+    default:
+        return "Invalid"
+    }
 }
 ```
 
-- Enum отлично подходит для switch, **default не нужен**, если все кейсы перечислены
-    
-
----
-
-### Пример 2. Диапазоны
+#### 2.3 Pattern matching + where + let binding
 
 ```swift
-let score = 85
-
-switch score {
-case 0..<50:
-    print("Fail")
-case 50..<70:
-    print("Pass")
-case 70..<90:
-    print("Good")
-case 90...100:
-    print("Excellent")
-default:
-    print("Invalid score")
+func describe(point: (x: Int, y: Int)) -> String {
+    switch point {
+    case (let x, 0) where x > 0:
+        return "На положительной оси X"
+    case (let x, 0) where x < 0:
+        return "На отрицательной оси X"
+    case (0, let y) where y > 0:
+        return "На положительной оси Y"
+    case (0, let y) where y < 0:
+        return "На отрицательной оси Y"
+    case (0, 0):
+        return "Начало координат"
+    case (let x, let y):
+        return "Точка (\(x), \(y))"
+    }
 }
 ```
 
-- Можно использовать **диапазоны** с `<`, `...` и `..<`
-    
-
----
-
-### Пример 3. Where clause
+#### 2.4 Обработка Result (очень популярно в 2026)
 
 ```swift
-let number = 8
-
-switch number {
-case let x where x % 2 == 0:
-    print("Even number")
-case let x where x % 2 != 0:
-    print("Odd number")
-default:
-    break
+switch result {
+case .success(let value):
+    updateUI(with: value)
+case .failure(let error as NSError) where error.code == 404:
+    showNotFound()
+case .failure(let error):
+    showGenericError(error)
 }
 ```
 
-- `where` добавляет **условие для кейса**
-    
-
----
-
-### Пример 4. [[tuple]] + switch
+#### 2.5 Switch по Optional (альтернатива if let)
 
 ```swift
-let point = (2, 3)
-
-switch point {
-case (0, 0):
-    print("Origin")
-case (let x, 0):
-    print("X-axis: \(x)")
-case (0, let y):
-    print("Y-axis: \(y)")
-case (let x, let y):
-    print("Point at (\(x), \(y))")
-}
-```
-
-- Можно использовать **кортежи и деструктуризацию**
-    
-
----
-
-### Пример 5. Pattern Matching с [[Optional]]
-
-```swift
-let value: Int? = 5
-
-switch value {
-case .some(let x):
-    print("Value is \(x)")
+switch optionalValue {
+case .some(let value):
+    process(value)
 case .none:
-    print("Value is nil")
+    showPlaceholder()
 }
 ```
 
-- Используется для **опциональных значений**
-    
+### 3. Продвинутые возможности switch (2025–2026)
 
----
+- **Комбинирование кейсов**  
+  ```swift
+  case .north, .south:
+      print("Вертикальное движение")
+  ```
 
-## 5. Особенности switch
+- **fallthrough** (редко, но полезно)  
+  ```swift
+  case 1:
+      print("Один")
+      fallthrough
+  case 2:
+      print("Два")  // выполнится и для 1, и для 2
+  ```
 
-1. **Полное покрытие кейсов** — без `default` не компилируется для неполного перечисления
-    
-2. Поддерживает **pattern matching, диапазоны, кортежи, where**
-    
-3. Не требует `break` в конце кейса (по умолчанию **не проваливается**)
-    
-4. `fallthrough` можно использовать для перехода к следующему кейсу
-    
-5. Может работать с **[[enum]], [[Int]], [[String]], Optional, tuple, кастомными типами**
-    
+- **Value binding + where**  
+  ```swift
+  case let x where x % 2 == 0:
+      print("Чётное число: \(x)")
+  ```
 
----
+### 4. Лучшие практики switch в Swift 2026
 
-## 6. Итог
+- **Используй switch вместо if-else**, когда:
+  - работаешь с enum (особенно с associated values)
+  - нужно полное покрытие кейсов
+  - есть диапазоны или кортежи
+  - много условий на одно значение
 
-- **switch** = мощный оператор ветвления с pattern matching
-    
-- Используется для **enum, чисел, диапазонов, кортежей, опционалов**
-    
-- Полезен, когда **if/else слишком громоздкий**
-    
-- Поддерживает **where, fallthrough, деструктуризацию**
-    
+- **Всегда** покрывай все кейсы enum — компилятор подскажет  
+- **Не злоупотребляй** `fallthrough` — это ухудшает читаемость  
+- **Для Optional** — чаще `if let` / `guard let`, но `switch` полезен при сложной логике  
+- **В SwiftUI / Combine** — switch отлично работает с `@State` / `@Published` enum  
+- **Swift 6 strict concurrency** — switch полностью безопасен  
+- **Документируйте** — пиши комментарий «switch по состоянию загрузки — все кейсы покрыты»
 
----
+**Короткий девиз 2026**:
+> `switch` — это когда ты хочешь **чётко, безопасно и полностью** обработать все возможные состояния значения.  
+> В 2026 году:  
+> - enum + switch — золотой стандарт  
+> - pattern matching + where + let — главная фича  
+> - полный охват кейсов — компилятор проверяет за тебя  
+> - избегай if-else цепочек длиннее 3–4 условий  
+> Это **самый мощный** и **самый читаемый** способ ветвления в Swift.
+
+Удачи с чистыми, безопасными и исчерпывающими switch в твоём коде! 🔀
