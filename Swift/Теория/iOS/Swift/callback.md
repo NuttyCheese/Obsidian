@@ -128,7 +128,7 @@ let (result1, result2, result3) = try await (r1, r2, r3)
 
 ### 5. Лучшие практики callback в Swift 2026
 
-- **Мигрируй на async/await** — почти все новые API (URLSession, FileManager, Core Data, CloudKit) имеют `async` версии  
+- **Мигрируй на async/await** — почти все новые [[API]] ([[URLSession]], [[FileManager]], [[Core Data]], CloudKit) имеют `async` версии  
 - **Если API только с callback** — оборачивай в `async` функцию с `withCheckedThrowingContinuation`  
 - **Всегда используй `[weak self]` в escaping closure** — иначе retain cycle  
 - **Передавай результат через `Result<Type, Error>`** — это стандарт  
@@ -140,5 +140,3 @@ let (result1, result2, result3) = try await (r1, r2, r3)
 > Callback — это когда функция говорит: «когда я закончу — позвоню тебе».  
 > В 2026 году callback’и почти везде заменены на `async/await` — код стал линейным, читаемым и безопасным.  
 > Если видишь старый callback — оборачивай его в `async` функцию и живи счастливо.
-
-Удачи с чистым асинхронным кодом без callback hell в твоём приложении! 🚀

@@ -1,114 +1,88 @@
-**`NSPredicate`** — класс из **[[Foundation]]**, используемый для **фильтрации данных** и создания условий выборки.
+**`NSPredicate`** — это мощный и гибкий инструмент в Foundation для создания **логических условий фильтрации** объектов.  
+Он используется в основном с:
 
-- Часто применяется с **Core Data** (`NSFetchRequest`), массивами (`filter`) и `NSArray`.
-    
-- Позволяет описывать **логические условия** для поиска объектов по атрибутам.
-    
-- Использует **синтаксис предикатов**, похожий на SQL.
-    
+- **Core Data** (`NSFetchRequest.predicate`)
+- **NSArray** / `NSArray.filtered(using:)`
+- **Swift коллекциями** через `filter { predicate.evaluate(with: $0) }`
 
-Относится к: **[[Foundation]] → Filtering / [[Core Data]]**
+NSPredicate позволяет описывать сложные запросы в **строковом формате**, похожем на SQL, но с полной типобезопасностью и безопасной подстановкой параметров.
 
----
+### 1. Почему NSPredicate всё ещё актуален в 2025–2026
 
-## 🔹 Примеры кода
+| Сценарий                                      | Почему NSPredicate здесь лучший выбор                  | Альтернатива (когда можно обойтись без него) |
+|-----------------------------------------------|--------------------------------------------------------|----------------------------------------------|
+| Core Data fetch request                       | Самый надёжный и безопасный способ фильтрации          | SwiftData / @Query (если используешь SwiftData) |
+| Фильтрация NSArray / NSMutableArray           | Работает нативно, поддерживает KVC                     | `filter` с замыканием                        |
+| Сложные условия (AND/OR/IN/BEGINSWITH и т.д.) | Очень выразительный синтаксис                          | `filter` + цепочка условий                   |
+| Динамическая фильтрация (поиск по тексту)     | Легко строить предикаты в runtime                      | Combine / @Query                             |
+| Legacy-код / Objective-C interop              | NSPredicate — стандарт Foundation                      | —                                            |
 
-### 1. Фильтрация массива строк
+### 2. Самые важные форматы NSPredicate (шпаргалка 2026)
 
-```swift
-import Foundation
+| Формат / Оператор                  | Описание                                               | Пример NSPredicate(format:)                     | Эквивалент в Swift замыкании |
+|------------------------------------|--------------------------------------------------------|-------------------------------------------------|--------------------------------|
+| `==`, `=`, `!=`                    | Равенство / неравенство                                | `"age == %d"`                                   | `$0.age == 25`                 |
+| `>`, `<`, `>=`, `<=`               | Сравнение чисел                                        | `"price > 100"`                                 | `$0.price > 100`               |
+| `IN`                               | Вхождение в массив/множество                           | `"status IN %@"`                                | `["active", "pending"].contains($0.status)` |
+| `BETWEEN`                          | Диапазон                                               | `"age BETWEEN {18, 65}"`                        | `$0.age >= 18 && $0.age <= 65` |
+| `BEGINSWITH[c]`, `ENDSWITH[c]`     | Начинается/заканчивается (игнорируя регистр)           | `"name BEGINSWITH[c] %@"`                       | `$0.name.lowercased().hasPrefix("a")` |
+| `CONTAINS[c]`, `LIKE[c]`           | Содержит / wildcard                                    | `"name CONTAINS[c] %@"`                         | `$0.name.lowercased().contains("bob")` |
+| `ANY`, `ALL`                       | Для коллекций (to-many отношения)                      | `"ANY tags.name == %@"`                         | —                              |
+| `&&`, `AND`, `||`, `OR`, `NOT`     | Логические операторы                                   | `"age > 18 AND status == 'active'"`             | `$0.age > 18 && $0.status == "active"` |
 
-let names = ["Alice", "Bob", "Charlie", "David"]
-let predicate = NSPredicate(format: "SELF BEGINSWITH[c] %@", "A")
-let filtered = names.filter { predicate.evaluate(with: $0) }
-
-print(filtered) // ["Alice"]
-```
-
-- `SELF` — текущий элемент массива.
-    
-- `[c]` — игнорировать регистр.
-    
-
----
-
-### 2. Простое сравнение с числом
+### 3. Самый безопасный и современный паттерн 2026 (Core Data + NSPredicate)
 
 ```swift
-let numbers = [1, 5, 10, 15]
-let predicate = NSPredicate(format: "SELF > %d", 5)
-let filtered = numbers.filter { predicate.evaluate(with: $0) }
-
-print(filtered) // [10, 15]
-```
-
----
-
-### 3. Использование с Core Data
-
-```swift
-import CoreData
-
-let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "User")
-fetchRequest.predicate = NSPredicate(format: "age >= %d AND name CONTAINS[c] %@", 18, "a")
-
-do {
-    let users = try context.fetch(fetchRequest)
-    users.forEach { print($0.value(forKey: "name") ?? "") }
-} catch {
-    print("Ошибка fetch: \(error)")
+final class UserRepository {
+    private let context: NSManagedObjectContext
+    
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+    
+    func fetchActiveUsers(olderThan minAge: Int, searchText: String?) throws -> [User] {
+        let request = User.fetchRequest()
+        
+        var subpredicates: [NSPredicate] = [
+            NSPredicate(format: "isActive == true"),
+            NSPredicate(format: "age >= %d", minAge)
+        ]
+        
+        if let searchText, !searchText.isEmpty {
+            let searchPredicate = NSPredicate(format: "name CONTAINS[c] %@ OR email CONTAINS[c] %@", searchText, searchText)
+            subpredicates.append(searchPredicate)
+        }
+        
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+        
+        // Сортировка
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        
+        return try context.fetch(request)
+    }
 }
 ```
 
-- Фильтруем пользователей старше 18 лет с буквой "a" в имени.
-    
-- Используется **безопасное подставление параметров** (`%@`, `%d`).
-    
+### 4. Лучшие практики NSPredicate в 2026
 
----
+- **Всегда** используй **форматированные строки с подстановкой** (`%@`, `%d`, `%f`) — это **защищает** от инъекций  
+- **Никогда** не конкатенируй строки вручную: `"name == '\(search)'"` → уязвимость и ошибки с кавычками  
+- **Для нескольких условий** — используй `NSCompoundPredicate` (`andPredicateWithSubpredicates`, `orPredicateWithSubpredicates`)  
+- **Для поиска по тексту** — всегда добавляй `[c]` (case-insensitive) и `[d]` (diacritic-insensitive)  
+  ```swift
+  NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+  ```
+- **В SwiftUI / Combine** — предпочитай `@Query` или `filter` замыканиями вместо NSPredicate  
+- **Для производительности** — используй индексы в модели Core Data для часто фильтруемых атрибутов  
+- **Документируйте** — пиши комментарий «NSPredicate — поиск активных пользователей старше minAge с текстом в имени или email»
 
-### 4. Фильтрация массива словарей
+**Короткий девиз 2026**:
+> `NSPredicate` — это «SQL-подобный язык запросов» внутри Swift для Core Data и NSArray.  
+> В 2026 году:  
+> - используй **форматированные строки** с `%@`, `%d`  
+> - `[c]` / `[cd]` — для поиска без учёта регистра и диакритик  
+> - `NSCompoundPredicate` — для сложных AND/OR условий  
+> - в новом коде → чаще `filter` замыканиями или `@Query`  
+> Это **основа** мощной и безопасной фильтрации в Core Data.
 
-```swift
-let users = [
-    ["name": "Alice", "age": 25],
-    ["name": "Bob", "age": 17],
-    ["name": "Charlie", "age": 30]
-]
-
-let predicate = NSPredicate(format: "age >= %d", 18)
-let filtered = (users as NSArray).filtered(using: predicate)
-
-print(filtered) 
-// [["name": "Alice", "age": 25], ["name": "Charlie", "age": 30]]
-```
-
----
-
-### 5. Сложные условия с OR и IN
-
-```swift
-let predicate = NSPredicate(format: "name IN %@ OR age < %d", ["Alice", "Bob"], 20)
-let filtered = (users as NSArray).filtered(using: predicate)
-
-print(filtered)
-// [["name": "Alice", "age": 25], ["name": "Bob", "age": 17], ["name": "Charlie", "age": 30]]
-```
-
-- `IN` проверяет наличие значения в массиве.
-    
-- `OR`, `AND`, `NOT` — поддерживаются для логических выражений.
-    
-
----
-
-### 🔹 Особенности
-
-1. Используется для **массивов, Core Data и других коллекций**.
-    
-2. Поддерживает **форматные спецификаторы** (`%@`, `%d`, `%f`).
-    
-3. Позволяет **безопасно подставлять значения**, избегая SQL-инъекций в Core Data.
-    
-4. Можно комбинировать с **sortDescriptors** для сортировки результатов.
-    
+Удачи с быстрыми и точными запросами к данным! 🔍

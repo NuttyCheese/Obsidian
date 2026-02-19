@@ -13,166 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/callback.md",
+                "file": "Swift/Теория/iOS/Swift/open addressing.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "callback"
-            }
-          },
-          {
-            "id": "386a06933a01d78c",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/iOS/UNUserNotificationCenterDelegate.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "UNUserNotificationCenterDelegate"
-            }
-          },
-          {
-            "id": "a381f11adda642e9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "MFMailComposeViewControllerDelegate.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "MFMailComposeViewControllerDelegate"
-            }
-          },
-          {
-            "id": "c413be1d140fc58f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "CLLocationManagerDelegate.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "CLLocationManagerDelegate"
-            }
-          },
-          {
-            "id": "80f163baaaa1ddfc",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "UIImagePickerControllerDelegate.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "UIImagePickerControllerDelegate"
-            }
-          },
-          {
-            "id": "3f09ec0b892b4856",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "UIScrollViewDelegate.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "UIScrollViewDelegate"
-            }
-          },
-          {
-            "id": "68d19e1f0123d338",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "MFMailComposeViewController.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "MFMailComposeViewController"
-            }
-          },
-          {
-            "id": "19868c60a4d3e942",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "UNUserNotificationCenter.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "UNUserNotificationCenter"
-            }
-          },
-          {
-            "id": "ff24b5bc63379712",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "CLLocationManager.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "CLLocationManager"
-            }
-          },
-          {
-            "id": "e1e6d6bfa41c6d93",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "CLLocationManager.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "CLLocationManager"
-            }
-          },
-          {
-            "id": "865f27d3837eab39",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ExpressibleByDictionaryLiteral.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "ExpressibleByDictionaryLiteral"
-            }
-          },
-          {
-            "id": "498a8c95d35d10f3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ExpressibleByArrayLiteral.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "ExpressibleByArrayLiteral"
+              "title": "open addressing"
             }
           }
         ]
@@ -350,32 +196,32 @@
   },
   "active": "674d8be54ba96312",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/Swift/Capture.md",
-    "Swift/Теория/iOS/Swift/Capture list.md",
-    "Swift/Теория/iOS/Swift/catch.md",
-    "Swift/Теория/iOS/Swift/Chaining.md",
-    "Swift/Теория/iOS/Swift/Character.md",
-    "Swift/Теория/iOS/Swift/class.md",
-    "Swift/Теория/iOS/Swift/closure.md",
-    "Swift/Теория/iOS/Swift/Codable.md",
-    "Swift/Теория/iOS/Swift/Collection.md",
-    "Swift/Теория/iOS/Swift/Comparable.md",
-    "Swift/Теория/iOS/Swift/compile-time.md",
-    "Swift/Теория/iOS/Swift/completion handler.md",
-    "Swift/Теория/iOS/Swift/constraint.md",
-    "Swift/Теория/iOS/Swift/continue.md",
-    "Swift/Теория/iOS/Swift/Data.md",
-    "Swift/Теория/iOS/Swift/Date.md",
-    "Swift/Теория/iOS/Swift/DateComponents.md",
-    "Swift/Теория/iOS/Swift/DateFormatter.md",
-    "Swift/Теория/iOS/Swift/Decimal.md",
-    "Swift/Теория/iOS/Swift/Decodable.md",
-    "Swift/Теория/iOS/Swift/default.md",
-    "Swift/Теория/iOS/Swift/defer.md",
-    "Swift/Теория/iOS/Swift/deinit.md",
-    "Swift/Теория/iOS/Swift/Delegate.md",
-    "Swift/Теория/iOS/UNUserNotificationCenterDelegate.md",
-    "MFMailComposeViewControllerDelegate.md",
+    "Swift/Теория/iOS/Swift/open.md",
+    "Swift/Теория/iOS/Swift/Observer.md",
+    "Swift/Теория/iOS/Swift/ObjC Runtime.md",
+    "Swift/Теория/iOS/Swift/Numeric.md",
+    "Swift/Теория/iOS/Swift/NSValue.md",
+    "Swift/Теория/iOS/Swift/NSString.md",
+    "Swift/Теория/iOS/Swift/NSSortDescriptor.md",
+    "Swift/Теория/iOS/Swift/NSPredicate.md",
+    "Swift/Теория/iOS/Swift/NSObjectProtocol.md",
+    "Swift/Теория/iOS/Swift/NSObject Scheme.md",
+    "Swift/Теория/iOS/Swift/NSObject.md",
+    "Swift/Теория/iOS/Swift/NSNumber.md",
+    "Swift/Теория/iOS/Swift/NSNull.md",
+    "Swift/Теория/iOS/Swift/NSLock.md",
+    "Swift/Теория/iOS/Swift/NSLayoutYAxisAnchor.md",
+    "Swift/Теория/iOS/Swift/any.md",
+    "Swift/Теория/iOS/Swift/any Protocol.md",
+    "Swift/Теория/iOS/Swift/Any vs AnyObject.md",
+    "metatype.md",
+    "Swift/Теория/iOS/Swift/AnyClass.md",
+    "Swift/Теория/iOS/Swift/AnyObject.md",
+    "Swift/Теория/iOS/Swift/Array.md",
+    "Swift/Теория/iOS/Swift/as.md",
+    "Swift/Теория/iOS/Swift/AssociatedType.md",
+    "Swift/Теория/iOS/Swift/Associated value.md",
+    "Swift/Теория/iOS/Swift/Atomic Operation.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",
