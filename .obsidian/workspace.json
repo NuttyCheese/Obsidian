@@ -8,35 +8,20 @@
         "type": "tabs",
         "children": [
           {
-            "id": "674d8be54ba96312",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/iOS/MapKit/MapKit.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "MapKit"
-            }
-          },
-          {
             "id": "a0b14c8fff2fe4cf",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/MapKit/MapKit.md",
+                "file": "Swift/Теория/iOS/MapKit/MKDirections.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "MapKit"
+              "title": "MKDirections"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -211,34 +196,34 @@
   },
   "active": "a0b14c8fff2fe4cf",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/Core Location/CLLocationManagerDelegate.md",
-    "Swift/Теория/iOS/Core Location/CLLocationManager.md",
-    "Swift/Теория/iOS/Core Graphics/UIBezierPath.md",
-    "Swift/Теория/iOS/Core Animation/CAShapeLayerFillRule.md",
-    "Swift/Теория/iOS/Core Animation/CAShapeLayerLineCap.md",
-    "Swift/Теория/iOS/Core Animation/CAShapeLayerLineJoin.md",
-    "Swift/Теория/iOS/MapKit/MKMapView.md",
+    "Swift/Теория/iOS/MapKit/MKClusterAnnotation.md",
+    "Swift/Теория/iOS/MapKit/MKDirectionsTransportType.md",
+    "Swift/Теория/iOS/MapKit/MKDirections.md",
+    "Swift/Теория/iOS/MapKit/MKRoute.md",
+    "Swift/Теория/iOS/MapKit/MKMapItem.md",
+    "Swift/Теория/iOS/MapKit/MKCircleRenderer.md",
+    "Swift/Теория/iOS/Core Graphics/CGLineCap.md",
+    "Swift/Теория/iOS/Core Graphics/CGLineJoin.md",
+    "Swift/Теория/iOS/MapKit/MKCircle.md",
+    "Swift/Теория/iOS/MapKit/MKAnnotationView.md",
+    "Swift/Теория/iOS/Core Location/CLLocationCoordinate2D.md",
+    "Swift/Теория/iOS/MapKit/MKOverlayRenderer.md",
+    "Swift/Теория/iOS/Core Location/CLLocationDistance.md",
+    "Swift/Теория/iOS/MapKit/MKAnnotation.md",
     "Swift/Теория/iOS/MapKit/MapKit.md",
-    "Swift/Теория/iOS/Core Animation/CAShapeLayer.md",
-    "Swift/Теория/iOS/Core Animation/CALayer.md",
-    "Swift/Теория/iOS/Core Graphics/Core Graphics.md",
-    "Swift/Теория/iOS/Core Graphics/CGSize.md",
-    "Swift/Теория/iOS/Core Graphics/CGRect.md",
-    "Swift/Теория/iOS/Core Graphics/CGPoint.md",
-    "Swift/Теория/iOS/Core Graphics/CGPath.md",
-    "Swift/Теория/iOS/Core Graphics/CGImage.md",
+    "Swift/Теория/iOS/MapKit/MKPolyline.md",
+    "Swift/Теория/iOS/MapKit/MKPolygon.md",
+    "Swift/Теория/iOS/MapKit/MKPointAnnotation.md",
+    "Swift/Теория/iOS/MapKit/MKOverlay.md",
+    "Swift/Теория/iOS/MapKit/MKMarkerAnnotationView.md",
+    "Swift/Теория/iOS/MapKit/MKMapViewDelegate.md",
+    "Swift/Теория/iOS/MapKit/MKMapView.md",
+    "Swift/Теория/iOS/MapKit/MKMapCamera.md",
+    "Swift/Теория/iOS/MapKit/MKLocalSearch.md",
+    "Swift/Теория/iOS/MessageUI/MFMailComposeViewControllerDelegate.md",
+    "Swift/Теория/iOS/MessageUI/mailComposeController(_ didFinishWith error ).md",
     "Swift/Теория/iOS/SceneKit",
-    "Swift/Теория/iOS/SceneKit/SceneKit.md",
-    "Swift/Теория/iOS/Core Animation/Core Animation.md",
     "Swift/Теория/iOS/Core Animation",
-    "Swift/Теория/iOS/Core Graphics/CGFloat.md",
-    "Swift/Теория/iOS/Core Graphics/CGColor.md",
-    "README.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/loadView.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/init(nibName bundle).md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/init(coder).md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/didMove.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/awakeFromNib.md",
     "Swift/Теория/iOS/MapKit",
     "Swift/Теория/iOS/MessageUI",
     "Swift/Теория/iOS/Core Location",
