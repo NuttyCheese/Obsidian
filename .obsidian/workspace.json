@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIScreenEdgePanGestureRecognizer.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UIScreenEdgePanGestureRecognizer"
+              "title": "README"
             }
           }
         ]
@@ -176,12 +176,11 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 425.5,
-    "collapsed": true
+    "width": 425.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -195,8 +194,17 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "674d8be54ba96312",
+  "active": "c2edb47d47520656",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/loadView.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/init(nibName bundle).md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/init(coder).md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/didMove.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/awakeFromNib.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UITapGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UISwipeGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIScreenEdgePanGestureRecognizer.md",
     "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIRotationGestureRecognizer.md",
     "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIPinchGestureRecognizer.md",
     "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIPanGestureRecognizer.md",
@@ -214,15 +222,6 @@
     "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewDiffableDataSource.md",
     "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewDelegate.md",
     "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewDataSource.md",
-    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewController.md",
-    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewCompositionalLayout.md",
-    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewCell.md",
-    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIScreenEdgePanGestureRecognizer.md",
-    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UISwipeGestureRecognizer.md",
-    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UITapGestureRecognizer.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/didMove.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/awakeFromNib.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
     "Swift/Теория/iOS/MapKit",
     "Swift/Теория/iOS/MessageUI",
     "Swift/Теория/iOS/Core Location",
