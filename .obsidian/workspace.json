@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "MFMailComposeViewController.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "MFMailComposeViewController"
             }
           }
         ]
@@ -196,6 +196,13 @@
   },
   "active": "674d8be54ba96312",
   "lastOpenFiles": [
+    "metatype.md",
+    "Identifiable.md",
+    "ExpressibleByDictionaryLiteral.md",
+    "ExpressibleByArrayLiteral.md",
+    "CLLocationManagerDelegate.md",
+    "CLLocationManager.md",
+    "README.md",
     "Swift/Теория/iOS/Swift/NSDate.md",
     "Swift/Теория/iOS/Swift/NSDictionary.md",
     "Swift/Теория/iOS/Swift/NSLayoutAnchor.md",
@@ -215,13 +222,6 @@
     "Swift/Теория/iOS/Swift/Optional.md",
     "Swift/Теория/iOS/Swift/override.md",
     "Swift/Теория/iOS/Swift/Point.md",
-    "Swift/Теория/iOS/Swift/Pointer.md",
-    "Swift/Теория/iOS/Swift/private.md",
-    "Swift/Теория/iOS/Swift/Protocol.md",
-    "Swift/Теория/iOS/Swift/protocol Sequence.md",
-    "Swift/Теория/iOS/Swift/protocol type.md",
-    "Swift/Теория/iOS/Swift/public.md",
-    "Swift/Теория/iOS/Swift/Range.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",
