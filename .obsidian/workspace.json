@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MFMailComposeViewController.md",
+                "file": "UserNotifications.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "MFMailComposeViewController"
+              "title": "UserNotifications"
             }
           }
         ]
@@ -196,13 +196,26 @@
   },
   "active": "674d8be54ba96312",
   "lastOpenFiles": [
-    "metatype.md",
-    "Identifiable.md",
-    "ExpressibleByDictionaryLiteral.md",
-    "ExpressibleByArrayLiteral.md",
-    "CLLocationManagerDelegate.md",
-    "CLLocationManager.md",
+    "UNUserNotificationCenter.md",
+    "UIScrollViewDelegate.md",
+    "UIImagePickerControllerDelegate.md",
+    "UIFont.md",
     "README.md",
+    "MKMapView.md",
+    "MapKit.md",
+    "Swift/Теория/iOS/MapKit",
+    "Swift/Теория/iOS/MessageUI/MFMailComposeViewControllerDelegate.md",
+    "Swift/Теория/iOS/MessageUI/MFMailComposeViewController.md",
+    "Swift/Теория/iOS/MessageUI",
+    "Swift/Теория/iOS/Swift/Identifiable.md",
+    "Swift/Теория/iOS/Swift/metatype.md",
+    "Swift/Теория/iOS/Swift/ExpressibleByDictionaryLiteral.md",
+    "Swift/Теория/iOS/Swift/ExpressibleByArrayLiteral.md",
+    "Swift/Теория/iOS/Core Location/CLLocationManager.md",
+    "Swift/Теория/iOS/Core Location/CLLocationManagerDelegate.md",
+    "Swift/Теория/iOS/Core Location",
+    "UserNotifications.md",
+    "WKWebView.md",
     "Swift/Теория/iOS/Swift/NSDate.md",
     "Swift/Теория/iOS/Swift/NSDictionary.md",
     "Swift/Теория/iOS/Swift/NSLayoutAnchor.md",
@@ -211,26 +224,12 @@
     "Swift/Теория/iOS/Swift/NSLayoutXAxisAnchor.md",
     "Swift/Теория/iOS/Swift/NSLayoutYAxisAnchor.md",
     "Swift/Теория/Хранение данных/Core Data/NSPredicate.md",
-    "Swift/Теория/Хранение данных/Core Data/NSSortDescriptor.md",
-    "Swift/Теория/iOS/Swift/NSValue.md",
-    "Swift/Теория/iOS/Swift/NSString.md",
-    "Swift/Теория/iOS/Swift/Numeric.md",
-    "Swift/Теория/iOS/Swift/ObjC Runtime.md",
-    "Swift/Теория/iOS/Swift/Observer.md",
-    "Swift/Теория/iOS/Swift/open.md",
-    "Swift/Теория/iOS/Swift/open addressing.md",
-    "Swift/Теория/iOS/Swift/Optional.md",
-    "Swift/Теория/iOS/Swift/override.md",
-    "Swift/Теория/iOS/Swift/Point.md",
     "Swift/Теория/iOS/Core Graphics",
     "Swift/Теория/iOS",
     "Swift/Теория/Фреймворк Apple",
     "Swift/Теория/Архитектурные подходы/Методологии ведения проекта",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle",
     "remove_all_tags_final.py",
-    "remove_all_tags.py",
-    "add_thematic_tags.py",
-    "fix_tag_spacing_one_line.py",
-    "fix_tag_spacing.py"
+    "remove_all_tags.py"
   ]
 }

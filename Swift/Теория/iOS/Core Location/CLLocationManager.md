@@ -1,4 +1,4 @@
-**`CLLocationManager`** — это основной класс в **Core Location** фреймворке для работы с геолокацией на iOS, iPadOS, macOS, watchOS и tvOS.
+**`CLLocationManager`** — это основной класс в **[[Core Location]]** фреймворке для работы с геолокацией на [[iOS]], iPadOS, macOS, watchOS и tvOS.
 
 Он отвечает за:
 - получение текущего местоположения устройства,
@@ -10,15 +10,15 @@
 
 ### Ключевые особенности CLLocationManager (актуально на 2026 год)
 
-| Характеристика                     | Описание                                                                 | Важные замечания 2026 |
-|------------------------------------|--------------------------------------------------------------------------|------------------------|
-| **Разрешения**                     | Требует запроса `requestWhenInUseAuthorization()` или `requestAlwaysAuthorization()` | Строгое поведение в iOS 17+ (Privacy Manifest, NSLocation*) |
-| **Точность**                       | `desiredAccuracy`: `kCLLocationAccuracyBest`, `kCLLocationAccuracyKilometer` и др. | `bestForNavigation` — самый точный, но энергозатратный |
-| **Фоновый режим**                  | Поддерживается при `always` разрешении + Background Modes → Location updates | С iOS 18+ ещё строже (App Privacy Report) |
-| **Significant-change location**    | `startMonitoringSignificantLocationChanges()` — экономит батарею           | Работает даже при killed-приложении |
-| **Region monitoring**              | Геозоны (circular regions) до 20 на приложение                           | iBeacon + CLBeaconRegion |
-| **Heading**                        | `startUpdatingHeading()` — компас (магнитный/истинный)                   | Требует отдельного разрешения (NSLocationWhenInUseUsageDescription) |
-| **Потокобезопасность**             | Делегат вызывается на **главном потоке**                                 | С Swift 6 — рекомендуется `@MainActor` |
+| Характеристика                  | Описание                                                                             | Важные замечания 2026                                               |
+| ------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| **Разрешения**                  | Требует запроса `requestWhenInUseAuthorization()` или `requestAlwaysAuthorization()` | Строгое поведение в iOS 17+ (Privacy Manifest, NSLocation*)         |
+| **Точность**                    | `desiredAccuracy`: `kCLLocationAccuracyBest`, `kCLLocationAccuracyKilometer` и др.   | `bestForNavigation` — самый точный, но энергозатратный              |
+| **Фоновый режим**               | Поддерживается при `always` разрешении + Background Modes → Location updates         | С iOS 18+ ещё строже (App Privacy Report)                           |
+| **Significant-change location** | `startMonitoringSignificantLocationChanges()` — экономит батарею                     | Работает даже при killed-приложении                                 |
+| **Region monitoring**           | Геозоны (circular regions) до 20 на приложение                                       | iBeacon + CLBeaconRegion                                            |
+| **Heading**                     | `startUpdatingHeading()` — компас (магнитный/истинный)                               | Требует отдельного разрешения (NSLocationWhenInUseUsageDescription) |
+| **Потокобезопасность**          | Делегат вызывается на **главном потоке**                                             | С Swift 6 — рекомендуется [[@MainActor]]                            |
 
 ### Минимальный рабочий пример (2026 стандарт)
 
@@ -111,5 +111,3 @@ class LocationService: NSObject, CLLocationManagerDelegate {
 > - останавливайте обновления, когда не нужны  
 > - всегда оборачивайте в отдельный класс с делегатом  
 > - учитывайте Privacy Manifest и фоновые режимы  
-
-Удачи с корректной и энергосберегающей геолокацией в твоём приложении! 📍

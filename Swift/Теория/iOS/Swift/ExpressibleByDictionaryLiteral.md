@@ -1,4 +1,4 @@
-**`ExpressibleByDictionaryLiteral`** — это протокол в стандартной библиотеке Swift, который позволяет типу быть инициализированным с помощью **литерала словаря** (dictionary literal), то есть синтаксиса `[key: value, key2: value2, …]`.
+**`ExpressibleByDictionaryLiteral`** — это протокол в стандартной библиотеке [[Swift]], который позволяет типу быть инициализированным с помощью **литерала словаря** (dictionary literal), то есть синтаксиса `[key: value, key2: value2, …]`.
 
 Если тип соответствует этому протоколу, вы можете писать:
 
@@ -19,7 +19,7 @@ public protocol ExpressibleByDictionaryLiteral {
 }
 ```
 
-- `Key` должен быть `Hashable` (как ключи в обычном `Dictionary`)
+- `Key` должен быть [[Hashable]] (как ключи в обычном [[Dictionary]])
 - `Value` — любой тип
 - Обязательный инициализатор принимает **variadic-параметр** пар `(Key, Value)`
 
@@ -146,19 +146,17 @@ print(settings.fontSize)  // 18.0
   - DSL (например, для валидации, стилей, параметров запросов)
   - обёрток над `[String: Any]` с типобезопасностью
 - **Комбинируйте** с другими Expressible-протоколами:
-  - `ExpressibleByStringLiteral`
-  - `ExpressibleByIntegerLiteral`
-  - `ExpressibleByArrayLiteral`
+  - [[ExpressibleByStringLiteral]]
+  - [[ExpressibleByIntegerLiteral]]
+  - [[ExpressibleByArrayLiteral]]
 - **Не злоупотребляйте** — если тип требует сложной логики при создании → лучше обычный `init` с именованными параметрами
-- **Swift 6 strict concurrency** — тип, реализующий протокол, должен быть `Sendable`, если используется в акторах
+- **Swift 6 strict concurrency** — тип, реализующий протокол, должен быть [[Sendable]], если используется в акторах
 - **Документируйте** — пишите комментарий «ExpressibleByDictionaryLiteral — позволяет инициализацию через [ConfigKey: Any]»
 
 **Короткий девиз 2026**:
 > `ExpressibleByDictionaryLiteral` — это когда вы хотите, чтобы ваш тип создавался так же естественно, как обычный словарь: `["key": value]`.  
 > В 2026 году:  
-> - используйте для красивого API конфигураций, настроек, DSL  
-> - чаще всего реализуют с фиксированным набором ключей (enum)  
+> - используйте для красивого [[API]] конфигураций, настроек, DSL  
+> - чаще всего реализуют с фиксированным набором ключей ([[enum]])  
 > - комбинируйте с другими Expressible*-протоколами  
 > Это **мощный инструмент** для declarative и выразительного кода.
-
-Удачи с элегантными инициализациями словарей в твоём проекте! 📖

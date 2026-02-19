@@ -1,4 +1,4 @@
-**`CLLocationManagerDelegate`** — это **протокол** в фреймворке **Core Location**, который определяет методы-делегаты для получения событий и обновлений от объекта **`CLLocationManager`**.
+**`CLLocationManagerDelegate`** — это **протокол** в фреймворке **[[Core Location]]**, который определяет методы-делегаты для получения событий и обновлений от объекта **[[CLLocationManager]]**.
 
 Это **единственный** способ получать геолокацию, ошибки, изменения авторизации и другие события от менеджера местоположения.
 
@@ -23,7 +23,7 @@
 func locationManagerDidChangeAuthorization(_ manager: CLLocationManager)
 ```
 
-Этот метод **заменил** устаревший `locationManager(_:didChangeAuthorizationStatus:)` (deprecated с iOS 14).
+Этот метод **заменил** устаревший `locationManager(_:didChangeAuthorizationStatus:)` ==(deprecated с [[iOS]] 14)==.
 
 Почему он критически важен:
 - вызывается **при первом запуске** и **при каждом изменении** статуса
@@ -103,7 +103,7 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
 
 ### Лучшие практики CLLocationManagerDelegate в 2026
 
-- **Делайте делегат отдельным классом** (`NSObject` + `@MainActor`)  
+- **Делайте делегат отдельным классом** ([[NSObject]] + [[@MainActor]])  
 - **Проверяйте** `authorizationStatus` **в** `locationManagerDidChangeAuthorization` и **перед** `startUpdatingLocation()`  
 - **Останавливайте** обновления (`stopUpdatingLocation()`) как можно раньше — это критично для батареи  
 - **Обрабатывайте** `didFailWithError` — особенно `CLError.denied`, `CLError.locationUnknown`  
@@ -120,5 +120,3 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
 > - всегда обрабатывайте `didFailWithError`  
 > - делегат — `@MainActor` + отдельный класс  
 > - учитывайте Privacy Manifest и фоновые режимы  
-
-Удачи с надёжным и энергосберегающим получением геолокации в твоём приложении! 🌍
