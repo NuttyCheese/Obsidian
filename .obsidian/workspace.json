@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Core Location/CLLocationManager.md",
+                "file": "Swift/Теория/iOS/Core Graphics/CGSize.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CLLocationManager"
+              "title": "CGSize"
             }
           }
         ]
@@ -196,14 +196,15 @@
   },
   "active": "674d8be54ba96312",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/Core Graphics/Core Graphics.md",
-    "Swift/Теория/iOS/Core Graphics/CGSize.md",
     "Swift/Теория/iOS/Core Graphics/CGRect.md",
     "Swift/Теория/iOS/Core Graphics/CGPoint.md",
     "Swift/Теория/iOS/Core Graphics/CGPath.md",
     "Swift/Теория/iOS/Core Graphics/CGImage.md",
     "Swift/Теория/iOS/Core Graphics/CGFloat.md",
     "Swift/Теория/iOS/Core Graphics/CGColor.md",
+    "Swift/Теория/iOS/Core Location/CLLocationManager.md",
+    "Swift/Теория/iOS/Core Graphics/Core Graphics.md",
+    "Swift/Теория/iOS/Core Graphics/CGSize.md",
     "README.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/loadView.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/init(nibName bundle).md",
@@ -221,7 +222,6 @@
     "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIGestureRecognizer.md",
     "Swift/Теория/iOS/UIKit/TableView/UITableViewFlowLayout.md",
     "Swift/Теория/iOS/UIKit/TableView/UITableViewDiffableDataSource.md",
-    "Swift/Теория/iOS/UIKit/TableView/UITableViewDelegate.md",
     "Swift/Теория/iOS/MapKit",
     "Swift/Теория/iOS/MessageUI",
     "Swift/Теория/iOS/Core Location",
