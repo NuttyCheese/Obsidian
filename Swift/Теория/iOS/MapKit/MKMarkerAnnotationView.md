@@ -1,4 +1,4 @@
-**`MKMarkerAnnotationView`** — это современный класс в **MapKit** (доступен с iOS 11+), который представляет **стилизованный маркер** (annotation view) на карте `MKMapView`.
+**`MKMarkerAnnotationView`** — это современный класс в **[[MapKit]]** (доступен с iOS 11+), который представляет **стилизованный маркер** (annotation view) на карте [[MKMapView]].
 
 Это **рекомендуемая замена** старому `MKPinAnnotationView` — более гибкий, красивый и кастомизируемый вариант пина с поддержкой цвета, глифа (иконки/текста внутри), анимаций и кластеризации.
 
@@ -14,16 +14,16 @@
 
 ### Основные свойства MKMarkerAnnotationView
 
-| Свойство                     | Тип                  | Значение по умолчанию                  | Что контролирует / зачем нужен |
-|------------------------------|----------------------|----------------------------------------|--------------------------------|
-| `markerTintColor`            | `UIColor?`           | `nil` (системный синий)                | Цвет маркера                   |
-| `glyphImage`                 | `UIImage?`           | `nil`                                  | Кастомная иконка внутри маркера |
-| `glyphText`                  | `String?`            | `nil`                                  | Текст внутри маркера (1–2 символа) |
-| `selectedGlyphImage`         | `UIImage?`           | `nil`                                  | Иконка при выбранном состоянии |
-| `animatesWhenAdded`          | `Bool`               | `true`                                 | Анимированное появление маркера |
-| `canShowCallout`             | `Bool`               | `true`                                 | Показывать ли всплывающее окно |
-| `rightCalloutAccessoryView`  | `UIView?`            | `nil`                                  | Кнопка справа в callout        |
-| `detailCalloutAccessoryView` | `UIView?`            | `nil`                                  | Полностью кастомный контент callout |
+| Свойство                     | Тип          | Значение по умолчанию     | Что контролирует / зачем нужен      |
+| ---------------------------- | ------------ | ------------------------- | ----------------------------------- |
+| `markerTintColor`            | [[UIColor]]? | [[nil]] (системный синий) | Цвет маркера                        |
+| `glyphImage`                 | [[UIImage]]? | `nil`                     | Кастомная иконка внутри маркера     |
+| `glyphText`                  | [[String]]?  | `nil`                     | Текст внутри маркера (1–2 символа)  |
+| `selectedGlyphImage`         | `UIImage?`   | `nil`                     | Иконка при выбранном состоянии      |
+| `animatesWhenAdded`          | [[Bool]]     | `true`                    | Анимированное появление маркера     |
+| `canShowCallout`             | `Bool`       | `true`                    | Показывать ли всплывающее окно      |
+| `rightCalloutAccessoryView`  | [[UIView]]?  | `nil`                     | Кнопка справа в callout             |
+| `detailCalloutAccessoryView` | `UIView?`    | `nil`                     | Полностью кастомный контент callout |
 
 ### Рекомендуемый паттерн использования в 2026 году
 
@@ -117,7 +117,7 @@ func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnota
 ### Лучшие практики MKMarkerAnnotationView в Swift 2026
 
 - **Всегда** используйте `dequeueReusableAnnotationView` — экономит память  
-- **Предпочитайте** `MKMarkerAnnotationView` над старым `MKAnnotationView` — современный стиль, лучше поддержка тёмной темы  
+- **Предпочитайте** [[MKMarkerAnnotationView]] над старым [[MKAnnotationView]] — современный стиль, лучше поддержка тёмной темы  
 - **Для текста внутри** — используйте `glyphText` (1–2 символа) или `glyphImage`  
 - **Для цвета** — `markerTintColor` автоматически адаптируется к тёмной теме  
 - **Для callout** — добавляйте `rightCalloutAccessoryView` (кнопка) или `detailCalloutAccessoryView` (кастомный контент)  
@@ -132,6 +132,4 @@ func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnota
 > - ключевые свойства — `markerTintColor`, `glyphImage`/`glyphText`, `canShowCallout`  
 > - кастомизируйте callout через `rightCalloutAccessoryView` / `detailCalloutAccessoryView`  
 > - переиспользуйте через `dequeueReusableAnnotationView`  
-> Это **самый красивый** и **самый рекомендуемый** способ отображения точек на карте в iOS-приложениях.
-
-Удачи с стильными, информативными и современными маркерами на картах в твоём проекте! 📍✨
+> Это **самый красивый** и **самый рекомендуемый** способ отображения точек на карте в [[iOS]]-приложениях.

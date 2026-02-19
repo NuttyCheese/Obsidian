@@ -1,12 +1,12 @@
-**`MKOverlay`** — это **протокол** в фреймворке **MapKit**, который определяет объект как **оверлей** (overlay) на карте `MKMapView`.
+**`MKOverlay`** — это **протокол** в фреймворке **[[MapKit]]**, который определяет объект как **оверлей** (overlay) на карте [[MKMapView]].
 
 Оверлей — это **графический слой поверх карты**, который может представлять:
-- линии (маршруты, дороги, границы) — `MKPolyline`
-- полигоны (зоны, страны, здания) — `MKPolygon`
-- круги (радиус покрытия, геозоны) — `MKCircle`
+- линии (маршруты, дороги, границы) — [[MKPolyline]]
+- полигоны (зоны, страны, здания) — [[MKPolygon]]
+- круги (радиус покрытия, геозоны) — [[MKCircle]]
 - кастомные оверлеи (любые сложные формы)
 
-Сам протокол `MKOverlay` наследуется от `MKAnnotation` и добавляет одно ключевое свойство:
+Сам протокол `MKOverlay` наследуется от [[MKAnnotation]] и добавляет одно ключевое свойство:
 
 ```swift
 public protocol MKOverlay : MKAnnotation {
@@ -19,13 +19,13 @@ public protocol MKOverlay : MKAnnotation {
 
 ### Основные встроенные классы, реализующие MKOverlay
 
-| Класс               | Что рисует                                  | Самый частый сценарий использования | Как создать |
-|---------------------|---------------------------------------------|--------------------------------------|-------------|
-| `MKPolyline`        | Ломаная линия / маршрут                     | Отображение маршрутов (MKDirections) | `MKPolyline(points:coordinates, count:)` |
-| `MKPolygon`         | Замкнутый полигон (с дырками опционально)   | Зоны, границы, страны, здания        | `MKPolygon(coordinates:count:)` |
-| `MKCircle`          | Круг с заданным центром и радиусом          | Радиус доставки, geofencing          | `MKCircle(center:radius:)` |
-| `MKMultiPoint`      | Набор точек (редко используется напрямую)   | —                                    | — |
-| `MKGeodesicPolyline`| Геодезическая (кратчайшая по сфере) линия   | Длинные маршруты по глобусу          | `MKGeodesicPolyline(points:count:)` |
+| Класс                | Что рисует                                | Самый частый сценарий использования      | Как создать                              |
+| -------------------- | ----------------------------------------- | ---------------------------------------- | ---------------------------------------- |
+| `MKPolyline`         | Ломаная линия / маршрут                   | Отображение маршрутов ([[MKDirections]]) | `MKPolyline(points:coordinates, count:)` |
+| `MKPolygon`          | Замкнутый полигон (с дырками опционально) | Зоны, границы, страны, здания            | `MKPolygon(coordinates:count:)`          |
+| `MKCircle`           | Круг с заданным центром и радиусом        | Радиус доставки, geofencing              | `MKCircle(center:radius:)`               |
+| `MKMultiPoint`       | Набор точек (редко используется напрямую) | —                                        | —                                        |
+| `MKGeodesicPolyline` | Геодезическая (кратчайшая по сфере) линия | Длинные маршруты по глобусу              | `MKGeodesicPolyline(points:count:)`      |
 
 ### Как добавить оверлей на карту (обязательный делегат)
 
@@ -105,14 +105,14 @@ func showRoute(from start: CLLocationCoordinate2D, to end: CLLocationCoordinate2
 }
 ```
 
-### Лучшие практики MKOverlay / MKOverlayRenderer в Swift 2026
+### Лучшие практики [[MKOverlay]] / [[MKOverlayRenderer]] в Swift 2026
 
 - **Всегда** реализуйте `mapView(_:rendererFor:)` — без него оверлей не отобразится  
 - **Используйте** конкретные рендереры: `MKPolylineRenderer`, `MKCircleRenderer`, `MKPolygonRenderer`  
 - **Для маршрутов** — добавляйте `MKPolyline` из `MKRoute.polyline`  
 - **Для динамических оверлеев** — обновляйте через `removeOverlay` + `addOverlay`  
 - **Для производительности** — не добавляйте слишком много оверлеев (MapKit сам оптимизирует)  
-- **В SwiftUI** — оборачивайте `MKMapView` в `UIViewRepresentable` и добавляйте оверлеи в `updateUIView`  
+- **В [[SwiftUI]]** — оборачивайте `MKMapView` в [[UIViewRepresentable]] и добавляйте оверлеи в `updateUIView`  
 - **Privacy Manifest** (PrivacyInfo.xcprivacy) — обязательно с iOS 17+ для MapKit  
 - **Документируйте** — пишите комментарий «MKOverlay — круг радиусом 2 км с полупрозрачной заливкой (MKCircleRenderer)»
 
@@ -123,5 +123,3 @@ func showRoute(from start: CLLocationCoordinate2D, to end: CLLocationCoordinate2
 > - добавляются через `mapView.addOverlay`  
 > - рендерятся в `mapView(_:rendererFor:)` с помощью `MK*Renderer`  
 > - это **единственный** способ отобразить маршруты, зоны покрытия, границы и другие векторные фигуры на карте  
-
-Удачи с точными, информативными и красивыми оверлеями на картах в твоём приложении! 🗺️⭕️
