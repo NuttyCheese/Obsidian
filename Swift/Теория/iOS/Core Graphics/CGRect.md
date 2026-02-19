@@ -1,4 +1,4 @@
-**CGRect** — это базовая структура из **Core Graphics** (импортируется через `import UIKit` / `import CoreGraphics`), которая описывает **прямоугольник** в двухмерном пространстве. Она состоит из двух частей:
+**CGRect** — это базовая структура из **[[Core Graphics]]** (импортируется через `import UIKit` / `import CoreGraphics`), которая описывает **прямоугольник** в двухмерном пространстве. Она состоит из двух частей:
 
 - **origin** — точка левого верхнего угла (тип `CGPoint`)
 - **size** — ширина и высота (тип `CGSize`)
@@ -24,7 +24,7 @@ public struct CGRect {
 
 ### Самые частые и важные сценарии использования CGRect в 2026
 
-1. **Работа с frame / bounds вью**
+1. **Работа с [[frame]] / [[bounds]] вью**
 
 ```swift
 override func viewDidLayoutSubviews() {
@@ -116,14 +116,14 @@ extension CGRect {
 - **Читай frame/bounds в [[viewDidLayoutSubviews]]() / [[layoutSubviews]]()** — до этого размеры обычно неверные  
 - **bounds.origin всегда (0, 0)** — используй для внутренних размеров  
 - **frame.origin** — позиция относительно супервида (может быть отрицательным)  
-- **Используй safeAreaLayoutGuide / readableContentGuide** — вместо ручного расчёта отступов  
+- **Используй [[safeAreaLayoutGuide]] / readableContentGuide** — вместо ручного расчёта отступов  
 - **integral / standardized** — используй для выравнивания по пикселям (убирает субпиксельные ошибки)  
-- **@MainActor** — все операции с CGRect в UI-контексте — на главном акторе  
-- **Swift 6 strict concurrency** — CGRect полностью Sendable (value type)  
+- **[[@MainActor]]** — все операции с CGRect в UI-контексте — на главном акторе  
+- **Swift 6 strict concurrency** — CGRect полностью [[Sendable]] ([[value type]])  
 - **Тестирование** — XCTAssertEqual(rect1, rect2, accuracy: 0.001) для floating-point  
 - **Документируйте** — пиши комментарий «CGRect — актуальный frame после Auto Layout»
 
 **Короткий девиз 2026**:
 > «CGRect — это когда тебе нужна **полная информация о прямоугольнике**: и позиция (origin), и размер (size).  
 > bounds — только размер (origin всегда 0,0), frame — позиция + размер относительно супервида.  
-> Читай в viewDidLayoutSubviews, используй integral/standardized для точности по пикселям.»
+> Читай в [[viewDidLayoutSubviews]], используй integral/standardized для точности по пикселям.»
