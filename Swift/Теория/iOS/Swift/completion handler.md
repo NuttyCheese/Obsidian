@@ -1,21 +1,21 @@
-**Completion handler** (или просто **completion**) — это **замыкание** (closure), которое передаётся в функцию как последний аргумент и вызывается **после завершения** какой-либо операции (обычно асинхронной), чтобы сообщить результат, успех/ошибку или просто факт завершения.
+**Completion handler** (или просто **completion**) — это **замыкание** ([[closure]]), которое передаётся в функцию как последний аргумент и вызывается **после завершения** какой-либо операции (обычно асинхронной), чтобы сообщить результат, успех/ошибку или просто факт завершения.
 
-В 2026 году completion handler всё ещё очень часто встречается в UIKit, Foundation и legacy-коде, хотя большинство новых API уже перешли на **async/await**.
+В 2026 году completion handler всё ещё очень часто встречается в [[UIKit]], [[Foundation]] и legacy-коде, хотя большинство новых [[API]] уже перешли на **[[async]]/[[await]]**.
 
 ### 1. Почему completion handler до сих пор важен
 
-| Сценарий                                      | Почему completion всё ещё используется                   | Современная альтернатива (2026)                     |
-|-----------------------------------------------|----------------------------------------------------------|------------------------------------------------------|
-| UIKit анимации                                | `UIView.animate` и `UIView.transition`                   | `withAnimation { ... }` + `Task`                     |
-| URLSession (старый API)                       | `dataTask`, `uploadTask`, `downloadTask`                 | `URLSession.shared.data(from:)` — async версия       |
-| Core Location, Core Motion, Core Bluetooth    | `requestLocation`, `startUpdatingLocation` и т.д.        | Некоторые методы уже async, но большинство — completion |
-| FileManager, PHPhotoLibrary, AVFoundation     | `moveItem`, `requestAuthorization`, `exportAsynchronously` | Частично async, частично completion                  |
-| Legacy-библиотеки и SDK (Firebase, Alamofire до 5.x) | Большинство SDK до сих пор на completion                | Новые версии — async/await                           |
-| Кастомные асинхронные операции                 | Когда пишешь свою асинхронную функцию на GCD/Operation   | Переписывай на `async throws`                        |
+| Сценарий                                             | Почему completion всё ещё используется                         | Современная альтернатива (2026)                         |
+| ---------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------- |
+| [[UIKit]] анимации                                   | `UIView.animate` и `UIView.transition`                         | `withAnimation { ... }` + `Task`                        |
+| [[URLSession]] (старый [[API]])                      | `dataTask`, `uploadTask`, `downloadTask`                       | `URLSession.shared.data(from:)` — async версия          |
+| Core Location, Core Motion, Core Bluetooth           | `requestLocation`, `startUpdatingLocation` и т.д.              | Некоторые методы уже async, но большинство — completion |
+| FileManager, PHPhotoLibrary, AVFoundation            | `moveItem`, `requestAuthorization`, `exportAsynchronously`     | Частично async, частично completion                     |
+| Legacy-библиотеки и SDK (Firebase, Alamofire до 5.x) | Большинство SDK до сих пор на completion                       | Новые версии — async/await                              |
+| Кастомные асинхронные операции                       | Когда пишешь свою асинхронную функцию на [[GCD]]/[[Operation]] | Переписывай на `async throws`                           |
 
 ### 2. Самый современный и рекомендуемый паттерн 2026 года
 
-#### Вариант 1: Классический completion handler (ещё очень живой в UIKit)
+#### Вариант 1: Классический completion handler (ещё очень живой в [[UIKit]])
 
 ```swift
 func loadUserProfile(userId: String, completion: @escaping (Result<User, Error>) -> Void) {
@@ -83,7 +83,7 @@ Task {
 
 **Преимущества обёртки**:
 - Код становится линейным (без вложенности)
-- Можно использовать `try await`, `async let`, `TaskGroup`
+- Можно использовать `try await`, `async let`, [[TaskGroup]]
 - Легко тестировать с `XCTest` + `async`
 - Совместимо с Swift 6 strict concurrency
 
@@ -104,5 +104,3 @@ Task {
 > - всегда `[weak self]` + `guard let self`  
 > - оборачивай старые API в `async throws`  
 > - новый код пиши на `async/await` — callback hell мёртв.
-
-Удачи с чистым и современным асинхронным кодом без вложенных замыканий! 🚀
