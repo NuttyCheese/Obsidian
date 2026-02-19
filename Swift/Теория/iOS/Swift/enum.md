@@ -180,5 +180,3 @@ let product = ArithmeticExpression.multiply(sum, ArithmeticExpression.number(2))
 > - associated value — для результатов и состояний  
 > - indirect — для деревьев и рекурсии  
 > Это **самый безопасный**, **самый выразительный** и часто **самый производительный** тип в Swift.
-
-Удачи с мощными, типобезопасными и быстрыми enum в твоём коде! 🔷

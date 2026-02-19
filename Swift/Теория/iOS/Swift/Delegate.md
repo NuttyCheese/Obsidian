@@ -1,4 +1,4 @@
-**Delegate** — это один из самых важных и часто используемых паттернов проектирования в iOS-разработке на Swift/UIKit.
+**Delegate** — это один из самых важных и часто используемых паттернов проектирования в [[iOS]]-разработке на [[Swift]]/[[UIKit]].
 
 Он позволяет **одному объекту (делегатору)** передавать ответственность за выполнение определённых действий **другому объекту (делегату)**, сохраняя **слабую связь** между ними.
 
@@ -6,21 +6,21 @@
 
 ### 1. Почему delegate — это основа UIKit (2026 реальность)
 
-| Компонент UIKit                  | Зачем нужен delegate                                      | Самый частый делегат в 2026 |
-|----------------------------------|------------------------------------------------------------|-----------------------------|
-| `UITableView` / `UICollectionView` | Обработка данных, размеров ячеек, действий пользователя    | `UITableViewDelegate`, `UITableViewDataSource` |
-| `UITextField` / `UITextView`     | Реакция на ввод, фокус, возврат клавиатуры                 | `UITextFieldDelegate`       |
-| `UIScrollView`                   | Отслеживание скролла, зума, начала/окончания перетаскивания | `UIScrollViewDelegate`      |
-| `CLLocationManager`              | Получение обновлений геолокации, авторизация               | `CLLocationManagerDelegate` |
-| `UNUserNotificationCenter`       | Обработка уведомлений, действий пользователя               | `UNUserNotificationCenterDelegate` |
-| `UIImagePickerController`        | Выбор фото/видео из галереи/камеры                         | `UIImagePickerControllerDelegate` |
-| `MFMailComposeViewController`    | Отправка почты из приложения                               | `MFMailComposeViewControllerDelegate` |
+| Компонент UIKit                        | Зачем нужен delegate                                        | Самый частый делегат в 2026                        |
+| -------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------- |
+| [[UITableView]] / [[UICollectionView]] | Обработка данных, размеров ячеек, действий пользователя     | [[UITableViewDelegate]], [[UITableViewDataSource]] |
+| [[UITextField]] / [[UITextView]]       | Реакция на ввод, фокус, возврат клавиатуры                  | [[UITextFieldDelegate]]                            |
+| [[UIScrollView]]                       | Отслеживание скролла, зума, начала/окончания перетаскивания | [[UIScrollViewDelegate]]                           |
+| [[CLLocationManager]]                  | Получение обновлений геолокации, авторизация                | [[CLLocationManagerDelegate]]                      |
+| [[UNUserNotificationCenter]]           | Обработка уведомлений, действий пользователя                | [[UNUserNotificationCenterDelegate]]               |
+| [[UIImagePickerController]]            | Выбор фото/видео из галереи/камеры                          | [[UIImagePickerControllerDelegate]]                |
+| [[MFMailComposeViewController]]        | Отправка почты из приложения                                | [[MFMailComposeViewControllerDelegate]]            |
 
 ### 2. Ключевые принципы современного delegate-паттерна (2026)
 
-- **weak ссылка** на delegate — обязательно, чтобы избежать retain cycle
-- **AnyObject** — протокол обычно ограничивается `AnyObject` (только классы)
-- **optional методы** — через `@objc optional` (старый UIKit-стиль) или default-реализация в протоколе (новый стиль)
+- **[[weak]] ссылка** на delegate — обязательно, чтобы избежать [[retain cycle]]
+- **[[AnyObject]]** — протокол обычно ограничивается [[AnyObject]] (только классы)
+- **optional методы** — через `@objc optional` (старый [[UIKit]]-стиль) или [[default]]-реализация в протоколе (новый стиль)
 - **Односторонняя связь** — делегатор знает о делегате, но делегат не знает о делегаторе
 - **Множество делегатов** — редко, но возможно через массив weak-ссылок
 
@@ -107,13 +107,13 @@ final class DownloadViewController: UIViewController, DownloadDelegate {
 
 ### 4. Современные альтернативы delegate в 2026 году
 
-| Ситуация                                      | Старый стиль (delegate)                              | Новый стиль (2026)                                   | Когда выбрать новый |
-|-----------------------------------------------|-------------------------------------------------------|------------------------------------------------------|---------------------|
-| UITableView / UICollectionView                | `dataSource` / `delegate`                             | `UICollectionViewDiffableDataSource` + `UICollectionViewCellRegistration` | Почти всегда (iOS 13+) |
-| UITextField / UITextView                      | `UITextFieldDelegate`                                 | Combine: `publisher(for: \.text)` или SwiftUI `onChange` | SwiftUI / Combine-проекты |
-| Асинхронные операции                          | Completion handler                                    | `async throws` + `await`                             | Новый код (iOS 15+) |
-| Уведомления о состоянии                       | Delegate с несколькими методами                       | `Publisher` / `AsyncStream` / `Observation`          | Combine / SwiftUI |
-| Передача данных между экранами                | Delegate + метод `didSelect`                          | `@Environment`, `@Observable`, `ObservableObject`    | SwiftUI             |
+| Ситуация                       | Старый стиль (delegate)         | Новый стиль (2026)                                                        | Когда выбрать новый       |
+| ------------------------------ | ------------------------------- | ------------------------------------------------------------------------- | ------------------------- |
+| UITableView / UICollectionView | `dataSource` / `delegate`       | `UICollectionViewDiffableDataSource` + `UICollectionViewCellRegistration` | Почти всегда (iOS 13+)    |
+| UITextField / UITextView       | `UITextFieldDelegate`           | Combine: `publisher(for: \.text)` или SwiftUI `onChange`                  | SwiftUI / Combine-проекты |
+| Асинхронные операции           | [[Completion handler]]          | `async throws` + `await`                                                  | Новый код (iOS 15+)       |
+| Уведомления о состоянии        | Delegate с несколькими методами | `Publisher` / `AsyncStream` / `Observation`                               | [[Combine]] / [[SwiftUI]] |
+| Передача данных между экранами | Delegate + метод `didSelect`    | `@Environment`, `@Observable`, `ObservableObject`                         | SwiftUI                   |
 
 ### 5. Лучшие практики delegate в Swift 2026
 
@@ -133,7 +133,7 @@ extension DownloadDelegate {
 ```
 
 - **Добавляй deinit с отменой** — если делегатор держит задачи/таймеры  
-- **Swift 6 strict concurrency** — delegate должен быть `Sendable` или помечен `@MainActor`  
+- **Swift 6 strict concurrency** — delegate должен быть [[Sendable]] или помечен `@MainActor`  
 - **Документируйте** — пиши комментарий «weak var delegate — уведомления о прогрессе загрузки»
 
 **Короткий девиз 2026**:
@@ -143,5 +143,3 @@ extension DownloadDelegate {
 > - несколько узких протоколов лучше одного жирного  
 > - новый код → `async/await`, Combine, SwiftUI вместо delegate  
 > - старый UIKit → delegate всё ещё король
-
-Удачи с чистыми и безопасными делегатами в твоём коде! 📞
