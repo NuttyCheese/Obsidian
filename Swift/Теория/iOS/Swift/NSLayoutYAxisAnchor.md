@@ -1,20 +1,20 @@
-**NSLayoutYAxisAnchor** — это специальный класс в **Auto Layout** (UIKit), который представляет **вертикальную ось** (Y-ось) представления и позволяет создавать **ограничения** (constraints) по вертикали: верхняя граница (top), нижняя (bottom), центр по Y, базовая линия текста и т.д.
+**NSLayoutYAxisAnchor** — это специальный класс в **[[Auto Layout]]** ([[UIKit]]), который представляет **вертикальную ось** (Y-ось) представления и позволяет создавать **ограничения** ([[constraint]]s) по вертикали: верхняя граница (top), нижняя (bottom), центр по Y, базовая линия текста и т.д.
 
 Он наследуется от **NSLayoutAnchor** и используется исключительно для **вертикальных** ограничений.
 
 ### Основные методы и свойства NSLayoutYAxisAnchor
 
-| Метод / свойство                              | Что создаёт ограничение на                     | Пример использования (современный стиль 2026) |
-|-----------------------------------------------|------------------------------------------------|-----------------------------------------------|
-| `topAnchor`                                   | верхняя граница                                | `view.topAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.topAnchor, constant: 16)` |
-| `bottomAnchor`                                | нижняя граница                                 | `view.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor, constant: -16)` |
-| `centerYAnchor`                               | центр по вертикали                             | `view.centerYAnchor.constraint(equalTo: superview.centerYAnchor)` |
-| `firstBaselineAnchor`                         | первая базовая линия текста (для UILabel и т.п.) | `label.firstBaselineAnchor.constraint(equalTo: otherLabel.firstBaselineAnchor)` |
-| `lastBaselineAnchor`                          | последняя базовая линия текста                 | `label.lastBaselineAnchor.constraint(equalTo: otherLabel.lastBaselineAnchor)` |
-| `constraint(equalTo: multiplier: constant:)`  | пропорциональное ограничение                   | `view.heightAnchor.constraint(equalTo: superview.heightAnchor, multiplier: 0.5)` |
-| `constraint(equalToConstant:)`                | фиксированная высота                           | `view.heightAnchor.constraint(equalToConstant: 44)` |
-| `constraint(greaterThanOrEqualToConstant:)`   | минимальная высота                             | `view.heightAnchor.constraint(greaterThanOrEqualToConstant: 100)` |
-| `constraint(lessThanOrEqualToConstant:)`      | максимальная высота                            | `view.heightAnchor.constraint(lessThanOrEqualToConstant: 300)` |
+| Метод / свойство                             | Что создаёт ограничение на                       | Пример использования (современный стиль 2026)                                                      |
+| -------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `topAnchor`                                  | верхняя граница                                  | `view.topAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.topAnchor, constant: 16)`        |
+| `bottomAnchor`                               | нижняя граница                                   | `view.bottomAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.bottomAnchor, constant: -16)` |
+| `centerYAnchor`                              | центр по вертикали                               | `view.centerYAnchor.constraint(equalTo: superview.centerYAnchor)`                                  |
+| `firstBaselineAnchor`                        | первая базовая линия текста (для UILabel и т.п.) | `label.firstBaselineAnchor.constraint(equalTo: otherLabel.firstBaselineAnchor)`                    |
+| `lastBaselineAnchor`                         | последняя базовая линия текста                   | `label.lastBaselineAnchor.constraint(equalTo: otherLabel.lastBaselineAnchor)`                      |
+| `constraint(equalTo: multiplier: constant:)` | пропорциональное ограничение                     | `view.heightAnchor.constraint(equalTo: superview.heightAnchor, multiplier: 0.5)`                   |
+| `constraint(equalToConstant:)`               | фиксированная высота                             | `view.heightAnchor.constraint(equalToConstant: 44)`                                                |
+| `constraint(greaterThanOrEqualToConstant:)`  | минимальная высота                               | `view.heightAnchor.constraint(greaterThanOrEqualToConstant: 100)`                                  |
+| `constraint(lessThanOrEqualToConstant:)`     | максимальная высота                              | `view.heightAnchor.constraint(lessThanOrEqualToConstant: 300)`                                     |
 
 ### Самые популярные и рекомендуемые паттерны 2026
 
@@ -57,7 +57,7 @@ NSLayoutConstraint.activate([
 ])
 ```
 
-#### 4. Выравнивание базовых линий текста (для UILabel, UITextField)
+#### 4. Выравнивание базовых линий текста (для [[UILabel]], [[UITextField]])
 
 ```swift
 titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -90,13 +90,13 @@ NSLayoutConstraint.activate([
 
 ### 6. Лучшие практики NSLayoutYAxisAnchor в 2026
 
-- **Всегда** используй **safeAreaLayoutGuide** для отступов от краёв экрана (особенно top и bottom)  
+- **Всегда** используй **[[safeAreaLayoutGuide]]** для отступов от краёв экрана (особенно top и bottom)  
 - **Предпочитай** `topAnchor` / `bottomAnchor` для вертикальных отступов  
 - **Используй** `firstBaselineAnchor` / `lastBaselineAnchor` при выравнивании текста в разных UILabel  
 - **Не меняй** `constant` внутри `layoutSubviews()` — это может вызвать layout cycle  
 - **Для пропорций** — используй `multiplier` — самый гибкий способ  
 - **Активируй** сразу массивом через `NSLayoutConstraint.activate([…])` — чисто и эффективно  
-- **В SwiftUI** — почти никогда не нужен (GeometryReader, .frame, .offset, .aspectRatio)  
+- **В [[SwiftUI]]** — почти никогда не нужен (GeometryReader, .frame, .offset, .aspectRatio)  
 - **Документируйте** — пиши комментарий «top = safeArea.top + 20 (стандартный отступ от верха)»
 
 **Короткий девиз 2026**:
@@ -108,5 +108,3 @@ NSLayoutConstraint.activate([
 > - `firstBaseline` / `lastBaseline` — для выравнивания текста  
 > - activate массивом — самый чистый стиль  
 > Это **основа** вертикально адаптивного и читаемого Auto Layout в UIKit.
-
-Удачи с идеально выровненным по вертикали интерфейсом! ↕️

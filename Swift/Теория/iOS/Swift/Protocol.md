@@ -32,9 +32,9 @@ func drawShape(_ shape: any Drawable) {
 | **Property Requirement**       | Требование свойства ([[get]] / [[get set]])                          | `var area: Double { get }`                       |
 | **Method Requirement**         | Требование метода с сигнатурой                                       | `func draw()`                                    |
 | **Initializer Requirement**    | Требование инициализатора                                            | `init(radius: Double)`                           |
-| **Associated Type**            | Замещаемый тип ([[generic]] в протоколе)                             | `associatedtype Element`                         |
-| **Protocol Extension**         | Default-реализация методов/свойств через extension                   | `extension Drawable { func describe() { ... } }` |
-| **Optional Requirement**       | Необязательные методы (только `@objc` протоколы)                     | `@objc optional func optionalMethod()`           |
+| **[[AssociatedType]]**         | Замещаемый тип ([[generic]] в протоколе)                             | `associatedtype Element`                         |
+| **[[Protocol]] [[Extension]]** | Default-реализация методов/свойств через extension                   | `extension Drawable { func describe() { ... } }` |
+| **[[Optional]] Requirement**   | Необязательные методы (только `@objc` протоколы)                     | `@objc optional func optionalMethod()`           |
 | **Class-only Protocol**        | Протокол, который могут реализовывать только классы ([[AnyObject]])  | `protocol Delegate: AnyObject { ... }`           |
 | **Composition**                | Комбинирование протоколов                                            | `typealias DrawableView = Drawable & View`       |
 | **Existential Type** ([[any]]) | Хранение разных типов, реализующих протокол                          | `let shapes: [any Drawable]`                     |

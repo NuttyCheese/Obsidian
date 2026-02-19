@@ -75,7 +75,7 @@ override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollect
 
 ### 6. Лучшие практики NSLayoutXAxisAnchor в 2026
 
-- **Всегда** используй **safeAreaLayoutGuide** вместо прямого superview для отступов от краёв экрана  
+- **Всегда** используй **[[safeAreaLayoutGuide]]** вместо прямого superview для отступов от краёв экрана  
 - **Предпочитай** `leading` / `trailing` над `left` / `right` — это автоматически поддерживает RTL (арабский, иврит)  
 - **Не используй** `left` / `right` в новых проектах — только если нужен фиксированный физический край  
 - **Активируй** сразу массивом через `NSLayoutConstraint.activate([…])` — это атомарно и эффективно  
