@@ -9,7 +9,7 @@
 | Свойство     | Тип                        | Обязательно? | Описание / Пример использования |
 | ------------ | -------------------------- | ------------ | ------------------------------- |
 | `coordinate` | [[CLLocationCoordinate2D]] | Да           | Географическая точка на карте   |
-| `title`      | String?                    | Нет          | Основной заголовок (в callout)  |
+| `title`      | [[String]]?                | Нет          | Основной заголовок (в callout)  |
 | `subtitle`   | `String?`                  | Нет          | Подзаголовок (в callout)        |
 
 ### Самые популярные способы создания и использования MKPointAnnotation (2026 стандарт)
@@ -104,9 +104,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 - **Для сложных данных** — создавайте собственный класс, реализующий `MKAnnotation`  
 - **Всегда** задавайте `title` — это основной текст в callout  
 - **Не забывайте** `canShowCallout = true` в `viewFor annotation:` — иначе callout не появится  
-- **Для кастомного вида** — используйте `MKMarkerAnnotationView` (glyph, цвет) или `MKAnnotationView` с `image`  
-- **Для кластеризации** — реализуйте `MKClusterAnnotation` и кастомный кластер-view  
-- **В SwiftUI** — оборачивайте `MKMapView` в `UIViewRepresentable` и добавляйте аннотации в `updateUIView`  
+- **Для кастомного вида** — используйте [[MKMarkerAnnotationView]] (glyph, цвет) или `MKAnnotationView` с `image`  
+- **Для кластеризации** — реализуйте [[MKClusterAnnotation]] и кастомный кластер-view  
+- **В [[SwiftUI]]** — оборачивайте `MKMapView` в [[UIViewRepresentable]] и добавляйте аннотации в `updateUIView`  
 - **Документируйте** — пишите комментарий «MKPointAnnotation — простая метка для достопримечательности»
 
 **Короткий итог 2026**:
@@ -116,5 +116,3 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 > - используйте как базовый класс или напрямую  
 > - кастомизируйте вид через `MKMarkerAnnotationView` или `MKAnnotationView` в делегате  
 > - это **основа** всех простых точек интереса (POI) на картах в iOS-приложениях  
-
-Удачи с точными и информативными маркерами на картах в твоём проекте! 📍
