@@ -1,4 +1,4 @@
-**`TimeInterval`** — это **псевдоним** (`typealias`) для типа `Double`, который используется в Swift исключительно для представления **продолжительности времени в секундах** (с долями секунды).
+**`TimeInterval`** — это **псевдоним** ([[typealias]]) для типа [[Double]], который используется в [[Swift]] исключительно для представления **продолжительности времени в секундах** (с долями секунды).
 
 ```swift
 typealias TimeInterval = Double
@@ -8,14 +8,14 @@ typealias TimeInterval = Double
 
 ### Основные сценарии использования TimeInterval (2025–2026)
 
-| Задача                                      | Как обычно выглядит в коде                                      | Примерное значение       |
-|---------------------------------------------|------------------------------------------------------------------|--------------------------|
-| Разница между двумя датами                  | `end.timeIntervalSince(start)`                                   | 125.7 сек                |
-| Добавить/вычесть время к `Date`             | `date.addingTimeInterval(3600)`                                  | +1 час                   |
-| Интервал для `Timer`                        | `Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { … }` | 0.5 сек                  |
-| Длительность анимации                       | `UIView.animate(withDuration: 0.3) { … }`                        | 0.3 сек                  |
-| Задержка в `DispatchQueue`                  | `DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { … }`    | 2.5 сек                  |
-| Таймаут сетевого запроса                    | `URLSessionConfiguration.default.timeoutIntervalForRequest = 30` | 30 сек                   |
+| Задача                            | Как обычно выглядит в коде                                         | Примерное значение |
+| --------------------------------- | ------------------------------------------------------------------ | ------------------ |
+| Разница между двумя датами        | `end.timeIntervalSince(start)`                                     | 125.7 сек          |
+| Добавить/вычесть время к [[Date]] | `date.addingTimeInterval(3600)`                                    | +1 час             |
+| Интервал для [[Timer]]            | `Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { … }` | 0.5 сек            |
+| Длительность анимации             | `UIView.animate(withDuration: 0.3) { … }`                          | 0.3 сек            |
+| Задержка в [[DispatchQueue]]      | `DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { … }`      | 2.5 сек            |
+| Таймаут сетевого запроса          | `URLSessionConfiguration.default.timeoutIntervalForRequest = 30`   | 30 сек             |
 
 ### Самые употребительные идиомы и лучшие практики 2026 года
 
@@ -139,5 +139,3 @@ let timeout = 30.seconds
 > - таймаутов  
 > Для красивого вывода — `DateComponentsFormatter`.  
 > Для человекочитаемых констант — добавляйте расширения.
-
-Удачи с точным и читаемым измерением времени в твоём приложении! ⏱️

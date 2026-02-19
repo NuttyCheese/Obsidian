@@ -4,13 +4,13 @@
 
 ### Когда typealias действительно полезен (реальные сценарии 2025–2026)
 
-| Ситуация                                      | Без typealias (длинно и непонятно)                          | С typealias (коротко и семантично)                  | Почему это выигрывает |
-|-----------------------------------------------|-------------------------------------------------------------|-----------------------------------------------------|-----------------------|
-| Длинные сигнатуры замыканий                   | `(Result<[Post], Error>) -> Void`                           | `typealias PostCompletion = (Result<[Post], Error>) -> Void` | Читаемость + меньше опечаток |
-| Часто повторяющиеся generic-типы              | `[String: [UUID: User]]`                                    | `typealias UserMap = [String: [UUID: User]]`        | Код становится декларативным |
-| Объединение протоколов (composition)          | `protocol A & B & C`                                        | `typealias Drawable = View & Animatable & Codable`  | Легко переиспользовать |
-| Именованные кортежи для читаемости            | `(Int, Int)`                                                | `typealias Coordinate = (lat: Double, lon: Double)` | Самодокументируемый код |
-| Упрощение сложных типов из сторонних библиотек| `Combine.Publishers.Share<…>`                               | `typealias SharedPublisher = Publishers.Share<…>`   | Код становится чище |
+| Ситуация                                       | Без typealias (длинно и непонятно) | С typealias (коротко и семантично)                           | Почему это выигрывает        |
+| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------------------ | ---------------------------- |
+| Длинные сигнатуры замыканий                    | `(Result<[Post], Error>) -> Void`  | `typealias PostCompletion = (Result<[Post], Error>) -> Void` | Читаемость + меньше опечаток |
+| Часто повторяющиеся [[generic]]-типы           | `[String: [UUID: User]]`           | `typealias UserMap = [String: [UUID: User]]`                 | Код становится декларативным |
+| Объединение протоколов (composition)           | `protocol A & B & C`               | `typealias Drawable = View & Animatable & Codable`           | Легко переиспользовать       |
+| Именованные кортежи для читаемости             | `(Int, Int)`                       | `typealias Coordinate = (lat: Double, lon: Double)`          | Самодокументируемый код      |
+| Упрощение сложных типов из сторонних библиотек | `Combine.Publishers.Share<…>`      | `typealias SharedPublisher = Publishers.Share<…>`            | Код становится чище          |
 
 ### Самые популярные и рекомендуемые паттерны typealias в 2026
 
@@ -41,7 +41,7 @@ let groupedUsers: UserByGroup = [:]
 let imageCache: Cache<URL, UIImage> = [:]
 ```
 
-#### 3. Объединение протоколов (очень популярно в SwiftUI/UIKit)
+#### 3. Объединение протоколов (очень популярно в [[SwiftUI]]/[[UIKit]])
 
 ```swift
 typealias CellViewModel = Identifiable & Hashable & Equatable & Codable
@@ -77,8 +77,8 @@ func placeView(at position: Position, size: Size) {
   - создания «нового типа» (это не делает typealias — это просто имя)
 
 - **Не злоупотребляй** — слишком много typealias делает код менее понятным  
-- **В SwiftUI** — часто используют typealias для ViewModel-протоколов  
-- **Swift 6 strict concurrency** — typealias полностью безопасен и не влияет на Sendable  
+- **В [[SwiftUI]]** — часто используют typealias для ViewModel-протоколов  
+- **Swift 6 strict concurrency** — typealias полностью безопасен и не влияет на [[Sendable]]  
 - **Документируйте** — пиши комментарий «typealias Completion<T> — стандартный колбэк с Result»
 
 **Короткий девиз 2026**:
@@ -89,5 +89,3 @@ func placeView(at position: Position, size: Size) {
 > - именованных кортежей  
 > - часто повторяющихся generic-конструкций  
 > Это **не новый тип**, а **улучшение читаемости** кода.
-
-Удачи с чистым и выразительным кодом благодаря typealias! ✍️

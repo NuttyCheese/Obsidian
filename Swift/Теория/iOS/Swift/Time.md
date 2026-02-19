@@ -4,15 +4,15 @@
 
 ### Основные способы работы с «чистым» временем в Swift (2025–2026)
 
-| Задача / Потребность                          | Рекомендуемый подход в 2026                              | Пример кода (самый популярный паттерн) |
-|-----------------------------------------------|----------------------------------------------------------|----------------------------------------|
-| Отобразить текущее время (часы:минуты)        | `DateFormatter` с `timeStyle`                            | `formatter.string(from: Date())`       |
-| Отобразить время из `Date` в любом формате    | `DateFormatter` с `dateFormat`                           | `"HH:mm"` или `"h:mm a"`               |
-| Получить только часы / минуты / секунды       | `Calendar.component(…)`                                  | `calendar.component(.hour, from: now)` |
-| Создать время «14:30:00» без даты             | `DateComponents` → `calendar.date(from:)`                | самый распространённый способ          |
-| Вычислить разницу во времени (секунды)        | `timeIntervalSince(_:)` или `dateComponents`             | `end.timeIntervalSince(start)`         |
-| Работать с временными интервалами (таймеры)   | `TimeInterval` (Double в секундах)                       | `Timer.scheduledTimer(withTimeInterval:)` |
-| Парсить строку вида "14:30" → время           | `DateFormatter` с `dateFormat: "HH:mm"`                  | `formatter.date(from: "14:30")`        |
+| Задача / Потребность                        | Рекомендуемый подход в 2026                  | Пример кода (самый популярный паттерн)    |
+| ------------------------------------------- | -------------------------------------------- | ----------------------------------------- |
+| Отобразить текущее время (часы:минуты)      | [[DateFormatter]] с `timeStyle`              | `formatter.string(from: Date())`          |
+| Отобразить время из `Date` в любом формате  | `DateFormatter` с `dateFormat`               | `"HH:mm"` или `"h:mm a"`                  |
+| Получить только часы / минуты / секунды     | [[Calendar]]`.component(…)`                  | `calendar.component(.hour, from: now)`    |
+| Создать время «14:30:00» без даты           | [[DateComponents]] → `calendar.date(from:)`  | самый распространённый способ             |
+| Вычислить разницу во времени (секунды)      | `timeIntervalSince(_:)` или `dateComponents` | `end.timeIntervalSince(start)`            |
+| Работать с временными интервалами (таймеры) | `TimeInterval` ([[Double]] в секундах)       | `Timer.scheduledTimer(withTimeInterval:)` |
+| Парсить строку вида "14:30" → время         | `DateFormatter` с `dateFormat: "HH:mm"`      | `formatter.date(from: "14:30")`           |
 
 ### Самые употребительные шаблоны 2026 года
 
@@ -70,7 +70,7 @@ let seconds = duration.truncatingRemainder(dividingBy: 60)
 print(String(format: "%02d:%02d", Int(minutes), Int(seconds))) // "00:02"
 ```
 
-#### 5. Парсинг строки "14:30" → Date (только время сегодня)
+#### 5. Парсинг строки "14:30" → [[Date]] (только время сегодня)
 
 ```swift
 let formatter = DateFormatter()
@@ -100,5 +100,3 @@ if let time = formatter.date(from: "14:30") {
 > - создание времени → `DateComponents` + `calendar.date(from:)`  
 > - разница → `TimeInterval` (секунды)  
 > Это **очень гибкая** и **полностью локализованная** система работы с временем.
-
-Удачи с красивым и корректным отображением времени в твоём приложении! ⏰

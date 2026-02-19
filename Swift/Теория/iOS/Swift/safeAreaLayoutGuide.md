@@ -1,6 +1,6 @@
-**`safeAreaLayoutGuide`** — это свойство в UIKit, которое возвращает объект типа **`UILayoutGuide`**, представляющий **безопасную область** (safe area) внутри представления (`UIView`).
+**`safeAreaLayoutGuide`** — это свойство в [[UIKit]], которое возвращает объект типа **`UILayoutGuide`**, представляющий **безопасную область** (safe area) внутри представления (`UIView`).
 
-Safe area — это часть экрана, которая **гарантированно видна пользователю** и не перекрывается системными элементами интерфейса iOS, такими как:
+Safe area — это часть экрана, которая **гарантированно видна пользователю** и не перекрывается системными элементами интерфейса [[iOS]], такими как:
 
 - notch / Dynamic Island (iPhone X и новее)
 - статус-бар
@@ -98,7 +98,7 @@ NSLayoutConstraint.activate([
 - **Никогда** не используй фиксированные отступы от `topLayoutGuide` / `bottomLayoutGuide` — они устарели с iOS 11  
 - **В iPhone с Dynamic Island** — safe area автоматически учитывает вырез и индикатор  
 - **В iPad / Split View** — safe area адаптируется под размер окна  
-- **В SwiftUI** — аналог — `.safeAreaInset(edge:)` или `.ignoresSafeArea()`  
+- **В [[SwiftUI]]** — аналог — `.safeAreaInset(edge:)` или `.ignoresSafeArea()`  
 - **Не меняй** константы внутри `layoutSubviews()` — используй `traitCollectionDidChange` или `viewDidLayoutSubviews` для динамических изменений  
 - **Документируйте** — пиши комментарий «top = safeArea.top + 16 — стандартный отступ от Dynamic Island / статус-бара»
 
@@ -109,5 +109,3 @@ NSLayoutConstraint.activate([
 > - забудь про старые `topLayoutGuide` / `bottomLayoutGuide`  
 > - комбинируй с `layoutMarginsGuide` для внутренних отступов  
 > - это **обязательный** стандарт для любого современного UIKit-приложения
-
-Удачи с идеально адаптивным и современным интерфейсом без проблем с вырезами и индикаторами! 📱
