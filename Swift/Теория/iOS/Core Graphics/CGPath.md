@@ -1,4 +1,4 @@
-**`CGPath`** — это структура (C-структура) из **Core Graphics** (Quartz), которая представляет **математический путь** (path) — последовательность линий, кривых Безье, дуг и прямоугольников.
+**`CGPath`** — это структура (C-структура) из **[[Core Graphics]]** (Quartz), которая представляет **математический путь** (path) — последовательность линий, кривых Безье, дуг и прямоугольников.
 
 Это **низкоуровневый** объект, который используется для:
 - рисования произвольных форм в `CGContext`,
@@ -9,16 +9,16 @@
 
 ### Основные способы создания CGPath (2026 актуально)
 
-| Способ создания                              | Пример кода                                                                 | Когда использовать |
-|----------------------------------------------|-----------------------------------------------------------------------------|---------------------|
-| Пустой путь                                  | `let path = CGMutablePath()`                                                | Начало построения пути |
-| Прямоугольник                                | `CGPath(rect: rect, transform: nil)`                                        | Простые прямоугольники |
-| Закруглённый прямоугольник                   | `CGPath(roundedRect: rect, cornerWidth: 12, cornerHeight: 12, transform: nil)` | Кнопки, карточки |
-| Эллипс / круг                                | `CGPath(ellipseIn: rect, transform: nil)`                                   | Круги, овалы |
-| Линия / ломаная                              | `path.move(to: start)`<br>`path.addLine(to: end)`                           | Полигоны, линии |
-| Кривая Безье (квадратичная / кубическая)     | `path.addQuadCurve(to: end, control: control)`<br>`path.addCurve(to: end, control1: c1, control2: c2)` | Плавные кривые, анимации |
-| Из `UIBezierPath`                            | `UIBezierPath(roundedRect: rect, cornerRadius: 12).cgPath`                  | Самый удобный и рекомендуемый способ |
-| Из `CAShapeLayer`                            | `shapeLayer.path`                                                           | Когда работаете с CALayer |
+| Способ создания                          | Пример кода                                                                                            | Когда использовать                   |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------ |
+| Пустой путь                              | `let path = CGMutablePath()`                                                                           | Начало построения пути               |
+| Прямоугольник                            | `CGPath(rect: rect, transform: nil)`                                                                   | Простые прямоугольники               |
+| Закруглённый прямоугольник               | `CGPath(roundedRect: rect, cornerWidth: 12, cornerHeight: 12, transform: nil)`                         | Кнопки, карточки                     |
+| Эллипс / круг                            | `CGPath(ellipseIn: rect, transform: nil)`                                                              | Круги, овалы                         |
+| Линия / ломаная                          | `path.move(to: start)`<br>`path.addLine(to: end)`                                                      | Полигоны, линии                      |
+| Кривая Безье (квадратичная / кубическая) | `path.addQuadCurve(to: end, control: control)`<br>`path.addCurve(to: end, control1: c1, control2: c2)` | Плавные кривые, анимации             |
+| Из [[UIBezierPath]]                      | `UIBezierPath(roundedRect: rect, cornerRadius: 12).cgPath`                                             | Самый удобный и рекомендуемый способ |
+| Из [[CAShapeLayer]]                      | `shapeLayer.path`                                                                                      | Когда работаете с CALayer            |
 
 ### Самые популярные и рекомендуемые паттерны CGPath в 2026
 
@@ -78,7 +78,7 @@ if path.contains(point) {
 }
 ```
 
-#### 4. Создание маски для UIView
+#### 4. Создание маски для [[UIView]]
 
 ```swift
 let maskPath = UIBezierPath(roundedRect: view.bounds,
@@ -94,7 +94,7 @@ view.layer.mask = maskLayer
 
 - **Всегда** создавайте путь **через `UIBezierPath`** — это удобнее, читаемее и менее подвержено ошибкам  
 - **Никогда** не создавайте `CGMutablePath` вручную, если можно обойтись `UIBezierPath`  
-- **Для CAShapeLayer** — предпочтительнее `UIBezierPath.cgPath`  
+- **Для [[CAShapeLayer]]** — предпочтительнее `UIBezierPath.cgPath`  
 - **Для сложных анимаций** — используйте `CABasicAnimation(keyPath: "path")` с `CGPath`  
 - **Для hit-testing** — `CGPath.contains(_:)` — очень точный и быстрый  
 - **Swift 6 strict concurrency** — `CGPath` полностью `Sendable`  
@@ -106,5 +106,3 @@ view.layer.mask = maskLayer
 > - создавайте **всегда** через `UIBezierPath.cgPath`  
 > - используйте для `CAShapeLayer.path`, `CGContext.addPath`, масок, проверки contains  
 > - это **низкоуровневый**, но **очень мощный** инструмент для кастомных форм и UI  
-
-Удачи с красивыми, точными и анимированными путями в твоём приложении! ✏️

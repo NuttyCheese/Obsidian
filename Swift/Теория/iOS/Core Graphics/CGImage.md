@@ -1,6 +1,6 @@
-**`CGImage`** — это структура (C-структура) из **Core Graphics** (Quartz), представляющая **растровое изображение** в памяти — набор пикселей с цветами, альфа-каналом, размером, цветовым пространством и другими метаданными.
+**`CGImage`** — это структура (C-структура) из **[[Core Graphics]]** (Quartz), представляющая **растровое изображение** в памяти — набор пикселей с цветами, альфа-каналом, размером, цветовым пространством и другими метаданными.
 
-Это **низкоуровневый** объект, который используется практически во всех случаях, когда нужно работать с изображениями на уровне пикселей, Core Graphics, Core Animation, Metal, AVFoundation, Image I/O и т.д.
+Это **низкоуровневый** объект, который используется практически во всех случаях, когда нужно работать с изображениями на уровне пикселей, Core Graphics, [[Core Animation]], [[Metal]], [[AVFoundation]], Image I/O и т.д.
 
 ### Ключевые характеристики CGImage (актуально на 2026 год)
 
@@ -16,7 +16,7 @@
 
 ### Самые частые способы получения CGImage в 2026 году
 
-#### 1. Из UIImage (самый популярный и рекомендуемый)
+#### 1. Из [[UIImage]] (самый популярный и рекомендуемый)
 
 ```swift
 let uiImage = UIImage(named: "example") ?? UIImage(systemName: "photo")!
@@ -86,7 +86,7 @@ let swiftUIImage = Image(uiImage: uiImage)
    let filtered = ciImage.applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: 10])
    ```
 
-4. **Создание текстур для Metal / SceneKit**  
+4. **Создание текстур для [[Metal]] / [[SceneKit]]**  
    ```swift
    let texture = try! MTLTexture(from: cgImage, device: device)
    ```
@@ -102,11 +102,11 @@ let swiftUIImage = Image(uiImage: uiImage)
 
 - **Всегда** получайте CGImage **через UIImage** (`uiImage.cgImage`) — это самый безопасный и читаемый способ  
 - **Никогда** не создавайте CGImage вручную, если можно обойтись `UIImage` / `CIImage`  
-- **Для SwiftUI** — предпочитайте `Image` — `CGImage` нужен только при работе с CALayer или Core Graphics  
-- **Для Core Graphics** — всегда проверяйте `CGBitmapContextCreate` на `nil`  
+- **Для SwiftUI** — предпочитайте `Image` — `CGImage` нужен только при работе с [[CALayer]] или [[Core Graphics]]  
+- **Для Core Graphics** — всегда проверяйте `CGBitmapContextCreate` на [[nil]]  
 - **Для производительности** — используйте `CGBitmapContext` с правильным `bitmapInfo` и `colorSpace`  
-- **Swift 6 strict concurrency** — `CGImage` полностью безопасен (`Sendable`), но контекст и рисование — только на главном потоке  
-- **Документируйте** — пишите комментарий «CGImage — растровое изображение для CALayer.contents (из UIImage)»
+- **Swift 6 strict concurrency** — `CGImage` полностью безопасен ([[Sendable]]), но контекст и рисование — только на главном потоке  
+- **Документируйте** — пишите комментарий «CGImage — растровое изображение для CALayer.contents (из [[UIImage]])»
 
 **Короткий итог 2026**:
 > `CGImage` — это **низкоуровневое растровое изображение** для Core Graphics, Core Animation и Metal.  
@@ -115,5 +115,3 @@ let swiftUIImage = Image(uiImage: uiImage)
 > - используйте для `CALayer.contents`, `CGContext.draw`, Metal-текстур  
 > - не создавайте вручную, если не работаете с сырыми пикселями  
 > Это **мост** между высокоуровневым UIImage и низкоуровневым рисованием/текстурами  
-
-Удачи с эффективной и безопасной работой с изображениями на уровне пикселей в твоём проекте! 🖼️
