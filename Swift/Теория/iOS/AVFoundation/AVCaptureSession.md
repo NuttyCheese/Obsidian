@@ -21,13 +21,13 @@
 1.  **AVCaptureSession:** Сам конвейер. Управляет запуском и остановкой потока данных.
 2.  **AVCaptureDevice:** Представляет физическое устройство ввода (задняя камера, фронтальная камера, микрофон).
 3.  **AVCaptureDeviceInput:** Коннектор, который подключает AVCaptureDevice к сессии. Нужно создать инпут из девайса и добавить его в сессию.
-4.  **AVCaptureOutput:** Получатель данных. Может быть нескольких типов:
-    - AVCapturePhotoOutput — для фото высокого разрешения (замена устаревшего AVCaptureStillImageOutput).
-    - AVCaptureMovieFileOutput — для записи видео в файл.
-    - AVCaptureVideoDataOutput — для доступа к каждому кадру видео в реальном времени (для обработки).
-    - AVCaptureMetadataOutput — для чтения QR-кодов и метаданных.
-    - AVCaptureAudioDataOutput — для доступа к аудиопотоку.
-5.  **AVCaptureVideoPreviewLayer:** Специальный слой (CALayer`), который отображает видео с камеры прямо на экране (не является выходом, а скорее монитором).
+4.  **[[AVCaptureOutput]]:** Получатель данных. Может быть нескольких типов:
+    - [[AVCapturePhotoOutput]] — для фото высокого разрешения (замена устаревшего [[AVCaptureStillImageOutput]]).
+    - [[AVCaptureMovieFileOutput]] — для записи видео в файл.
+    - [[AVCaptureVideoDataOutput]] — для доступа к каждому кадру видео в реальном времени (для обработки).
+    - [[AVCaptureMetadataOutput]] — для чтения QR-кодов и метаданных.
+    - [[AVCaptureAudioDataOutput]] — для доступа к аудиопотоку.
+5.  **AVCaptureVideoPreviewLayer:** Специальный слой ([[CALayer]]), который отображает видео с камеры прямо на экране (не является выходом, а скорее монитором).
 
 ```mermaid
 graph TD
@@ -66,8 +66,8 @@ graph TD
 #### Уровень 0: Настройка Info.plist (разрешения)
 Прежде чем использовать камеру и микрофон, нужно добавить описания в `Info.plist`.
 
-- **NSCameraUsageDescription** — "Для съемки фото и видео"
-- **NSMicrophoneUsageDescription** — "Для записи звука в видео"
+- **[[NSCameraUsageDescription]]** — "Для съемки фото и видео"
+- **[[NSMicrophoneUsageDescription]]** — "Для записи звука в видео"
 
 #### Уровень 1: Простейшая камера с предпросмотром
 Самый базовый пример — показать картинку с камеры на экране.
@@ -147,7 +147,7 @@ class SimpleCameraViewController: UIViewController {
 }
 ```
 
-#### Уровень 2: Съемка фото (AVCapturePhotoOutput)
+#### Уровень 2: Съемка фото ([[AVCapturePhotoOutput]])
 Добавим кнопку и возможность сделать фото.
 
 ```swift
@@ -243,7 +243,7 @@ class PhotoCaptureViewController: UIViewController, AVCapturePhotoCaptureDelegat
 }
 ```
 
-#### Уровень 3: Запись видео (AVCaptureMovieFileOutput)
+#### Уровень 3: Запись видео ([[AVCaptureMovieFileOutput]])
 
 ```swift
 import UIKit
@@ -339,7 +339,7 @@ class VideoRecordingViewController: UIViewController, AVCaptureFileOutputRecordi
 }
 ```
 
-#### Уровень 4: Обработка кадров в реальном времени (AVCaptureVideoDataOutput)
+#### Уровень 4: Обработка кадров в реальном времени ([[AVCaptureVideoDataOutput]])
 Этот пример показывает, как получать каждый кадр видео для анализа (например, для детекции лиц или QR-кодов).
 
 ```swift
@@ -411,7 +411,7 @@ class FrameProcessorViewController: UIViewController, AVCaptureVideoDataOutputSa
 }
 ```
 
-#### Уровень 5: Чтение QR-кодов (AVCaptureMetadataOutput)
+#### Уровень 5: Чтение QR-кодов ([[AVCaptureMetadataOutput]])
 
 ```swift
 import UIKit
@@ -558,4 +558,4 @@ func focus(at point: CGPoint) {
 Помните, что `.photo` — это специальный пресет, оптимизированный для фото (максимальное разрешение, но низкая частота кадров). Для видео используйте `.high` или `.hd1920x1080`.
 
 ### Итог
-**AVCaptureSession** — мощный и гибкий инструмент для работы с камерой и микрофоном в iOS. Понимание его архитектуры (сессия -> входы -> выходы) позволяет создавать приложения любой сложности: от простой камеры до профессиональных приложений с обработкой видео в реальном времени. Ключевые навыки: управление сессией на фоновых очередях, правильный выбор пресетов и обработка данных из различных типов выходов.
+**AVCaptureSession** — мощный и гибкий инструмент для работы с камерой и микрофоном в [[iOS]]. Понимание его архитектуры (сессия -> входы -> выходы) позволяет создавать приложения любой сложности: от простой камеры до профессиональных приложений с обработкой видео в реальном времени. Ключевые навыки: управление сессией на фоновых очередях, правильный выбор пресетов и обработка данных из различных типов выходов.
