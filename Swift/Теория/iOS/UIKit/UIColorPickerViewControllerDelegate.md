@@ -125,8 +125,8 @@ picker.preferredContentSize = CGSize(width: 420, height: 600) // размер н
 - **Используйте** `didFinish` для финального сохранения и закрытия  
 - **В `didCancel`** — просто закрывайте и (опционально) откатывайте preview  
 - **Поддерживайте** прозрачность (`supportsAlpha = true`) — это стандарт 2025–2026  
-- **Для [[SwiftUI]]** — используйте UIColorPicker (нативный компонент с iOS 14) — он проще и не требует делегата  
-- **Для сохранения** — используйте UIColor + [[UserDefaults]] или [[Codable]] структуру с `CodableColor`  
+- **Для [[SwiftUI]]** — используйте [[UIColorPicker]] (нативный компонент с iOS 14) — он проще и не требует делегата  
+- **Для сохранения** — используйте [[UIColor]] + [[UserDefaults]] или [[Codable]] структуру с `CodableColor`  
 - **Документируйте** — пишите комментарий «UIColorPickerViewControllerDelegate — live-обновление цвета в реальном времени + сохранение при Done»
 
 **Короткий итог 2026**:
@@ -136,5 +136,3 @@ picker.preferredContentSize = CGSize(width: 420, height: 600) // размер н
 > - финальное сохранение — в `colorPickerViewControllerDidFinish`  
 > - отмена — в `colorPickerViewControllerDidCancel`  
 > - это **единственный** способ получить выбранный цвет из нативного UIColorPickerViewController в UIKit  
-
-Удачи с красивым и удобным выбором цвета в твоём приложении! 🎨
