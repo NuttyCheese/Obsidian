@@ -11,14 +11,10 @@
             "id": "122819f68e61968c",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/iOS/Core Animation/Core Animation.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Core Animation"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Граф"
             }
           }
         ]
@@ -196,6 +192,19 @@
   },
   "active": "122819f68e61968c",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Core Animation/CADisplayLink.md",
+    "Swift/Теория/iOS/Core Animation/CALayer.md",
+    "Swift/Теория/iOS/Core Animation/CAShapeLayer.md",
+    "Swift/Теория/iOS/Core Animation/CAShapeLayerFillRule.md",
+    "Swift/Теория/iOS/Core Animation/CAShapeLayerLineCap.md",
+    "Swift/Теория/iOS/Core Animation/CAShapeLayerLineJoin.md",
+    "Swift/Теория/iOS/Core Animation/Core Animation.md",
+    "CAAnimation.md",
+    "CAKeyframeAnimation.md",
+    "CASpringAnimation.md",
+    "CAAnimationGroup.md",
+    "CATransaction.md",
+    "CPU.md",
     "Swift/Теория/iOS/Core Graphics/CGColor.md",
     "Swift/Теория/iOS/Core Graphics/CGFloat.md",
     "Swift/Теория/iOS/Core Graphics/CGImage.md",
@@ -209,19 +218,6 @@
     "Swift/Теория/iOS/Core Graphics/Core Graphics.md",
     "Swift/Теория/iOS/Core Graphics/UIBezierPath.md",
     "Swift/Теория/iOS/Core Location/CLCircularRegion.md",
-    "Swift/Теория/iOS/Core Location/CLLocationCoordinate2D.md",
-    "CLLocationFormatter.md",
-    "CLGeocoder.md",
-    "Swift/Теория/iOS/Core Location/CLLocationDegrees.md",
-    "Swift/Теория/iOS/Core Location/CLLocationDirection.md",
-    "Swift/Теория/iOS/Core Location/CLLocationDistance.md",
-    "Swift/Теория/iOS/Core Location/CLLocationManager.md",
-    "Swift/Теория/iOS/Core Location/CLLocationManagerDelegate.md",
-    "Swift/Теория/iOS/MapKit/MapKit.md",
-    "Swift/Теория/iOS/MapKit/MKAnnotation.md",
-    "Swift/Теория/iOS/MapKit/MKAnnotationView.md",
-    "Swift/Теория/iOS/MapKit/MKCircle.md",
-    "Swift/Теория/iOS/MapKit/MKCircleRenderer.md",
     "Swift/Теория/iOS/SwiftUI",
     "Swift/Теория/iOS/SceneKit",
     "Swift/Теория/iOS/Core Animation",
