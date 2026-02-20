@@ -23,12 +23,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/static.md",
+                "file": "Swift/Теория/iOS/Storyboard.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "static"
+              "title": "Storyboard"
             }
           },
           {
@@ -261,8 +261,16 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e407b43c27bfa155",
+  "active": "61def8af31671719",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/xib.md",
+    "Swift/Теория/iOS/Interface Builder.md",
+    "Swift/Теория/iOS/Storyboard.md",
+    "Swift/Теория/iOS/Nib.md",
+    "Swift/Теория/iOS/isolation.md",
+    "Swift/Теория/iOS/Application Life Cycle.md",
+    "Swift/Теория/iOS/AVPlayer.md",
+    "Swift/Теория/iOS/static.md",
     "Swift/Теория/iOS/canSendMail().md",
     "Swift/Теория/iOS/UIKit/UIApplicationShortcutItem.md",
     "Swift/Теория/iOS/MapKit/MKPolygonRenderer.md",
@@ -281,14 +289,6 @@
     "Swift/Теория/Алгоритмы и методы высшего порядка/Нотация сложности алгоритмов.md",
     "Swift/System Design/3. Офлайн-режим и кэширование/Кэширование/Кэширование изображений и медиа.md",
     "Swift/Теория/iOS/AVFoundation/AVCaptureDeviceInput.md",
-    "Swift/Теория/iOS/AVFoundation/AVCapturePhotoOutput.md",
-    "Swift/Теория/iOS/AVFoundation/AVCapturePhotoSettings.md",
-    "Swift/Теория/iOS/AVFoundation/AVCapturePhoto.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureStillImageOutput.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureSession.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureOutput.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureMovieFileOutput.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureMetadataOutputObjectsDelegate.md",
     "Swift/Теория/iOS/AVFoundation",
     "Swift/Теория/Ошибки и варнинги/UI и Auto Layout",
     "Swift/Теория/Ошибки и варнинги/Многопоточность",
