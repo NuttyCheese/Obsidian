@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sketch.md",
+                "file": "Display P3.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Sketch"
+              "title": "Display P3"
             }
           }
         ]
@@ -197,9 +197,19 @@
   },
   "active": "b671281359bc2cee",
   "lastOpenFiles": [
+    "Adobe RGB.md",
+    "Display P3.md",
+    "sRGB.md",
+    "HEIC.md",
+    "CGImageDestination.md",
+    "CGImageSource.md",
+    "JPEG.md",
+    "SVG.md",
+    "WebKit.md",
+    "Swift/Теория/Общие вопросы/AppKit.md",
+    "Sketch.md",
     "RGB.md",
     "PNG.md",
-    "JPEG.md",
     "CATiledLayer.md",
     "PDF.md",
     "UIDocumentInteractionController.md",
@@ -209,20 +219,10 @@
     "GPS.md",
     "CLLocation.md",
     "Figma.md",
-    "SVG.md",
     "CPU.md",
     "Swift/Теория/Сетевое взаимодействие/PUT-HTTP.md",
     "Swift/Теория/Сетевое взаимодействие/PATCH-HTTP.md",
     "Swift/Теория/Многопоточность/NSOperation/completionBlock.md",
-    "Swift/Теория/Сетевое взаимодействие/JSONEncoder.md",
-    "Swift/Теория/Метод Dispatch/Какие виды диспетчеризации существуют?.md",
-    "static.md",
-    "Swift/Теория/iOS/Swift/Unicode.md",
-    "Swift/Теория/Ошибки и варнинги/Use After Free.md",
-    "memory layout.md",
-    "PUT.md",
-    "Swift/Теория/Ошибки и варнинги/Thread Explosion.md",
-    "Swift/Теория/Многопоточность/Swift Concurrency/isolation (concept).md",
     "Swift/Теория/Swift/Standart Library",
     "Swift/Теория/Swift",
     "Swift/Теория/iOS/SwiftUI",
