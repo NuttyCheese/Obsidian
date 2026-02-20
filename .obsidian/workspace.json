@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "03b7f6ca04e3f936",
+        "id": "91411190d3516b44",
         "type": "tabs",
         "children": [
           {
-            "id": "b671281359bc2cee",
+            "id": "03c320c5a6e719c1",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Display P3.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "Display P3"
+              "title": "Новая вкладка"
             }
           }
         ]
@@ -195,10 +191,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "b671281359bc2cee",
+  "active": "03c320c5a6e719c1",
   "lastOpenFiles": [
-    "Adobe RGB.md",
     "Display P3.md",
+    "Adobe RGB.md",
     "sRGB.md",
     "HEIC.md",
     "CGImageDestination.md",
