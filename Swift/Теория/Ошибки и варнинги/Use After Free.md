@@ -6,7 +6,7 @@
 - Работа с **Unsafe**-указателями (`UnsafePointer`, `UnsafeMutablePointer`, `UnsafeRawPointer`)  
 - Взаимодействие с **C [[API]]** или низкоуровневыми фреймворками ([[Core Foundation]], [[Metal]], [[Core Audio]], [[Accelerate]] и т.д.)  
 - Неправильное использование `Unmanaged` или ручное управление retain/release  
-- Ошибки в **[[unsafeBitCast]] или **[[memory layout]]**  
+- Ошибки в **[[unsafeBitCast]] или **[[MemoryLayout]]**  
 - Редко — баги в ARC или компиляторе (крайне редко в 2026 году)
 
 **Самые частые последствия UAF в iOS-приложении**:

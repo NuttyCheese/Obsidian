@@ -1,4 +1,4 @@
-**`URLSession`** — это **центральный [[API]]** в [[Foundation]] для выполнения **всех сетевых операций** в iOS, macOS, [[tvOS]], watchOS и visionOS.
+**`URLSession`** — это **центральный [[API]]** в [[Foundation]] для выполнения **всех сетевых операций** в iOS, macOS, tvOS, watchOS и visionOS.
 
 Это **единственный нативный** способ отправлять [[HTTP]]/[[HTTPS]]-запросы, загружать/выгружать файлы, работать с [[WebSocket]] и т.д.
 

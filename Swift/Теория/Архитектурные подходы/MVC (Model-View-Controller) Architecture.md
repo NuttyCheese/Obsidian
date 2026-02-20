@@ -27,7 +27,7 @@ flowchart TD
     *   *Пример:* `model.isLoggedIn = true`
 
 4.  **Реакция Model (Notification):** **Model** уведомляет об своих изменениях заинтересованные стороны. В классическом MVC — это Controller, который подписан на изменения Model. (На практике в [[iOS]] это часто опускается, и Controller сам обновляет View после изменения Model).
-    *   *Способы уведомления:* [[KVO]], [[NotificationCenter]], [[Swift/Теория/Swift/Standart Library/Delegate]], [[callback]].
+    *   *Способы уведомления:* [[KVO]], [[NotificationCenter]], [[Delegate]], [[callback]].
 
 5.  **Обновление View (UI Update):** На основе изменений в **Model**, **Controller** обновляет **View**.
     *   *Пример:* `controller.tableView.reloadData()` или `controller.nameLabel.text = model.userName`
@@ -81,7 +81,7 @@ graph TD
 
 #### **Проблема "Massive View Controller":**
 В классической реализации Apple Controller неизбежно становится большим и перегруженным, потому что он:
-*   Работает с жизненным циклом View (`viewDidLoad`, `viewDidAppear`).
+*   Работает с жизненным циклом View ([[viewDidLoad]], [[viewDidAppear]]).
 *   Является делегатом и источником данных для таблиц и коллекций ([[UITableViewDelegate]], [[UITableViewDataSource]]).
 *   Обрабатывает пользовательский ввод.
 *   Управляет навигацией.
@@ -125,12 +125,12 @@ SimpleApp/
 
 *   **MVC — это не плохо, это по-другому.** Для маленьких проектов, прототипов или простых экранов это абсолютно валидный и эффективный выбор.
 *   **Боритесь с "Massiveness":** Даже оставаясь в рамках MVC, можно писать чистый код:
-    *   **Выносите DataSource и [[Swift/Теория/Swift/Standart Library/Delegate]]:** Создавайте отдельные классы для [[UITableViewDataSource]]/[[UITableViewDelegate]].
+    *   **Выносите DataSource и [[Delegate]]:** Создавайте отдельные классы для [[UITableViewDataSource]]/[[UITableViewDelegate]].
     *   **Используйте Child ViewControllers:** Дробите сложные экраны на несколько дочерних ViewController'ов.
     *   **Выносите логику в отдельные классы:** Создавайте `Manager`'ы, `Service`'ы, `Helper`'ы для сетевых запросов, работы с данными, валидации. Controller должен только orchestrate их работу.
-    *   **Категории (Extensions):** Делите большой Controller на логические части с помощью `// MARK: -` и extensions.
+    *   **Категории (Extensions):** Делите большой Controller на логические части с помощью `// MARK: -` и [[extension]].
 *   **Model-View-Controller+Model:** Старайтесь хотя бы не забывать про Model. Выносите данные и простую логику в отдельные структуры, а не храните всё в свойствах Controller'а.
-*   **Это отправная точка.** Понимание проблем MVC мотивирует изучать и применять более сложные паттерны ([[MVVM (Model-View-ViewModel) Architecture]], [[MVP (Model-View-Presenter) Architecture]], [[VIPER Architecture]]) для больших и сложных проектов.
-*   **SwiftUI — это новый взгляд.** [[SwiftUI]] представляет собой более современный и декларативный подход, который во многом решает проблемы классического MVC, смешивая черты MVVM и [[MVI (Model-View-Intent) Architecture]].
+*   **Это отправная точка.** Понимание проблем MVC мотивирует изучать и применять более сложные паттерны ([[MVVM (Model-View-ViewModel) Architecture|MVVM]], [[MVP (Model-View-Presenter) Architecture|MVP]], [[VIPER Architecture|VIPER]]) для больших и сложных проектов.
+*   **SwiftUI — это новый взгляд.** [[SwiftUI]] представляет собой более современный и декларативный подход, который во многом решает проблемы классического MVC, смешивая черты MVVM и [[MVI (Model-View-Intent) Architecture|MVI]].
 
 ---

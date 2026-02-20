@@ -83,7 +83,7 @@ class CircularProgressView: UIView {
 }
 ```
 
-#### 3. Маска сложной формы [[для]] UIView
+#### 3. Маска сложной формы для [[UIView]]
 
 ```swift
 let maskPath = UIBezierPath()

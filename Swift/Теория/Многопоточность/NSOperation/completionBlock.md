@@ -128,7 +128,7 @@ queue.addOperation(operation)
 | Обновление UI напрямую в completionBlock               | [[Main Thread Violation]]                                       | Всегда `DispatchQueue.main.async` или `@MainActor`         |
 | Сильная зависимость от completionBlock                 | Сложно тестировать, сложно отлаживать                           | Переходить на `async` / `await`                            |
 | Забыть [weak self] в completionBlock                   | Утечка памяти                                                   | Всегда `[weak self]`                                       |
-| Изменение completionBlock после добавления в очередь   | Неопределённое поведение                                        | Задавать до [[addOperation]]                               |
+| Изменение completionBlock после добавления в очередь   | Неопределённое поведение                                        | Задавать до addOperation                                   |
 | Использование completionBlock для асинхронных операций | Операция завершается до завершения вложенной асинхронной задачи | Использовать асинхронные операции или `isFinished` вручную |
 
 ### 5. BlockOperation + completionBlock vs современные альтернативы (2026 сравнение)
