@@ -1,159 +1,118 @@
-**`UIImageView`** — это подкласс **[[UIView]]**, предназначенный для отображения **изображений ([[UIImage]])** в приложении [[iOS]].
+**`UIImageView`** — это подкласс **[[UIView]]**, предназначенный исключительно для **отображения одного или нескольких изображений** ([[UIImage]]) в [[iOS]]-приложениях.
 
-- Не интерактивен по умолчанию (не реагирует на нажатия)
-    
-- Может содержать одно изображение и анимированную последовательность изображений
-    
-- Поддерживает **contentMode**, чтобы управлять тем, как изображение масштабируется и размещается внутри view
-    
+Это один из самых часто используемых элементов интерфейса в [[UIKit]]. В 2026 году он остаётся актуальным, несмотря на появление `Image` в [[SwiftUI]], потому что:
+- даёт полный контроль над производительностью и поведением,
+- поддерживает анимацию, gesture recognizers, CALayer-эффекты,
+- идеально работает в смешанных UIKit + SwiftUI проектах через [[UIViewRepresentable]].
 
-> Проще говоря: `UIImageView` = «виджет для показа картинки на экране».
+### Основные характеристики UIImageView (актуально на 2026 год)
 
----
+| Свойство / Возможность     | Значение по умолчанию     | Что делает / зачем нужен                         | Самый частый сценарий                                    |
+| -------------------------- | ------------------------- | ------------------------------------------------ | -------------------------------------------------------- |
+| `image`                    | [[nil]]                   | Основное изображение (один кадр)                 | Отображение фото, иконки                                 |
+| `highlightedImage`         | `nil`                     | Изображение в выделенном состоянии (при нажатии) | Кнопки, иконки в таббаре                                 |
+| `animationImages`          | `nil`                     | Массив изображений для анимации                  | Лоадеры, индикаторы, GIF-подобные эффекты                |
+| `animationDuration`        | 0.033 сек × кол-во кадров | Длительность полного цикла анимации              | Настройка скорости                                       |
+| `animationRepeatCount`     | 0 (бесконечно)            | Количество повторов анимации                     | Одноразовые эффекты                                      |
+| `contentMode`              | `.scaleToFill`            | Как изображение масштабируется и позиционируется | `.scaleAspectFit`, `.scaleAspectFill` — самые популярные |
+| `isUserInteractionEnabled` | `false`                   | Разрешает ли вью получать касания                | Включать для тапов, long press                           |
+| `clipsToBounds`            | `false`                   | Обрезает ли содержимое по границам view          | Почти всегда `true` при cornerRadius                     |
+| `tintColor`                | наследуется от superview  | Цвет для template-изображений                    | Иконки SF Symbols                                        |
 
-## 2. Основные термины
+### Основные contentMode (самые используемые в 2026)
 
-|Термин|Описание|
-|---|---|
-|**UIImage**|Объект изображения, который отображается в UIImageView|
-|**contentMode**|Определяет, как изображение размещается и масштабируется (`.scaleAspectFit`, `.scaleAspectFill` и др.)|
-|**isUserInteractionEnabled**|Разрешает взаимодействие с изображением, например для распознавания тапов|
-|**animationImages**|Массив изображений для анимации|
-|**startAnimating / stopAnimating**|Методы запуска и остановки анимации изображений|
-|**clipsToBounds**|Обрезает изображение по границам view, если оно выходит за пределы|
+| contentMode                  | Описание визуально                                      | Когда использовать |
+|------------------------------|----------------------------------------------------------|---------------------|
+| `.scaleToFill`               | Растягивает изображение, заполняя весь view (может искажать) | Редко |
+| `.scaleAspectFit`            | Вписывает изображение, сохраняя пропорции (может быть пустое пространство) | Фото профиля, логотипы, контент |
+| `.scaleAspectFill`           | Заполняет весь view, сохраняя пропорции (обрезает края) | Фоны, аватарки в круге |
+| `.center`                    | Центрирует без масштабирования                           | Иконки фиксированного размера |
+| `.top`, `.bottom`, `.left`, `.right` и комбинации | Привязка к краю без масштабирования                      | Специфические дизайны |
 
----
+### Самые популярные и рекомендуемые паттерны 2026 года
 
-## 3. Основной синтаксис
-
-### Через Interface Builder
-
-```swift
-@IBOutlet weak var imageView: UIImageView!
-imageView.image = UIImage(named: "exampleImage")
-imageView.contentMode = .scaleAspectFit
-```
-
-### Программно
+#### 1. Базовое использование (самый частый)
 
 ```swift
-let imageView = UIImageView(frame: CGRect(x: 50, y: 50, width: 200, height: 200))
-imageView.image = UIImage(named: "exampleImage")
+let imageView = UIImageView(image: UIImage(named: "avatar"))
 imageView.contentMode = .scaleAspectFill
 imageView.clipsToBounds = true
+imageView.layer.cornerRadius = 16
 view.addSubview(imageView)
 ```
 
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простое изображение
+#### 2. SF Symbols с tintColor (очень популярно)
 
 ```swift
-let imageView = UIImageView()
-imageView.image = UIImage(named: "exampleImage")
-imageView.frame = CGRect(x: 50, y: 50, width: 100, height: 100)
-view.addSubview(imageView)
+let iconView = UIImageView()
+iconView.image = UIImage(systemName: "heart.fill")?
+    .withRenderingMode(.alwaysTemplate)
+iconView.tintColor = .systemRed
+iconView.contentMode = .scaleAspectFit
 ```
 
-- Просто отображаем картинку на экране
-    
-
----
-
-### Пример 2. Content Mode
+#### 3. Анимация (лоадер, индикатор)
 
 ```swift
-imageView.contentMode = .scaleAspectFit // Вписывает изображение внутри view, сохраняя пропорции
-imageView.contentMode = .scaleAspectFill // Масштабирует изображение, чтобы заполнить весь view
-```
-
-- Управляем тем, как изображение отображается внутри UIImageView
-    
-
----
-
-### Пример 3. Анимация изображений
-
-```swift
-let animationImages = [
-    UIImage(named: "frame1")!,
-    UIImage(named: "frame2")!,
-    UIImage(named: "frame3")!
-]
-imageView.animationImages = animationImages
+let loadingImages = (1...12).compactMap { UIImage(named: "loading\($0)") }
+imageView.animationImages = loadingImages
 imageView.animationDuration = 1.0
+imageView.animationRepeatCount = 0
 imageView.startAnimating()
 ```
 
-- UIImageView может показывать последовательность изображений как анимацию
-    
-
----
-
-### Пример 4. Скругление и тень через layer
-
-```swift
-imageView.layer.cornerRadius = 20
-imageView.clipsToBounds = true
-imageView.layer.shadowColor = UIColor.black.cgColor
-imageView.layer.shadowOpacity = 0.5
-imageView.layer.shadowOffset = CGSize(width: 3, height: 3)
-```
-
-- Можно комбинировать **[[CALayer]]** свойства с UIImageView
-    
-
----
-
-### Пример 5. UIImageView с распознаванием тапов
+#### 4. UIImageView с распознаванием жестов
 
 ```swift
 imageView.isUserInteractionEnabled = true
-let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
-imageView.addGestureRecognizer(tapGesture)
 
-@objc func imageTapped() {
-    print("Image tapped!")
+let tap = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+imageView.addGestureRecognizer(tap)
+
+@objc private func imageTapped() {
+    print("Картинка нажата")
+    // открываем полноэкранный просмотр
 }
 ```
 
-- По умолчанию UIImageView **не реагирует на касания**, нужно включить `isUserInteractionEnabled` и добавить жест
-    
+#### 5. Кэширование и асинхронная загрузка (рекомендуемый способ 2026)
 
----
-
-## 5. Особенности UIImageView
-
-1. **Не интерактивен по умолчанию**
-    
-2. Поддерживает как **одно изображение, так и анимацию**
-    
-3. Использует **contentMode** для управления масштабированием
-    
-4. Можно комбинировать с **слоями (`CALayer`)** для скруглений, теней и рамок
-    
-5. Для взаимодействия нужно включать `isUserInteractionEnabled` и использовать жесты
-    
-
----
-
-## 6. Итог
-
-- **UIImageView** = компонент для отображения изображений
-    
-- Позволяет:
-    
-    - Показывать статические картинки
+```swift
+extension UIImageView {
+    func loadImage(from url: URL, placeholder: UIImage? = nil) {
+        image = placeholder
         
-    - Создавать анимацию через `animationImages`
-        
-    - Настраивать контент (масштаб, обрезку)
-        
-    - Использовать CALayer для скруглений, тени и границ
-        
-    - Обрабатывать нажатия через [[UITapGestureRecognizer]]
-        
+        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+            guard let data, error == nil,
+                  let image = UIImage(data: data) else { return }
+            
+            DispatchQueue.main.async {
+                self?.image = image
+            }
+        }.resume()
+    }
+}
 
----
+// Использование
+imageView.loadImage(from: URL(string: "https://...")!, placeholder: UIImage(systemName: "photo"))
+```
+
+### Лучшие практики UIImageView в Swift 2026
+
+- **Всегда** задавайте `contentMode` — по умолчанию `.scaleToFill` часто искажает изображение  
+- **Для круглых аватарок** — `clipsToBounds = true` + `layer.cornerRadius = bounds.height / 2`  
+- **Для иконок** — используйте SF Symbols + `.alwaysTemplate` + `tintColor`  
+- **Для анимаций** — `animationImages` — самый лёгкий и производительный способ  
+- **Для сетевых изображений** — используйте кэширование (Kingfisher, SDWebImage, Nuke, или свой) — ручная загрузка через URLSession устарела  
+- **Для [[SwiftUI]]** — используйте `Image` / `AsyncImage` — `UIImageView` нужен только в смешанных проектах через `UIViewRepresentable`  
+- **Для производительности** — избегайте большого количества анимированных UIImageView одновременно  
+- **Документируйте** — пишите комментарий «UIImageView — аватарка пользователя с scaleAspectFill и скруглением»
+
+**Короткий итог 2026**:
+> UIImageView — это **специализированный UIView** для отображения изображений (`UIImage`).  
+> В 2026 году:  
+> - ключевые свойства — `image`, `contentMode`, `clipsToBounds`, `animationImages`  
+> - для иконок — SF Symbols + `.alwaysTemplate`  
+> - для сетевых изображений — используйте кэширующие библиотеки  
+> - для жестов — включайте `isUserInteractionEnabled` и добавляйте recognizers  
+> Это **самый простой** и **самый часто встречающийся** способ показать картинку в UIKit-приложении.
