@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/AVFoundation/AVCaptureConnection.md",
+                "file": "Swift/Теория/iOS/AVFoundation/AVCaptureInput.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "AVCaptureConnection"
+              "title": "AVCaptureInput"
             }
           }
         ]
@@ -196,18 +196,25 @@
   },
   "active": "03c320c5a6e719c1",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/AVFoundation/AVCaptureFileOutputRecordingDelegate.md",
+    "AVCaptureDeviceInput.md",
+    "Swift/Теория/iOS/AVFoundation/AVCaptureInput.md",
+    "AVCapturePort.md",
+    "AVCaptureScreenInput.md",
+    "AVCaptureFileInput.md",
+    "AVCaptureMetadataInput.md",
+    "Swift/Теория/iOS/AVFoundation/AVCaptureOutput.md",
     "Swift/Теория/iOS/AVFoundation/AVCaptureMovieFileOutput.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureConnection.md",
     "Swift/Теория/iOS/AVFoundation/AVCaptureMetadataOutputObjectsDelegate.md",
     "Swift/Теория/iOS/AVFoundation/AVCaptureMetadataOutput.md",
+    "Swift/Теория/iOS/AVFoundation/AVCaptureFileOutputRecordingDelegate.md",
+    "Swift/Теория/iOS/AVFoundation/AVCaptureConnection.md",
+    "Swift/Теория/iOS/AVFoundation/AVCaptureAudioDataOutputSampleBufferDelegate.md",
+    "Swift/Теория/iOS/AVFoundation/AVCaptureAudioDataOutput.md",
     "Swift/Теория/iOS/AVFoundation/AVMetadataCatBodyObject.md",
     "Swift/Теория/iOS/AVFoundation/AVMetadataDogBodyObject.md",
     "Swift/Теория/iOS/AVFoundation/AVMetadataHumanBodyObject.md",
     "Swift/Теория/iOS/AVFoundation/AVMetadataFaceObject.md",
     "Swift/Теория/iOS/AVFoundation/AVMetadataMachineReadableCodeObject.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureAudioDataOutputSampleBufferDelegate.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureAudioDataOutput.md",
     "Swift/Теория/iOS/AVFoundation/AVCaptureSession.md",
     "Swift/Теория/iOS/AVFoundation/AVFoundation.md",
     "Swift/Теория/iOS/AVFoundation",
@@ -216,13 +223,6 @@
     "Swift/Теория/iOS/AVFoundation/AVCaptureVideoDataOutput.md",
     "Swift/Теория/iOS/AVFoundation/AVCaptureStillImageOutput.md",
     "Swift/Теория/iOS/AVFoundation/AVCapturePhotoOutput.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureOutput.md",
-    "Swift/Теория/Ошибки и варнинги/Многопоточность/Captured mutable variable … in concurrently-executing code.md",
-    "Swift/Теория/Ошибки и варнинги/Многопоточность/deadlock.md",
-    "Swift/Теория/iOS/Swift/Swift.md",
-    "Swift/Теория/Ошибки и варнинги/Signing & Provisioning/Provisioning profile doesn't match the entitlements file.md",
-    "Swift/Теория/Ошибки и варнинги/Signing & Provisioning/Command CodeSign failed with a nonzero exit code.md",
-    "Swift/Теория/Ошибки и варнинги/Рантайм ошибки/Thread 1- EXC_BAD_ACCESS (code=1, address=0x…).md",
     "Swift/Теория/Ошибки и варнинги/UI и Auto Layout",
     "Swift/Теория/Ошибки и варнинги/Многопоточность",
     "Swift/Теория/Swift/Standart Library",
