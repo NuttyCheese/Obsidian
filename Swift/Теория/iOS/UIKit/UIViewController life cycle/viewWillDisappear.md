@@ -1,4 +1,4 @@
-**viewWillDisappear(_:)** — это один из ключевых методов **жизненного цикла** `UIViewController` в UIKit.
+**viewWillDisappear(_:)** — это один из ключевых методов **жизненного цикла** [[UIViewController]] в [[UIKit]].
 
 Он вызывается **каждый раз**, когда контроллер представления **вот-вот перестанет быть видимым** на экране (перед анимацией ухода).
 
@@ -16,13 +16,26 @@
 
 ### Порядок вызовов (самая частая последовательность)
 
-```text
-1. viewWillAppear(_:)
-2. viewDidAppear(_:)
-3. viewWillDisappear(_:)      ← здесь ты обычно
-4. viewDidDisappear(_:)
-5. (следующий экран) viewWillAppear(_:)
-6. (следующий экран) viewDidAppear(_:)
+```mermaid
+flowchart TD
+    subgraph Текущий[Текущий экран]
+        A[viewWillAppear] --> B[viewDidAppear]
+        B --> C[viewWillDisappear]
+        C --> D[viewDidDisappear]
+    end
+    
+    subgraph Следующий[Следующий экран]
+        E[viewWillAppear] --> F[viewDidAppear]
+    end
+    
+    C -.-> |переход| E
+    
+    style Текущий fill:#e1f5fe
+    style Следующий fill:#c8e6c9
+    style C fill:#ffcdd2,stroke:#333
+    style D fill:#ffcdd2
+    style E fill:#c8e6c9
+    style F fill:#c8e6c9
 ```
 
 ### Что обычно делают в viewWillDisappear в 2026 году
@@ -37,7 +50,7 @@
 | **Очистка временных ресурсов** (большие изображения, кэш) | Экран уходит → можно начать освобождать память                       | `imageCache.removeExpired()`                        |
 | **Остановка сетевых запросов / cancel tasks**             | Чтобы не тратить трафик/батарею на невидимый экран                   | `task?.cancel()` / `cancellable?.cancel()`          |
 
-### Самый современный паттерн 2026 (@MainActor + async/await)
+### Самый современный паттерн 2026 ([[@MainActor]] + [[async]]/[[await]])
 
 ```swift
 @MainActor

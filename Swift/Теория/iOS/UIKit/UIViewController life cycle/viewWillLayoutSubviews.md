@@ -1,17 +1,17 @@
-**`viewWillLayoutSubviews()`** — это метод жизненного цикла `UIViewController` в UIKit, который вызывается **непосредственно перед** тем, как система начнёт пересчитывать и применять layout (расположение и размеры) всех subviews контроллера.
+**`viewWillLayoutSubviews()`** — это метод жизненного цикла [[UIViewController]] в [[UIKit]], который вызывается **непосредственно перед** тем, как система начнёт пересчитывать и применять layout (расположение и размеры) всех subviews контроллера.
 
 Он входит в группу методов, связанных с **автоматическим layout** и **изменением размеров**.
 
 ### Когда вызывается viewWillLayoutSubviews()
 
-| Событие / Причина изменения размеров                              | Вызывается viewWillLayoutSubviews()? | Примерный порядок вызова |
-|-------------------------------------------------------------------|---------------------------------------|---------------------------|
-| Изменение размеров контроллера (поворот, Split View, Slide Over) | Да                                    | → viewWillLayoutSubviews → layoutSubviews → viewDidLayoutSubviews |
-| Изменение traitCollection (size class, Dynamic Type)              | Да (часто)                            | → traitCollectionDidChange → viewWillLayoutSubviews → ... |
-| Вызов `setNeedsLayout()` / `layoutIfNeeded()` вручную             | Да                                    | → viewWillLayoutSubviews → layoutSubviews |
-| Добавление/удаление subviews (addSubview, removeFromSuperview)    | Да (если изменились constraints)      | → viewWillLayoutSubviews → layoutSubviews |
-| Изменение safeAreaInsets (notch, Dynamic Island, внешняя клавиатура) | Да                                    | → viewWillLayoutSubviews → layoutSubviews |
-| Первый показ контроллера (после viewDidLoad)                      | Да                                    | → viewDidLoad → viewWillAppear → viewWillLayoutSubviews → ... |
+| Событие / Причина изменения размеров                                 | Вызывается viewWillLayoutSubviews()? | Примерный порядок вызова                                                  |
+| -------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------- |
+| Изменение размеров контроллера (поворот, Split View, Slide Over)     | Да                                   | → viewWillLayoutSubviews → [[layoutSubviews]] → [[viewDidLayoutSubviews]] |
+| Изменение traitCollection (size class, Dynamic Type)                 | Да (часто)                           | → [[traitCollectionDidChange]] → viewWillLayoutSubviews → ...             |
+| Вызов `setNeedsLayout()` / `layoutIfNeeded()` вручную                | Да                                   | → viewWillLayoutSubviews → layoutSubviews                                 |
+| Добавление/удаление subviews (addSubview, removeFromSuperview)       | Да (если изменились constraints)     | → viewWillLayoutSubviews → layoutSubviews                                 |
+| Изменение safeAreaInsets (notch, Dynamic Island, внешняя клавиатура) | Да                                   | → viewWillLayoutSubviews → layoutSubviews                                 |
+| Первый показ контроллера (после viewDidLoad)                         | Да                                   | → [[viewDidLoad]] → viewWillAppear → viewWillLayoutSubviews → ...         |
 
 ### Самые популярные и рекомендуемые сценарии использования в 2026 году
 
@@ -62,13 +62,13 @@ override func viewWillLayoutSubviews() {
 
 ### Чего **НИКОГДА** нельзя делать в viewWillLayoutSubviews() в 2026 году
 
-| Запрещённое действие                              | Почему нельзя делать                                   | Куда перенести |
-|---------------------------------------------------|--------------------------------------------------------|----------------|
-| Изменение иерархии view (addSubview, removeFromSuperview) | Вызывает рекурсивный вызов layout → бесконечный цикл   | viewDidLoad / viewWillAppear |
-| Вызов `setNeedsLayout()` / `layoutIfNeeded()`     | Рекурсия и бесконечный цикл                            | — |
-| Тяжёлые вычисления, сетевые запросы               | Метод может вызываться очень часто (сотни раз за секунду при анимации) | viewDidLoad / viewDidAppear |
-| Изменение navigationItem / tabBarItem             | Лучше делать в viewWillAppear / viewDidAppear          | viewWillAppear |
-| Доступ к frame / bounds дочерних view             | Они ещё не пересчитаны (layout не выполнен)            | viewDidLayoutSubviews |
+| Запрещённое действие                                      | Почему нельзя делать                                                   | Куда перенести                       |
+| --------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------ |
+| Изменение иерархии view (addSubview, removeFromSuperview) | Вызывает рекурсивный вызов layout → бесконечный цикл                   | [[viewDidLoad]] / [[viewWillAppear]] |
+| Вызов `setNeedsLayout()` / `layoutIfNeeded()`             | Рекурсия и бесконечный цикл                                            | —                                    |
+| Тяжёлые вычисления, сетевые запросы                       | Метод может вызываться очень часто (сотни раз за секунду при анимации) | viewDidLoad / [[viewDidAppear]]      |
+| Изменение [[navigationItem]] / [[tabBarItem]]             | Лучше делать в viewWillAppear / viewDidAppear                          | viewWillAppear                       |
+| Доступ к [[frame]] / [[bounds]] дочерних view             | Они ещё не пересчитаны (layout не выполнен)                            | viewDidLayoutSubviews                |
 
 ### Лучшие практики viewWillLayoutSubviews() в Swift 2026
 
@@ -90,5 +90,3 @@ override func viewWillLayoutSubviews() {
 > - **запрещено** менять иерархию, вызывать setNeedsLayout, делать тяжёлые операции  
 > - вызывайте `super`  
 > Это **очень важный**, но **очень тонкий** метод — его неправильное использование → бесконечные циклы и тормоза.
-
-Удачи с чистым и эффективным layout-циклом в твоём проекте! 📐

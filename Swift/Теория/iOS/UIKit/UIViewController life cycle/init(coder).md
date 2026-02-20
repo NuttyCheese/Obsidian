@@ -1,4 +1,4 @@
-**`init(coder:)`** — это **обязательный инициализатор** в UIKit/AppKit, который вызывается, когда объект (UIView, UIViewController, UITableViewCell и т.д.) создаётся из **Storyboard** или **.xib**-файла (через Interface Builder / nib).
+**`init(coder:)`** — это **обязательный инициализатор** в [[UIKit]]/[[AppKit]], который вызывается, когда объект ([[UIView]], [[UIViewController]], [[UITableViewCell]] и т.д.) создаётся из **Storyboard** или **.[[xib]]**-файла (через Interface Builder / nib).
 
 Это один из самых важных и одновременно самых часто неправильно понимаемых методов в iOS-разработке.
 
@@ -23,7 +23,7 @@
    }
    ```
 
-2. **Нельзя** обращаться к **IBOutlet** и **IBAction** внутри init(coder:)**  
+2. **Нельзя** обращаться к **[[@IBOutlet]]** и **IBAction** внутри init(coder:)**  
    На момент вызова init(coder:) все outlets ещё **nil**.
 
    ```swift
@@ -35,7 +35,7 @@
    }
    ```
 
-   **Правильное место** для работы с outlets — **`awakeFromNib()`**
+   **Правильное место** для работы с outlets — **[[awakeFromNib]]`()`**
 
    ```swift
    override func awakeFromNib() {
@@ -106,5 +106,3 @@
 > - **минимальная** логика: базовая настройка, не зависящая от outlets  
 > - всё остальное — в `awakeFromNib()`, `viewDidLoad()`, `layoutSubviews()`  
 > Это **классический** и **очень важный** метод при работе с Interface Builder.
-
-Удачи с правильной и безопасной инициализацией из Storyboard / .xib в твоём проекте! 🧩

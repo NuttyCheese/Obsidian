@@ -1,4 +1,4 @@
-**`traitCollectionDidChange(_:)`** — это метод жизненного цикла `UITraitEnvironment` (реализуется `UIView`, `UIViewController`, `UIPresentationController` и некоторыми другими классами), который вызывается **каждый раз**, когда меняется **коллекция трейтов** (trait collection) объекта.
+**`traitCollectionDidChange(_:)`** — это метод жизненного цикла [[UITraitEnvironment]] (реализуется [[UIView]], [[UIViewController]], [[UIPresentationController]] и некоторыми другими классами), который вызывается **каждый раз**, когда меняется **коллекция трейтов** (trait collection) объекта.
 
 С 2017 года (iOS 10+) и особенно после появления **Dynamic Type**, **тёмной темы**, **Split View**, **SceneDelegate** и **multi-window** в iPadOS это один из **самых важных** методов для адаптивного UI.
 
@@ -95,7 +95,7 @@ private func updateFontsForCurrentContentSize() {
 - **Всегда** вызывайте `super.traitCollectionDidChange(previousTraitCollection)` — иначе дочерние контроллеры/вью могут не обновиться  
 - **Сравнивайте** с `previousTraitCollection` — это позволяет понять, **что именно изменилось** (userInterfaceStyle, sizeClass, contentSizeCategory)  
 - **Не делайте** тяжёлые операции (сеть, диск, сложные вычисления) — метод может вызываться очень часто  
-- **Для SwiftUI** — аналог — `.onChange(of: \.colorScheme)`, `.onChange(of: \.dynamicTypeSize)`, `.environment(\.horizontalSizeClass)`  
+- **Для [[SwiftUI]]** — аналог — `.onChange(of: \.colorScheme)`, `.onChange(of: \.dynamicTypeSize)`, `.environment(\.horizontalSizeClass)`  
 - **Для автоматической адаптации** — используйте `traitCollection` + `UITraitCollection.current` + `preferredFont(forTextStyle:)`  
 - **В iPadOS** — обязательно тестируйте в Split View и Slide Over — traitCollection меняется динамически  
 - **Документируйте** — пишите комментарий «traitCollectionDidChange — реакция на смену тёмной темы / size class / Dynamic Type»
@@ -107,5 +107,3 @@ private func updateFontsForCurrentContentSize() {
 > - сравнивайте с `previousTraitCollection`  
 > - используйте для: тёмной/светлой темы, Dynamic Type, адаптации под iPad Split View  
 > - это **один из самых важных** методов для создания современного, адаптивного и доступного UI в UIKit  
-
-Удачи с идеально адаптивным интерфейсом в твоём проекте! 🌗📱

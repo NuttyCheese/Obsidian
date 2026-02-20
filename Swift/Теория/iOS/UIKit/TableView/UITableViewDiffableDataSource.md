@@ -1,6 +1,6 @@
 **UITableViewDiffableDataSource** — это современный класс из [[UIKit]] (с iOS 13, 2019), который радикально упрощает работу с данными в таблицах.
 
-Он заменяет старый подход с `UITableViewDataSource` + `reloadData()` / `performBatchUpdates()` на **снимки данных** (snapshots) и **автоматический diff**.
+Он заменяет старый подход с [[UITableViewDataSource]] + `reloadData()` / `performBatchUpdates()` на **снимки данных** (snapshots) и **автоматический diff**.
 
 ### Почему в 2025–2026 годах почти все используют именно DiffableDataSource
 
