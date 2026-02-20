@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "touchid",
+                "query": "TouchID",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
