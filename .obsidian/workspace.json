@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "CPU.md",
+                "file": "Sketch.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CPU"
+              "title": "Sketch"
             }
           }
         ]
@@ -197,6 +197,20 @@
   },
   "active": "b671281359bc2cee",
   "lastOpenFiles": [
+    "RGB.md",
+    "PNG.md",
+    "JPEG.md",
+    "CATiledLayer.md",
+    "PDF.md",
+    "UIDocumentInteractionController.md",
+    "HEX.md",
+    "GPU.md",
+    "Swift/Теория/iOS/UIKit/UIGraphicsImageRenderer.md",
+    "GPS.md",
+    "CLLocation.md",
+    "Figma.md",
+    "SVG.md",
+    "CPU.md",
     "Swift/Теория/Сетевое взаимодействие/PUT-HTTP.md",
     "Swift/Теория/Сетевое взаимодействие/PATCH-HTTP.md",
     "Swift/Теория/Многопоточность/NSOperation/completionBlock.md",
@@ -209,22 +223,8 @@
     "PUT.md",
     "Swift/Теория/Ошибки и варнинги/Thread Explosion.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/isolation (concept).md",
-    "isolation.md",
-    "Swift/Теория/Сетевое взаимодействие/URLSession.md",
-    "URLSessionDataTask.md",
-    "Swift/Теория/iOS/Core Location/CLCircularRegion.md",
-    "CLRegion.md",
-    "Swift/Теория/iOS/Core Animation/CAShapeLayer.md",
-    "Swift/Теория/Архитектурные подходы/MVVM (Model-View-ViewModel) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/MVC (Model-View-Controller) Architecture.md",
-    "Swift/Теория/iOS/Swift/for-in.md",
-    "Swift/Теория/iOS/Swift/Array.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Последовательность Фибоначчи.md",
-    "Swift/Теория/Swift/Standart Library/Sequence.md",
-    "Swift/Теория/Swift/Standart Library/Array.md",
     "Swift/Теория/Swift/Standart Library",
     "Swift/Теория/Swift",
-    "Swift/Теория/iOS/Core Animation/CADisplayLink.md",
     "Swift/Теория/iOS/SwiftUI",
     "Swift/Теория/iOS/SceneKit",
     "Swift/Теория/iOS/Core Animation",
