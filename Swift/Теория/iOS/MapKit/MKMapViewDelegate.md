@@ -134,8 +134,8 @@ final class MapViewController: UIViewController, MKMapViewDelegate, CLLocationMa
 - **Используйте** `MKMarkerAnnotationView` (iOS 11+) — современный стиль с цветом и glyph  
 - **Для производительности** — переиспользуйте view через `dequeueReusableAnnotationView`  
 - **Для бесконечной прокрутки POI** — загружайте в `regionDidChangeAnimated` с учётом `mapView.visibleMapRect`  
-- **В SwiftUI** — оборачивайте `MKMapView` в `UIViewRepresentable` + `Coordinator` (делегат)  
-- **Privacy Manifest** (PrivacyInfo.xcprivacy) — обязательно с iOS 17+ для MapKit  
+- **В [[SwiftUI]]** — оборачивайте [[MKMapView]] в [[UIViewRepresentable]] + [[Coordinator]] (делегат)  
+- **Privacy Manifest** (PrivacyInfo.xcprivacy) — обязательно с iOS 17+ для [[MapKit]]  
 - **Документируйте** — пишите комментарий «MKMapViewDelegate — кастомные пины и рендеринг маршрутов»
 
 **Короткий итог 2026**:

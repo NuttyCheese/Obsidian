@@ -122,7 +122,7 @@ func createMixedLayout() -> UICollectionViewCompositionalLayout {
 - **Для sticky headers** — `pinToVisibleBounds = true` + `.top` alignment  
 - **Для разделителей** — используйте `interItemSpacing` и `interGroupSpacing`  
 - **Для кастомных фонов** — добавляйте `NSCollectionLayoutDecorationItem`  
-- **В SwiftUI** — используйте `UICollectionView` через `UIViewRepresentable` с compositional layout  
+- **В SwiftUI** — используйте `UICollectionView` через [[UIViewRepresentable]] с compositional layout  
 - **Документируйте** — пишите комментарий «UICollectionViewCompositionalLayout — горизонтальная карусель с групповой прокруткой и центрированием»
 
 **Короткий итог 2026**:
@@ -132,5 +132,3 @@ func createMixedLayout() -> UICollectionViewCompositionalLayout {
 > - размеры — fractional / absolute / estimated  
 > - поддерживает orthogonal scrolling, sticky headers, nested groups  
 > - это **основа** всех современных коллекций (Pinterest, Netflix, App Store, Instagram и т.д.)  
-
-Удачи с красивыми, адаптивными и современными коллекциями в твоём приложении! 📱✨

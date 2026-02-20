@@ -1,4 +1,4 @@
-**`MKPointOfInterestFilter`** — это класс в **MapKit** (доступен с iOS 13.0+), который позволяет **фильтровать** результаты поиска по категориям точек интереса (POI — Points of Interest) при использовании **`MKLocalSearch`**.
+**`MKPointOfInterestFilter`** — это класс в **[[MapKit]]** (доступен с [[iOS]] 13.0+), который позволяет **фильтровать** результаты поиска по категориям точек интереса (POI — Points of Interest) при использовании **[[MKLocalSearch]]**.
 
 С его помощью можно:
 - включить только определённые категории (например, только кафе и рестораны),
@@ -106,16 +106,14 @@ search.start { response, error in
 - **Комбинируйте** оба — это даёт максимальную точность  
 - **Ограничивайте** `region` — фильтр работает только внутри указанной области  
 - **Для автодополнения** — `MKLocalSearchCompleter` тоже поддерживает `pointOfInterestFilter` (с iOS 13+)  
-- **Privacy Manifest** (PrivacyInfo.xcprivacy) — обязательно с iOS 17+ для MapKit  
+- **Privacy Manifest** (PrivacyInfo.xcprivacy) — обязательно с [[iOS]] 17+ для [[MapKit]]  
 - **Документируйте** — пишите комментарий «MKPointOfInterestFilter — только кафе и рестораны в видимой области карты»
 
 **Короткий итог 2026**:
-> `MKPointOfInterestFilter` — это **фильтр категорий** для поиска мест в `MKLocalSearch`.  
+> `MKPointOfInterestFilter` — это **фильтр категорий** для поиска мест в [[MKLocalSearch]].  
 > В 2026 году:  
 > - создаётся через `including:` / `excluding:` или их комбинацию  
 > - передаётся в `MKLocalSearch.Request.pointOfInterestFilter`  
 > - основные категории — `.cafe`, `.restaurant`, `.bakery`, `.hotel`, `.museum`, `.park` и т.д.  
 > - сильно улучшает релевантность результатов и уменьшает мусор  
 > Это **обязательный** инструмент для любого качественного поиска по карте в iOS-приложении.
-
-Удачи с точным и релевантным поиском мест в твоём приложении! 🔍🍽️

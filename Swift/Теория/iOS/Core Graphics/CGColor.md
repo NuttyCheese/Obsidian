@@ -1,17 +1,17 @@
 **`CGColor`** — это структура (C-структура) из **[[Core Graphics]]** (Quartz), представляющая **цвет в пространстве цветов** (color space) с набором компонентов (обычно RGBA, CMYK, grayscale и т.д.).
 
-В Swift это **не Swift-тип**, а **C-структура**, которая активно используется в UIKit/AppKit для работы с цветами на уровне **Core Graphics / Core Animation** (CALayer, CGContext и т.д.).
+В Swift это **не Swift-тип**, а **C-структура**, которая активно используется в UIKit/AppKit для работы с цветами на уровне **Core Graphics / Core Animation** ([[CALayer]], [[CGContext]] и т.д.).
 
 ### Ключевые характеристики CGColor (актуально на 2026 год)
 
 | Характеристика | Описание                                                | Важные замечания 2026                          |
 | -------------- | ------------------------------------------------------- | ---------------------------------------------- |
-| Тип            | `CGColor` (C-структура, не объект)                      | Не является [[NSObject]] / [[AnyObject]]       |
+| Тип            | [[CGColor]] (C-структура, не объект)                    | Не является [[NSObject]] / [[AnyObject]]       |
 | Компоненты     | Массив `CGFloat` (обычно 4 для RGBA)                    | Длина зависит от color space                   |
 | Color Space    | `CGColorSpace` (sRGB, P3, CMYK, DeviceRGB и т.д.)       | Чаще всего `CGColorSpaceCreateDeviceRGB()`     |
 | Alpha          | Последний компонент — прозрачность (0.0–1.0)            | Всегда присутствует в большинстве color spaces |
 | Создание       | `CGColorCreate`, `CGColorCreateCopy`, `UIColor.cgColor` | Почти всегда через `UIColor` / `NSColor`       |
-| Swift-обёртка  | `CGColor` → `UIColor` / `Color` (SwiftUI)               | Рекомендуется работать через Swift-типы        |
+| Swift-обёртка  | `CGColor` → `UIColor` / `Color` ([[SwiftUI]])           | Рекомендуется работать через Swift-типы        |
 
 ### Самые частые способы получения CGColor в 2026 году
 

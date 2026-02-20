@@ -6,7 +6,7 @@ func mailComposeController(_ controller: MFMailComposeViewController,
                            error: Error?)
 ```
 
-Это **единственный обязательный** метод протокола `MFMailComposeViewControllerDelegate`.  
+Это **единственный ==обязательный==** метод протокола [[MFMailComposeViewControllerDelegate]].  
 Он вызывается **всегда**, когда пользователь завершил работу с окном составления письма (нажал «Отправить», «Отмена», «Сохранить» или произошла ошибка).
 
 ### Параметры метода
@@ -17,7 +17,7 @@ func mailComposeController(_ controller: MFMailComposeViewController,
 | `result`     | `MFMailComposeResult`            | Основной результат действия пользователя (enum)                             |
 | `error`      | `Error?`                         | Ошибка (если `result == .failed`), иначе `nil`                              |
 
-### Все возможные значения MFMailComposeResult (enum)
+### Все возможные значения [[MFMailComposeResult]] ([[enum]])
 
 | Значение       | Когда происходит                                      | Что обычно нужно сделать в приложении                              | Рекомендуемый UX |
 |----------------|-------------------------------------------------------|--------------------------------------------------------------------|------------------|
@@ -90,8 +90,8 @@ func mailComposeController(_ controller: MFMailComposeViewController,
 - **В `.sent`** — показывайте позитивный фидбек (алерт, тост, галочку)  
 - **В `.failed`** — информируйте пользователя и давайте возможность повторить  
 - **Не сохраняйте** сильную ссылку на контроллер — используйте weak или передавайте через completion  
-- **Для SwiftUI** — оборачивайте `MFMailComposeViewController` в `UIViewControllerRepresentable` и обрабатывайте результат в `Coordinator`  
-- **Документируйте** — пишите комментарий «MFMailComposeViewControllerDelegate — обработка всех возможных результатов отправки письма»
+- **Для SwiftUI** — оборачивайте `MFMailComposeViewController` в [[UIViewControllerRepresentable]] и обрабатывайте результат в `Coordinator`  
+- **Документируйте** — пишите комментарий «[[MFMailComposeViewControllerDelegate]] — обработка всех возможных результатов отправки письма»
 
 **Короткий итог 2026**:
 > `mailComposeController(_:didFinishWith:error:)` — **единственный обязательный** метод делегата `MFMailComposeViewControllerDelegate`.  
@@ -101,5 +101,3 @@ func mailComposeController(_ controller: MFMailComposeViewController,
 > - в `.sent` — благодарите пользователя  
 > - в `.failed` — показывайте ошибку и возможность повторить  
 > - это **ключевой** момент, который определяет, насколько приятным будет опыт отправки письма из приложения.
-
-Удачи с вежливой и надёжной обратной связью в твоём приложении! ✉️
