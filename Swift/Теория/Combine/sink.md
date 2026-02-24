@@ -1,166 +1,164 @@
-Метод `sink` позволяет подписаться на **[[Publisher]]** и указать, что должно происходить, когда он отправляет:
+**`sink`** — это самый простой и часто используемый способ **подписаться** на **Publisher** в Combine.  
 
-- новые значения,
-- ошибку,
-- сигнал о завершении потока.
+Он позволяет указать, что делать, когда придёт:
 
-Когда ты используешь `sink`, ты говоришь [[Combine]]: "Когда Publisher отправит новое значение, я выполню это замыкание (closure), и буду работать с этим значением".
+- новое значение (`receiveValue`)
+- завершение потока (`receiveCompletion`) — успешно или с ошибкой
 
-### Основные параметры метода `sink`
+`s sink` возвращает объект **`AnyCancellable`**, который нужно сохранить, чтобы подписка не отменилась преждевременно.
 
-`sink` может принимать до трех замыканий (или "[[closure]]"):
-
-1. **Value [[closure]]** — что делать с новыми значениями.
-2. **Completion closure** — что делать, когда [[Publisher]] завершит поток данных (например, успешное завершение или ошибка).
-
-Пример:
+### Основные формы метода `sink` (актуально на 2026 год)
 
 ```swift
-sink(receiveCompletion: { completion in
-    // Обработка завершения потока (успех или ошибка)
-}, receiveValue: { value in
-    // Обработка полученного значения
-})
-```
-
-### Простой пример использования `sink`
-
-Предположим, у нас есть Publisher, который посылает текст, и мы хотим вывести этот текст в консоль.
-
-```swift
-import Combine
-
-// Publisher, который передает строку
-let publisher = ["Hello", "World", "from", "Combine"].publisher
-
-// Подписываемся на Publisher с помощью sink
+// Вариант 1: только значения (completion игнорируется)
 publisher.sink { value in
-    print("Получено значение: \(value)")
-}
-```
-
-### Что происходит в этом примере?
-
-1. Мы создаем **Publisher** с массивом строк, который автоматически становится Publisher с помощью `.publisher`.
-2. Подписываемся на этот Publisher с помощью метода `sink`. Каждый раз, когда Publisher отправляет новое значение, оно будет выводиться в консоль с помощью замыкания.
-
-### Пример с обработкой ошибок и завершением
-
-Теперь добавим обработку ошибок и уведомления о завершении потока.
-
-```swift
-import Combine
-
-enum MyError: Error {
-    case somethingWentWrong
+    // обработка каждого нового значения
 }
 
-let publisherWithError: AnyPublisher<String, MyError> = Future { promise in
-    promise(.failure(.somethingWentWrong)) // Генерируем ошибку
-}.eraseToAnyPublisher()
-
-publisherWithError.sink(receiveCompletion: { completion in
-    switch completion {
-    case .finished:
-        print("Publisher завершил работу успешно.")
-    case .failure(let error):
-        print("Произошла ошибка: \(error)")
+// Вариант 2: полный контроль (самый рекомендуемый)
+publisher.sink(
+    receiveCompletion: { completion in
+        switch completion {
+        case .finished:
+            print("Поток успешно завершён")
+        case .failure(let error):
+            print("Ошибка:", error)
+        }
+    },
+    receiveValue: { value in
+        print("Получено значение:", value)
     }
-}, receiveValue: { value in
-    print("Получено значение: \(value)")
-})
+)
 ```
 
-### Что происходит в этом примере?
+### Самые популярные и рекомендуемые паттерны использования sink (2026)
 
-1. Мы создаем **Publisher**, который использует [[Future]] для симуляции асинхронной операции. В данном случае, он сразу завершится с ошибкой.
-2. Мы подписываемся на Publisher с помощью `sink` и обрабатываем как значение, так и завершение.
-    - Если Publisher завершится успешно, мы получим сообщение о завершении.
-    - Если произойдет ошибка, мы обрабатываем её в блоке `receiveCompletion`.
-
-### Пример с изменениями UI в [[UIViewController]]
-
-Рассмотрим пример использования `sink` для обновления интерфейса в [[UIKit]]. Пусть у нас есть переменная, которая меняется, и мы хотим отображать это в UI.
+#### 1. Подписка на @Published в ViewModel (MVVM + UIKit)
 
 ```swift
-import UIKit
-import Combine
+class ProfileViewModel: ObservableObject {
+    @Published var name = "Аноним"
+    @Published var isLoading = false
+}
 
-class ViewController: UIViewController {
-
-    private var label: UILabel!
-    private var cancellable: AnyCancellable?
-    private var textPublisher = PassthroughSubject<String, Never>()
-
+class ProfileViewController: UIViewController {
+    private let viewModel = ProfileViewModel()
+    private var cancellables = Set<AnyCancellable>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Инициализируем UILabel
-        label = UILabel()
-        label.frame = CGRect(x: 50, y: 100, width: 300, height: 50)
-        label.textColor = .black
-        view.addSubview(label)
-
-        // Подписка на изменения текста
-        cancellable = textPublisher.sink { [weak self] newText in
-            self?.label.text = newText // Обновляем текст в лейбле
-        }
-
-        // Изменяем значение на Publisher
-        textPublisher.send("Hello, Combine!") // Лейбл обновится на "Hello, Combine!"
-    }
-
-    deinit {
-        cancellable?.cancel() // Отменяем подписку, когда объект уничтожается
+        
+        // Подписка на изменения имени
+        viewModel.$name
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newName in
+                self?.nameLabel.text = newName
+            }
+            .store(in: &cancellables)
+        
+        // Подписка на состояние загрузки
+        viewModel.$isLoading
+            .sink { [weak self] isLoading in
+                if isLoading {
+                    self?.activityIndicator.startAnimating()
+                } else {
+                    self?.activityIndicator.stopAnimating()
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 ```
 
-### Что происходит в этом примере?
-
-1. Мы создаем `PassthroughSubject`, который будет отправлять строки.
-2. Подписываемся на этот Publisher с помощью `sink`. Когда приходят новые строки, мы обновляем текст в [[UILabel]].
-3. Когда мы вызываем `send("Hello, Combine!")`, наш `UILabel` обновляется и отображает новый текст.
-4. В методе [[deinit]] мы отменяем подписку, чтобы избежать утечек памяти.
-
-### Подписка на изменения свойств с помощью `@Published`
-
-Допустим, у нас есть свойство в классе, которое помечено `@Published`, и мы хотим отслеживать изменения этого свойства.
+#### 2. Обработка сетевого запроса (URLSession + sink)
 
 ```swift
-import Combine
-
-class MyViewModel {
-
-    @Published var name: String = "Initial Name"
-    private var cancellable: AnyCancellable?
-
-    init() {
-        // Подписка на изменения свойства name
-        cancellable = $name.sink { newName in
-            print("Новое имя: \(newName)")
+URLSession.shared.dataTaskPublisher(for: url)
+    .map(\.data)
+    .decode(type: [User].self, decoder: JSONDecoder())
+    .receive(on: DispatchQueue.main)
+    .sink { completion in
+        switch completion {
+        case .finished:
+            print("Загрузка завершена успешно")
+        case .failure(let error):
+            print("Ошибка загрузки:", error.localizedDescription)
+            // показать алерт
         }
+    } receiveValue: { [weak self] users in
+        self?.users = users
+        self?.tableView.reloadData()
     }
+    .store(in: &cancellables)
+```
+
+#### 3. Подписка на кастомный PassthroughSubject (события)
+
+```swift
+let buttonTap = PassthroughSubject<Void, Never>()
+
+buttonTap
+    .sink { [weak self] _ in
+        print("Кнопка нажата!")
+        self?.performAction()
+    }
+    .store(in: &cancellables)
+
+// где-то в UI
+@objc func buttonPressed() {
+    buttonTap.send(())
 }
 ```
 
-### Что происходит здесь?
+#### 4. Обработка ошибок + завершения (самый безопасный вариант)
 
-1. Мы создаем свойство `name`, которое помечено `@Published`, что автоматически превращает его в [[Publisher]].
-2. Мы подписываемся на изменения этого свойства с помощью `sink`, и каждый раз, когда значение меняется, мы выводим его в консоль.
-3. Когда свойство `name` изменяется, подписка срабатывает и выводит новое значение.
+```swift
+networkService.fetchData()
+    .receive(on: DispatchQueue.main)
+    .sink(
+        receiveCompletion: { [weak self] completion in
+            self?.isLoading = false
+            
+            switch completion {
+            case .finished:
+                print("Успех")
+            case .failure(let error):
+                self?.showError(error)
+            }
+        },
+        receiveValue: { [weak self] data in
+            self?.updateUI(with: data)
+        }
+    )
+    .store(in: &cancellables)
+```
 
-### Заключение
+### Лучшие практики использования sink в Combine 2026
 
-Метод `sink` в [[Combine]] — это удобный способ подписаться на **Publisher** и обработать полученные значения, ошибки или уведомления о завершении. Он позволяет:
+- **Всегда** используйте полную форму `sink(receiveCompletion:..., receiveValue:...)` — это позволяет корректно обрабатывать ошибки  
+- **Никогда** не забывайте `.store(in: &cancellables)` — иначе подписка будет жить вечно → утечка памяти  
+- **Для UI-обновлений** — обязательно `.receive(on: DispatchQueue.main)` перед `.sink`  
+- **Используйте `[weak self]`** в замыканиях внутри `sink` — это предотвращает retain cycle  
+- **Для простых случаев** — можно использовать только `receiveValue`, но это менее безопасно  
+- **Для тестирования** — используйте `XCTest` + `XCTestExpectation` внутри `sink`  
+- **Документируйте** — всегда пишите комментарий:
 
-- Легко подписаться на изменения.
-- Обрабатывать ошибки.
-- Управлять завершением потока.
+```swift
+// Обновляем UI при изменении имени пользователя
+viewModel.$name
+    .receive(on: DispatchQueue.main)
+    .sink { [weak self] newName in
+        self?.nameLabel.text = newName
+    }
+    .store(in: &cancellables)
+```
 
-**Когда использовать `sink`?**
+**Короткий итог 2026**:
+> `sink` — это **основной способ подписаться** на Publisher в Combine.  
+> В 2026 году:  
+> - используйте полную форму с `receiveCompletion` и `receiveValue`  
+> - всегда сохраняйте подписку в `Set<AnyCancellable>`  
+> - для UI — `.receive(on: .main)` + `[weak self]`  
+> - это **самый частый** и **самый понятный** способ получать данные из Combine-потока  
 
-- Когда тебе нужно просто получить значения и выполнить с ними какую-то операцию (например, обновить UI или сохранить в базе данных).
-- Когда нужно работать с асинхронными событиями и результатами.
-
----
+Удачи с чистыми и безопасными подписками в твоём проекте! 📡

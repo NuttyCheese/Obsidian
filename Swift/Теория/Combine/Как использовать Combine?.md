@@ -1,231 +1,221 @@
-- **[[Publisher]]** — источник данных (например, изменения текста в [[UITextField]], события от [[URLSession]], таймеры)
-    
-- **[[Subscriber]]** — получатель данных, который обрабатывает значения и завершение
-    
-- **[[Operators]]** — методы для преобразования, фильтрации, комбинирования потоков
-    
-- **[[Subscription]]** — связь между Publisher и Subscriber, позволяет управлять жизненным циклом подписки (отписаться и т.п.)
-    
+Combine — это **фреймворк реактивного программирования** от Apple, встроенный в [[iOS]] 13+ / macOS 10.15+.  
+Он позволяет работать с **асинхронными потоками данных** (изменения UI, сеть, уведомления, таймеры и т.д.) в декларативном стиле.
 
----
+### Основные сущности Combine (коротко и чётко)
 
-## 2. Установка
+| Компонент              | Что это                                                                      | Аналогия из RxSwift / других |
+| ---------------------- | ---------------------------------------------------------------------------- | ---------------------------- |
+| **[[Publisher]]**      | Источник данных (может испускать значения, ошибки, завершаться)              | Observable / Publisher       |
+| **[[Subscriber]]**     | Получатель данных (sink, assign, receive)                                    | Observer / Subscriber        |
+| **[[Subscription]]**   | Связь между [[Publisher]] и [[Subscriber]] (управляет жизненным циклом)      | Disposable / Subscription    |
+| **[[Operator]]**       | Преобразователь потока ([[map]], [[filter]], combineLatest, debounce и т.д.) | Operator                     |
+| **[[AnyCancellable]]** | Токен подписки — отменяет подписку при deinit                                | DisposeBag (но без мешка)    |
 
-Combine встроен в iOS 13+, подключать ничего не надо, просто импортируйте:
+### Шаг 1. Импорт и базовый синтаксис
 
 ```swift
 import Combine
 ```
 
----
-
-## 3. Пример 1. Отслеживаем изменения [[UITextField]] через Combine
-
-В [[UIKit]] для текстовых полей Combine не даёт готового `Publisher`, но можно использовать [[NotificationCenter]] или расширения.
-
-### Пример с `UITextField` и `NotificationCenter`
+Самый простой Publisher → Subscriber:
 
 ```swift
-import UIKit
-import Combine
+let publisher = Just("Hello, Combine!")  // Publisher, который испускает одно значение и завершается
 
-class ViewController: UIViewController {
-
-    private var textField = UITextField()
-    private var label = UILabel()
-    private var cancellables = Set<AnyCancellable>() // для хранения подписок
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupViews()
-
-        // Подписываемся на уведомления об изменениях текста
-        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: textField)
-            .compactMap { ($0.object as? UITextField)?.text } // извлекаем текст
-            .sink { [weak self] text in
-                self?.label.text = "Вы ввели: \(text)"
-            }
-            .store(in: &cancellables)
+publisher
+    .sink { value in
+        print("Получено:", value)         // → "Получено: Hello, Combine!"
     }
-
-    private func setupViews() {
-        textField.borderStyle = .roundedRect
-        textField.placeholder = "Введите текст"
-
-        label.textColor = .black
-
-        view.addSubview(textField)
-        view.addSubview(label)
-
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            textField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            textField.widthAnchor.constraint(equalToConstant: 200),
-
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20)
-        ])
-    }
-}
+    .store(in: &cancellables)             // ← обязательно храним подписку
 ```
 
----
+### Шаг 2. Хранение подписок (самое важное правило 2026)
 
-## 4. Пример 2. Использование `@Published` и подписка из ViewModel в UIKit
-
-Часто Combine применяется для организации [[MVVM (Model-View-ViewModel) Architecture|MVVM]]-паттерна. В модели представления (ViewModel) используем `@Published` свойства, в контроллере — подписываемся на них.
+Всегда храните `AnyCancellable` в коллекции:
 
 ```swift
-import UIKit
-import Combine
+private var cancellables = Set<AnyCancellable>()
+```
 
-// ViewModel с @Published
-class MyViewModel {
-    @Published var username: String = ""
-    @Published var isValid: Bool = false
+Или массив (редко):
 
+```swift
+private var cancellables: [AnyCancellable] = []
+```
+
+**Почему это обязательно?**  
+Без хранения подписки не отменяются → [[retain cycle]] → утечки памяти.
+
+### Шаг 3. Самые популярные источники Publisher в UIKit-приложении
+
+#### 1. Изменения в [[UITextField]] / [[UITextView]]
+
+```swift
+textField.publisher(for: \.text)
+    .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+    .compactMap { $0 }
+    .sink { [weak self] text in
+        self?.validate(text)
+    }
+    .store(in: &cancellables)
+```
+
+#### 2. @Published в ViewModel ([[MVVM (Model-View-ViewModel) Architecture|MVVM]] + [[Combine]])
+
+```swift
+class ProfileViewModel: ObservableObject {
+    @Published var username = ""
+    @Published var isValid = false
+    
     private var cancellables = Set<AnyCancellable>()
-
+    
     init() {
-        // Пример простой валидации username (минимум 3 символа)
         $username
             .map { $0.count >= 3 }
-            .assign(to: \.isValid, on: self)
-            .store(in: &cancellables)
-    }
-}
-
-// ViewController, подписываемся на изменения ViewModel
-class MyViewController: UIViewController {
-
-    private var viewModel = MyViewModel()
-    private var cancellables = Set<AnyCancellable>()
-
-    private let usernameTextField = UITextField()
-    private let validationLabel = UILabel()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupViews()
-
-        // Подписываемся на изменения username
-        usernameTextField.addTarget(self, action: #selector(textChanged), for: .editingChanged)
-
-        // Подписываемся на isValid для обновления UI
-        viewModel.$isValid
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isValid in
-                self?.validationLabel.text = isValid ? "Имя валидно" : "Имя слишком короткое"
-                self?.validationLabel.textColor = isValid ? .green : .red
-            }
-            .store(in: &cancellables)
-    }
-
-    @objc private func textChanged() {
-        viewModel.username = usernameTextField.text ?? ""
-    }
-
-    private func setupViews() {
-        usernameTextField.borderStyle = .roundedRect
-        usernameTextField.placeholder = "Введите имя пользователя"
-
-        validationLabel.textColor = .red
-
-        view.addSubview(usernameTextField)
-        view.addSubview(validationLabel)
-
-        usernameTextField.translatesAutoresizingMaskIntoConstraints = false
-        validationLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            usernameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            usernameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            usernameTextField.widthAnchor.constraint(equalToConstant: 200),
-
-            validationLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            validationLabel.topAnchor.constraint(equalTo: usernameTextField.bottomAnchor, constant: 10)
-        ])
+            .assign(to: &$isValid)  // ← удобный синтаксис с iOS 14+
     }
 }
 ```
 
----
-
-## 5. Пример 3. Использование Combine с сетевыми запросами
-
-Combine отлично подходит для работы с [[URLSession]].
+В контроллере:
 
 ```swift
-import UIKit
-import Combine
+viewModel.$isValid
+    .receive(on: DispatchQueue.main)
+    .sink { [weak self] isValid in
+        self?.updateUI(isValid: isValid)
+    }
+    .store(in: &cancellables)
+```
 
+#### 3. Сетевые запросы ([[URLSession]] + [[Combine]])
+
+```swift
 struct Post: Codable {
     let id: Int
     let title: String
 }
 
-class NetworkService {
+URLSession.shared.dataTaskPublisher(for: URL(string: "https://jsonplaceholder.typicode.com/posts")!)
+    .map(\.data)
+    .decode(type: [Post].self, decoder: JSONDecoder())
+    .receive(on: DispatchQueue.main)
+    .sink(receiveCompletion: { completion in
+        if case .failure(let error) = completion {
+            print("Ошибка:", error)
+        }
+    }, receiveValue: { posts in
+        print("Получено постов:", posts.count)
+    })
+    .store(in: &cancellables)
+```
 
-    func fetchPosts() -> AnyPublisher<[Post], Error> {
-        let url = URL(string: "https://jsonplaceholder.typicode.com/posts")!
+#### 4. [[NotificationCenter]]
 
-        return URLSession.shared.dataTaskPublisher(for: url)
-            .map(\.data)
-            .decode(type: [Post].self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main) // обновления UI на главном потоке
-            .eraseToAnyPublisher()
+```swift
+NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+    .sink { _ in
+        print("Приложение снова на экране")
     }
-}
+    .store(in: &cancellables)
+```
 
-class PostsViewController: UIViewController {
+### Шаг 4. Самые полезные операторы Combine (топ-15 в 2026)
 
+| Оператор                 | Что делает                                                  | Самый частый кейс           |
+| ------------------------ | ----------------------------------------------------------- | --------------------------- |
+| [[map]]                  | Преобразует каждое значение                                 | Изменение типа данных       |
+| [[compactMap]]           | map + фильтрация [[nil]]                                    | Извлечение optional         |
+| [[filter]]               | Пропускает только подходящие значения                       | Отсечение пустых строк      |
+| `debounce`               | Ждёт паузу перед испусканием значения                       | Поиск с задержкой           |
+| `receive(on:)`           | Переключает выполнение на указанный scheduler               | Обновление UI на main       |
+| `assign(to:)`            | Присваивает значение @Published свойству                    | Связь ViewModel → View      |
+| [[sink]]                 | Основной способ подписки (receiveValue + receiveCompletion) | Всё остальное               |
+| `eraseToAnyPublisher`    | Скрывает конкретный тип Publisher                           | Возврат из функции          |
+| `combineLatest`          | Комбинирует последние значения нескольких publishers        | Формы (email + password)    |
+| `merge` / `zip`          | Объединяет потоки                                           | Несколько источников данных |
+| `catch` / `replaceError` | Обрабатывает ошибки                                         | Отображение fallback        |
+| `retry`                  | Повторяет подписку при ошибке                               | Сетевые запросы             |
+| `share`                  | Делает подписку общей (один запрос — много подписчиков)     | Дорогие операции            |
+| `multicast`              | Более гибкая версия share                                   | Редко                       |
+| `handleEvents`           | Логирование событий (receiveSubscription и т.д.)            | Отладка                     |
+
+### Шаг 5. Полный пример ViewModel + [[UIKit]] (MVVM + Combine)
+
+```swift
+@MainActor
+class UserProfileViewModel: ObservableObject {
+    
+    @Published var username = ""
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    @Published var user: User?
+    
     private var cancellables = Set<AnyCancellable>()
-    private let networkService = NetworkService()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        networkService.fetchPosts()
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    print("Загрузка завершена")
-                case .failure(let error):
-                    print("Ошибка: \(error)")
+    private let service: UserService
+    
+    init(service: UserService = .live) {
+        self.service = service
+        
+        // Автоматическая валидация
+        $username
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .map { $0.count >= 3 }
+            .assign(to: &$isValid)
+        
+        // Автоматическая загрузка при изменении username
+        $username
+            .filter { $0.count >= 3 }
+            .debounce(for: .seconds(0.8), scheduler: DispatchQueue.main)
+            .sink { [weak self] name in
+                self?.fetchUser(name: name)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func fetchUser(name: String) {
+        isLoading = true
+        errorMessage = nil
+        
+        service.fetchUser(by: name)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                self?.isLoading = false
+                if case .failure(let error) = completion {
+                    self?.errorMessage = error.localizedDescription
                 }
-            }, receiveValue: { posts in
-                print("Посты: \(posts)")
-            })
+            } receiveValue: { [weak self] user in
+                self?.user = user
+            }
             .store(in: &cancellables)
     }
 }
 ```
 
----
+### Итог: как начать использовать Combine в 2026 году
 
-## 6. Управление жизненным циклом подписок
+1. Импортируй `import Combine`
+2. Создай `@Published` свойства в ViewModel
+3. Подписывайся через `.sink` и сохраняй в `Set<AnyCancellable>`
+4. Используй операторы для трансформации (map, filter, debounce, receive(on:))
+5. Для сетевых запросов — `URLSession.dataTaskPublisher`
+6. Для уведомлений — `NotificationCenter.default.publisher(for:)`
+7. Для UI — `.receive(on: DispatchQueue.main)`
 
-Очень важно **сохранять подписки** в свойстве типа `Set<AnyCancellable>` в классе, чтобы подписка жила, пока жив объект (например, [[UIViewController]]), и не утекала память.
+Combine — мощный инструмент, но в 2026 году часто комбинируют его с **Swift Concurrency** ([[async]]/[[await]] + [[Task]]):
 
----
+```swift
+Task {
+    do {
+        let user = try await service.fetchUser(by: username)
+        await MainActor.run { self.user = user }
+    } catch {
+        await MainActor.run { self.errorMessage = error.localizedDescription }
+    }
+}
+```
 
-## 7. Краткое резюме
-
-- Импортируем Combine
-    
-- Подписываемся на Publishers ([[NotificationCenter]], `@Published`, [[URLSession]]`.dataTaskPublisher`)
-    
-- Используем операторы ([[map]], [[filter]], [[compactMap]], debounce и т.п.)
-    
-- Сохраняем подписки в `Set<AnyCancellable>`
-    
-- Обновляем UI на главном потоке через `.receive(on: DispatchQueue.main)`
-    
-- Можно удобно строить [[MVVM (Model-View-ViewModel) Architecture|MVVM]], где ViewModel — источник данных через `@Published`, а ViewController подписывается
-    
-
----
+**Вывод**:  
+Combine идеален для реактивного UI, форм, сетевых цепочек и MVVM.  
+Но если проект новый и простой — можно обойтись **async/await + @Observable**.  
+Если же нужно мощное комбинирование потоков — Combine всё ещё король.

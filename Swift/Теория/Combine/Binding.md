@@ -1,197 +1,246 @@
-**Binding** — это механизм, при котором изменения в одном объекте (например, модели данных) автоматически отражаются в другом объекте (например, UI-элементы). В [[Combine]] это достигается через использование **[[Publisher]]** и **[[Subscriber]]**.
+**Binding в Combine** — это не отдельный тип (как в [[SwiftUI]]), а **механизм двусторонней синхронизации** между источником данных и UI-элементом, который достигается с помощью **Publisher** + **Subscriber** + **.assign(to:)** или **.sink**.
 
-### Пример с UITextField
+В UIKit Combine не даёт готового типа `Binding`, как в SwiftUI, поэтому мы строим его вручную.  
+Вот **самые актуальные и рекомендуемые** способы в 2025–2026 годах.
 
-Допустим, у нас есть [[UITextField]], и мы хотим, чтобы его текст синхронизировался с переменной в модели (например, в `ViewModel`). Также изменения этой переменной должны быть отражены в `UITextField`.
-
-#### 1. Создадим ViewModel с @Published
-
-Сначала создадим модель данных, которая будет содержать свойство с текстом, и будем отслеживать его изменения с помощью Combine.
+### 1. Классический двусторонний Binding ([[UIKit]] + [[Combine]] + [[MVVM (Model-View-ViewModel) Architecture|MVVM]])
 
 ```swift
 import UIKit
 import Combine
 
-class MyViewModel {
-    // Используем @Published, чтобы уведомлять подписчиков об изменениях
-    @Published var text: String = ""
-}
-```
-
-#### 2. Создадим ViewController и UITextField
-
-Теперь создадим ViewController, где будем связывать данные из `UITextField` с моделью. Для этого используем Combine, чтобы слушать изменения текста в поле и синхронизировать их с переменной в `ViewModel`.
-
-```swift
-import UIKit
-import Combine
-
-class MyViewController: UIViewController {
+// ViewModel
+class FormViewModel: ObservableObject {
+    @Published var username: String = ""
+    @Published var isValid: Bool = false
     
-    // Создаем объект ViewModel
-    private var viewModel = MyViewModel()
-    
-    // Создаем UITextField
-    private var textField: UITextField!
-    
-    // Храним подписки для отмены подписок позже
     private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        // Валидация в реальном времени
+        $username
+            .map { $0.count >= 3 }
+            .assign(to: &$isValid)
+    }
+}
+
+// ViewController
+class FormViewController: UIViewController {
+    
+    private let viewModel = FormViewModel()
+    private var cancellables = Set<AnyCancellable>()
+    
+    private lazy var textField: UITextField = {
+        let tf = UITextField()
+        tf.borderStyle = .roundedRect
+        tf.placeholder = "Имя пользователя"
+        tf.translatesAutoresizingMaskIntoConstraints = false
+        return tf
+    }()
+    
+    private lazy var validationLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.textColor = .systemRed
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Настроим UITextField
-        textField = UITextField()
-        textField.borderStyle = .roundedRect
-        textField.frame = CGRect(x: 50, y: 100, width: 300, height: 40)
+        setupUI()
+        bindUI()
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .systemBackground
         view.addSubview(textField)
+        view.addSubview(validationLabel)
         
-        // Добавляем Publisher для UITextField: когда текст изменяется, подписка на текст
-        textField
-            .publisher(for: \.text)
-            .compactMap { $0 } // Игнорируем nil значения
-            .assign(to: &$viewModel.text) // Присваиваем новое значение переменной viewModel.text
-        
-        // Подписываемся на изменения в ViewModel и обновляем текст в UITextField
-        viewModel.$text
-            .sink { [weak self] newText in
-                self?.textField.text = newText // Обновляем текст в UITextField
-            }
-            .store(in: &cancellables) // Сохраняем подписку для последующего отмены
+        NSLayoutConstraint.activate([
+            textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
+            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            textField.heightAnchor.constraint(equalToConstant: 44),
+            
+            validationLabel.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 16),
+            validationLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
     }
-}
-```
-
-### Что происходит в этом коде?
-
-1. **Publisher для UITextField**: Мы создаем Publisher для `UITextField` с помощью метода `.publisher(for: \.text)`, который отслеживает изменения текста в поле. Когда текст изменяется, он передает новое значение в `viewModel.text`.
     
-2. **Синхронизация данных через `@Published`**: В `ViewModel` у нас есть свойство `@Published var text`, которое автоматически уведомляет всех подписчиков (например, наш `ViewController`) о том, что значение изменилось.
-    
-3. **Подписка на изменения модели**: Мы подписываемся на `viewModel.$text` (Publisher, связанный с `@Published` свойством) и обновляем текст в `UITextField` каждый раз, когда модель изменяет значение.
-    
-4. **Компактное использование**: Мы используем `compactMap { $0 }`, чтобы игнорировать возможные [[nil]] значения в тексте.
-    
-
-### Пример с UISwitch
-
-Теперь давай рассмотрим пример с [[UISwitch]], который мы будем синхронизировать с булевым значением в модели.
-
-#### 1. Модель
-
-```swift
-class MySwitchViewModel {
-    // Используем @Published для отслеживания состояния переключателя
-    @Published var isSwitchOn: Bool = false
-}
-```
-
-#### 2. ViewController с [[UISwitch]]
-
-```swift
-import UIKit
-import Combine
-
-class MySwitchViewController: UIViewController {
-    
-    private var viewModel = MySwitchViewModel()
-    private var switchControl: UISwitch!
-    private var cancellables = Set<AnyCancellable>()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private func bindUI() {
+        // 1. Из UI → ViewModel (изменения текста → @Published)
+        textField.publisher(for: \.text)
+            .compactMap { $0 }
+            .assign(to: &$viewModel.username)
         
-        // Настроим UISwitch
-        switchControl = UISwitch()
-        switchControl.frame = CGRect(x: 50, y: 150, width: 0, height: 0)
-        view.addSubview(switchControl)
-        
-        // Связываем изменение значения UISwitch с моделью через Combine
-        switchControl
-            .publisher(for: \.isOn)
-            .assign(to: &$viewModel.isSwitchOn) // Присваиваем новое значение переменной viewModel.isSwitchOn
-        
-        // Подписываемся на изменения в ViewModel
-        viewModel.$isSwitchOn
-            .sink { [weak self] isOn in
-                self?.switchControl.isOn = isOn // Обновляем состояние UISwitch
+        // 2. Из ViewModel → UI (изменения @Published → обновление label)
+        viewModel.$isValid
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isValid in
+                self?.validationLabel.text = isValid ? "Имя валидно ✓" : "Минимум 3 символа"
+                self?.validationLabel.textColor = isValid ? .systemGreen : .systemRed
             }
-            .store(in: &cancellables) // Сохраняем подписку
-    }
-}
-```
-
-### Что происходит в этом коде?
-
-1. **Publisher для [[UISwitch]]**: Мы создаем Publisher для `UISwitch` с помощью `.publisher(for: \.isOn)`, который отслеживает изменения состояния переключателя. Когда переключатель изменяет свое состояние, оно передается в `viewModel.isSwitchOn`.
-    
-2. **Синхронизация через `@Published`**: В `ViewModel` у нас есть свойство `@Published var isSwitchOn`, которое уведомляет всех подписчиков о том, что значение переменной изменилось.
-    
-3. **Подписка на изменения модели**: Мы подписываемся на `viewModel.$isSwitchOn` и обновляем состояние `UISwitch` каждый раз, когда значение переменной меняется.
-    
-
-### Пример с [[UIButton]]
-
-Еще один пример — связывание состояния кнопки с моделью через [[Combine]]. Представим, что мы хотим включать или выключать кнопку в зависимости от состояния некоторой переменной.
-
-#### 1. Модель
-
-```swift
-class MyButtonViewModel {
-    @Published var isButtonEnabled: Bool = true
-}
-```
-
-#### 2. ViewController с UIButton
-
-```swift
-import UIKit
-import Combine
-
-class MyButtonViewController: UIViewController {
-    
-    private var viewModel = MyButtonViewModel()
-    private var button: UIButton!
-    private var cancellables = Set<AnyCancellable>()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+            .store(in: &cancellables)
         
-        // Настроим UIButton
-        button = UIButton(type: .system)
-        button.setTitle("Нажми меня", for: .normal)
-        button.frame = CGRect(x: 50, y: 200, width: 200, height: 50)
-        view.addSubview(button)
-        
-        // Связываем состояние кнопки с моделью
-        button
-            .publisher(for: .touchUpInside)
+        // 3. (Опционально) отложенная валидация с debounce
+        viewModel.$username
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in
-                self?.viewModel.isButtonEnabled.toggle() // Переключаем состояние кнопки
-            }
-            .store(in: &cancellables)
-        
-        // Подписываемся на изменения в ViewModel и обновляем состояние кнопки
-        viewModel.$isButtonEnabled
-            .sink { [weak self] isEnabled in
-                self?.button.isEnabled = isEnabled // Включаем/выключаем кнопку
+                print("Пользователь закончил ввод:", self?.viewModel.username ?? "")
             }
             .store(in: &cancellables)
     }
 }
 ```
 
-### Что происходит в этом коде?
+### 2. Самый современный и чистый способ ([[iOS]] 14+): assign(to:) + $property
 
-1. **Publisher для UIButton**: Мы создаем Publisher для события `.touchUpInside` кнопки. Когда кнопка нажимается, мы переключаем значение в `viewModel.isButtonEnabled`.
+```swift
+// В ViewModel
+@Published var email = ""
+@Published var password = ""
+@Published var isLoginEnabled = false
+
+init() {
+    Publishers.CombineLatest($email, $password)
+        .map { email, password in
+            !email.isEmpty && password.count >= 6
+        }
+        .assign(to: &$isLoginEnabled)
+}
+```
+
+В контроллере:
+
+```swift
+viewModel.$isLoginEnabled
+    .receive(on: DispatchQueue.main)
+    .assign(to: \.isEnabled, on: loginButton)
+    .store(in: &cancellables)
+```
+
+### 3. Расширения для удобства (очень популярны в 2026)
+
+```swift
+extension UITextField {
+    var textPublisher: AnyPublisher<String, Never> {
+        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: self)
+            .compactMap { ($0.object as? UITextField)?.text }
+            .eraseToAnyPublisher()
+    }
+}
+
+extension UISwitch {
+    var isOnPublisher: AnyPublisher<Bool, Never> {
+        publisher(for: \.isOn)
+            .eraseToAnyPublisher()
+    }
+}
+
+extension UIButton {
+    var tapPublisher: AnyPublisher<Void, Never> {
+        publisher(for: .touchUpInside)
+            .map { _ in () }
+            .eraseToAnyPublisher()
+    }
+}
+```
+
+Использование:
+
+```swift
+textField.textPublisher
+    .assign(to: &$viewModel.username)
+
+switchControl.isOnPublisher
+    .assign(to: &$viewModel.isDarkMode)
+
+button.tapPublisher
+    .sink { [weak self] in
+        self?.viewModel.login()
+    }
+    .store(in: &cancellables)
+```
+
+### 4. Полный пример с валидацией формы и кнопкой входа
+
+```swift
+class LoginViewModel: ObservableObject {
+    @Published var email = ""
+    @Published var password = ""
+    @Published var isLoginEnabled = false
     
-2. **Подписка на изменения в модели**: Мы подписываемся на изменения в `viewModel.$isButtonEnabled`, чтобы включать или отключать кнопку в зависимости от значения в модели.
+    private var cancellables = Set<AnyCancellable>()
     
+    init() {
+        Publishers.CombineLatest($email, $password)
+            .map { email, password in
+                email.contains("@") && password.count >= 6
+            }
+            .assign(to: &$isLoginEnabled)
+    }
+    
+    func login() {
+        print("Попытка входа: \(email), пароль: \(password)")
+        // здесь вызов API
+    }
+}
 
-### Заключение
+class LoginViewController: UIViewController {
+    
+    private let viewModel = LoginViewModel()
+    private var cancellables = Set<AnyCancellable>()
+    
+    private lazy var emailField = UITextField()
+    private lazy var passwordField = UITextField()
+    private lazy var loginButton = UIButton(type: .system)
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        bind()
+    }
+    
+    private func setupUI() {
+        // ... настройка полей и кнопки
+        loginButton.setTitle("Войти", for: .normal)
+        loginButton.isEnabled = false
+    }
+    
+    private func bind() {
+        emailField.textPublisher
+            .assign(to: &$viewModel.email)
+        
+        passwordField.textPublisher
+            .assign(to: &$viewModel.password)
+        
+        viewModel.$isLoginEnabled
+            .assign(to: \.isEnabled, on: loginButton)
+            .store(in: &cancellables)
+        
+        loginButton.tapPublisher
+            .sink { [weak self] in
+                self?.viewModel.login()
+            }
+            .store(in: &cancellables)
+    }
+}
+```
 
-**Binding в Combine** — это удобный способ синхронизации данных между моделью и пользовательским интерфейсом. В [[UIKit]] это обычно достигается с использованием Publisher и [[Subscriber]], что позволяет удобно отслеживать изменения и обновлять интерфейс.
+### Лучшие практики Combine Binding в UIKit 2026
 
-В примерах выше мы рассмотрели, как синхронизировать значения между элементами UI (например, `UITextField`, `UISwitch`, `UIButton`) и моделью с помощью [[Combine]]. Это делает код более чистым и позволяет легко отслеживать изменения данных.
+- **Всегда** храните подписки в `Set<AnyCancellable>` или `[AnyCancellable]`  
+- **Используйте** `assign(to:)` для прямой привязки `@Published` → UI-свойство  
+- **Для [[UITextField]]** — добавьте расширение `textPublisher`  
+- **Для debounce / throttle** — используйте перед `.assign` или `.sink`  
+- **Для сложных форм** — `CombineLatest` или `Publishers.Zip`  
+- **Для SwiftUI** — используйте `@Binding` и `.onChange` — Combine не обязателен  
+- **Документируйте** — пишите комментарий «Двусторонний Binding: UITextField <-> @Published username через Combine»
 
----
+**Короткий итог 2026**:
+> Binding в UIKit + Combine — это **двусторонняя синхронизация** UI ↔ ViewModel через `.publisher(for:)` + `.assign(to:)` + `.sink`.  
+> В 2026 году:  
+> - храните подписки в `Set<AnyCancellable>`  
+> - используйте расширения для `textPublisher`, `isOnPublisher` и т.д.  
+> - для форм — `CombineLatest` + `debounce`  
+> - это **самый чистый** и **самый надёжный** способ MVVM в UIKit с Combine  

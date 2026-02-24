@@ -1,97 +1,142 @@
-**`tryMap`** — оператор в **Combine** (и аналогично в [[RxSwift]] через [[map]] с [[try]]), который **преобразует элементы потока**, но при этом может **выбрасывать ошибку**.  
-Если возникает ошибка, поток **завершается с `Failure`**.  
-Относится к **[[Combine]] / Reactive Programming**.
+**`tryMap`** — это оператор в **Combine**, который работает почти как обычный `map`, но **может выбросить ошибку** внутри замыкания.
 
----
+Если внутри `tryMap` возникает исключение (throw), поток **немедленно завершается с ошибкой** (`Failure`), и дальнейшие операторы не выполняются.
 
-## 🔹 Примеры кода
+Это делает `tryMap` идеальным инструментом для операций, где преобразование может завершиться неудачей (парсинг, декодирование, деление на ноль и т.д.).
 
-### 1. Простейшее использование `tryMap`
+### Ключевые отличия tryMap от map
 
-```swift
-import Combine
+| Оператор   | Может бросить ошибку? | Что происходит при ошибке?               | Когда использовать в 2026 |
+|------------|------------------------|------------------------------------------|----------------------------|
+| `map`      | Нет                    | Ошибка внутри замыкания → краш приложения | Простые безопасные преобразования |
+| `tryMap`   | Да                     | Поток завершается с `.failure(error)`    | Любое преобразование, которое может fail (парсинг, decode, вычисления) |
 
-let numbers = [1, 2, 3, 0]
-let publisher = numbers.publisher
+### Самые популярные и рекомендуемые сценарии использования tryMap (2026)
 
-publisher
-    .tryMap { value -> Int in
-        guard value != 0 else {
-            throw NSError(domain: "ZeroError", code: 1, userInfo: nil)
-        }
-        return 10 / value
-    }
-    .sink(receiveCompletion: { completion in
-        print("Completion:", completion)
-    }, receiveValue: { value in
-        print("Value:", value)
-    })
-```
-
----
-
-### 2. Преобразование строк в числа с `tryMap`
+#### 1. Парсинг строк в числа / даты / enum
 
 ```swift
-let strings = ["10", "20", "abc"]
-let publisher2 = strings.publisher
-
-publisher2
+["10", "20", "тридцать", "40"].publisher
     .tryMap { str -> Int in
         guard let number = Int(str) else {
-            throw NSError(domain: "ParseError", code: 2, userInfo: nil)
+            throw NSError(domain: "ParseError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Не число: \(str)"])
         }
         return number * 2
     }
-    .sink(receiveCompletion: { print($0) },
-          receiveValue: { print($0) })
+    .sink(
+        receiveCompletion: { completion in
+            switch completion {
+            case .finished: print("Успешно завершено")
+            case .failure(let error): print("Ошибка парсинга:", error.localizedDescription)
+            }
+        },
+        receiveValue: { doubled in
+            print("Удвоенное число:", doubled)
+        }
+    )
+    .store(in: &cancellables)
 ```
 
----
+Вывод:
+```
+Удвоенное число: 20
+Удвоенное число: 40
+Удвоенное число: 80
+Ошибка парсинга: Не число: тридцать
+```
 
-### 3. Работа с [[API]] и [[JSON]]
+#### 2. Декодирование JSON (самый частый кейс в реальных приложениях)
 
 ```swift
-struct User: Decodable {
-    let name: String
-}
-
-let dataPublisher: AnyPublisher<Data, URLError> = URLSession.shared.dataTaskPublisher(for: URL(string: "https://example.com/user.json")!)
+URLSession.shared.dataTaskPublisher(for: url)
     .map(\.data)
-    .eraseToAnyPublisher()
-
-dataPublisher
-    .tryMap { data -> User in
-        try JSONDecoder().decode(User.self, from: data)
+    .tryMap { data -> UserProfile in
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try decoder.decode(UserProfile.self, from: data)
     }
-    .sink(receiveCompletion: { print($0) },
-          receiveValue: { user in print("User:", user.name) })
+    .receive(on: DispatchQueue.main)
+    .sink(
+        receiveCompletion: { completion in
+            if case .failure(let error) = completion {
+                print("Ошибка декодирования:", error)
+                // показать алерт
+            }
+        },
+        receiveValue: { [weak self] profile in
+            self?.updateUI(with: profile)
+        }
+    )
+    .store(in: &cancellables)
 ```
 
----
-
-### 4. Использование с `mapError` для обработки ошибок
+#### 3. Безопасное деление / математические операции
 
 ```swift
-publisher
-    .tryMap { value -> Int in
-        guard value != 0 else { throw NSError(domain: "ZeroError", code: 1) }
-        return 100 / value
+[10, 5, 0, 2].publisher
+    .tryMap { number -> Double in
+        guard number != 0 else {
+            throw DivisionByZeroError()
+        }
+        return 100.0 / Double(number)
     }
-    .mapError { $0 as NSError } // преобразуем Error в конкретный тип
-    .sink(receiveCompletion: { print($0) },
-          receiveValue: { print($0) })
+    .sink(
+        receiveCompletion: { print("Completion:", $0) },
+        receiveValue: { print("Результат:", $0) }
+    )
+    .store(in: &cancellables)
 ```
 
----
-
-### 5. Цепочка операторов с `tryMap`
+#### 4. tryMap + mapError (очень популярная комбинация)
 
 ```swift
-numbers.publisher
-    .tryMap { 10 / $0 }
-    .map { $0 * 2 }
-    .filter { $0 > 5 }
-    .sink(receiveCompletion: { print($0) },
-          receiveValue: { print("Filtered Value:", $0) })
+$inputText
+    .tryMap { text -> Int in
+        guard let number = Int(text) else {
+            throw ValidationError.invalidNumber
+        }
+        return number
+    }
+    .mapError { error -> AppError in
+        if let validationError = error as? ValidationError {
+            return AppError.validation(validationError)
+        }
+        return AppError.unknown
+    }
+    .sink { [weak self] number in
+        self?.processNumber(number)
+    } onFailure: { error in
+        print("Ошибка валидации:", error)
+    }
+    .store(in: &cancellables)
 ```
+
+### Лучшие практики tryMap в Combine 2026
+
+- **Используйте tryMap** вместо `map`, если внутри может произойти ошибка (throw)  
+- **Всегда** указывайте конкретный тип ошибки в `Future` / `Publisher`, чтобы `tryMap` мог её выбросить  
+- **Комбинируйте** с `.mapError`, `.catch`, `.replaceError` — чтобы обработать ошибку дальше по цепочке  
+- **Для UI** — после `tryMap` ставьте `.receive(on: DispatchQueue.main)` перед `.sink` / `.assign`  
+- **Для сетевых ответов** — `tryMap` + `decode` — классическая пара  
+- **В тестах** — используйте `XCTestExpectation` внутри `sink` для проверки ошибки  
+- **Документируйте** — всегда пиши комментарий:
+
+```swift
+// Преобразование строки в Int с обработкой ошибки парсинга
+.tryMap { str -> Int in
+    guard let number = Int(str) else {
+        throw ValidationError.invalidInput("Ожидалось число, получено: \(str)")
+    }
+    return number
+}
+```
+
+**Короткий итог 2026**:
+> `tryMap` — это `map`, который **может бросить ошибку** и завершить поток с `Failure`.  
+> В 2026 году:  
+> - самый популярный кейс — парсинг строк, JSON-декодирование, безопасные вычисления  
+> - используйте вместо `map`, если преобразование может fail  
+> - комбинируйте с `.mapError`, `.catch`, `.retry` для устойчивости  
+> - это **must-have** оператор для любого реального пайплайна с внешними данными  
+
+Удачи с надёжными и безопасными трансформациями в твоих Combine-потоках! 🔄

@@ -1,129 +1,135 @@
-`Cancellable` — это протокол в Combine, описывающий объект, который может отменить выполняемую работу (обычно — подписку на [[Publisher]]).  
-Любой тип, соответствующий `Cancellable`, обязан иметь метод `cancel()`.  
-`AnyCancellable` — одна из основных реализаций протокола.
+**`Cancellable`** — это **протокол** в фреймворке **[[Combine]]**, который описывает объект, способный **отменить** выполняемую работу (обычно — подписку на [[Publisher]]).
 
----
-
-## 🔹 Примеры кода
-
-### 1. Простая реализация `Cancellable`
+Любой тип, реализующий `Cancellable`, обязан иметь единственный метод:
 
 ```swift
-import Combine
+protocol Cancellable {
+    func cancel()
+}
+```
 
-class SimpleCancel: Cancellable {
-    func cancel() {
-        print("Отмена операции")
+**Самая популярная** и **единственная** часто используемая реализация — это **`AnyCancellable`**.
+
+### Зачем нужен Cancellable и почему именно AnyCancellable
+
+| Проблема без Cancellable                            | Как решает Cancellable / [[AnyCancellable]]                              | Почему это критично в 2026          |
+| --------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------- |
+| Подписка на Publisher живёт вечно                   | При `cancel()` или [[deinit]] → подписка отменяется                      | Нет утечек памяти и лишних запросов |
+| Разные Publisher возвращают разные типы Cancellable | `AnyCancellable` — type-erased, можно хранить в коллекции                | Единый тип для всех подписок        |
+| Забыть отменить подписку                            | `AnyCancellable` + `.store(in: &cancellables)` — почти невозможно забыть | Предотвращает [[retain cycle]]      |
+| Ручное управление жизненным циклом                  | Автоматическая отмена при выходе из scope ([[deinit]])                   | Чистый и безопасный код             |
+
+### Самые важные и актуальные способы использования (2026)
+
+#### 1. Самый популярный паттерн — .store(in: &cancellables)
+
+```swift
+class ViewModel: ObservableObject {
+    
+    @Published var searchText = ""
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        $searchText
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] text in
+                self?.performSearch(text)
+            }
+            .store(in: &cancellables)  // ← ключевой момент
+    }
+    
+    private func performSearch(_ query: String) {
+        // поиск
     }
 }
-
-let c = SimpleCancel()
-c.cancel()
 ```
 
----
+**Почему Set<AnyCancellable> — золотой стандарт:**
+- Автоматически отменяет все подписки при deinit ViewModel
+- Одна строка `.store(in: &cancellables)`
+- Работает с любым типом Publisher
+- Thread-safe в большинстве случаев
 
-### 2. Использование стандартного `AnyCancellable`
+#### 2. Хранение одной подписки (когда подписок мало)
 
 ```swift
-import Combine
-
-let cancellable: Cancellable = Just("Hello")
-    .sink { print($0) }
-
-cancellable.cancel() // отменяем подписку
+class SomeController {
+    private var subscription: AnyCancellable?
+    
+    func startObserving() {
+        subscription = NotificationCenter.default.publisher(for: .someEvent)
+            .sink { _ in
+                // обработка
+            }
+    }
+    
+    func stopObserving() {
+        subscription?.cancel()
+        subscription = nil
+    }
+}
 ```
 
----
-
-### 3. Кастомный объект с логикой отмены
+#### 3. Кастомная реализация Cancellable (редко, но полезно)
 
 ```swift
 class NetworkTask: Cancellable {
-    private var isCancelled = false
-
+    
+    private var task: URLSessionDataTask?
+    private var onCancel: (() -> Void)?
+    
+    init(task: URLSessionDataTask, onCancel: @escaping () -> Void) {
+        self.task = task
+        self.onCancel = onCancel
+    }
+    
     func cancel() {
-        isCancelled = true
-        print("Запрос отменён")
+        task?.cancel()
+        onCancel?()
+        task = nil
+        onCancel = nil
     }
 }
 
-let task = NetworkTask()
+// Использование
+let task = NetworkTask(task: dataTask) {
+    print("Запрос отменён")
+}
 task.cancel()
 ```
 
----
-
-### 4. Хранение нескольких `Cancellable` в коллекции
+#### 4. AnyCancellable как замыкание (очень популярный трюк)
 
 ```swift
-var cancellables: [Cancellable] = []
+let cancellable = AnyCancellable {
+    print("Подписка отменена")
+    // здесь можно вызвать cleanup: invalidate timer, remove observer и т.д.
+}
 
-let c1 = AnyCancellable { print("Отмена 1") }
-let c2 = AnyCancellable { print("Отмена 2") }
-
-cancellables.append(c1)
-cancellables.append(c2)
-
-cancellables.forEach { $0.cancel() }
+cancellables.insert(cancellable)
+// или просто
+cancellable.cancel()
 ```
 
----
+### Лучшие практики Cancellable / AnyCancellable в Swift 2026
 
-### 5. Использование Cancellable внутри класса
+- **Всегда** храните подписки в `private var cancellables = Set<AnyCancellable>()`  
+- **Никогда** не храните `AnyCancellable` в глобальных переменных — это утечка  
+- **В SwiftUI** — подписки обычно живут в `@StateObject` / `@ObservableObject` → автоматически отменяются  
+- **Для долгоживущих подписок** (глобальный EventBus, background monitoring) — храните в singleton с явной отменой  
+- **Для Combine + async/await** — часто подписки заменяют на `Task` → AnyCancellable не нужен  
+- **Для отладки** — используйте `handleEvents(receiveCancel: { print("Отмена!") })`  
+- **Документируйте** — пишите комментарий:
 
 ```swift
-class ViewModel {
-    var subscription: Cancellable?
-
-    func start() {
-        subscription = Timer.publish(every: 1, on: .main, in: .default)
-            .autoconnect()
-            .sink { _ in print("Тик") }
-    }
-
-    func stop() {
-        subscription?.cancel()
-    }
-}
-
-let vm = ViewModel()
-vm.start()
-vm.stop()
+private var cancellables = Set<AnyCancellable>() // все Combine-подписки контроллера
 ```
 
----
-
-### 6. Сложный пример с кастомным Publisher
-
-```swift
-struct CounterPublisher: Publisher {
-    typealias Output = Int
-    typealias Failure = Never
-
-    func receive<S>(subscriber: S) where S : Subscriber, Never == S.Failure, Int == S.Input {
-        let subscription = CounterSubscription(subscriber: subscriber)
-        subscriber.receive(subscription: subscription)
-    }
-}
-
-final class CounterSubscription<S: Subscriber>: Cancellable, Subscription where S.Input == Int {
-    private var subscriber: S?
-    private var value = 0
-
-    init(subscriber: S) {
-        self.subscriber = subscriber
-    }
-
-    func request(_ demand: Subscribers.Demand) {
-        guard demand > .none, let subscriber else { return }
-        _ = subscriber.receive(value)
-    }
-
-    func cancel() {
-        subscriber = nil
-    }
-}
-```
-
----
+**Короткий итог 2026**:
+> `Cancellable` — протокол, `AnyCancellable` — универсальная реализация для отмены подписки в Combine.  
+> В 2026 году:  
+> - стандартный паттерн — `.sink(...).store(in: &cancellables)`  
+> - хранилище — `Set<AnyCancellable>` или массив  
+> - предотвращает утечки памяти и ненужные операции  
+> - это **обязательный** инструмент для любого кода на Combine  

@@ -1,185 +1,162 @@
-**Publisher** — это объект, который может издавать (публиковать) значения, ошибки или завершение потока данных. Это как источник данных, который выдает события, и все подписчики ([[Subscriber]]) получают эти события.
+**Publisher** — это **источник данных** в Combine.  
+Он **может** выдавать:
 
-Основные моменты:
+- **значения** (Output) — любое количество раз  
+- **ошибку** (Failure) — один раз и завершает поток  
+- **завершение** (finished) — успешно или с ошибкой
 
-- **Publisher** издает данные по мере их появления.
-- Подписчики **подписываются** на эти данные и реагируют на них.
-- **Publisher** может издавать несколько значений или завершиться с ошибкой или успехом.
+Publisher — это **пассивный** объект: сам по себе он ничего не делает, пока на него **не подпишутся** (Subscriber).  
+Как только появляется подписчик — Publisher начинает «толкать» данные.
 
-### Как работает Publisher?
+### Основные типы Publisher (актуальные в 2026 году)
 
-Когда вы создаете **Publisher**, вы фактически создаете источник данных. Этот источник может генерировать события (значения, ошибки или завершение). Подписчик подписывается на этот источник и получает эти события.
+| Тип Publisher                        | Что делает                                                                 | Когда использовать в 2026 | Пример создания |
+|--------------------------------------|----------------------------------------------------------------------------|----------------------------|-----------------|
+| `Just(value)`                        | Выдаёт **одно значение** и сразу завершается успешно                       | фиксированное значение, мок, дефолт в цепочке | `Just("Hello")` |
+| `Fail(error:)`                       | Сразу завершается с ошибкой                                                | явная ошибка в пайплайне   | `Fail(error: URLError(.badURL))` |
+| `Empty(completeImmediately:)`        | Ничего не выдаёт, сразу завершается (или не завершается)                   | пустой успешный результат  | `Empty(completeImmediately: true)` |
+| `@Published`                         | Хранит текущее значение, выдаёт его новым подписчикам + обновления         | ViewModel → View в MVVM    | `@Published var count = 0` |
+| `PassthroughSubject`                 | Не хранит значение, передаёт события всем текущим подписчикам             | события, команды, broadcast | `PassthroughSubject<Void, Never>()` |
+| `CurrentValueSubject`                | Хранит текущее значение, сразу выдаёт его новым подписчикам + обновления   | состояние с текущим значением | `CurrentValueSubject<String, Never>("initial")` |
+| `URLSession.dataTaskPublisher`       | Асинхронный сетевой запрос                                                 | любой HTTP-запрос          | `URLSession.shared.dataTaskPublisher(for: url)` |
+| `NotificationCenter.default.publisher(for:)` | Превращает уведомления в поток данных                                      | UIKit-уведомления          | `NotificationCenter.default.publisher(for: .keyboardWillShow)` |
+| `Timer.publish`                      | Периодический таймер                                                       | обновление каждые N секунд | `Timer.publish(every: 1, on: .main, in: .common)` |
+| `Future`                             | Одноразовая асинхронная операция (completion-handler → Publisher)          | обёртка над старым API     | `Future { promise in ... }` |
 
-### Пример простого Publisher:
+### Как создать и использовать Publisher (самые частые паттерны 2026)
 
-Представь, что у нас есть Publisher, который генерирует несколько чисел.
+#### 1. Простейший Publisher из массива / последовательности
 
 ```swift
-import Combine
+let numbers = [1, 2, 3, 4, 5].publisher
 
-// Создаем Publisher, который издает числа от 1 до 3
-let publisher = [1, 2, 3].publisher
-
-// Подписываемся на Publisher с помощью метода sink
-let subscription = publisher.sink { value in
-    print("Получено значение: \(value)")
-}
-
-// Вывод:
-// Получено значение: 1
-// Получено значение: 2
-// Получено значение: 3
+numbers
+    .sink { value in
+        print("Получено:", value)
+    }
+    .store(in: &cancellables)
+// Вывод: 1 2 3 4 5
 ```
 
-Здесь:
-
-- Мы создаем массив `[1, 2, 3]`, который превращается в Publisher с помощью `.publisher`.
-- Подписчик, который создан с помощью метода [[sink]], будет получать каждое значение, издаваемое этим Publisher.
-
-### Виды Publisher
-
-1. **[[Just]]** — Публикует одно значение и сразу завершает поток.
+#### 2. @Published в ViewModel (MVVM + Combine + SwiftUI/UIKit)
 
 ```swift
-import Combine
-
-// Publisher, который издает одно значение
-let publisher = Just("Привет, мир!")
-
-let subscription = publisher.sink { value in
-    print(value)
-}
-
-// Вывод:
-// Привет, мир!
-```
-
-2. **[[Future]]** — Публикует значение, которое будет получено в будущем (например, после выполнения асинхронной операции).
-
-```swift
-import Combine
-
-// Создаем Future, который издает значение через 2 секунды
-let futurePublisher = Future<String, Never> { promise in
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-        promise(.success("Значение из Future"))
+class CounterViewModel: ObservableObject {
+    @Published var count = 0
+    
+    func increment() {
+        count += 1
     }
 }
 
-let subscription = futurePublisher.sink { value in
-    print(value)
+// В SwiftUI
+struct CounterView: View {
+    @StateObject var viewModel = CounterViewModel()
+    
+    var body: some View {
+        Text("Счёт: \(viewModel.count)")
+            .onReceive(viewModel.$count) { newCount in
+                print("Счёт изменился:", newCount)
+            }
+    }
 }
 
-// Вывод:
-// Значение из Future (после 2 секунд)
-```
-
-3. **[[PassthroughSubject]]** — Это Publisher, который можно контролировать вручную. Мы можем вручную отправлять значения и завершение.
-
-```swift
-import Combine
-
-// Создаем PassthroughSubject
-let subject = PassthroughSubject<String, Never>()
-
-// Подписываемся на Subject
-let subscription = subject.sink { value in
-    print("Получено: \(value)")
-}
-
-// Отправляем значения через Subject
-subject.send("Первое значение")
-subject.send("Второе значение")
-subject.send(completion: .finished)
-
-// Вывод:
-// Получено: Первое значение
-// Получено: Второе значение
-```
-
-### Как подписаться на Publisher?
-
-Чтобы начать получать данные от Publisher, необходимо подписаться на него. Для этого используется метод **[[sink]]**. Он позволяет вам обработать как новые значения, так и завершение потока (успешное завершение или ошибка).
-
-```swift
-import Combine
-
-let publisher = [10, 20, 30].publisher
-
-let subscription = publisher.sink { value in
-    print("Получено значение: \(value)")
+// В UIKit
+class CounterViewController: UIViewController {
+    private var cancellables = Set<AnyCancellable>()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        viewModel.$count
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newCount in
+                self?.countLabel.text = "Счёт: \(newCount)"
+            }
+            .store(in: &cancellables)
+    }
 }
 ```
 
-Метод `sink` — это подписка на Publisher. Он принимает замыкание (или методы), которые выполняются каждый раз, когда Publisher издает новое значение.
-
-### Обработка ошибок в Publisher
-
-Publisher может завершиться с ошибкой, и это важно учитывать. Некоторые Publisher могут генерировать ошибки (например, при сетевых запросах), и мы должны быть готовы их обработать.
-
-Пример с ошибкой:
+#### 3. Сетевой запрос (URLSession + Combine)
 
 ```swift
-import Combine
-
-enum MyError: Error {
-    case somethingWentWrong
+struct User: Codable {
+    let id: Int
+    let name: String
 }
 
-// Создаем Publisher, который сразу выдает ошибку
-let publisher = Fail<Int, MyError>(error: .somethingWentWrong)
+func fetchUsers() -> AnyPublisher<[User], Error> {
+    let url = URL(string: "https://jsonplaceholder.typicode.com/users")!
+    
+    return URLSession.shared.dataTaskPublisher(for: url)
+        .map(\.data)
+        .decode(type: [User].self, decoder: JSONDecoder())
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+}
 
-let subscription = publisher.sink(receiveCompletion: { completion in
-    switch completion {
-    case .finished:
-        print("Завершено успешно")
-    case .failure(let error):
-        print("Произошла ошибка: \(error)")
-    }, receiveValue: { value in
-        print("Получено значение: \(value)")
+fetchUsers()
+    .sink(receiveCompletion: { completion in
+        if case .failure(let error) = completion {
+            print("Ошибка:", error)
+        }
+    }, receiveValue: { users in
+        print("Загружено пользователей:", users.count)
     })
-
-// Вывод:
-// Произошла ошибка: somethingWentWrong
+    .store(in: &cancellables)
 ```
 
-Здесь `Fail` — это тип Publisher, который немедленно завершится с ошибкой.
-
-### Как можно комбинировать несколько Publisher?
-
-С помощью Combine можно комбинировать несколько Publisher. Например, можно объединить значения от разных источников, используя операторы как `zip`, `combineLatest`, `merge`.
-
-Пример с `zip`:
+#### 4. PassthroughSubject как кастомный event bus
 
 ```swift
-import Combine
-
-let publisher1 = [1, 2, 3].publisher
-let publisher2 = ["A", "B", "C"].publisher
-
-// Комбинируем два потока данных
-let combinedPublisher = publisher1.zip(publisher2)
-
-let subscription = combinedPublisher.sink { value in
-    print("Значения: \(value.0), \(value.1)")
+class EventBus {
+    static let shared = EventBus()
+    
+    let userDidLogin = PassthroughSubject<User, Never>()
+    let themeChanged = PassthroughSubject<Theme, Never>()
+    
+    private init() {}
 }
 
-// Вывод:
-// Значения: 1, A
-// Значения: 2, B
-// Значения: 3, C
+// Подписка где угодно
+EventBus.shared.userDidLogin
+    .sink { user in
+        print("Вход:", user.name)
+    }
+    .store(in: &globalCancellables)
+
+// Где-то в коде
+EventBus.shared.userDidLogin.send(currentUser)
 ```
 
-Здесь два Publisher комбинируются, и каждый раз, когда один из них издает значение, другой издает свое, и мы получаем пару значений.
+### Лучшие практики работы с Publisher в 2026 году
 
-### Важные моменты о Publisher:
+- **Всегда** храните подписку: `.store(in: &cancellables)` или `.assign(to:)`  
+- **Для UI** — всегда `.receive(on: DispatchQueue.main)` перед обновлением `@Published` или UI  
+- **Для ввода** — добавляйте `.debounce`, `.removeDuplicates`, `.filter` перед тяжёлыми операциями  
+- **Для ошибок** — используйте `.catch`, `.replaceError`, `.retry` — делайте пайплайн устойчивым  
+- **Для тестов** — используйте `Just`, `Fail`, `PassthroughSubject`, `CurrentValueSubject`  
+- **Для SwiftUI** — чаще используйте `@Observable` + `.task` — Combine нужен только в сложных случаях  
+- **Документируйте** — пишите комментарий:
 
-1. **Один Publisher может издавать несколько значений** — это особенно полезно для потоковых данных (например, обновлений интерфейса, сетевых запросов).
-2. **Publisher может завершиться с ошибкой или без нее**.
-3. **Подписчики получают значения только после подписки** — это означает, что если подписчик был создан после того, как Publisher уже завершил свою работу, он не получит старые данные.
+```swift
+/// Publisher для поиска с отложенной обработкой
+$searchText
+    .debounce(for: .milliseconds(400), scheduler: RunLoop.main)
+    .removeDuplicates()
+    .flatMap { self.search(query: $0) }
+    .assign(to: &$results)
+```
 
-### Заключение
+**Короткий итог 2026**:
+> Publisher — это **источник асинхронных данных** в Combine: может выдавать значения, ошибки или завершаться.  
+> Самые популярные в 2026:  
+> - `@Published` — для ViewModel → View  
+> - `URLSession.dataTaskPublisher` — для сети  
+> - `PassthroughSubject` — для кастомных событий  
+> - `Just` — для фиксированных значений  
+> - `NotificationCenter.publisher` — для UIKit-уведомлений  
+> Подписывайся через `.sink` / `.assign` и храни в `Set<AnyCancellable>`
 
-**Publisher** в [[Combine]] — это основной строительный блок для работы с асинхронными потоками данных. Он позволяет вам издавать данные, которые могут быть получены и обработаны подписчиками. Вы можете комбинировать, трансформировать и обрабатывать данные с помощью различных операторов, которые предоставляет Combine.
-
----
+Удачи с мощными и предсказуемыми потоками данных в твоём проекте! 🔄
