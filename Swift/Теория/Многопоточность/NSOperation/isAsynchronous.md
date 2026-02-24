@@ -14,7 +14,7 @@
 - По умолчанию **все** операции (`BlockOperation`, кастомные `Operation`) имеют `isAsynchronous = false`  
 - Если вы используете `isAsynchronous = true`, то **обязаны**:
   - самостоятельно управлять состояниями `isExecuting` / `isFinished`  
-  - отправлять KVO-уведомления (`willChangeValue`, `didChangeValue`)  
+  - отправлять [[KVO]]-уведомления (`willChangeValue`, `didChangeValue`)  
   - вызывать `isFinished = true` только после **полного** завершения асинхронной работы  
 - Если забыть это сделать — операция **зависнет** в очереди навсегда (`isFinished` никогда не станет `true`)
 

@@ -4,17 +4,17 @@
 
 ### Зачем нужен @objc в 2026 году (реальные сценарии)
 
-| Сценарий                                      | Почему нужен именно @objc                              | Пример |
-|-----------------------------------------------|--------------------------------------------------------|--------|
-| Использование `#selector`                     | Селекторы — это Objective-C механизм                   | `button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)` |
-| `@IBAction` и `@IBOutlet` в Interface Builder | IB работает через Objective-C runtime                  | `@IBAction func tapped(_ sender: UIButton)` |
-| Key-Value Observing (KVO)                     | KVO — чисто Objective-C фича                           | `@objc dynamic var age: Int` |
-| Опциональные методы в протоколах              | Objective-C протоколы поддерживают optional методы     | `@objc optional func optionalMethod()` |
-| Вызов из Objective-C кода                     | Старый код / библиотеки на ObjC                        | Редко, но встречается в legacy |
-| `Timer`, `NotificationCenter`, `performSelector` | Все эти API используют селекторы                      | `Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(tick), ...)` |
-| Динамический вызов методов                    | `performSelector`, `responds(to:)` и т.д.              | Редко, но нужно для низкоуровневой магии |
+| Сценарий                                         | Почему нужен именно @objc                          | Пример                                                                                |
+| ------------------------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Использование `#selector`                        | Селекторы — это Objective-C механизм               | `button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)`        |
+| `@IBAction` и `@IBOutlet` в Interface Builder    | IB работает через Objective-C runtime              | `@IBAction func tapped(_ sender: UIButton)`                                           |
+| Key-Value Observing ([[KVO]])                    | KVO — чисто Objective-C фича                       | `@objc dynamic var age: Int`                                                          |
+| Опциональные методы в протоколах                 | Objective-C протоколы поддерживают optional методы | `@objc optional func optionalMethod()`                                                |
+| Вызов из Objective-C кода                        | Старый код / библиотеки на ObjC                    | Редко, но встречается в legacy                                                        |
+| `Timer`, `NotificationCenter`, `performSelector` | Все эти API используют селекторы                   | `Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(tick), ...)` |
+| Динамический вызов методов                       | `performSelector`, `responds(to:)` и т.д.          | Редко, но нужно для низкоуровневой магии                                              |
 
-### Ключевые правила и синтаксис @objc
+### Ключевые правила и синтаксис [[@objc]]
 
 ```swift
 // 1. Метод с селектором
@@ -70,5 +70,5 @@ func tappedButton(_ sender: UIButton) { ... }
 **Короткий девиз 2026**:
 > @objc — это «мост» из Swift в Objective-C runtime.  
 > Пиши его, когда нужен селектор, KVO, Interface Builder, [[Optional]] протоколы Objective-C или старый ObjC-код.  
-> В 2026 году @objc нужен везде, где есть #selector, [[@IBAction]], KVO или Objective-C API.  
+> В 2026 году @objc нужен везде, где есть #selector, [[@IBAction]], KVO или [[Objective-C]] [[API]].  
 > Без него Swift-код остаётся «невидимым» для Objective-C мира.

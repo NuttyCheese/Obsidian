@@ -1,222 +1,155 @@
-**Определение:**  
-`@autoclosure` — это атрибут в [[Swift]], который автоматически **оборачивает выражение в замыкание ([[closure]]) без скобок**. Это позволяет писать более читаемый код и откладывать вычисление значения до момента использования.
+**@autoclosure** — это атрибут в [[Swift]], который позволяет автоматически **оборачивать переданное выражение в замыкание** без явных фигурных скобок `{}`. Это делает код чище, естественнее и позволяет **откладывать вычисление** выражения до момента, когда оно действительно понадобится.
 
-Иными словами: **вы передаёте выражение, а Swift превращает его в замыкание, которое выполнится только когда нужно**.
+### Ключевые характеристики @autoclosure (актуально на 2026 год)
 
----
+| Характеристика                                   | Описание                                                                              | Важные нюансы 2026                                         |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Тип параметра                                    | `@autoclosure () -> T` (или `@autoclosure @escaping () -> T`)                         | Возвращаемый тип — любой ([Bool], [[String]], Void и т.д.) |
+| Вычисление                                       | **Ленивое** — выражение не выполняется, пока не вызовут замыкание                     | Экономит ресурсы при дорогих вычислениях                   |
+| Обязательно одно выражение                       | Нельзя передать несколько выражений или блок кода                                     | Только одно выражение                                      |
+| Не escaping по умолчанию                         | Без `@escaping` замыкание не может быть сохранено надолго (нельзя хранить в свойстве) | Часто добавляют `@escaping`                                |
+| Нельзя использовать с inout-параметрами          | `@autoclosure` + [[inout]] — запрещено компилятором                                   | —                                                          |
+| Работает только с **неименованными** параметрами | Нельзя написать `@autoclosure let condition: () -> Bool`                              | Только без имени                                           |
+| Можно комбинировать с `@escaping`                | `@autoclosure @escaping () -> Bool` — замыкание можно сохранить и вызвать позже       | Очень популярно для отложенных проверок                    |
 
-## Основные моменты
+### Почему @autoclosure так любят (преимущества)
 
-|Характеристика|Описание|
-|---|---|
-|Тип|Атрибут функции параметра|
-|Применение|Часто используется для условий, логов, assert, lazy evaluation|
-|Вычисление|Ленивая (отложенная), значение не вычисляется до вызова closure|
-|Синтаксис|`func example(param: @autoclosure () -> Bool)`|
-
----
-
-## Простая демонстрация
+1. Код выглядит **натурально**, как обычное условие
 
 ```swift
-func logIfTrue(_ condition: @autoclosure () -> Bool) {
-    if condition() {
-        print("Условие истинно")
-    } else {
-        print("Условие ложно")
+// Без @autoclosure
+logIfTrue({ expensiveCheck() })           // некрасиво
+
+// С @autoclosure
+logIfTrue(expensiveCheck())               // красиво и естественно
+```
+
+2. **Отложенное вычисление** — экономия ресурсов
+
+```swift
+// expensiveCheck() НЕ вызывается, если условие уже ложно
+guard isUserLoggedIn() else { return }
+guard expensiveNetworkCheck() else { return }  // не выполнится, если первый guard сработал
+```
+
+3. Поддерживает **short-circuit evaluation** (ленивые && и ||)
+
+```swift
+func require(_ condition: @autoclosure () -> Bool, _ message: String) {
+    assert(condition(), message)
+}
+
+require(user.isAdmin && expensiveAdminCheck(), "Доступ запрещён")
+// expensiveAdminCheck() НЕ вызовется, если user.isAdmin == false
+```
+
+### Самые популярные и реальные сценарии использования в 2026 году
+
+#### 1. Замена assert / precondition / guard с ленивым вычислением
+
+```swift
+func require(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String = "Requirement failed") {
+    assert(condition(), message())
+}
+
+require(user.balance >= amount, "Недостаточно средств: \(user.balance) < \(amount)")
+// message вычисляется только при краше
+```
+
+#### 2. Логирование с условием (очень популярно)
+
+```swift
+func logIfEnabled(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String) {
+    guard isLoggingEnabled && condition() else { return }
+    print("[DEBUG] \(message())")
+}
+
+logIfEnabled(user.isPremium) {
+    "Пользователь \(user.id) имеет премиум-аккаунт"
+}
+// message вычисляется только если логи включены И пользователь премиум
+```
+
+#### 3. Отложенная проверка в замыканиях (с @escaping)
+
+```swift
+class FormValidator {
+    private var validations: [() -> Bool] = []
+    
+    func addValidation(_ condition: @autoclosure @escaping () -> Bool) {
+        validations.append(condition)
+    }
+    
+    func isValid() -> Bool {
+        validations.allSatisfy { $0() }
     }
 }
 
-logIfTrue(2 > 1)
+let validator = FormValidator()
+validator.addValidation(email.isValidFormat)
+validator.addValidation(password.count >= 8)
+validator.addValidation(expensiveServerSideCheck())  // НЕ вызывается сразу
 ```
 
-**Что происходит:**
-
-1. `2 > 1` — обычное выражение
-    
-2. Благодаря `@autoclosure` Swift превращает его в `{ 2 > 1 }`
-    
-3. Выражение вычисляется только при вызове `condition()`
-    
-
-**Вывод:**
-
-```
-Условие истинно
-```
-
----
-
-## Почему это удобно
-
-Без `@autoclosure` пришлось бы писать так:
+#### 4. Условное выполнение дорогих операций
 
 ```swift
-func logIfTrue(_ condition: () -> Bool) {
-    if condition() {
-        print("Условие истинно")
-    }
-}
-
-logIfTrue({ 2 > 1 }) // <--- нужно явно писать closure
-```
-
-`@autoclosure` делает вызов чище:
-
-```swift
-logIfTrue(2 > 1) // без {}
-```
-
----
-
-## Пример с **побочными эффектами**
-
-```swift
-func checkAndPrint(_ condition: @autoclosure () -> Bool) {
-    print("Начинаем проверку")
-    if condition() {
-        print("Условие выполнено")
-    } else {
-        print("Условие не выполнено")
-    }
-    print("Проверка завершена")
-}
-
-checkAndPrint(expensiveCalculation())
-
-func expensiveCalculation() -> Bool {
-    print("Выполняется дорогая операция")
-    return true
-}
-```
-
-**Вывод:**
-
-```
-Начинаем проверку
-Выполняется дорогая операция
-Условие выполнено
-Проверка завершена
-```
-
-- `expensiveCalculation()` вызывается **только когда `condition()` вызывается**.
-    
-- Можно совмещать с **short-circuit evaluation**.
-    
-
----
-
-## Использование с AND/OR и short-circuit
-
-`@autoclosure` часто встречается в функциях вроде `assert`:
-
-```swift
-func myAssert(_ condition: @autoclosure () -> Bool, _ message: String) {
-    if !condition() {
-        print("Assertion failed: \(message)")
-    }
-}
-
-let x = 5
-myAssert(x > 10, "x должно быть больше 10")
-```
-
-- `x > 10` **не вычисляется до вызова closure**
-    
-- Удобно для сложных проверок с дорогими вычислениями или сетевыми условиями.
-    
-
----
-
-## Расширенный пример с UIKit
-
-Представим **валидацию формы**:
-
-```swift
-func validateField(_ field: UITextField, _ condition: @autoclosure () -> Bool, message: String) -> Bool {
-    if !condition() {
-        print("Ошибка: \(message)")
-        field.backgroundColor = .red
-        return false
-    }
-    field.backgroundColor = .white
-    return true
-}
-
-let nameField = UITextField()
-nameField.text = ""
-
-let isNameValid = validateField(nameField, nameField.text?.isEmpty == false, message: "Имя не может быть пустым")
-```
-
-**Пояснение:**
-
-- `nameField.text?.isEmpty == false` автоматически оборачивается в замыкание
-    
-- Вычисляется **только внутри `validateField`**
-    
-- Можно легко добавить **несколько проверок подряд** с `&&` или `||`
-    
-
----
-
-## Пример с “отложенной логикой”
-
-```swift
-func executeIfTrue(_ condition: @autoclosure () -> Bool, action: () -> Void) {
+func executeIf(_ condition: @autoclosure () -> Bool, _ action: () -> Void) {
     if condition() {
         action()
     }
 }
 
-executeIfTrue(2 > 3) {
-    print("Никогда не выполнится")
-}
-
-executeIfTrue(3 > 2) {
-    print("Выполнится") // <- Вывод
+executeIf(user.isAdmin && server.isReachable()) {
+    performAdminAction()  // не выполнится, если хотя бы одно условие ложно
 }
 ```
 
----
+### Когда НЕ использовать @autoclosure (ловушки 2026)
 
-## Важные замечания
-
-1. `@autoclosure` работает **только с одним выражением**. Нельзя передавать сразу несколько выражений.
-    
-2. Можно использовать вместе с `@escaping`:
-    
+1. **Когда выражение имеет побочные эффекты** и должно выполняться всегда
 
 ```swift
-func delayed(_ condition: @autoclosure @escaping () -> Bool, completion: () -> Void) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        if condition() {
-            completion()
-        }
-    }
-}
+// Ошибка
+logIfTrue(incrementCounter())  // счётчик НЕ увеличится, если условие ложно!
+
+// Правильно
+incrementCounter()
+logIfTrue(true)
 ```
 
-- Это позволяет хранить **closure на будущее** (например, для UI или сетевых проверок).
-    
+2. **Когда нужно передать несколько выражений**
 
----
+```swift
+// Нельзя
+logIfTrue(user.isLoggedIn && user.hasPremium)  // Ошибка компиляции
+```
 
-## Итог
+3. **Когда замыкание должно храниться надолго без @escaping**
 
-- `@autoclosure` делает код **короче и читаемее**
-    
-- Полезен для:
-    
-    - assert и precondition
-        
-    - lazy evaluation
-        
-    - UI-валидации форм
-        
-- Часто комбинируется с **short-circuit evaluation**
-    
-- Можно использовать вместе с `@escaping` для отложенного выполнения
-    
+```swift
+// Ошибка — компилятор не даст
+var storedCondition: () -> Bool = { true && expensive() }  // без @autoclosure
+```
 
----
+### Лучшие практики @autoclosure в Swift 2026
+
+- **Используйте** для **ленивых условий**, **assert**, **логов**, **валидаций**, **guard**-подобных функций  
+- **Всегда добавляйте `@escaping`**, если замыкание сохраняется (в массиве, свойстве и т.д.)  
+- **Комбинируйте** с `@autoclosure` для сообщения об ошибке — это стандарт в assert/precondition  
+- **Не используйте** для выражений с **побочными эффектами** (инкремент, сетевые вызовы)  
+- **В SwiftUI** — `@autoclosure` почти не нужен (используйте `@ViewBuilder`, computed properties)  
+- **Документируйте** — пишите комментарий:
+
+```swift
+/// Проверяет условие лениво и выводит сообщение только при провале
+func require(_ condition: @autoclosure () -> Bool, _ message: @autoclosure () -> String = "Assertion failed")
+```
+
+**Короткий итог 2026**:
+> `@autoclosure` — это **автоматическое оборачивание выражения в замыкание**, которое позволяет писать естественный код и откладывать вычисления.  
+> В 2026 году:  
+> - самый популярный кейс — условия в `assert`, `guard`, логи, валидация форм  
+> - часто комбинируется с `@escaping` для хранения замыкания  
+> - делает код **красивее** и **эффективнее** за счёт ленивого выполнения  
+> - это **один из самых любимых** инструментов Swift-разработчиков для чистоты кода

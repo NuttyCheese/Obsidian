@@ -76,7 +76,7 @@ class ProfileViewModel: ObservableObject {
 }
 ```
 
-#### Шаблон 3 — Временное переключение с await MainActor.run
+#### Шаблон 3 — Временное переключение с [[await]] MainActor.run
 
 ```swift
 actor Analytics {
