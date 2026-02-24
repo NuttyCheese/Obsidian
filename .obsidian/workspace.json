@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Core Animation/CATiledLayer.md",
+                "file": "Swift/Теория/iOS/Core Graphics/CGColor.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CATiledLayer"
+              "title": "CGColor"
             }
           }
         ]
@@ -196,6 +196,11 @@
   },
   "active": "9df3efb6dc106b4b",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Core Graphics/CGContext.md",
+    "Swift/Теория/iOS/Core Graphics/CGColor.md",
+    "Swift/Теория/iOS/Core Animation/Core Animation.md",
+    "Swift/Теория/iOS/Core Animation/CATransaction.md",
+    "Swift/Теория/iOS/Core Animation/CATiledLayer.md",
     "Swift/Теория/iOS/Core Animation/CASpringAnimation.md",
     "Swift/Теория/iOS/Core Animation/CAShapeLayerLineJoin.md",
     "Swift/Теория/iOS/Core Animation/CAShapeLayerLineCap.md",
@@ -203,10 +208,12 @@
     "Swift/Теория/iOS/Core Animation/CAShapeLayer.md",
     "Swift/Теория/iOS/Core Animation/CALayer.md",
     "Swift/Теория/iOS/Core Animation/CAKeyframeAnimation.md",
+    "CAPropertyAnimation.md",
     "Swift/Теория/iOS/Core Animation/CADisplayLink.md",
     "Swift/Теория/iOS/Core Animation/CABasicAnimation.md",
     "Swift/Теория/iOS/Core Animation/CAAnimationGroup.md",
     "Swift/Теория/iOS/Core Animation/CAAnimation.md",
+    "CATransition.md",
     "Swift/Теория/iOS/AVFoundation/AVMetadataMachineReadableCodeObject.md",
     "Swift/Теория/iOS/AVFoundation/AVPlayerViewController.md",
     "Swift/Теория/iOS/AVFoundation/AVPlayer.md",
@@ -215,13 +222,6 @@
     "Swift/Теория/iOS/AVFoundation/AVMetadataFaceObject.md",
     "AVMetadataObjectType.md",
     "AVMetadataObjectTypeFace.md",
-    "Swift/Теория/iOS/AVFoundation/AVMetadataDogBodyObject.md",
-    "Swift/Теория/iOS/AVFoundation/AVMetadataCatBodyObject.md",
-    "AVMetadataBodyObject.md",
-    "AVMetadataObject.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureVideoDataOutputSampleBufferDelegate.md",
-    "Swift/Теория/iOS/AVFoundation/AVFoundation.md",
-    "Swift/Теория/iOS/AVFoundation/AVCaptureVideoDataOutput.md",
     "Swift/Теория/iOS/LocalAuthentication",
     "Swift/Теория/iOS/AVFoundation",
     "Swift/Теория/Ошибки и варнинги/UI и Auto Layout",
