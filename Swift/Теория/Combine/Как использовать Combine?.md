@@ -217,7 +217,7 @@ class PostsViewController: UIViewController {
 
 - Импортируем Combine
     
-- Подписываемся на Publishers (`NotificationCenter`, `@Published`, `URLSession.dataTaskPublisher`)
+- Подписываемся на Publishers ([[NotificationCenter]], `@Published`, [[URLSession]]`.dataTaskPublisher`)
     
 - Используем операторы ([[map]], [[filter]], [[compactMap]], debounce и т.п.)
     

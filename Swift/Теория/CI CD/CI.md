@@ -21,7 +21,7 @@
     
 - Экономия времени за счёт раннего обнаружения багов.
     
-- Инструменты: **[[GitHub]] Actions, [[GitLab]] CI/CD, Jenkins, Bitrise, CircleCI, [[Xcode]] Cloud**.
+- Инструменты: **[[GitHub]] Actions, [[GitLab]] CI/[[CD]], Jenkins, Bitrise, CircleCI, [[Xcode]] Cloud**.
     
 
 ---

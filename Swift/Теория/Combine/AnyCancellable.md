@@ -33,7 +33,7 @@ cancellable.cancel() // отменяем подписку вручную
 
 ---
 
-## **2. Хранение AnyCancellable в Set**
+## **2. Хранение AnyCancellable в [[Set]]**
 
 ```swift
 var cancellables = Set<AnyCancellable>()
@@ -49,7 +49,7 @@ Just(10)
 
 ---
 
-## **3. Подписка на NotificationCenter Publisher**
+## **3. Подписка на [[NotificationCenter]] [[Publisher]]**
 
 ```swift
 var cancellables = Set<AnyCancellable>()
@@ -61,7 +61,7 @@ NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotificat
     .store(in: &cancellables)
 ```
 
-**Комментарий:** реальный пример для UIKit.
+**Комментарий:** реальный пример для [[UIKit]].
 
 ---
 

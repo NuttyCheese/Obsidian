@@ -32,9 +32,9 @@
 
 ### Самый популярный стек для Swift-приложений 2026
 
-1. **Бэкенд** — Vapor / Hummingbird + FluentPostgreSQL  
+1. **Бэкенд** — [[Vapor]] / Hummingbird + FluentPostgreSQL  
 2. **Облако** — Supabase (PostgreSQL + Realtime + Auth + Storage)  
-3. **Локально** — SwiftData / Core Data / GRDB (SQLite)  
+3. **Локально** — SwiftData / [[Core Data]] / GRDB ([[SQLite]])  
 4. **Расширения** — pgvector (векторный поиск), PostGIS (гео), TimescaleDB (time-series)  
 5. **Миграции** — Fluent Migrations / Flyway / Liquibase  
 6. **ORM** — Fluent (Vapor), GRDB (локально), SQLKit (низкоуровневый)

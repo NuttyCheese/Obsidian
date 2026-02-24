@@ -16,7 +16,7 @@ CD является продолжением **Continuous Integration ([[CI]])**
     
 - Поддержка разных окружений (dev, stage, prod).
     
-- Интеграция с инструментами: **[[GitHub]] Actions, [[GitLab]] CI/CD, Jenkins, Bitrise, CircleCI, Xcode Cloud**.
+- Интеграция с инструментами: **[[GitHub]] Actions, [[GitLab]] [[CI]]/CD, Jenkins, Bitrise, CircleCI, Xcode Cloud**.
     
 
 ---
