@@ -1,4 +1,4 @@
-**`UIViewRepresentable`** — это протокол в **SwiftUI**, который позволяет **встраивать любой UIKit-компонент** (UIView или UIViewController) в SwiftUI-иерархию.
+**`UIViewRepresentable`** — это протокол в **SwiftUI**, который позволяет **встраивать любой UIKit-компонент** (UIView или [[UIViewController]]) в SwiftUI-иерархию.
 
 Это **единственный официальный и рекомендуемый** мост между UIKit и SwiftUI.
 
