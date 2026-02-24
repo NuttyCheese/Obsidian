@@ -124,8 +124,8 @@ override func viewWillDisappear(_ animated: Bool) {
 
 **Вывод 2026**:
 - **Новый код** → **TaskGroup** / **actor** + **async let**  
-- **Сложные зависимости** → **OperationQueue + addDependency** (если не хотите переписывать)  
-- Полная миграция → всё на Swift Concurrency (ручная координация через `actor` или `TaskGroup`)
+- **Сложные зависимости** → **[[OperationQueue]] + addDependency** (если не хотите переписывать)  
+- Полная миграция → всё на [[Swift Concurrency]] (ручная координация через [[actor]] или `TaskGroup`)
 
 ### 6. Лучшие практики 2026 года
 
@@ -134,7 +134,7 @@ override func viewWillDisappear(_ animated: Bool) {
 - **maxConcurrentOperationCount** — всегда ограничивайте (4–8)  
 - **isCancelled** — проверяйте в начале каждой операции  
 - **Для UI** — только `@MainActor` / `MainActor.run`  
-- **Для тестов** — используйте `XCTestExpectation` + `waitUntilFinished`  
+- **Для тестов** — используйте [[XCTestExpectation]] + `waitUntilFinished`  
 - **Мониторинг** — добавляйте `os_signpost` для отслеживания длительности операций в Instruments  
 - **Swift 6 strict concurrency** — часто подсвечивает небезопасную передачу данных между зависимыми операциями
 

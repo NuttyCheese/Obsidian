@@ -82,13 +82,13 @@ group.notify(queue: .main) {
 
 ### 4. DispatchQueue vs Swift Concurrency (сравнение 2026)
 
-| Характеристика             | DispatchQueue / GCD                      | Swift Concurrency (Task, actor)                    | Что выбрать в 2026 году       |
+| Характеристика             | DispatchQueue / [[GCD]]                  | [[Swift Concurrency]] ([[Task]], [[actor]])        | Что выбрать в 2026 году       |
 | -------------------------- | ---------------------------------------- | -------------------------------------------------- | ----------------------------- |
 | Потокобезопасность         | Нужно вручную (lock, queue)              | Встроенная ([[actor]], [[Sendable]])               | Swift Concurrency             |
 | Приоритеты                 | [[QoS]] (.userInteractive, .background…) | Task priority (.userInitiated, .background)        | Оба хороши, но [[Task]] проще |
-| Ожидание завершения        | DispatchGroup / wait                     | TaskGroup / [[async let]] / withTaskGroup          | [[TaskGroup]] лучше           |
+| Ожидание завершения        | [[DispatchGroup]] / wait                 | TaskGroup / [[async let]] / withTaskGroup          | [[TaskGroup]] лучше           |
 | Отмена задач               | Сложно ([[DispatchWorkItem]])            | Нативная (Task.cancel(), [[withTaskCancellation]]) | [[Swift Concurrency]]         |
-| UI-обновления              | DispatchQueue.main.async                 | @MainActor / await MainActor.run                   | [[@MainActor]] лучше          |
+| UI-обновления              | [[DispatchQueue]].[[main]].[[async]]     | @MainActor / await MainActor.run                   | [[@MainActor]] лучше          |
 | Читаемость и современность | Старый стиль, много boilerplate          | Современный, меньше кода                           | Swift Concurrency             |
 | Совместимость с legacy     | Отличная                                 | Требует адаптации                                  | GCD для старого кода          |
 

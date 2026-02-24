@@ -1,4 +1,4 @@
-**Dispatching** (отправка / диспетчеризация задач) — это процесс **помещения блока кода** (замыкания / closure) в очередь диспетчера (`DispatchQueue`), чтобы система GCD сама решила:
+**Dispatching** (отправка / диспетчеризация задач) — это процесс **помещения блока кода** (замыкания / closure) в очередь диспетчера ([[DispatchQueue]]), чтобы система [[GCD]] сама решила:
 
 - когда именно выполнить задачу  
 - на каком потоке (или в каком пуле потоков)  
@@ -40,7 +40,7 @@ func loadUserProfile() {
 }
 ```
 
-#### Шаблон 2 — Современный эквивалент (Swift Concurrency 2026)
+#### Шаблон 2 — Современный эквивалент ([[Swift Concurrency]] 2026)
 
 ```swift
 @MainActor
@@ -91,8 +91,8 @@ actor Cache {
 | Совместимость с legacy | Отличная                                                       | Требует адаптации                        | GCD для старого кода    |
 
 **Вывод 2026**:
-- **Новый код** → **Swift Concurrency** (`Task`, `actor`, `TaskGroup`, `@MainActor`)  
-- **Поддержка старого кода** → GCD (`DispatchQueue.global`, `main.async`)  
+- **Новый код** → **Swift Concurrency** ([[Task]], [[actor]], [[TaskGroup]], [[@MainActor]])  
+- **Поддержка старого кода** → [[GCD]] (`DispatchQueue.global`, `main.async`)  
 - `DispatchQueue.concurrent(label:)` — почти никогда не создавайте
 
 ### 5. Типичные ошибки dispatching в 2026
