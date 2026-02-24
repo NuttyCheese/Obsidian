@@ -13,15 +13,44 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Архитектурные подходы/Flux.md",
+                "file": "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Flux"
+              "title": "What patterns are used in iOS"
+            }
+          },
+          {
+            "id": "a59f6b78359bc872",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Теория/Архитектурные подходы/Facade.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Facade"
+            }
+          },
+          {
+            "id": "9df3efb6dc106b4b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Теория/Метод Dispatch/Dispatching type/Static Dispatch/Static Dispatch.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Static Dispatch"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -195,34 +224,34 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "03c320c5a6e719c1",
+  "active": "9df3efb6dc106b4b",
   "lastOpenFiles": [
-    "Swift/Теория/Архитектурные подходы/Domain-Driven Design.md",
-    "Swift/Теория/Архитектурные подходы/Difference between architectural approaches.md",
-    "Swift/Теория/Архитектурные подходы/Decorator.md",
-    "Swift/Теория/Архитектурные подходы/Coordinator.md",
-    "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
-    "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Waterfall.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Scrum.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Kanban.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Agile.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология DevOps.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Последовательность Фибоначчи.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Нотация сложности алгоритмов.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Сортировка слиянием.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Сортировка вставками.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Пузырьковая сортировка.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Пирамидальная сортировка.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Быстрая сортировка.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Hash-поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Экспоненциальный поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Поиск по строке.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Поиск в графах.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Линейный поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Интерполяционный поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Бинарный поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/swapAt.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Static Dispatch/Direct Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic Dispatch/Virtual Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic Dispatch/Table Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic Dispatch/Message Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic Dispatch/Dynamic Dispatch.md",
+    "Swift/Теория/Менеджер зависимостей/SPM.md",
+    "Swift/Теория/Менеджер зависимостей/Differences CocoaPods, Carthage and SPM.md",
+    "Swift/Теория/Менеджер зависимостей/dependency manager.md",
+    "Swift/Теория/Менеджер зависимостей/CocoaPods.md",
+    "Swift/Теория/Менеджер зависимостей/Carthage.md",
+    "Swift/Теория/Контроль памяти/Weak self.md",
+    "Swift/Теория/Контроль памяти/weak references.md",
+    "Swift/Теория/Контроль памяти/weak.md",
+    "Swift/Теория/Контроль памяти/value type and reference type.md",
+    "Swift/Теория/Контроль памяти/Value Type.md",
+    "Swift/Теория/Контроль памяти/value semantic.md",
+    "Swift/Теория/Контроль памяти/unowned.md",
+    "Swift/Теория/Контроль памяти/struct = stack, class = heap.md",
+    "Swift/Теория/Контроль памяти/Stack and Heap.md",
+    "Swift/Теория/Контроль памяти/Stack.md",
+    "Swift/Теория/Контроль памяти/Sidetable.md",
+    "Swift/Теория/Контроль памяти/Runtime.md",
+    "Swift/Теория/Контроль памяти/RunLoop.md",
+    "Swift/Теория/Контроль памяти/retain cycle.md",
+    "Swift/Теория/Контроль памяти/retain count.md",
+    "Swift/Теория/Контроль памяти/retain.md",
     "Swift/Теория/iOS/LocalAuthentication",
     "Swift/Теория/iOS/AVFoundation",
     "Swift/Теория/Ошибки и варнинги/UI и Auto Layout",

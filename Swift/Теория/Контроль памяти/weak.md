@@ -1,206 +1,126 @@
-**`weak`** — это модификатор ссылки на объект, который:
+**`weak`** — это модификатор слабой ссылки в Swift, который:
 
-- **Не увеличивает счетчик ссылок ([[ARC]])**
-    
-- Становится **[[nil]] автоматически**, когда объект, на который она ссылается, освобождается
-    
-- Всегда должен быть **[[Optional]]** (`?`), потому что объект может исчезнуть в любой момент
-    
+- **не увеличивает** счётчик ссылок ([[ARC]])
+- **автоматически становится [[nil]]**, когда объект, на который она ссылается, освобождается
+- **обязательно должен быть optional** (`?`), потому что объект может исчезнуть в любой момент
+- **не приводит к крашу** при обращении к уже освобождённому объекту (в отличие от `unowned`)
 
-> Проще говоря: `weak` = «ссылка на объект, которая не удерживает его и может стать nil».
+> Проще говоря:  
+> `weak` = «я не держу этот объект сильно, и если он умрёт раньше меня — моя ссылка просто станет `nil`»
 
----
+### Когда использовать `weak` (реальные сценарии 2025–2026)
 
-## 2. Основные термины
+| Ситуация                                                                 | Почему именно `weak`                                               | Пример из практики                                            |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------- |
+| Объект A владеет объектом B, а B имеет обратную ссылку на A              | A может умереть раньше B → B должен безопасно стать `nil`          | [[delegate]], `parent` в дереве объектов                      |
+| Замыкание захватывает `self`, но `self` может быть освобождён раньше     | Предотвращение [[retain cycle]] + безопасный доступ                | `[weak self]` в замыканиях анимаций, сетевых запросов         |
+| Делегат, data source, observer                                           | Владелец (например, view controller) может умереть раньше делегата | [[UITableViewDataSource]], [[CLLocationManagerDelegate]]      |
+| Любая обратная связь в иерархии владения, где нет гарантии порядка жизни | Безопасность важнее производительности                             | [[Coordinator]] в [[SwiftUI]] → [[UIKit]], `child` → `parent` |
+| Кэширование слабых ссылок (weak cache)                                   | Объекты могут быть удалены из памяти                               | [[NSCache]] с объектами, weak observers                       |
 
-| Термин                                 | Описание                                                                           |
-| -------------------------------------- | ---------------------------------------------------------------------------------- |
-| **ARC (Automatic Reference Counting)** | Автоматический подсчет ссылок на объекты в Swift                                   |
-| **Strong Reference**                   | Сильная ссылка, увеличивает счетчик ARC                                            |
-| **Weak Reference (`weak`)**            | Слабая ссылка, не увеличивает счетчик ARC, становится nil при освобождении объекта |
-| **Unowned Reference (`unowned`)**      | Слабая ссылка, не optional, crash если объект освобождён                           |
-| **[[retain cycle]]**                  | Цикл сильных ссылок между объектами, приводящий к утечке памяти                    |
-
----
-
-## 3. Основной синтаксис
+### Синтаксис и варианты (все актуальные в Swift 6)
 
 ```swift
-class Person {
-    var name: String
-    init(name: String) { self.name = name }
-}
-
+// 1. Слабая ссылка на свойство (самый частый)
 class Apartment {
-    var number: Int
-    weak var tenant: Person?  // weak ссылка
-    init(number: Int) {
-        self.number = number
-    }
-}
-```
-
-- `weak var tenant: Person?` — объект `Apartment` ссылается на `Person`, **не удерживая его**
-    
-- Ссылка Optional, может стать `nil` при освобождении `Person`
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейший weak
-
-```swift
-class Owner {
-    let name: String
-    init(name: String) { self.name = name }
+    weak var tenant: Person?          // ← может стать nil
+    init() { }
 }
 
-class Pet {
-    weak var owner: Owner?  // weak ссылка
-    init(owner: Owner) { self.owner = owner }
-}
-
-var alice: Owner? = Owner(name: "Alice")
-var pet: Pet? = Pet(owner: alice!)
-print(pet?.owner?.name) // Alice
-
-alice = nil
-print(pet?.owner?.name) // nil
-```
-
-- Ссылка `owner` не удерживает объект `alice`, становится nil при его освобождении
-    
-
----
-
-### Пример 2. weak vs [[unowned]]
-
-```swift
-class A {
-    var b: B?
-}
-
-class B {
-    weak var a: A?  // может быть nil
-    init(a: A) { self.a = a }
-}
-
-var objectA: A? = A()
-var objectB: B? = B(a: objectA!)
-objectA?.b = objectB
-
-objectA = nil
-print(objectB?.a) // nil, безопасно
-```
-
-- `weak` безопаснее, чем `unowned`, так как не крашит приложение
-    
-
----
-
-### Пример 3. Замыкания с weak
-
-```swift
-class ViewController {
+// 2. weak в замыкании (самый популярный кейс)
+class MyViewController {
     var closure: (() -> Void)?
-
+    
     func setupClosure() {
         closure = { [weak self] in
-            guard let self = self else { return }
-            print("ViewController is \(self)")
+            guard let self else { return }     // безопасная проверка
+            self.updateUI()
         }
     }
 }
+
+// 3. weak var + optional chaining
+class Node {
+    weak var parent: Node?
+}
+
+// 4. weak в параметре функции (редко, но встречается)
+func configure(delegate: weak SomeDelegate?) { ... }
 ```
 
-- Используем `[weak self]` чтобы избежать retain cycle в замыкании
-    
-- Всегда проверяем, что [[self]] ещё существует
-    
+### Сравнение `weak` и `unowned` (таблица 2026)
 
----
+| Характеристика                                   | `weak`                               | [[unowned]]                                 | Когда выбирать в 2026           |
+| ------------------------------------------------ | ------------------------------------ | ------------------------------------------- | ------------------------------- |
+| [[Optional]]?                                    | Да (`?`)                             | Нет                                         | `weak` — если может быть nil    |
+| [[ARC]]                                          | Не увеличивает                       | Не увеличивает                              | —                               |
+| Что происходит при обращении к мёртвому объекту? | Ссылка = `nil`                       | **Краш** (EXC_BAD_ACCESS)                   | `weak` — безопаснее             |
+| Проверка на существование                        | [[if let]] / [[guard let]]           | Нет проверки                                | `weak` — надёжнее               |
+| Производительность                               | Чуть медленнее (optional unwrapping) | Чуть быстрее (нет проверки)                 | `unowned` — только при гарантии |
+| Самый частый кейс                                | Делегаты, замыкания, parent/child    | Обратные ссылки с чёткой иерархией владения | `weak` — 90% случаев            |
 
-### Пример 4. Слабая ссылка на делегата
+### Самые популярные ошибки с `weak` (и как их избежать)
+
+1. **Забыли `[weak self]` в замыкании → retain cycle**
 
 ```swift
-protocol WorkerDelegate: AnyObject {
-    func didFinishWork()
+// Ошибка — retain cycle
+network.request { result in
+    self.handleResult(result)   // self удерживается замыканием
 }
 
-class Worker {
-    weak var delegate: WorkerDelegate?
-    func doWork() {
-        // Работа
-        delegate?.didFinishWork()
-    }
+// Правильно
+network.request { [weak self] result in
+    guard let self else { return }
+    self.handleResult(result)
 }
 ```
 
-- Делегаты всегда weak, чтобы избежать retain cycle между объектом и делегатом
-    
-
----
-
-### Пример 5. Цикл ссылок с weak
+2. **Использование `weak` там, где нужен `unowned` (лишние проверки)**
 
 ```swift
-class Parent {
-    var child: Child?
-}
+// Лишний код
+weak var parent: Node?
+// ...
+if let parent = parent { ... }   // каждый раз проверка
 
-class Child {
-    weak var parent: Parent?  // слабая ссылка, чтобы избежать retain cycle
-}
-
-var parent: Parent? = Parent()
-var child: Child? = Child()
-
-parent?.child = child
-child?.parent = parent
-
-parent = nil
-child = nil
+// Лучше (если parent живёт дольше)
+unowned var parent: Node
+// ...
+parent.doSomething()   // без проверок
 ```
 
-- Без weak циклы ссылок могут приводить к утечкам памяти
-    
+3. **Забыли `guard let` / `if let` → краш на [[force unwrap]]**
 
----
+```swift
+// Ошибка
+[weak self] in
+    self!.doSomething()   // краш, если self уже nil
 
-## 5. Особенности `weak`
+// Правильно
+[weak self] in
+    guard let self else { return }
+    self.doSomething()
+```
 
-1. **Optional** (`?`) — потому что объект может исчезнуть
-    
-2. **Не увеличивает счетчик ARC**, предотвращает retain cycle
-    
-3. Используется для:
-    
-    - Ссылок на делегатов
-        
-    - Ссылок между объектами с разной продолжительностью жизни
-        
-    - Замыканий
-        
-4. Безопасен: ссылка автоматически становится `nil`
-    
+### Лучшие практики `weak` в Swift 2026
 
----
+- **Используй `weak`** в 90% случаев, когда нужна слабая ссылка  
+- **Используй `[weak self]`** в замыканиях, если замыкание может жить дольше `self`  
+- **Всегда** пиши `guard let self else { return }` или `if let self = self` — это стандарт  
+- **Не используй** `weak` там, где объект **гарантированно** живёт дольше (лучше `unowned`)  
+- **В SwiftUI** — `weak` почти не нужен: `@ObservedObject`, `@StateObject`, `@EnvironmentObject` управляют этим автоматически  
+- **В Combine / async** — `weak self` + `guard let` — стандарт для подписок и задач  
+- **Документируй** — всегда пиши комментарий:
 
-## 6. Итог
+```swift
+weak var delegate: SomeDelegate? // weak, чтобы избежать retain cycle
+```
 
-- **weak** = слабая ссылка на объект, которая **может стать nil**
-    
-- Используется для:
-    
-    - Предотвращения retain cycle
-        
-    - Делегатов
-        
-    - Замыканий
-        
-- Отличие от `unowned`: **weak optional и безопасен**, `unowned` не optional и crash при освобождении
-    
-
----
+**Короткий итог 2026**:
+> `weak` — это **безопасная слабая ссылка**, которая становится `nil`, когда объект умирает.  
+> В 2026 году:  
+> - используется для предотвращения retain cycle  
+> - **обязательно optional** (`?`)  
+> - в замыканиях — `[weak self]` + `guard let self`  
+> - это **самый надёжный** и **самый часто используемый** способ слабой ссылки в Swift  

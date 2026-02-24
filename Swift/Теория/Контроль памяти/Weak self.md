@@ -193,7 +193,3 @@ downloader = nil // объект освободится благодаря weak 
         
 
 ---
-
-Если хочешь, я могу сделать **схему weak self**, где будет показано: объект → closure → [[Capture list]] `[weak self]` → Optional self → guard let → безопасная работа → предотвращение retain cycle.
-
-Хочешь, чтобы я это сделал?

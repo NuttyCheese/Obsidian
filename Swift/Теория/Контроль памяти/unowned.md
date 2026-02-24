@@ -1,200 +1,118 @@
-**`unowned`** — это модификатор ссылки на объект, который:
+**`unowned`** — это модификатор слабой ссылки в [[Swift]], который:
 
-- **Не увеличивает счетчик ссылок ([[ARC]])**
-    
-- Предполагает, что объект, на который ссылаются, **не будет освобождён** до того, как ссылка будет использоваться
-    
-- Если объект уже освобождён, попытка обращения к unowned-ссылке **приведет к крашу приложения**
-    
+- **не увеличивает** счётчик ссылок ([[ARC]])
+- **не является [[optional]]** (в отличие от [[weak]])
+- **предполагает**, что объект, на который ссылается, **живёт дольше**, чем владеющий им объект
+- **крашит приложение** при попытке разыменовать уже освобождённый объект
 
-> Проще говоря: `unowned` = «ссылка на объект, который точно будет жить столько же, сколько и эта ссылка».
+> Проще говоря:  
+> `unowned` = «я точно знаю, что этот объект будет жить дольше меня, поэтому не держу его сильно и не делаю optional»
 
----
+### Когда использовать `unowned` (реальные сценарии 2025–2026)
 
-## 2. Основные термины
+| Ситуация                                                                | Почему именно `unowned`, а не `weak`                                   | Пример из практики                                         |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Объект A владеет объектом B, а B имеет обратную ссылку на A             | A живёт дольше B → B может использовать `unowned` на A                 | `Customer` → `CreditCard` (Customer живёт дольше карты)    |
+| Замыкание захватывает [[self]], но `self` гарантированно живёт дольше   | Нет смысла делать `weak` и проверять `?`, если `self` не может умереть | `lazy var closure = { [unowned self] in ... }`             |
+| Делегирование в объекте, который создаётся владельцем и живёт не дольше | Владелец управляет жизненным циклом делегата                           | [[delegate]] в кастомном view, где делегат — владелец view |
+| Вложенные объекты с чёткой иерархией владения                           | Владелец → owned объект → unowned ссылка обратно                       | `Node` → `parent` (unowned) в дереве объектов              |
+| Оптимизация производительности в горячих участках кода                  | Нет optional-unwrapping → чуть быстрее и чище код                      | Анимации, игровые циклы, рендеринг                         |
 
-| Термин                                 | Описание                                                                      |
-| -------------------------------------- | ----------------------------------------------------------------------------- |
-| **ARC (Automatic Reference Counting)** | Автоматический подсчет ссылок на объекты в Swift                              |
-| **Strong Reference**                   | Сильная ссылка, увеличивает счетчик ARC                                       |
-| **Weak Reference ([[weak]])**          | Слабая ссылка, не увеличивает счетчик ARC и может стать [[nil]]               |
-| **Unowned Reference (`unowned`)**      | Слабая ссылка, не увеличивает счетчик ARC, **не optional**, не может быть nil |
-| **[[retain cycle]]**                  | Цикл сильных ссылок между объектами, приводящий к утечке памяти               |
-
----
-
-## 3. Основной синтаксис
+### Синтаксис и варианты (все актуальные в Swift 6)
 
 ```swift
-class Person {
-    var name: String
-    init(name: String) {
-        self.name = name
-    }
-}
-
+// 1. Простая unowned ссылка (самый частый)
 class Apartment {
-    var number: Int
-    unowned var tenant: Person  // unowned ссылка
-    init(number: Int, tenant: Person) {
-        self.number = number
-        self.tenant = tenant
-    }
-}
-```
-
-- `unowned var tenant: Person` — объект `Apartment` ссылается на `Person`, **не увеличивая счетчик ARC**
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейший unowned
-
-```swift
-class Owner {
-    let name: String
-    init(name: String) { self.name = name }
+    unowned let tenant: Person
+    init(tenant: Person) { self.tenant = tenant }
 }
 
-class Pet {
-    let name: String
-    unowned let owner: Owner
-    init(name: String, owner: Owner) {
-        self.name = name
-        self.owner = owner
+// 2. unowned в замыкании (самый популярный кейс)
+class MyViewController {
+    lazy var buttonAction: () -> Void = { [unowned self] in
+        self.updateUI()
     }
 }
 
-let owner = Owner(name: "Alice")
-let pet = Pet(name: "Fluffy", owner: owner)
-print(pet.owner.name) // Alice
-```
-
-- Ссылка `owner` не увеличивает счетчик ARC
-    
-
----
-
-### Пример 2. Unowned vs Weak
-
-```swift
-class A {
-    var b: B?
-}
-
-class B {
-    unowned var a: A  // Не optional, предполагается, что A существует
-    init(a: A) { self.a = a }
-}
-
-var objectA: A? = A()
-var objectB: B? = B(a: objectA!)
-objectA?.b = objectB
-
-objectA = nil
-// objectB?.a -> crash, потому что объект A уже освобождён
-```
-
-- `unowned` безопасно, если владеющий объект живёт дольше
-    
-
----
-
-### Пример 3. Замыкания с unowned
-
-```swift
-class ViewController {
-    var closure: (() -> Void)?
-
-    func setupClosure() {
-        closure = { [unowned self] in
-            print("ViewController is \(self)")
-        }
-    }
-}
-```
-
-- Используем `[unowned self]` чтобы избежать retain cycle в замыкании
-    
-
----
-
-### Пример 4. Unowned с [[Optional]] контекстом
-
-```swift
-class Customer {
-    let name: String
-    var card: CreditCard?
-    init(name: String) { self.name = name }
-}
-
-class CreditCard {
-    let number: UInt
-    unowned let customer: Customer
-    init(number: UInt, customer: Customer) {
-        self.number = number
-        self.customer = customer
-    }
-}
-
-let john = Customer(name: "John Appleseed")
-john.card = CreditCard(number: 1234_5678_9012_3456, customer: john)
-```
-
-- `CreditCard` ссылается на `Customer`, не создавая retain cycle
-    
-
----
-
-### Пример 5. Замыкание в сложной структуре
-
-```swift
+// 3. unowned var + implicit unwrapped (редко, но встречается)
 class Node {
-    var value: Int
-    var next: Node?
-    init(value: Int) { self.value = value }
-    lazy var printValue: () -> Void = { [unowned self] in
-        print("Node value is \(self.value)")
-    }
+    unowned var parent: Node?
 }
 
-let node = Node(value: 10)
-node.printValue() // Node value is 10
+// 4. unowned в параметре функции (очень редко)
+func configure(delegate: unowned SomeDelegate) { ... }
 ```
 
-- Замыкание с `[unowned self]` безопасно, если Node живёт дольше замыкания
-    
+### Сравнение `weak`, `unowned`, `unowned(unsafe)`
 
----
+| Модификатор             | Optional? | ARC?   | Что происходит при обращении к освобождённому объекту? | Когда использовать в 2026 |
+|-------------------------|-----------|--------|----------------------------------------------------------|----------------------------|
+| `weak`                  | Да        | Нет    | Ссылка становится `nil`                                  | Когда объект может умереть раньше |
+| `unowned`               | Нет       | Нет    | **Краш** (EXC_BAD_ACCESS)                                | Когда объект гарантированно живёт дольше |
+| `unowned(unsafe)`       | Нет       | Нет    | **Неопределённое поведение** (может не крашнуться сразу) | Только в очень редких low-level случаях (почти никогда) |
 
-## 5. Особенности `unowned`
+**Правило 2026**:  
+`unowned(unsafe)` — **никогда не используй**, если нет очень веских причин (например, взаимодействие с C-API).  
+В 99,9% случаев достаточно обычного `unowned`.
 
-1. **Не optional**, всегда предполагается, что объект существует
-    
-2. **Не увеличивает счетчик ARC**, предотвращает retain cycle
-    
-3. Используется для **объектов с более долгим временем жизни**, чем текущий объект
-    
-4. Ошибки при доступе к уже освобождённому объекту приводят к **crash**
-    
-5. Отличие от `weak`: `weak` optional, может стать nil; `unowned` не optional, crash если объект освобождён
-    
+### Самые популярные ошибки с `unowned` (и как их избежать)
 
----
+1. **Захват `self` в замыкании, которое живёт дольше `self`**
 
-## 6. Итог
+```swift
+// Ошибка — retain cycle или краш
+button.onTap = { [unowned self] in
+    // если button живёт дольше self → краш при разыменовании
+}
 
-- **unowned** = слабая ссылка без увеличения ARC, предполагает, что объект живёт дольше
-    
-- Используется для:
-    
-    - Связей между объектами с разной продолжительностью жизни
-        
-    - Замыканий для предотвращения retain cycle
-        
-- Отличие от `weak`: **не optional, не может быть nil**, crash при освобождении объекта
-    
+// Правильно — weak
+button.onTap = { [weak self] in
+    guard let self else { return }
+    self.doSomething()
+}
+```
 
----
+2. **unowned на объект, который может быть освобождён раньше**
+
+```swift
+class Parent {
+    let child: Child
+    init() { child = Child(parent: self) }
+}
+
+class Child {
+    unowned let parent: Parent // ← Ошибка: если Parent освободится раньше — краш
+}
+```
+
+Правильно — `weak` или пересмотреть владение.
+
+3. **Использование `unowned` вместо `weak` только «чтобы не писать ?»**
+
+```swift
+// Плохо
+unowned let delegate: SomeDelegate
+
+// Хорошо
+weak var delegate: SomeDelegate?
+```
+
+### Лучшие практики `unowned` в Swift 2026
+
+- **Используй `unowned`** только если **на 100% уверен**, что объект-владелец живёт дольше  
+- **В замыканиях** — `unowned self` только если замыкание живёт **не дольше** `self` (часто [[lazy]] [[var]])  
+- **Предпочитай `weak`** в большинстве случаев — это безопаснее  
+- **Никогда не используй `unowned(unsafe)`** в обычном коде  
+- **В [[SwiftUI]]** — `unowned` почти не нужен (всё управляется через `@State`, `@ObservedObject`, `@EnvironmentObject`)  
+- **В Combine / async** — `unowned` можно использовать в замыканиях, но чаще `weak` + `guard let`  
+- **Документируй** — всегда пиши комментарий:
+
+```swift
+unowned let parent: Node // parent живёт дольше этого узла
+```
+
+**Короткий итог 2026**:
+> `unowned` — это **не-optional слабая ссылка**, которая **не держит** объект сильно и **крашит приложение**, если объект уже умер.  
+> Используй `unowned` только когда **точно знаешь**, что объект-владелец живёт дольше.  
+> В 99% случаев безопаснее `weak`.  
+> Самый популярный кейс — `[unowned self]` в замыканиях и обратные ссылки в иерархиях владения.

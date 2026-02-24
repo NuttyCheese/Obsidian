@@ -62,13 +62,13 @@ flowchart TD
 
 Message Dispatch работает **только** в следующих случаях:
 
-| Условие                                      | Диспетчеризация       | Пример |
-|----------------------------------------------|------------------------|--------|
-| Класс наследуется от `NSObject`              | Message (objc_msgSend) | `class MyView: UIView` |
-| Метод помечен `@objc` или `dynamic`          | Message                | `@objc func didTap()` |
-| Протокол помечен `@objc`                     | Message                | `@objc protocol Delegate` |
-| Метод `override` в подклассе NSObject-класса | Message                | `override func viewDidLoad()` |
-| Нет `@objc` и не наследуется от NSObject     | Table Dispatch (witness/vtable) | `protocol SoundMaker` |
+| Условие                                        | Диспетчеризация                 | Пример                        |
+| ---------------------------------------------- | ------------------------------- | ----------------------------- |
+| Класс наследуется от `NSObject`                | Message (objc_msgSend)          | `class MyView: UIView`        |
+| Метод помечен `@objc` или `dynamic`            | Message                         | `@objc func didTap()`         |
+| Протокол помечен `@objc`                       | Message                         | `@objc protocol Delegate`     |
+| Метод [[override]] в подклассе NSObject-класса | Message                         | `override func viewDidLoad()` |
+| Нет `@objc` и не наследуется от NSObject       | Table Dispatch (witness/vtable) | `protocol SoundMaker`         |
 
 ### 4. Полные примеры кода
 
@@ -154,7 +154,7 @@ proxy.makeSound?()  // Woof! (сообщение перенаправлено Do
   - Method swizzling
   - Доступ из Objective-C
 - В новом коде предпочитайте **Table Dispatch** (`override func` без `@objc`)
-- Для максимальной производительности — **final**, **static**, **private**, **some**
+- Для максимальной производительности — **[[final]]**, **[[static]]**, **[[private]]**, **[[some]]**
 - Избегайте `@objc dynamic` в горячих путях (UI-обновления, рендеринг, циклы)
 - В [[SwiftUI]] — `some View`, `some ViewModel` — статическая диспетчеризация
 - В Swift 6 strict concurrency — минимизируйте `any` и `@objc` — они усложняют проверку потокобезопасности
