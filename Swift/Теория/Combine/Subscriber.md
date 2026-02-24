@@ -1,4 +1,4 @@
-**Subscriber** — это **получатель** событий от **Publisher** в Combine.
+**Subscriber** — это **получатель** событий от **[[Publisher]]** в [[Combine]].
 
 Он определяет, **что делать**, когда приходят:
 - новые значения (receiveValue)
@@ -42,17 +42,17 @@ publisher
 ### Топ-10 самых частых сценариев использования sink в 2026
 
 1. Обновление UI из `@Published` свойства ViewModel  
-2. Обработка сетевого ответа (`URLSession.dataTaskPublisher`)  
-3. Реакция на пользовательский ввод (UITextField.textPublisher)  
+2. Обработка сетевого ответа ([[URLSession]]`.dataTaskPublisher`)  
+3. Реакция на пользовательский ввод ([[UITextField]].textPublisher)  
 4. Обработка кастомных событий (PassthroughSubject.send)  
 5. Отслеживание состояния загрузки / ошибки  
 6. Валидация формы в реальном времени  
-7. Подписка на уведомления NotificationCenter  
-8. Реакция на изменения в Core Data / Realm / GRDB  
-9. Обработка результатов асинхронных операций (Future, async/await → Future)  
+7. Подписка на уведомления [[NotificationCenter]]  
+8. Реакция на изменения в [[Core Data]] / [[Realm]] / GRDB  
+9. Обработка результатов асинхронных операций (Future, [[async]]/[[await]] → Future)  
 10. Логирование / аналитика событий
 
-### Полный реальный пример (UIKit + MVVM + sink)
+### Полный реальный пример ([[UIKit]] + [[MVVM (Model-View-ViewModel) Architecture|MVVM]] + [[sink]])
 
 ```swift
 class ProfileViewModel: ObservableObject {
@@ -166,5 +166,3 @@ viewModel.$userName
 > - всегда сохраняйте подписку в `Set<AnyCancellable>`  
 > - для UI — `.receive(on: .main)` + `[weak self]`  
 > - это **самый понятный** и **самый часто используемый** способ получить данные из Combine  
-
-Удачи с чистыми и надёжными подписками в твоём проекте! 📡

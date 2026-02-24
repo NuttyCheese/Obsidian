@@ -1,4 +1,4 @@
-**Publisher / Subscriber** — это фундаментальный паттерн реактивного программирования, лежащий в основе фреймворка **Combine** (и многих других библиотек, таких как RxSwift, ReactiveSwift и т.д.).
+**Publisher / Subscriber** — это фундаментальный паттерн реактивного программирования, лежащий в основе фреймворка **Combine** (и многих других библиотек, таких как [[RxSwift]], ReactiveSwift и т.д.).
 
 В Combine этот паттерн реализован следующим образом:
 
@@ -46,7 +46,7 @@ publisher
     .store(in: &cancellables)
 ```
 
-#### 2. Подписка на `@Published` в ViewModel (MVVM + UIKit)
+#### 2. Подписка на `@Published` в ViewModel ([[MVVM (Model-View-ViewModel) Architecture|MVVM]] + [[UIKit]])
 
 ```swift
 class ProfileViewModel: ObservableObject {
@@ -73,7 +73,7 @@ class ProfileViewController: UIViewController {
 }
 ```
 
-#### 3. Сетевой запрос через `URLSession.dataTaskPublisher`
+#### 3. Сетевой запрос через [[URLSession]]`.dataTaskPublisher`
 
 ```swift
 struct User: Codable {
@@ -154,5 +154,3 @@ $searchText
 > - `Just` — для фиксированных значений  
 > - `NotificationCenter.publisher` — для UIKit-уведомлений  
 > Подписывайся через `.sink`, `.assign`, храни в `Set<AnyCancellable>`
-
-Удачи с мощными и предсказуемыми потоками данных в твоём проекте! 🔄

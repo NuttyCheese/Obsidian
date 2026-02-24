@@ -1,4 +1,4 @@
-**`sink`** — это самый простой и часто используемый способ **подписаться** на **Publisher** в Combine.  
+**`sink`** — это самый простой и часто используемый способ **подписаться** на **[[Publisher]]** в Combine.  
 
 Он позволяет указать, что делать, когда придёт:
 
@@ -33,7 +33,7 @@ publisher.sink(
 
 ### Самые популярные и рекомендуемые паттерны использования sink (2026)
 
-#### 1. Подписка на @Published в ViewModel (MVVM + UIKit)
+#### 1. Подписка на @Published в ViewModel ([[MVVM (Model-View-ViewModel) Architecture|MVVM]] + [[UIKit]])
 
 ```swift
 class ProfileViewModel: ObservableObject {
@@ -70,7 +70,7 @@ class ProfileViewController: UIViewController {
 }
 ```
 
-#### 2. Обработка сетевого запроса (URLSession + sink)
+#### 2. Обработка сетевого запроса ([[URLSession]] + sink)
 
 ```swift
 URLSession.shared.dataTaskPublisher(for: url)
@@ -160,5 +160,3 @@ viewModel.$name
 > - всегда сохраняйте подписку в `Set<AnyCancellable>`  
 > - для UI — `.receive(on: .main)` + `[weak self]`  
 > - это **самый частый** и **самый понятный** способ получать данные из Combine-потока  
-
-Удачи с чистыми и безопасными подписками в твоём проекте! 📡

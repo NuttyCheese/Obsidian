@@ -95,7 +95,7 @@ po self
 
 - stored properties
     
-- lazy properties
+- [[lazy]] properties
     
 - computed (если уже вычислены)
     

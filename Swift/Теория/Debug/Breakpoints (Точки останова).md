@@ -177,7 +177,7 @@ view == nil
 
 ---
 
-## 🧩 1. Отладка UITableView
+## 🧩 1. Отладка [[UITableView]]
 
 Проблема: ячейки отображаются некорректно.
 
@@ -198,7 +198,7 @@ po model[indexPath.row]
 
 ## 🧩 2. Проверка передачи данных между экранами
 
-В `viewDidLoad` второго VC:
+В [[viewDidLoad]] второго VC:
 
 ```
 po model
@@ -313,9 +313,9 @@ po model
 
 Работает для:
 
-- [[UIViewController]] lifecycle
+- [[UIViewController]] [[Жизненный цикл ViewController-a|lifecycle]]
     
-- delegate методов
+- [[delegate]] методов
     
 - сетевых ответов
     
