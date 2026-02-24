@@ -7,23 +7,25 @@
 
 ```mermaid
 gitGraph
-   commit id: "C1 (main)"
-   commit id: "C2 (main)"
+   commit id: "C1 (main)" type: NORMAL
+   commit id: "C2 (main)" type: NORMAL
    branch feature
    checkout feature
-   commit id: "F1"
-   commit id: "F2"
+   commit id: "F1" type: NORMAL
+   commit id: "F2" type: NORMAL
    checkout main
-   commit id: "C3 (main)"
+   commit id: "C3 (main)" type: NORMAL
    
-   %% merge
-   merge feature id: "Merge commit M" type: REVERSE
-   commit id: "После merge" tag: "merge результат"
+   merge feature id: "Merge commit M" type: HIGHLIGHT
+   commit id: "После merge" type: NORMAL
    
-   %% rebase (альтернативная история)
    checkout feature
-   rebase main id: "Rebased F1' и F2'"
-   commit id: "После rebase" tag: "rebase результат"
+   commit id: "F3" type: REVERSE
+   commit id: "F4" type: REVERSE
+   
+   checkout main
+   merge feature id: "Rebase commit" type: HIGHLIGHT
+   commit id: "После rebase" type: NORMAL
 ```
 
 **После merge** история выглядит так (нелинейно):
