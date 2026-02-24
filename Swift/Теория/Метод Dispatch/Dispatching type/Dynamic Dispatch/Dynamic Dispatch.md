@@ -124,14 +124,14 @@ animal.makeSound()  // objc_msgSend → динамика
 
 ### 5. Таблица: как Swift выбирает диспетчеризацию
 
-| Конструкция                          | Тип диспетчеризации | Почему |
-|-------------------------------------|----------------------|--------|
-| `final func` / `static func`        | Direct               | Нельзя переопределить |
-| Обычный метод класса                | Table (vtable)       | Поддержка override |
-| Метод протокола (без @objc)         | Table (witness table)| Witness table для каждого conforming типа |
-| `@objc` / `dynamic` метод           | Message (objc_msgSend) | Поддержка Objective-C runtime |
-| `some Protocol`                     | Direct / Table       | Конкретный тип известен компилятору |
-| `any Protocol`                      | Table / Message      | Экзистенциал — динамика |
+| Конструкция                  | Тип диспетчеризации    | Почему                                    |
+| ---------------------------- | ---------------------- | ----------------------------------------- |
+| `final func` / `static func` | Direct                 | Нельзя переопределить                     |
+| Обычный метод класса         | Table (vtable)         | Поддержка override                        |
+| Метод протокола (без @objc)  | Table (witness table)  | Witness table для каждого conforming типа |
+| `@objc` / `dynamic` метод    | Message (objc_msgSend) | Поддержка Objective-C runtime             |
+| [[some Protocol]]            | Direct / Table         | Конкретный тип известен компилятору       |
+| [[any Protocol]]             | Table / Message        | Экзистенциал — динамика                   |
 
 ### 6. Производительность (примерные цифры 2026)
 

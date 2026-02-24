@@ -1,17 +1,17 @@
-**`UIViewRepresentable`** — это протокол в **SwiftUI**, который позволяет **встраивать любой UIKit-компонент** (UIView или [[UIViewController]]) в SwiftUI-иерархию.
+**`UIViewRepresentable`** — это протокол в **SwiftUI**, который позволяет **встраивать любой UIKit-компонент** ([[UIView]] или [[UIViewController]]) в SwiftUI-иерархию.
 
-Это **единственный официальный и рекомендуемый** мост между UIKit и SwiftUI.
+Это **единственный официальный и рекомендуемый** мост между [[UIKit]] и [[SwiftUI]].
 
 ### Когда и зачем нужен UIViewRepresentable
 
-| Ситуация                                      | Почему нужен именно UIViewRepresentable                  | Альтернатива (когда можно обойтись без него) |
-|-----------------------------------------------|----------------------------------------------------------|----------------------------------------------|
-| Использование `MKMapView`, `WKWebView`        | Нет нативного аналога в SwiftUI (Map в SwiftUI — упрощённый) | `Map` (только базовые функции)               |
-| `UITextView`, `UITextField` с кастомным поведением | `TextEditor` / `TextField` ограничены                    | —                                            |
-| `UIImagePickerController`, `MFMailComposeViewController` | Нет нативных аналогов                                    | —                                            |
-| Кастомный `UIView` / `UIViewController` из старого проекта | Нужно перенести UIKit-код в SwiftUI без переписывания    | —                                            |
-| `SCNView` (SceneKit), `ARSCNView` (ARKit)     | Полный контроль над 3D/AR-сценой                         | —                                            |
-| Любые сложные UIKit-компоненты (AVPlayerViewController, PDFView и т.д.) | SwiftUI пока не покрывает всё                            | —                                            |
+| Ситуация                                                                    | Почему нужен именно UIViewRepresentable                      | Альтернатива (когда можно обойтись без него) |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------- |
+| Использование `MKMapView`, `WKWebView`                                      | Нет нативного аналога в SwiftUI (Map в SwiftUI — упрощённый) | `Map` (только базовые функции)               |
+| [[UITextView]], [[UITextField]] с кастомным поведением                      | `TextEditor` / `TextField` ограничены                        | —                                            |
+| [[UIImagePickerController]], [[MFMailComposeViewController]]                | Нет нативных аналогов                                        | —                                            |
+| Кастомный `UIView` / `UIViewController` из старого проекта                  | Нужно перенести UIKit-код в SwiftUI без переписывания        | —                                            |
+| `SCNView` ([[SceneKit]]), `ARSCNView` (ARKit)                               | Полный контроль над 3D/AR-сценой                             | —                                            |
+| Любые сложные UIKit-компоненты ([[AVPlayerViewController]], PDFView и т.д.) | SwiftUI пока не покрывает всё                                | —                                            |
 
 ### Обязательные требования протокола UIViewRepresentable
 
@@ -27,11 +27,11 @@ protocol UIViewRepresentable : View {
 Опционально:
 - `makeCoordinator() -> Coordinator` — если нужен делегат / состояние
 - `dismantleUIView(_:context:)` — очистка при удалении (редко)
-- `sizeThatFits(...)` — кастомный размер (iOS 16+)
+- `sizeThatFits(...)` — кастомный размер ([[iOS]] 16+)
 
 ### Самый популярный и рекомендуемый паттерн (2026 стандарт)
 
-#### Пример: MKMapView в SwiftUI
+#### Пример: [[MKMapView]] в SwiftUI
 
 ```swift
 import SwiftUI
@@ -111,7 +111,7 @@ struct ContentView: View {
 
 ### Лучшие практики UIViewRepresentable в Swift 2026
 
-- **Всегда** реализуйте `Coordinator`, если нужен делегат (MKMapViewDelegate, WKNavigationDelegate и т.д.)  
+- **Всегда** реализуйте [[Coordinator]], если нужен делегат ([[MKMapViewDelegate]], [[WKNavigationDelegate]] и т.д.)  
 - **В `makeUIView`** — создавайте и настраивайте UIView один раз  
 - **В `updateUIView`** — обновляйте состояние (регион, аннотации, контент, цвета и т.д.)  
 - **Используйте** `@Binding` для двусторонней синхронизации (регион, выбранная аннотация)  
@@ -127,5 +127,3 @@ struct ContentView: View {
 > - ключевые методы — `makeUIView`, `updateUIView`, `makeCoordinator`  
 > - состояние передаётся через `@Binding` и `Coordinator`  
 > - это **единственный** способ использовать мощные UIKit-компоненты в чистом SwiftUI-приложении  
-
-Удачи с идеальной интеграцией UIKit-компонентов в SwiftUI! 🖼️↔️
