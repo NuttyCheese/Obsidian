@@ -22,18 +22,18 @@
 
 ```mermaid
 graph TD
-    subgraph Input [Входные данные]
+    subgraph Input[Входные данные]
         A[Текстовый адрес]
         B[Координаты CLLocation]
     end
 
-    subgraph CLGeocoder [CLGeocoder]
-        C[Прямое геокодирование]
-        D[Обратное геокодирование]
+    subgraph Geocoder[CLGeocoder]
+        C[Прямое геокодирование<br/>geocodeAddressString]
+        D[Обратное геокодирование<br/>reverseGeocodeLocation]
     end
 
-    subgraph Output [Результат]
-        E[placemarks: [CLPlacemark]]
+    subgraph Output[Результат]
+        E["placemarks: [CLPlacemark]"]
         F[Координаты + структурированный адрес]
     end
 
@@ -43,7 +43,7 @@ graph TD
     D --> E
     E --> F
     
-    style CLGeocoder fill:#ccf,stroke:#333,stroke-width:2px
+    style Geocoder fill:#ccf,stroke:#333,stroke-width:2px
     style Output fill:#cfc,stroke:#333
 ```
 
