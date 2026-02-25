@@ -1,4 +1,4 @@
-**UIViewControllerTransitioningDelegate** — это протокол в UIKit, который позволяет **полностью кастомизировать** анимацию перехода между двумя контроллерами представления (present / dismiss).
+**UIViewControllerTransitioningDelegate** — это протокол в [[UIKit]], который позволяет **полностью кастомизировать** анимацию перехода между двумя контроллерами представления (present / dismiss).
 
 Он отвечает за:
 
@@ -6,18 +6,18 @@
 - предоставление **интерактивного аниматора** (interaction controller) — для управления переходом жестами (swipe to dismiss, drag to close и т.д.)  
 - определение **стилей презентации** (presentation style) — fullScreen, overCurrentContext, custom и т.д.
 
-Это основной инструмент для создания **нестандартных модальных переходов** в iOS-приложениях.
+Это основной инструмент для создания **нестандартных модальных переходов** в [[iOS]]-приложениях.
 
 ### Когда использовать UIViewControllerTransitioningDelegate (актуально 2026)
 
-| Сценарий                                      | Почему именно transitioning delegate                                 | Альтернатива |
-|-----------------------------------------------|-----------------------------------------------------------------------|--------------|
-| Кастомная анимация модального экрана          | Стандартный crossDissolve / coverVertical выглядит скучно             | — |
-| Bottom sheet / half-modal / card-style        | Нужен контроллер с кастомным размером и анимацией снизу              | UISheetPresentationController (iOS 15+) |
-| Full-screen анимация с зумом / slide / fade   | Хотите сложную анимацию (scale, rotate, interactive)                  | — |
-| Интерактивный dismiss (swipe down to close)   | Пользователь может тянуть контроллер вниз пальцем                     | UIViewControllerInteractiveTransitioning |
-| Переход с gesture-driven анимацией            | Drag-to-dismiss, pan-to-present                                       | UIPercentDrivenInteractiveTransition |
-| Кастомный presentation style                  | overCurrentContext, custom, popover и т.д. с собственной анимацией    | — |
+| Сценарий                                    | Почему именно transitioning delegate                               | Альтернатива                                 |
+| ------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------- |
+| Кастомная анимация модального экрана        | Стандартный crossDissolve / coverVertical выглядит скучно          | —                                            |
+| Bottom sheet / half-modal / card-style      | Нужен контроллер с кастомным размером и анимацией снизу            | [[UISheetPresentationController]] (iOS 15+)  |
+| Full-screen анимация с зумом / slide / fade | Хотите сложную анимацию (scale, rotate, interactive)               | —                                            |
+| Интерактивный dismiss (swipe down to close) | Пользователь может тянуть контроллер вниз пальцем                  | [[UIViewControllerInteractiveTransitioning]] |
+| Переход с gesture-driven анимацией          | Drag-to-dismiss, pan-to-present                                    | [[UIPercentDrivenInteractiveTransition]]     |
+| Кастомный presentation style                | overCurrentContext, custom, popover и т.д. с собственной анимацией | —                                            |
 
 ### Основные методы протокола (самые важные)
 
@@ -164,7 +164,7 @@ present(bottomSheet, animated: true)
 ### Лучшие практики UIViewControllerTransitioningDelegate в 2026
 
 - **Всегда** реализуйте оба аниматора: для present и dismiss  
-- **Для интерактивного dismiss** — используйте `UIPercentDrivenInteractiveTransition` или кастомный  
+- **Для интерактивного dismiss** — используйте [[UIPercentDrivenInteractiveTransition]] или кастомный  
 - **Для bottom sheet** — часто используют `.pageSheet` + `UISheetPresentationController` (iOS 15+), но для полной кастомизации — transitioning delegate  
 - **Для производительности** — держите анимацию простой (spring, easeInOut), избегайте тяжёлых view в transition  
 - **Для SwiftUI** — используйте `.transition`, `.matchedGeometryEffect`, `.presentationDetents` — transitioning delegate нужен только в UIKit или смешанных проектах  
@@ -182,5 +182,3 @@ class CustomTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate 
 > - идеален для bottom sheet, card-style, zoom, interactive swipe  
 > - часто комбинируется с `UIPercentDrivenInteractiveTransition`  
 > - это **единственный** способ сделать действительно кастомную анимацию модального экрана в UIKit  
-
-Удачи с плавными, современными и интерактивными переходами в твоём приложении! 🎭
