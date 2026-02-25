@@ -1,8 +1,8 @@
 **UITargetedPreview** — это класс в [[UIKit]] (доступен с **iOS 13**, 2019), который используется для создания **предпросмотра** (preview) при взаимодействии с элементами интерфейса, особенно в следующих сценариях:
 
-- контекстное меню (UIEditMenuInteraction)
-- drag & drop (`UIDragInteraction`, `UIDropInteraction`)
-- peek & pop / force touch (устаревший 3D Touch, но API остался)
+- контекстное меню ([[UIEditMenuInteraction]])
+- drag & drop ([[UIDragInteraction]], [[UIDropInteraction]])
+- peek & pop / force touch (устаревший 3D Touch, но [[API]] остался)
 - кастомные preview при долгом нажатии
 
 Он позволяет указать:
@@ -16,13 +16,13 @@
 
 ### Основные свойства UITargetedPreview
 
-| Свойство                          | Тип / Значение по умолчанию                          | Что задаёт / зачем нужно                                      | Самый частый сценарий |
-|-----------------------------------|-------------------------------------------------------|---------------------------------------------------------------|-----------------------|
-| `view`                            | `UIView`                                              | Представление, которое будет показано в предпросмотре         | Основной элемент предпросмотра |
-| `parameters`                      | `UIPreviewParameters`                                 | Стилизация: тень, размытие, клиппинг, трансформация           | Настройка внешнего вида |
-| `target`                          | `UIPreviewTarget`                                     | Положение и якорь предпросмотра на экране                     | Точное позиционирование |
-| `size` (в target)                 | `CGSize`                                              | Размер предпросмотра                                          | Уменьшение/увеличение |
-| `center` (в target)               | `CGPoint`                                             | Центр предпросмотра относительно контейнера                   | Выравнивание по точке касания |
+| Свойство            | Тип / Значение по умолчанию | Что задаёт / зачем нужно                              | Самый частый сценарий          |
+| ------------------- | --------------------------- | ----------------------------------------------------- | ------------------------------ |
+| `view`              | [[UIView]]                  | Представление, которое будет показано в предпросмотре | Основной элемент предпросмотра |
+| `parameters`        | [[UIPreviewParameters]]     | Стилизация: тень, размытие, клиппинг, трансформация   | Настройка внешнего вида        |
+| `target`            | [[UIPreviewTarget]]         | Положение и якорь предпросмотра на экране             | Точное позиционирование        |
+| `size` (в target)   | [[CGSize]]                  | Размер предпросмотра                                  | Уменьшение/увеличение          |
+| `center` (в target) | [[CGPoint]]                 | Центр предпросмотра относительно контейнера           | Выравнивание по точке касания  |
 
 ### Самый популярный паттерн 2026 года  
 (Предпросмотр при долгом нажатии в UIEditMenuInteraction)
@@ -102,7 +102,7 @@ func dragInteraction(_ interaction: UIDragInteraction, previewForCancelling item
 }
 ```
 
-2. **Кастомный контекстный жест** (UILongPressGestureRecognizer)
+2. **Кастомный контекстный жест** ([[UILongPressGestureRecognizer]])
 
 ```swift
 @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
@@ -121,7 +121,7 @@ func dragInteraction(_ interaction: UIDragInteraction, previewForCancelling item
 - **Всегда** указывайте `view` — это то, что будет показано в предпросмотре  
 - **Используйте** `UIPreviewParameters` для теней, размытия, трансформации, маски  
 - **Для точного позиционирования** — применяйте `UIPreviewTarget` с `center` в точке касания  
-- **Для SwiftUI** — используйте `.contextMenu(preferredPreview:)` или `.onLongPressGesture` с `preview` — `UITargetedPreview` нужен только в UIKit  
+- **Для [[SwiftUI]]** — используйте `.contextMenu(preferredPreview:)` или `.onLongPressGesture` с `preview` — `UITargetedPreview` нужен только в UIKit  
 - **Для производительности** — не используйте сложные view с анимациями в предпросмотре  
 - **Для доступности** — предпросмотр должен поддерживать VoiceOver (accessibility)  
 - **Документируйте** — пишите комментарий:
@@ -141,5 +141,3 @@ func editMenuInteraction(_ interaction: UIEditMenuInteraction, previewForMenuAt 
 > - используется для контекстных меню, drag preview, кастомных жестов  
 > - в SwiftUI — эквивалент `.contextMenu` с `preview`  
 > - это **must-have** для современного, отзывчивого и красивого UX в UIKit  
-
-Удачи с интуитивными и визуально приятными предпросмотрами в твоём приложении! 👀
