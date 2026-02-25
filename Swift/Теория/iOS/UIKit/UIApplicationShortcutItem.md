@@ -81,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 ```
 
-#### 3. Обработка нажатия (в SceneDelegate или AppDelegate)
+#### 3. Обработка нажатия (в [[SceneDelegate]] или [[AppDelegate]])
 
 ```swift
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -122,7 +122,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 - **Тип** — всегда в формате `com.company.app.action` (reverse-DNS)  
 - **Иконки** — предпочитайте системные (`UIApplicationShortcutIconType`) — они выглядят нативно  
 - **Количество** — не больше 4–5 (Apple рекомендует не перегружать меню)  
-- **Для SwiftUI** — используйте `.onContinueUserActivity` в сцене — UIApplicationShortcutItem нужен только в UIKit  
+- **Для [[SwiftUI]]** — используйте `.onContinueUserActivity` в сцене — UIApplicationShortcutItem нужен только в UIKit  
 - **Документируйте** — пишите комментарий:
 
 ```swift
@@ -145,5 +145,3 @@ private func setupDynamicShortcuts() {
 > - обработка — в `windowScene(_:performActionFor:completionHandler:)`  
 > - идеален для "Новая заметка", "Поиск", "Сканировать QR", "Продолжить просмотр"  
 > - это **мощный** инструмент для улучшения UX и повышения вовлечённости  
-
-Удачи с удобными и быстрыми действиями прямо с домашнего экрана в твоём приложении! 🚀
