@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Testing/XCTestExpectation.md",
+                "file": "Swift/Теория/iOS/Swift/some Protocol.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "XCTestExpectation"
+              "title": "some Protocol"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "Identifiable",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -74,7 +74,8 @@
               "title": "Закладки"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -194,8 +195,17 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e407b43c27bfa155",
+  "active": "b92e76ba315ac85a",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/Без названия.md",
+    "Swift/Теория/iOS/Swift/some Protocol.md",
+    "Swift/Теория/iOS/Swift/any Protocol.md",
+    "Swift/Теория/Testing/XCTKVOExpectation.md",
+    "Swift/Теория/Testing/XCTNSNotificationExpectation.md",
+    "Swift/Теория/Testing/XCTestExpectation.md",
+    "Swift/Теория/Testing/XCUITest.md",
+    "Swift/Теория/Testing/XCTWaiter.md",
+    "Swift/Теория/Testing/XCTNSPredicateExpectation.md",
     "Swift/Теория/Testing/XCTest.md",
     "Swift/Теория/Testing/Unit-test.md",
     "Swift/Теория/Testing/UI-test.md",
@@ -213,15 +223,6 @@
     "Swift/Теория/iOS/UserNotifications.md",
     "Swift/Теория/iOS/UNUserNotificationCenterDelegate.md",
     "Swift/Теория/iOS/UNUserNotificationCenter.md",
-    "Swift/Теория/iOS/UIViewRepresentable.md",
-    "Swift/Теория/iOS/UISearchResultsUpdating.md",
-    "Swift/Теория/iOS/UISearchControllerDelegate.md",
-    "Swift/Теория/iOS/UISearchController.md",
-    "Swift/Теория/iOS/UIScrollViewDelegate.md",
-    "Swift/Теория/iOS/UIImagePickerControllerDelegate.md",
-    "Swift/Теория/iOS/UIFont.md",
-    "Swift/Теория/iOS/TimeZone.md",
-    "Swift/Теория/iOS/Storyboard.md",
     "Swift/Теория/iOS/LocalAuthentication",
     "Swift/Теория/iOS/AVFoundation",
     "Swift/Теория/Ошибки и варнинги/UI и Auto Layout",
