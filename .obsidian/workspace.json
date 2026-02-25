@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/SceneKit/SceneKit.md",
+                "file": "Swift/Теория/iOS/SwiftUI/UIViewControllerRepresentable.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SceneKit"
+              "title": "UIViewControllerRepresentable"
             }
           }
         ]
@@ -196,6 +196,21 @@
   },
   "active": "9df3efb6dc106b4b",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
+    "Swift/Теория/iOS/SceneKit/SceneKit.md",
+    "SCNScene.md",
+    "SCNView.md",
+    "SCNNode.md",
+    "SCNGeometry.md",
+    "SCNMaterial.md",
+    "SCNCamera.md",
+    "SCNLight.md",
+    "SCNAction.md",
+    "SCNAnimationPlayer.md",
+    "SCNPhysicsWorld.md",
+    "SCNPhysicsBody.md",
+    "SCNParticleSystem.md",
+    "ARSCNView.md",
     "Swift/Теория/iOS/MapKit/MKRoute.md",
     "Swift/Теория/iOS/MapKit/MKPolylineRenderer.md",
     "Swift/Теория/iOS/MapKit/MKPolyline.md",
@@ -207,21 +222,6 @@
     "Swift/Теория/iOS/MapKit/MKPointAnnotation.md",
     "Swift/Теория/iOS/MapKit/MKOverlayRenderer.md",
     "Swift/Теория/iOS/MapKit/MKOverlay.md",
-    "Swift/Теория/iOS/MapKit/MKMarkerAnnotationView.md",
-    "Swift/Теория/iOS/MapKit/MKMapViewDelegate.md",
-    "Swift/Теория/iOS/MapKit/MKMapView.md",
-    "Swift/Теория/iOS/MapKit/MKMapRect.md",
-    "Swift/Теория/iOS/MapKit/MKMapPoint.md",
-    "Swift/Теория/iOS/MapKit/MKMapItem.md",
-    "Swift/Теория/iOS/MapKit/MKMapCameraZoomRange.md",
-    "Swift/Теория/iOS/MapKit/MKMapCamera.md",
-    "Swift/Теория/iOS/MapKit/MKLocalSearchRequest.md",
-    "Swift/Теория/iOS/MapKit/MKLocalSearch.md",
-    "Swift/Теория/iOS/MapKit/MKDirectionsTransportType.md",
-    "Swift/Теория/iOS/MapKit/MKDirections.md",
-    "Swift/Теория/iOS/MapKit/MKCoordinateSpan.md",
-    "Swift/Теория/iOS/MapKit/MKCoordinateRegion.md",
-    "Swift/Теория/iOS/MapKit/MKClusterAnnotation.md",
     "Swift/Теория/iOS/LocalAuthentication",
     "Swift/Теория/iOS/AVFoundation",
     "Swift/Теория/Ошибки и варнинги/UI и Auto Layout",
