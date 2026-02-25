@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/MapKit/MKPolygonView.md",
+                "file": "UIImagePNGRepresentation.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "MKPolygonView"
+              "title": "UIImagePNGRepresentation"
             }
           }
         ]
@@ -194,17 +194,20 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e407b43c27bfa155",
+  "active": "9df3efb6dc106b4b",
   "lastOpenFiles": [
-    "UIDocumentPicker.md",
-    "UIImageJPEGRepresentation.md",
+    "UIDocumentPickerDelegate.md",
+    "UIImagePNGRepresentation.md",
+    "Swift/Теория/iOS/UIKit/UIImageJPEGRepresentation.md",
+    "Swift/Теория/iOS/UIKit/UIDocumentPicker.md",
+    "Swift/Теория/iOS/SceneKit/ARSCNView.md",
+    "Swift/Теория/iOS/MapKit/MKPolygonView.md",
     "Swift/Теория/iOS/LocalAuthentication/LAContext.md",
     "Swift/Теория/iOS/LocalAuthentication/LABiometryType.md",
     "Swift/Теория/iOS/LocalAuthentication/FaceID.md",
     "Swift/Теория/iOS/LocalAuthentication/Без названия",
     "Swift/Теория/iOS/Core Location/CLBeaconIdentityConstraint.md",
     "Swift/Теория/iOS/Core Animation/CAPropertyAnimation.md",
-    "ARSCNView.md",
     "Swift/Теория/iOS/AVFoundation/AVMetadataObjectTypeFace.md",
     "Swift/Теория/iOS/SceneKit/SCNView.md",
     "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
@@ -222,9 +225,6 @@
     "Swift/Теория/Testing/XCTWaiter.md",
     "Swift/Теория/Testing/XCTNSPredicateExpectation.md",
     "Swift/Теория/Testing/XCTNSNotificationExpectation.md",
-    "Swift/Теория/Testing/XCTKVOExpectation.md",
-    "Swift/Теория/Testing/XCTestExpectation.md",
-    "Swift/Теория/Testing/XCTest.md",
     "Swift/Теория/iOS/LocalAuthentication",
     "Swift/Теория/iOS/AVFoundation",
     "Swift/Теория/Ошибки и варнинги/UI и Auto Layout",
