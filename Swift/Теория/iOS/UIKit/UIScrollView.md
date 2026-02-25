@@ -1,25 +1,25 @@
-**UIScrollView** — это один из самых фундаментальных и мощных компонентов UIKit, который позволяет отображать контент, **превышающий размер экрана**, с возможностью **прокрутки** (scrolling), масштабирования (zooming), отскока (bouncing) и других интерактивных возможностей.
+**UIScrollView** — это один из самых фундаментальных и мощных компонентов [[UIKit]], который позволяет отображать контент, **превышающий размер экрана**, с возможностью **прокрутки** (scrolling), масштабирования (zooming), отскока (bouncing) и других интерактивных возможностей.
 
 В 2026 году UIScrollView остаётся **основой** практически всех прокручиваемых интерфейсов в iOS-приложениях: таблицы, коллекции, полноэкранные изображения, ленты новостей, профили, формы и т.д.
 
 ### Основные свойства UIScrollView (самые важные в 2026)
 
-| Свойство                          | Тип / Значение по умолчанию                          | Что делает / зачем нужно                                      | Самый частый сценарий |
-|-----------------------------------|-------------------------------------------------------|---------------------------------------------------------------|-----------------------|
-| `contentSize`                     | `CGSize` (0,0)                                        | Размер всего контента (ширина × высота)                       | Обязательно задавать, иначе прокрутка не работает |
-| `contentOffset`                   | `CGPoint` (0,0)                                       | Текущая позиция прокрутки (x — горизонтально, y — вертикально) | Чтение/установка позиции скролла |
-| `contentInset`                    | `UIEdgeInsets` (0)                                    | Отступы внутри контента (от краёв скроллвью)                  | Учёт safe area, navigation bar, tab bar |
-| `contentInsetAdjustmentBehavior`  | `UIScrollView.ContentInsetAdjustmentBehavior` (.automatic) | Как автоматически учитывать safe area и navigation bar        | `.automatic` — стандарт в iOS 11+ |
-| `showsHorizontalScrollIndicator` / `showsVerticalScrollIndicator` | `Bool` (true)                       | Показывать полосы прокрутки                                   | Обычно выключают для чистого дизайна |
-| `alwaysBounceVertical` / `alwaysBounceHorizontal` | `Bool` (false)                    | Всегда отскок даже если контент меньше экрана                 | `.vertical = true` — стандартный «iOS-отскок» |
-| `isPagingEnabled`                 | `Bool` (false)                                        | Включить постраничную прокрутку (как в UIPageViewController)  | Карусели изображений, onboarding |
-| `isScrollEnabled`                 | `Bool` (true)                                         | Включить/выключить прокрутку                                  | Отключение при полноэкранных модалках |
-| `zoomScale` / `minimumZoomScale` / `maximumZoomScale` | `CGFloat` (1.0 / 1.0 / 1.0)    | Масштабирование контента (pinch to zoom)                      | Просмотр фото, PDF, карт |
-| `keyboardDismissMode`             | `UIScrollView.KeyboardDismissMode` (.none)            | Как скрывать клавиатуру при скролле                           | `.interactive` — стандарт для форм |
-| `refreshControl`                  | `UIRefreshControl?`                                   | Pull-to-refresh (с iOS 10+)                                   | Обновление ленты |
+| Свойство                                                          | Тип / Значение по умолчанию                                | Что делает / зачем нужно                                         | Самый частый сценарий                             |
+| ----------------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------- |
+| `contentSize`                                                     | [[CGSize]] (0,0)                                           | Размер всего контента (ширина × высота)                          | Обязательно задавать, иначе прокрутка не работает |
+| `contentOffset`                                                   | [[CGPoint]] (0,0)                                          | Текущая позиция прокрутки (x — горизонтально, y — вертикально)   | Чтение/установка позиции скролла                  |
+| `contentInset`                                                    | [[UIEdgeInsets]] (0)                                       | Отступы внутри контента (от краёв скроллвью)                     | Учёт safe area, navigation bar, tab bar           |
+| `contentInsetAdjustmentBehavior`                                  | `UIScrollView.ContentInsetAdjustmentBehavior` (.automatic) | Как автоматически учитывать safe area и navigation bar           | `.automatic` — стандарт в iOS 11+                 |
+| `showsHorizontalScrollIndicator` / `showsVerticalScrollIndicator` | [[Bool]] (true)                                            | Показывать полосы прокрутки                                      | Обычно выключают для чистого дизайна              |
+| `alwaysBounceVertical` / `alwaysBounceHorizontal`                 | `Bool` (false)                                             | Всегда отскок даже если контент меньше экрана                    | `.vertical = true` — стандартный «iOS-отскок»     |
+| `isPagingEnabled`                                                 | `Bool` (false)                                             | Включить постраничную прокрутку (как в [[UIPageViewController]]) | Карусели изображений, onboarding                  |
+| `isScrollEnabled`                                                 | `Bool` (true)                                              | Включить/выключить прокрутку                                     | Отключение при полноэкранных модалках             |
+| `zoomScale` / `minimumZoomScale` / `maximumZoomScale`             | [[CGFloat]] (1.0 / 1.0 / 1.0)                              | Масштабирование контента (pinch to zoom)                         | Просмотр фото, PDF, карт                          |
+| `keyboardDismissMode`                                             | `UIScrollView.KeyboardDismissMode` (.none)                 | Как скрывать клавиатуру при скролле                              | `.interactive` — стандарт для форм                |
+| `refreshControl`                                                  | [[UIRefreshControl]]`?`                                    | Pull-to-refresh (с iOS 10+)                                      | Обновление ленты                                  |
 
 ### Самый популярный и рекомендуемый паттерн 2026 года  
-(UIScrollView + Auto Layout + Combine + MVVM)
+(UIScrollView + [[Auto Layout]] + [[Combine]] + [[MVVM (Model-View-ViewModel) Architecture|MVVM]])
 
 ```swift
 import UIKit

@@ -1,174 +1,164 @@
-**`UITextView`** — это **многострочное текстовое поле**, которое позволяет пользователю:
+**UITextView** — это многострочное текстовое поле в [[UIKit]], предназначенное для ввода, редактирования и отображения текста большого объёма.  
+В 2026 году это всё ещё основной инструмент для реализации полей заметок, чатов, комментариев, описаний продуктов, юридических текстов и любых сценариев, где нужен многострочный ввод.
 
-- Вводить и редактировать текст
-    
-- Отображать текст с форматированием (атрибуты, ссылки)
-    
-- Скроллить текст, если он превышает размеры поля
-    
+### Когда использовать UITextView в 2026 году (реальные кейсы)
 
-Особенности:
+| Сценарий                              | Почему именно UITextView (а не UITextField)          | Альтернатива в SwiftUI |
+|---------------------------------------|-------------------------------------------------------|-------------------------|
+| Заметки, дневник, черновик письма     | Многострочный ввод + прокрутка + атрибуты             | `TextEditor`            |
+| Поле комментария / отзыва             | Длинный текст + placeholder + автокоррект             | `TextEditor`            |
+| Чат (ввод сообщения)                  | Многострочный + динамическая высота + placeholder     | `TextEditor` + `.lineLimit(nil)` |
+| Отображение форматированного текста   | Поддержка `attributedText` (цвет, жирный, ссылки)     | `Text` + `AttributedString` |
+| Редактирование Markdown / HTML        | Полная поддержка атрибутов + выделение                | `TextEditor` + markdown |
+| Юридический текст / договор           | Очень длинный текст + readonly-режим                  | `Text` + `.scrollable()` |
 
-- Поддерживает **делегаты ([[UITextViewDelegate]])**
+### Сравнение [[UITextView]] vs [[UITextField]] vs [[TextEditor]] (2026)
+
+| Характеристика                      | UITextView ([[UIKit]])      | UITextField (UIKit)     | TextEditor ([[SwiftUI]])      |
+| ----------------------------------- | --------------------------- | ----------------------- | ----------------------------- |
+| Количество строк                    | Многострочный               | Однострочный            | Многострочный                 |
+| Placeholder встроенный              | Нет (нужен костыль)         | Да                      | Нет (нужен костыль)           |
+| AttributedText                      | Да (полная поддержка)       | Ограниченная            | Да (через AttributedString)   |
+| Автоматическая высота               | Нужно вручную (constraints) | Не нужно                | Автоматическая                |
+| Прокрутка                           | Встроенная                  | Нет                     | Встроенная                    |
+| Делегат / события                   | [[UITextViewDelegate]]      | [[UITextFieldDelegate]] | `.onChange`, `.focused`       |
+| Производительность на 10 000+ строк | Отличная                    | —                       | Хуже на очень больших текстах |
+| Минимальная версия                  | iOS 3+                      | iOS 2+                  | iOS 14+                       |
+
+### Самый популярный и рекомендуемый паттерн 2026 года  
+(UITextView + Auto Layout + Combine + динамическая высота)
+
+```swift
+import UIKit
+import Combine
+
+class CommentInputViewController: UIViewController {
     
-- Может быть **редактируемым** (`isEditable`) или **только для чтения** (`isSelectable`)
+    private let viewModel = CommentViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
-- Можно использовать для:
+    private lazy var textView: UITextView = {
+        let tv = UITextView()
+        tv.font = .systemFont(ofSize: 17)
+        tv.textColor = .label
+        tv.isScrollEnabled = false          // Важно для динамической высоты
+        tv.textContainerInset = UIEdgeInsets(top: 12, left: 8, bottom: 12, right: 8)
+        tv.layer.borderColor = UIColor.systemGray4.cgColor
+        tv.layer.borderWidth = 1
+        tv.layer.cornerRadius = 12
+        tv.delegate = self
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        return tv
+    }()
     
-    - Заметок
+    private lazy var placeholderLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.text = "Напишите комментарий..."
+        lbl.font = .systemFont(ofSize: 17)
+        lbl.textColor = .systemGray
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    private lazy var sendButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Отправить", for: .normal)
+        btn.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        btn.isEnabled = false
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
         
-    - Чат-полей
+        view.addSubview(textView)
+        textView.addSubview(placeholderLabel)
+        view.addSubview(sendButton)
         
-    - Описаний и комментариев
+        NSLayoutConstraint.activate([
+            textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 50), // минимальная высота
+            
+            placeholderLabel.topAnchor.constraint(equalTo: textView.topAnchor, constant: 12),
+            placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor, constant: 12),
+            
+            sendButton.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 12),
+            sendButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
         
-
-> Проще говоря: `UITextView` = «многострочное поле для ввода и отображения текста».
-
----
-
-## 2. Основные термины
-
-|Термин|Описание|
-|---|---|
-|**text**|Текущий текст|
-|**attributedText**|Текст с атрибутами (цвет, шрифт, подчеркивание)|
-|**isEditable**|Можно ли редактировать текст|
-|**isSelectable**|Можно ли выделять текст|
-|**delegate**|Делегат, который реагирует на события (ввод, выделение, изменение)|
-|**UITextViewDelegate**|Протокол для обработки событий начала/окончания редактирования, изменения текста и др.|
-|**scrollEnabled**|Можно ли прокручивать текст|
-|**keyboardType**|Тип клавиатуры (`.default`, `.numberPad`, `.emailAddress` и др.)|
-|**textContainerInset**|Отступы текста внутри UITextView|
-
----
-
-## 3. Основной синтаксис
-
-### Создание UITextView программно
-
-```swift
-let textView = UITextView(frame: CGRect(x: 20, y: 200, width: 300, height: 150))
-textView.text = "Введите текст..."
-textView.font = UIFont.systemFont(ofSize: 16)
-textView.textColor = .black
-textView.isEditable = true
-textView.isSelectable = true
-textView.delegate = self
-view.addSubview(textView)
-```
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Простейший UITextView
-
-```swift
-let textView = UITextView()
-textView.text = "Привет, мир!"
-view.addSubview(textView)
-```
-
-- Просто создаём поле для текста
+        bindViewModel()
+    }
     
-
----
-
-### Пример 2. Настройка шрифта и цвета
-
-```swift
-textView.font = UIFont.systemFont(ofSize: 18)
-textView.textColor = .systemBlue
-```
-
-- Меняем стиль текста
-    
-
----
-
-### Пример 3. Делегат для обработки изменений текста
-
-```swift
-class ViewController: UIViewController, UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        print("Текст изменился: \(textView.text ?? "")")
+    private func bindViewModel() {
+        // Двусторонняя связь text ↔ ViewModel
+        textView.publisher(for: \.text)
+            .removeDuplicates()
+            .assign(to: \.commentText, on: viewModel)
+            .store(in: &cancellables)
+        
+        viewModel.$commentText
+            .map { $0.isEmpty }
+            .assign(to: \.isHidden, on: placeholderLabel)
+            .store(in: &cancellables)
+        
+        viewModel.$commentText
+            .map { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .assign(to: \.isEnabled, on: sendButton)
+            .store(in: &cancellables)
+        
+        // Динамическая высота textView
+        textView.publisher(for: \.contentSize)
+            .map { $0.height + 24 } // + insets
+            .assign(to: \.constant, on: textView.constraints.first { $0.firstAttribute == .height }!)
+            .store(in: &cancellables)
     }
 }
-```
 
-- Делегат позволяет реагировать на каждое изменение текста
-    
+extension CommentInputViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        // Можно дополнительно обновлять layout
+        textView.invalidateIntrinsicContentSize()
+    }
+}
 
----
-
-### Пример 4. UITextView с placeholder
-
-```swift
-let placeholderLabel = UILabel()
-placeholderLabel.text = "Введите комментарий..."
-placeholderLabel.font = UIFont.systemFont(ofSize: 16)
-placeholderLabel.textColor = .lightGray
-placeholderLabel.frame = CGRect(x: 5, y: 8, width: textView.frame.width, height: 20)
-textView.addSubview(placeholderLabel)
-
-func textViewDidChange(_ textView: UITextView) {
-    placeholderLabel.isHidden = !textView.text.isEmpty
+// ViewModel
+@MainActor
+class CommentViewModel: ObservableObject {
+    @Published var commentText: String = ""
 }
 ```
 
-- Имитируем placeholder, так как UITextView не имеет встроенного свойства `placeholder`
-    
+### Лучшие практики UITextView в 2026 году
 
----
-
-### Пример 5. UITextView с атрибутами
+- **Динамическая высота** — отключайте `isScrollEnabled = false` и используйте Auto Layout + `invalidateIntrinsicContentSize()`  
+- **Placeholder** — добавляйте отдельный `UILabel` поверх и скрывайте при вводе текста  
+- **Для атрибутов** — используйте `attributedText` для форматирования (жирный, курсив, ссылки)  
+- **Для Combine** — подписывайтесь на `publisher(for: \.text)` или используйте `@Published` в ViewModel  
+- **Для производительности** — на очень длинных текстах (10 000+ строк) используйте `textStorage` и `layoutManager` вручную  
+- **Для SwiftUI** — используйте `TextEditor` — UITextView нужен только в UIKit или смешанных проектах  
+- **Для доступности** — задавайте `accessibilityLabel` и `accessibilityHint`  
+- **Документируйте** — пишите комментарий:
 
 ```swift
-let attrString = NSMutableAttributedString(string: "Hello, Swift!")
-attrString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: 0, length: 5))
-attrString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 18), range: NSRange(location: 7, length: 5))
-textView.attributedText = attrString
+/// UITextView с динамической высотой и placeholder для ввода комментария
+private lazy var commentTextView: UITextView = {
+    let tv = UITextView()
+    tv.font = .systemFont(ofSize: 17)
+    tv.isScrollEnabled = false
+    tv.textContainerInset = UIEdgeInsets(top: 12, left: 8, bottom: 12, right: 8)
+    return tv
+}()
 ```
 
-- Отображаем многострочный текст с разными стилями
-    
-
----
-
-## 5. Особенности UITextView
-
-1. **Многострочный текст** (в отличие от [[UITextField]])
-    
-2. Поддерживает **прокрутку текста**
-    
-3. Делегат позволяет:
-    
-    - Реагировать на начало и конец редактирования
-        
-    - Отслеживать изменения текста
-        
-    - Обрабатывать выделение текста
-        
-4. Можно использовать **атрибуты для форматирования текста**
-    
-5. Часто используется для: заметок, комментариев, сообщений
-    
-
----
-
-## 6. Итог
-
-- **UITextView** = многострочное текстовое поле для ввода и отображения текста
-    
-- Позволяет:
-    
-    - Настраивать шрифт, цвет, атрибуты текста
-        
-    - Отслеживать изменения через делегат
-        
-    - Скроллить длинный текст
-        
-- Отличие от UITextField: **UITextField — однострочный**, UITextView — многострочный
-    
-
----
+**Короткий итог 2026**:
+> `UITextView` — **многострочное поле ввода и отображения текста** в UIKit.  
+> В 2026 году:  
+> - ключевые возможности — `text`, `attributedText`, `isEditable`, `isSelectable`, делегат  
+> - самый популярный паттерн — динамическая высота + placeholder + Combine  
+> - идеален для заметок, комментариев, чатов, описаний  
+> - в SwiftUI — заменяется на `TextEditor`  
+> - это **фундаментальный** компонент для любого приложения с текстовым вводом  

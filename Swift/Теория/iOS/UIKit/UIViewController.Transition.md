@@ -1,7 +1,7 @@
 **UIViewController.Transition** — это не отдельный класс или протокол, а общий термин, который в документации и разговорах разработчиков обычно обозначает:
 
-- **Способы** и **механизмы** перехода (transition) от одного `UIViewController` к другому  
-- В основном речь идёт о **модальных переходах** (present / dismiss) и **навигационных переходах** (push / pop в UINavigationController)
+- **Способы** и **механизмы** перехода (transition) от одного [[UIViewController]] к другому  
+- В основном речь идёт о **модальных переходах** (present / dismiss) и **навигационных переходах** (push / pop в [[UINavigationController]])
 
 В UIKit существует несколько уровней управления переходами. Вот актуальная картина на 2026 год с приоритетами и рекомендациями.
 
@@ -18,7 +18,7 @@
 
 ### 2. Самые актуальные и рекомендуемые варианты в 2026 году
 
-#### A. Самый популярный в новых приложениях — UISheetPresentationController (iOS 15+)
+#### A. Самый популярный в новых приложениях — [[UISheetPresentationController]] (iOS 15+)
 
 ```swift
 let sheetVC = DetailViewController()
@@ -41,7 +41,7 @@ present(sheetVC, animated: true)
 - Адаптируется под iPhone / iPad / Stage Manager  
 - Минимальный код
 
-#### B. Полная кастомная анимация — UIViewControllerTransitioningDelegate
+#### B. Полная кастомная анимация — [[UIViewControllerTransitioningDelegate]]
 
 (подробный пример в предыдущем ответе)
 
@@ -51,7 +51,7 @@ present(sheetVC, animated: true)
 - interactive drag-to-dismiss  
 - анимация с blur / mask
 
-#### C. Кастомный push / pop в навигации — UINavigationControllerDelegate
+#### C. Кастомный push / pop в навигации — [[UINavigationControllerDelegate]]
 
 ```swift
 class CustomNavigationDelegate: NSObject, UINavigationControllerDelegate {
@@ -98,5 +98,3 @@ navigationController?.delegate = customDelegate
 > 2. **UIViewControllerTransitioningDelegate** — когда нужна полная кастомная анимация и/или интерактивность  
 > 3. **UINavigationControllerDelegate** — для кастомного push/pop в навигационном стеке  
 > 4. Обычный `present` / `push` — когда стандартный вид устраивает  
-
-Удачи с плавными, современными и интерактивными переходами в твоём приложении! 🎬
