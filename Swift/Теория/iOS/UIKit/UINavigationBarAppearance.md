@@ -1,22 +1,22 @@
-**UINavigationBarAppearance** — это объект конфигурации внешнего вида **UINavigationBar**, введённый в iOS 13 (2019), который заменил старые свойства `barTintColor`, `titleTextAttributes`, `backgroundImage` и т.д.
+**UINavigationBarAppearance** — это объект конфигурации внешнего вида **[[UINavigationBar]]**, введённый в iOS 13 (2019), который заменил старые свойства `barTintColor`, `titleTextAttributes`, `backgroundImage` и т.д.
 
 С помощью `UINavigationBarAppearance` можно централизованно и декларативно задавать внешний вид навигационной панели для всего приложения или отдельных экранов.
 
 ### Основные свойства UINavigationBarAppearance (самые используемые в 2026)
 
-| Свойство                                      | Тип / Значение по умолчанию                          | Что настраивает                                           | Самый частый сценарий |
-|-----------------------------------------------|-------------------------------------------------------|-----------------------------------------------------------|-----------------------|
-| `backgroundColor`                             | `UIColor?`                                            | Цвет фона панели                                          | Светлый/тёмный фон |
-| `backgroundImage` / `shadowImage`             | `UIImage?`                                            | Фоновое изображение и тень под панелью                    | Градиент, прозрачность |
-| `backgroundEffect`                            | `UIVisualEffect?`                                     | Эффект размытия (blur)                                    | `.systemMaterial` — стеклянный стиль |
-| `titleTextAttributes`                         | `[NSAttributedString.Key: Any]?`                      | Атрибуты текста заголовка                                 | Шрифт, цвет, размер |
-| `largeTitleTextAttributes`                    | `[NSAttributedString.Key: Any]?`                      | Атрибуты большого заголовка (large title)                 | `.large` стиль |
-| `buttonAppearance` (UIBarButtonItemAppearance) | `UIBarButtonItemAppearance`                          | Стиль обычных кнопок (back, done и т.д.)                  | Цвет иконок/текста |
-| `doneButtonAppearance`                        | `UIBarButtonItemAppearance`                           | Стиль кнопки «Done»                                       | Выделение акцентом |
-| `backButtonAppearance`                        | `UIBarButtonItemAppearance`                           | Стиль кнопки «Назад»                                      | Кастомизация стрелки |
-| `standardAppearance` (iOS 13+)                | `UINavigationBarAppearance`                           | Внешний вид при обычном размере (не large)                | Основной стиль |
-| `scrollEdgeAppearance` (iOS 13+)              | `UINavigationBarAppearance?`                          | Внешний вид, когда список в самом верху (scroll edge)     | Прозрачная панель при скролле |
-| `compactAppearance` (iOS 13+)                 | `UINavigationBarAppearance?`                          | Внешний вид в компактном режиме (landscape iPhone)        | Редко используется |
+| Свойство                                       | Тип / Значение по умолчанию      | Что настраивает                                       | Самый частый сценарий                |
+| ---------------------------------------------- | -------------------------------- | ----------------------------------------------------- | ------------------------------------ |
+| `backgroundColor`                              | [[UIColor]]`?`                   | Цвет фона панели                                      | Светлый/тёмный фон                   |
+| `backgroundImage` / `shadowImage`              | [[UIImage]]`?`                   | Фоновое изображение и тень под панелью                | Градиент, прозрачность               |
+| `backgroundEffect`                             | [[UIVisualEffect]]`?`            | Эффект размытия (blur)                                | `.systemMaterial` — стеклянный стиль |
+| `titleTextAttributes`                          | `[NSAttributedString.Key: Any]?` | Атрибуты текста заголовка                             | Шрифт, цвет, размер                  |
+| `largeTitleTextAttributes`                     | `[NSAttributedString.Key: Any]?` | Атрибуты большого заголовка (large title)             | `.large` стиль                       |
+| `buttonAppearance` (UIBarButtonItemAppearance) | [[UIBarButtonItemAppearance]]    | Стиль обычных кнопок (back, done и т.д.)              | Цвет иконок/текста                   |
+| `doneButtonAppearance`                         | `UIBarButtonItemAppearance`      | Стиль кнопки «Done»                                   | Выделение акцентом                   |
+| `backButtonAppearance`                         | `UIBarButtonItemAppearance`      | Стиль кнопки «Назад»                                  | Кастомизация стрелки                 |
+| `standardAppearance` (iOS 13+)                 | `UINavigationBarAppearance`      | Внешний вид при обычном размере (не large)            | Основной стиль                       |
+| `scrollEdgeAppearance` (iOS 13+)               | `UINavigationBarAppearance?`     | Внешний вид, когда список в самом верху (scroll edge) | Прозрачная панель при скролле        |
+| `compactAppearance` (iOS 13+)                  | `UINavigationBarAppearance?`     | Внешний вид в компактном режиме (landscape iPhone)    | Редко используется                   |
 
 ### Самый популярный и рекомендуемый паттерн 2026 года  
 (Глобальная кастомизация + адаптация под scroll edge)
@@ -124,5 +124,3 @@ static func setupGlobalNavigationBarAppearance() {
 > - глобально настраивается через `UINavigationBar.appearance()`  
 > - локально — через `navigationItem.standardAppearance` / `scrollEdgeAppearance`  
 > - это **единственный современный** способ кастомизировать navigation bar в UIKit  
-
-Удачи с красивой и согласованной навигацией в твоём приложении! 📱

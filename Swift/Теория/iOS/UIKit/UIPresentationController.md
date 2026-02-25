@@ -1,4 +1,4 @@
-**UIPresentationController** — это класс в UIKit, который отвечает за **управление презентацией** (отображением) модального контроллера представления (`UIViewController`) на экране.
+**UIPresentationController** — это класс в [[UIKit]], который отвечает за **управление презентацией** (отображением) модального контроллера представления ([[UIViewController]]) на экране.
 
 Он появился в iOS 8 (2014) вместе с введением **size classes** и адаптивных интерфейсов и остаётся **ключевым** инструментом для создания кастомных модальных презентаций в 2026 году.
 
@@ -16,17 +16,17 @@ UIPresentationController берёт на себя:
 
 ### Ключевые свойства и методы (самые важные в 2026)
 
-| Свойство / Метод                          | Тип / Значение по умолчанию                          | Что делает / зачем нужно                                      | Самый частый сценарий |
-|-------------------------------------------|-------------------------------------------------------|---------------------------------------------------------------|-----------------------|
-| `presentedViewController`                 | `UIViewController`                                    | Контроллер, который мы презентуем                             | Доступ к модальному VC |
-| `presentingViewController`                | `UIViewController?`                                   | Контроллер, от которого презентуем                            | Возврат к presenting VC |
-| `containerView`                           | `UIView`                                              | Контейнер, в который добавляется presented view               | Кастомный layout |
-| `frameOfPresentedViewInContainerView`     | `CGRect` (вычисляемое)                                | Прямоугольник, где будет размещён presented view              | **Самое важное** — здесь задаётся размер и позиция |
-| `adaptivePresentationStyle(for:traitCollection:)` | `UIModalPresentationStyle`                  | Как адаптировать стиль на разных устройствах                  | `.fullScreen` → `.pageSheet` на iPad |
-| `presentationTransitionWillBegin()`       | `Void`                                                | Вызывается перед началом анимации появления                   | Добавление затемнения |
-| `presentationTransitionDidEnd(_:)`        | `Void`                                                | Завершение анимации появления                                 | Очистка, если отменили |
-| `dismissalTransitionWillBegin()`          | `Void`                                                | Перед началом анимации ухода                                  | Анимация затемнения |
-| `dismissalTransitionDidEnd(_:)`           | `Void`                                                | После завершения ухода                                        | Удаление оверлеев |
+| Свойство / Метод                                  | Тип / Значение по умолчанию  | Что делает / зачем нужно                         | Самый частый сценарий                              |
+| ------------------------------------------------- | ---------------------------- | ------------------------------------------------ | -------------------------------------------------- |
+| `presentedViewController`                         | `UIViewController`           | Контроллер, который мы презентуем                | Доступ к модальному VC                             |
+| `presentingViewController`                        | `UIViewController?`          | Контроллер, от которого презентуем               | Возврат к presenting VC                            |
+| `containerView`                                   | [[UIView]]                   | Контейнер, в который добавляется presented view  | Кастомный layout                                   |
+| `frameOfPresentedViewInContainerView`             | [[CGRect]] (вычисляемое)     | Прямоугольник, где будет размещён presented view | **Самое важное** — здесь задаётся размер и позиция |
+| `adaptivePresentationStyle(for:traitCollection:)` | [[UIModalPresentationStyle]] | Как адаптировать стиль на разных устройствах     | `.fullScreen` → `.pageSheet` на iPad               |
+| `presentationTransitionWillBegin()`               | `Void`                       | Вызывается перед началом анимации появления      | Добавление затемнения                              |
+| `presentationTransitionDidEnd(_:)`                | `Void`                       | Завершение анимации появления                    | Очистка, если отменили                             |
+| `dismissalTransitionWillBegin()`                  | `Void`                       | Перед началом анимации ухода                     | Анимация затемнения                                |
+| `dismissalTransitionDidEnd(_:)`                   | `Void`                       | После завершения ухода                           | Удаление оверлеев                                  |
 
 ### Самый популярный и рекомендуемый паттерн 2026 года  
 (Кастомный bottom sheet / card-style модалка)
@@ -127,7 +127,7 @@ extension ViewController: UIViewControllerTransitioningDelegate {
 - **Для затемнения** — добавляйте `dimmingView` в `presentationTransitionWillBegin()` и анимируйте его alpha  
 - **Для адаптации** — реализуйте `adaptivePresentationStyle(for:traitCollection:)`  
 - **Для swipe-to-dismiss** — комбинируйте с `UIViewControllerTransitioningDelegate` и `UIPercentDrivenInteractiveTransition`  
-- **Для SwiftUI** — используйте `.presentationDetents`, `.sheet` — `UIPresentationController` нужен только в UIKit или смешанных проектах  
+- **Для [[SwiftUI]]** — используйте `.presentationDetents`, `.sheet` — `UIPresentationController` нужен только в [[UIKit]] или смешанных проектах  
 - **Для iPad / Stage Manager** — проверяйте `traitCollection.horizontalSizeClass` и адаптируйте размер  
 - **Документируйте** — пишите комментарий:
 
@@ -141,7 +141,5 @@ class CustomPresentationController: UIPresentationController { ... }
 > В 2026 году:  
 > - ключевой метод — `frameOfPresentedViewInContainerView` (задаёт размер и позицию)  
 > - идеален для bottom sheet, card-style, custom modal, popover  
-> - часто используется вместе с `UIViewControllerTransitioningDelegate`  
+> - часто используется вместе с [[UIViewControllerTransitioningDelegate]]  
 > - это **основа** создания нестандартных модальных презентаций в UIKit  
-
-Удачи с красивыми и современными модальными окнами в твоём приложении! 🪟

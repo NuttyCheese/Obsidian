@@ -128,8 +128,8 @@ class FeedViewModel: ObservableObject {
 - **Для pull-to-refresh** — добавляйте `UIRefreshControl` — это стандарт 2026  
 - **Для масштабирования** — задавайте `minimumZoomScale` / `maximumZoomScale` и реализуйте `viewForZooming(in:)`  
 - **Для производительности** — используйте `contentInset` вместо больших отступов в subviews  
-- **Для SwiftUI** — используйте `ScrollView` — UIScrollView нужен только в UIKit или смешанных проектах  
-- **Для Combine** — подписывайтесь на `publisher(for: \.contentOffset)` или `publisher(for: \.contentSize)`  
+- **Для [[SwiftUI]]** — используйте `ScrollView` — UIScrollView нужен только в [[UIKit]] или смешанных проектах  
+- **Для [[Combine]]** — подписывайтесь на `publisher(for: \.contentOffset)` или `publisher(for: \.contentSize)`  
 - **Документируйте** — пишите комментарий:
 
 ```swift
@@ -150,5 +150,3 @@ private lazy var scrollView: UIScrollView = {
 > - идеален для лент, профилей, форм, галерей, полноэкранного контента  
 > - в SwiftUI — заменяется на `ScrollView`  
 > - это **фундаментальный** компонент, без которого не обходится почти ни один экран  
-
-Удачи с плавными, адаптивными и производительными прокрутками в твоём приложении! 📜
