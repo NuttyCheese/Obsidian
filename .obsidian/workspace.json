@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "91411190d3516b44",
+        "id": "36bb9ecb5ab38b53",
         "type": "tabs",
         "children": [
           {
-            "id": "9df3efb6dc106b4b",
+            "id": "96a8a462166f6495",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/iOS/UIKit/UIDragInteraction.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "UIDragInteraction"
+              "title": "Новая вкладка"
             }
           }
         ]
@@ -194,43 +190,43 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "9df3efb6dc106b4b",
+  "active": "e407b43c27bfa155",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/UIKit/UIDragItem.md",
-    "Swift/Теория/iOS/UIKit/UIDragInteraction.md",
-    "Swift/Теория/iOS/UIKit/UIPasteboard.md",
-    "Swift/Теория/iOS/UIKit/TouchUpOutside.md",
-    "Swift/Теория/iOS/UIKit/UIAction.md",
-    "Swift/Теория/iOS/UIKit/UIActivityIndicatorView.md",
-    "Swift/Теория/iOS/UIKit/UIActivityViewController.md",
-    "Swift/Теория/iOS/UIKit/UIAlertController.md",
-    "Swift/Теория/iOS/UIKit/UIApplication.md",
-    "Swift/Теория/iOS/UIKit/UIApplicationDelegate.md",
-    "Swift/Теория/iOS/UIKit/UIApplicationShortcutItem.md",
-    "Swift/Теория/iOS/UIKit/UIBackgroundExtensionView.md",
-    "Swift/Теория/iOS/UIKit/UIBarButtonItem.md",
-    "Swift/Теория/iOS/UIKit/UIBarButtonItemAppearance.md",
-    "Swift/Теория/iOS/UIKit/UIBarItem.md",
-    "Swift/Теория/iOS/UIKit/UIButton.md",
-    "Swift/Теория/iOS/UIKit/UIButton.Configuration.md",
-    "Swift/Теория/iOS/UIKit/UICollectionView and UITableView.md",
-    "Swift/Теория/iOS/UIKit/UIColor.md",
-    "Swift/Теория/iOS/UIKit/UIColorPicker.md",
-    "Swift/Теория/iOS/UIKit/UIColorPickerViewController.md",
-    "Swift/Теория/iOS/UIKit/UIColorPickerViewControllerDelegate.md",
-    "Swift/Теория/iOS/UIKit/UICommand.md",
-    "Swift/Теория/iOS/UIKit/UIControl.md",
-    "Swift/Теория/iOS/UIKit/UIDatePicker.md",
-    "Swift/Теория/iOS/UIKit/UIDeferredMenuElement.md",
-    "Swift/Теория/iOS/WebKit",
-    "Swift/Теория/Сетевое взаимодействие/URLSession",
-    "Swift/Теория/iOS/LocalAuthentication/Без названия",
-    "Swift/Теория/Swift/Standart Library",
-    "Swift/Теория/Swift",
-    "Swift/Теория/iOS/LocalAuthentication",
-    "Swift/Теория/iOS/AVFoundation",
-    "Swift/Теория/Ошибки и варнинги/UI и Auto Layout",
-    "Swift/Теория/Ошибки и варнинги/Многопоточность",
-    "Swift/Теория/iOS/SwiftUI"
+    "Swift/Теория/iOS/UIKit/Concepts/isolation.md",
+    "Swift/Теория/iOS/UIKit/Concepts",
+    "Swift/Теория/iOS/UIKit/Document/UIPasteboard.md",
+    "Swift/Теория/iOS/UIKit/Document/UIDocumentPicker.md",
+    "Swift/Теория/iOS/UIKit/Interface Builder/@IBOutlet.md",
+    "Swift/Теория/iOS/UIKit/Interface Builder/@IBAction.md",
+    "Swift/Теория/iOS/UIKit/Control Events/ValueChanged.md",
+    "Swift/Теория/iOS/UIKit/Control Events/EditingDidEnd.md",
+    "Swift/Теория/iOS/UIKit/Control Events/EditingChanged.md",
+    "Swift/Теория/iOS/UIKit/Control Events/TouchDown.md",
+    "Swift/Теория/iOS/UIKit/Control Events/TouchUpOutside.md",
+    "Swift/Теория/iOS/UIKit/Control Events/TouchUpInside.md",
+    "Swift/Теория/iOS/UIKit/Traits/UITraitEnvironment.md",
+    "Swift/Теория/iOS/UIKit/Traits/UITraitCollection.md",
+    "Swift/Теория/iOS/UIKit/Responder/rendering blocks.md",
+    "Swift/Теория/iOS/UIKit/Responder/Responder Chain.md",
+    "Swift/Теория/iOS/UIKit/Responder/hitTest vs. Responder Chain.md",
+    "Swift/Теория/iOS/UIKit/Responder/hitTest.md",
+    "Swift/Теория/iOS/UIKit/Responder/UIResponder.md",
+    "Swift/Теория/iOS/UIKit/Responder/UIEvent.md",
+    "Swift/Теория/iOS/UIKit/Graphics/UIGraphicsPDFRenderer.md",
+    "Swift/Теория/iOS/UIKit/Graphics/UIGraphicsImageRenderer.md",
+    "Swift/Теория/iOS/UIKit/Graphics/UIColor.md",
+    "Swift/Теория/iOS/UIKit/Graphics/UIImagePNGRepresentation.md",
+    "Swift/Теория/iOS/UIKit/Graphics/UIImageJPEGRepresentation.md",
+    "Swift/Теория/iOS/UIKit/Graphics/UIImage.md",
+    "Swift/Теория/iOS/UIKit/Interactions/UIDragItem.md",
+    "Swift/Теория/iOS/UIKit/Document",
+    "Swift/Теория/iOS/UIKit/Interface Builder",
+    "Swift/Теория/iOS/UIKit/Control Events",
+    "Swift/Теория/iOS/UIKit/Traits",
+    "Swift/Теория/iOS/UIKit/Responder",
+    "Swift/Теория/iOS/UIKit/Graphics",
+    "Swift/Теория/iOS/UIKit/Interactions",
+    "Swift/Теория/iOS/UIKit/Menus",
+    "Swift/Теория/iOS/UIKit/Delegates"
   ]
 }
