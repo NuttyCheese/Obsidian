@@ -6,7 +6,7 @@
     
 - Типичные причины:
     
-    1. [[Swift/Теория/Swift/Standart Library/Force unwrap]] [[nil]] [[Optional]] (`!`).
+    1. [[Force unwrap]] [[nil]] [[Optional]] (`!`).
         
     2. Index out of range для массивов или строк.
         
