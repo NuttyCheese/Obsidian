@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/Views/UIButton.md",
+                "file": "Swift/Теория/Сетевое взаимодействие/URLSession/URLCache.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UIButton"
+              "title": "URLCache"
             }
           },
           {
@@ -323,6 +323,7 @@
   },
   "active": "e4448cb442c7e489",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/UIKit/Views/UIButton.md",
     "Swift/Теория/iOS/UIKit/Responder/hitTest.md",
     "Swift/Теория/iOS/Swift/some Protocol.md",
     "Swift/Теория/iOS/Swift/generic.md",
@@ -349,7 +350,6 @@
     "Swift/Теория/iOS/UIKit/Control Events/TouchUpInside.md",
     "Swift/Теория/iOS/UIKit/Traits/UITraitEnvironment.md",
     "Swift/Теория/iOS/UIKit/Traits/UITraitCollection.md",
-    "Swift/Теория/iOS/UIKit/Graphics/UIGraphicsPDFRenderer.md",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
     "Swift/Теория/iOS/UIKit/Control Events",
