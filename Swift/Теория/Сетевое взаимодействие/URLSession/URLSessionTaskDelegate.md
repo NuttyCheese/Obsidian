@@ -1,4 +1,4 @@
-**URLSessionTaskDelegate** — это протокол в **Foundation**, который позволяет получать **детальные события** для **любой** задачи (`URLSessionTask`) в `URLSession`: dataTask, downloadTask, uploadTask и streamTask.
+**URLSessionTaskDelegate** — это протокол в **Foundation**, который позволяет получать **детальные события** для **любой** задачи ([[URLSessionTask]]) в [[URLSession]]: dataTask, downloadTask, uploadTask и streamTask.
 
 Это **самый мощный** и **самый низкоуровневый** способ кастомизации сетевых операций в [[iOS]]/macOS-приложениях.
 

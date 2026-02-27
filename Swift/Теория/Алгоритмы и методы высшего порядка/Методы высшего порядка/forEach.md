@@ -85,7 +85,7 @@ cart.items.forEach { item in
 print("Итого: \(totalPrice)")
 ```
 
-### 6. forEach + throw (прерывание при ошибке)
+### 6. forEach + [[throw]] (прерывание при ошибке)
 
 ```swift
 do {

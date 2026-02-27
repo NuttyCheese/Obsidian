@@ -1,4 +1,4 @@
-**URLSessionDownloadDelegate** — это протокол в **[[Foundation]]**, который позволяет получать **детальные события** при выполнении задач типа `downloadTask` в `URLSession`.
+**URLSessionDownloadDelegate** — это протокол в **[[Foundation]]**, который позволяет получать **детальные события** при выполнении задач типа `downloadTask` в [[URLSession]].
 
 Он используется, когда тебе нужно:
 

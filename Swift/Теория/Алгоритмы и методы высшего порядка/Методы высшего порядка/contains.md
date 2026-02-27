@@ -36,7 +36,7 @@ func contains<S: Sequence>(_ other: S) -> Bool where S.Element == Element
 
 ## Примеры использования
 
-### 1. Простая проверка с Equatable
+### 1. Простая проверка с [[Equatable]]
 
 ```swift
 let numbers = [1, 3, 5, 7, 9, 11]
@@ -73,7 +73,7 @@ print(statuses.contains(.active))                           // Ошибка ко
 print(statuses.contains { $0 == .active })                  // true
 ```
 
-### 3. contains в Set и Dictionary — O(1)
+### 3. contains в [[Set]] и [[Dictionary]] — O(1)
 
 ```swift
 let ids: Set<Int> = [1001, 1005, 1012, 1020]
