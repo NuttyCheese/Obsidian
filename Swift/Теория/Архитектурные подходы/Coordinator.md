@@ -1,162 +1,161 @@
-**Coordinator** — паттерн в [[iOS]]-разработке, предназначенный для управления навигацией между экранами.  
-Основная идея: **вынести логику переходов из ViewController**, чтобы сделать код более чистым, модульным и тестируемым.  
-Часто используется с **[[UIKit]]**, но может применяться и в [[SwiftUI]] для управления NavigationStack или Flow.
+**Coordinator** — это один из самых популярных и полезных архитектурных паттернов в iOS-разработке 2025–2026 годов.
 
----
+Он решает сразу несколько очень болезненных проблем классического [[MVC (Model-View-Controller) Architecture|MVC]] / [[MVVM (Model-View-ViewModel) Architecture|MVVM]]:
 
-## 🔹 Примеры кода
+- **[[UIViewController]] знает слишком много** (навигация, создание других контроллеров, бизнес-логика)
+- сильная **связанность** между экранами
+- сложность тестирования навигации
+- дублирование кода переходов
+- трудно поддерживать глубокие навигационные стеки и модальные сценарии
 
-### 1. Простейший Coordinator с одним экраном
+Coordinator берёт на себя ответственность за **навигацию** и **координацию потоков экранов**, оставляя контроллерам только отображение и локальную логику.
+
+### Основные идеи Coordinator-паттерна
+
+1. **Координатор ≠ контроллер**  
+   Это отдельный объект (обычно класс), который:
+   - знает, какие экраны должны показываться в каком порядке
+   - создаёт и конфигурирует ViewController'ы
+   - управляет навигацией (push, present, pop, dismiss, set root и т.д.)
+   - передаёт данные между экранами (через модель или closure)
+
+2. **Иерархия координаторов**  
+   Обычно строится дерево:
+   - AppCoordinator (самый верхний — управляет окном / сценой)
+   - TabBarCoordinator / AuthCoordinator / MainFlowCoordinator
+   - вложенные: ProfileCoordinator, SettingsCoordinator, OnboardingCoordinator и т.д.
+
+3. **Слабая связанность**  
+   ViewController почти ничего не знает о других экранах и о том, как перейти дальше.
+
+### Самые популярные варианты реализации в 2026 году
+
+#### 1. Классический Coordinator с протоколом (самый распространённый)
 
 ```swift
-import UIKit
-
-protocol Coordinator {
+protocol Coordinator: AnyObject {
+    var childCoordinators: [Coordinator] { get set }
+    var navigationController: UINavigationController { get set } // или другой контейнер
+    
     func start()
 }
 
-class MainCoordinator: Coordinator {
-    let navigationController: UINavigationController
-
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-    }
-
-    func start() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .white
-        vc.title = "Main"
-        navigationController.pushViewController(vc, animated: true)
-    }
-}
-```
-
----
-
-### 2. Coordinator с переходом на второй экран
-
-```swift
-class MainCoordinator: Coordinator {
-    let navigationController: UINavigationController
-
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-    }
-
-    func start() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .white
-        vc.title = "Main"
-        vc.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Next",
-            style: .plain,
-            target: self,
-            action: #selector(goNext)
-        )
-        navigationController.pushViewController(vc, animated: true)
-    }
-
-    @objc func goNext() {
-        let secondVC = UIViewController()
-        secondVC.view.backgroundColor = .lightGray
-        secondVC.title = "Second"
-        navigationController.pushViewController(secondVC, animated: true)
-    }
-}
-```
-
----
-
-### 3. Coordinator с несколькими экранами через методы
-
-```swift
 class AppCoordinator: Coordinator {
-    let navigationController: UINavigationController
-
+    var childCoordinators: [Coordinator] = []
+    var navigationController: UINavigationController
+    
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
-
+    
     func start() {
-        showLogin()
+        let mainCoordinator = MainTabBarCoordinator(navigationController: navigationController)
+        childCoordinators.append(mainCoordinator)
+        mainCoordinator.start()
     }
+}
 
-    private func showLogin() {
-        let loginVC = UIViewController()
-        loginVC.view.backgroundColor = .white
-        loginVC.title = "Login"
-        navigationController.pushViewController(loginVC, animated: true)
+class MainTabBarCoordinator: Coordinator {
+    var childCoordinators: [Coordinator] = []
+    var navigationController: UINavigationController
+    
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
     }
-
-    private func showHome() {
-        let homeVC = UIViewController()
-        homeVC.view.backgroundColor = .green
-        homeVC.title = "Home"
-        navigationController.pushViewController(homeVC, animated: true)
+    
+    func start() {
+        let tabBarController = UITabBarController()
+        
+        let homeCoordinator = HomeCoordinator()
+        homeCoordinator.start()
+        let homeVC = homeCoordinator.rootViewController
+        homeVC.tabBarItem = UITabBarItem(title: "Главная", image: UIImage(systemName: "house"), tag: 0)
+        
+        // ... другие вкладки
+        
+        tabBarController.viewControllers = [homeVC /*, ... */]
+        navigationController.setViewControllers([tabBarController], animated: false)
     }
 }
 ```
 
----
-
-### 4. Coordinator с делегатом для обратной связи
+#### 2. Coordinator + Flow (очень популярный в 2025–2026)
 
 ```swift
-protocol LoginDelegate: AnyObject {
-    func didLogin()
+protocol FlowCoordinator: Coordinator {
+    var onFinish: (() -> Void)? { get set }
 }
 
-class LoginCoordinator: Coordinator, LoginDelegate {
-    let navigationController: UINavigationController
-
+class AuthCoordinator: FlowCoordinator {
+    var childCoordinators: [Coordinator] = []
+    var navigationController: UINavigationController
+    var onFinish: (() -> Void)?
+    
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
-
+    
     func start() {
-        let loginVC = UIViewController()
-        loginVC.view.backgroundColor = .white
-        navigationController.pushViewController(loginVC, animated: true)
-    }
-
-    func didLogin() {
-        let homeVC = UIViewController()
-        homeVC.view.backgroundColor = .green
-        navigationController.pushViewController(homeVC, animated: true)
-    }
-}
-```
-
----
-
-### 5. SwiftUI Coordinator (управление NavigationStack)
-
-```swift
-import SwiftUI
-
-class AppCoordinator: ObservableObject {
-    @Published var path = NavigationPath()
-
-    func goToDetail() {
-        path.append("Detail")
-    }
-}
-
-struct ContentView: View {
-    @StateObject var coordinator = AppCoordinator()
-
-    var body: some View {
-        NavigationStack(path: $coordinator.path) {
-            VStack {
-                Text("Home")
-                Button("Go to Detail") {
-                    coordinator.goToDetail()
-                }
-            }
-            .navigationDestination(for: String.self) { value in
-                Text("Screen: \(value)")
-            }
+        let loginVC = LoginViewController()
+        loginVC.onLoginSuccess = { [weak self] user in
+            self?.onFinish?()
         }
+        navigationController.setViewControllers([loginVC], animated: false)
     }
 }
 ```
+
+#### 3. Router внутри Coordinator (очень чистый вариант)
+
+```swift
+protocol Router: AnyObject {
+    func showLogin()
+    func showRegistration()
+    func showMainTabBar()
+}
+
+class AuthRouter: Router {
+    weak var navigationController: UINavigationController?
+    
+    func showLogin() {
+        let vc = LoginViewController()
+        navigationController?.setViewControllers([vc], animated: true)
+    }
+    
+    // ...
+}
+```
+
+### Преимущества Coordinator в 2026 году
+
+- **Навигация вынесена** из контроллеров → контроллеры становятся «глупыми»
+- **Легко тестировать** навигационные потоки (можно мокать Router / Coordinator)
+- **Поддержка сложных сценариев** — deep linking, восстановление стека, модальные потоки, tab bar + navigation
+- **Чистый код** — нет цепочек `presentingViewController?.presentingViewController?.dismiss`
+- **Легко добавлять/удалять экраны** — всё в одном месте
+
+### Недостатки и компромиссы
+
+- Дополнительный слой абстракции → больше кода на старте
+- Нужно следить за **слабой связанностью** (weak ссылки, избегать retain cycle)
+- Иногда кажется over-engineering для маленьких приложений
+
+### Альтернативы Coordinator в 2026 году
+
+| Подход                                                                                     | Когда лучше Coordinator                       | Плюсы                         | Минусы                                        |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------- | ----------------------------- | --------------------------------------------- |
+| **SwiftUI + NavigationStack / NavigationSplitView**                                        | Новые проекты на [[SwiftUI]]                  | Декларативно, меньше кода     | Пока хуже поддержка сложных модальных потоков |
+| **Router + Dependency Injection**                                                          | Хочется минимизировать количество классов     | Легче, чем полный Coordinator | Меньше изоляции навигации                     |
+| **MVVM + [[Closure]] / Publisher**                                                         | Простые приложения, переходы не очень сложные | Минимум кода                  | Контроллеры начинают разрастаться             |
+| **[[VIPER Architecture\|VIPER]] / [[Clean Swift (VIP) Architecture\|Clean Architecture]]** | Очень большие корпоративные проекты           | Максимальная изоляция         | Слишком много boilerplate                     |
+| **Coordinator + SwiftUI Hosting**                                                          | Смешанный [[UIKit]] + SwiftUI проект          | Лучшее из двух миров          | Нужно следить за двумя мирами                 |
+
+### Короткий итог 2026
+
+> **Coordinator** — паттерн, который **выносит навигацию и создание экранов** из UIViewController'ов в отдельные объекты.  
+> В 2026 году это:  
+> - один из **самых популярных** архитектурных паттернов в UIKit  
+> - фактически **стандарт де-факто** для приложений со сложной навигацией  
+> - особенно полезен при: deep linking, модальных потоках, tab bar + stack, восстановлении состояния  
+> - в чистом SwiftUI почти не нужен (NavigationStack делает многое сам)  
+> - но в **UIKit** и **смешанных** проектах — остаётся одним из лучших решений  
