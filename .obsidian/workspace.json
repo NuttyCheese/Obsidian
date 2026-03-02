@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Общие вопросы/Виды пагинации.md",
+                "file": "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Виды пагинации"
+              "title": "Client-server architecture"
             }
           },
           {
@@ -281,6 +281,17 @@
   },
   "active": "deb4078ddeaf813e",
   "lastOpenFiles": [
+    "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
+    "Swift/Теория/Архитектурные подходы/Adapter.md",
+    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Waterfall.md",
+    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Scrum.md",
+    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Kanban.md",
+    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология DevOps.md",
+    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Agile.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/Dictionary(grouping by).md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/contains.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/compactMap.md",
+    "Swift/Теория/Общие вопросы/Виды пагинации.md",
     "Swift/Теория/iOS/UIKit/Responder/hitTest.md",
     "Swift/Теория/iOS/Swift/generic.md",
     "Swift/Теория/Паттерны/Принципы/DRY.md",
@@ -296,17 +307,6 @@
     "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
     "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
     "Swift/Теория/Архитектурные подходы/TCA.md",
-    "Swift/Теория/Архитектурные подходы/Strategy.md",
-    "Swift/Теория/Архитектурные подходы/Singleton.md",
-    "Swift/Теория/Архитектурные подходы/RIBs.md",
-    "Swift/Теория/Архитектурные подходы/Redux Architecture.md",
-    "Swift/Теория/Архитектурные подходы/MVVM (Model-View-ViewModel) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/MVP (Model-View-Presenter) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/MVI (Model-View-Intent) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/MVC (Model-View-Controller) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/Flux.md",
-    "Swift/Теория/Архитектурные подходы/Facade.md",
-    "Swift/Теория/Архитектурные подходы/Domain-Driven Design.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
