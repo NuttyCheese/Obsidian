@@ -54,7 +54,7 @@ func createRoundedAvatarPlaceholder(size: CGSize, color: UIColor) -> UIImage {
 }
 ```
 
-#### 2. Создание PDF с несколькими страницами
+#### 2. Создание [[PDF]] с несколькими страницами
 
 ```swift
 func generateInvoicePDF(data: InvoiceData) -> Data {

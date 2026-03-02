@@ -50,20 +50,6 @@
             }
           },
           {
-            "id": "e2ffa98fe45fdf04",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/iOS/UIKit/Responder/rendering blocks.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "rendering blocks"
-            }
-          },
-          {
             "id": "43c85c1ce5cd27e7",
             "type": "leaf",
             "state": {
@@ -75,20 +61,6 @@
               },
               "icon": "lucide-file",
               "title": "Responder Chain"
-            }
-          },
-          {
-            "id": "e781ae6dbaa47b41",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/iOS/UIKit/Responder/UIEvent.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "UIEvent"
             }
           },
           {
@@ -148,7 +120,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -321,13 +293,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e2ffa98fe45fdf04",
+  "active": "5281e7e2848e4cb3",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/UIKit/Responder/UIGraphicsImageRendererFormat.md",
+    "Swift/Теория/iOS/UIKit/Responder/UIEvent.md",
+    "Swift/Теория/iOS/UIKit/Responder/UITouch.md",
+    "Swift/Теория/iOS/UIKit/Responder/Responder Chain.md",
     "Swift/Теория/iOS/UIKit/Responder/rendering blocks.md",
+    "Swift/Теория/iOS/UIKit/Responder/UIGraphicsImageRendererFormat.md",
     "Swift/Теория/iOS/UIKit/Responder/hitTest vs. Responder Chain.md",
     "Swift/Теория/iOS/UIKit/Responder/hitTest.md",
-    "Swift/Теория/iOS/UIKit/Responder/UIEvent.md",
     "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
     "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
     "Swift/Теория/Архитектурные подходы/TCA.md",
@@ -347,8 +321,6 @@
     "Swift/Теория/Архитектурные подходы/Coordinator.md",
     "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология DevOps.md",
     "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
-    "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/Adapter.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
