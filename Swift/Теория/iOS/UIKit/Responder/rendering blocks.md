@@ -1,6 +1,6 @@
 **Rendering blocks** (или **блоки рендеринга**) — это современный и рекомендуемый способ выполнения операций рисования в [[UIKit]], начиная с iOS 10 (2016 год). Они пришли на смену устаревшим функциям `UIGraphicsBeginImageContext` / `UIGraphicsEndImageContext`.
 
-Это замыкания ([[closure]]), которые передаются в методы рендереров (`UIGraphicsImageRenderer`, `UIGraphicsPDFRenderer`, `UIGraphicsImageRendererFormat` и т.д.), и внутри них выполняется весь код рисования.
+Это замыкания ([[closure]]), которые передаются в методы рендереров ([[UIGraphicsImageRenderer]], [[UIGraphicsPDFRenderer]], [[UIGraphicsImageRendererFormat]] и т.д.), и внутри них выполняется весь код рисования.
 
 ### Почему rendering blocks — это стандарт 2026 года
 

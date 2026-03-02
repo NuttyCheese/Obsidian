@@ -148,7 +148,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -321,10 +321,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "deb4078ddeaf813e",
+  "active": "e2ffa98fe45fdf04",
   "lastOpenFiles": [
-    "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
+    "Swift/Теория/iOS/UIKit/Responder/UIGraphicsImageRendererFormat.md",
+    "Swift/Теория/iOS/UIKit/Responder/rendering blocks.md",
+    "Swift/Теория/iOS/UIKit/Responder/hitTest vs. Responder Chain.md",
     "Swift/Теория/iOS/UIKit/Responder/hitTest.md",
+    "Swift/Теория/iOS/UIKit/Responder/UIEvent.md",
+    "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
     "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
     "Swift/Теория/Архитектурные подходы/TCA.md",
     "Swift/Теория/Архитектурные подходы/Strategy.md",
@@ -345,10 +349,6 @@
     "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
     "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
     "Swift/Теория/Архитектурные подходы/Adapter.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Waterfall.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Scrum.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Kanban.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Agile.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
