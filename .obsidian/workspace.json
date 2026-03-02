@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
+                "file": "Swift/Теория/Контроль памяти/Weak self.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Что такое - value type and reference type"
+              "title": "Weak self"
             }
           },
           {
@@ -281,10 +281,16 @@
   },
   "active": "deb4078ddeaf813e",
   "lastOpenFiles": [
-    "Swift/Теория/Контроль памяти/ARC.md",
+    "Swift/Теория/Контроль памяти/KVO.md",
+    "Swift/Теория/Контроль памяти/dealloc.md",
+    "Swift/Теория/Контроль памяти/Copy-On-Write.md",
+    "Swift/Теория/Контроль памяти/Garbage collector.md",
+    "Swift/Теория/Контроль памяти/Copy-On-Shadow.md",
     "Swift/Теория/Контроль памяти/autorelease.md",
-    "Swift/Теория/Контроль памяти/alloc.md",
     "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
+    "Swift/Теория/Контроль памяти/alloc.md",
+    "Swift/Теория/Контроль памяти/ARC.md",
+    "Swift/Теория/Контроль памяти/autoreleasepool.md",
     "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
     "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
     "Swift/Теория/Архитектурные подходы/MVVM (Model-View-ViewModel) Architecture.md",
@@ -301,12 +307,6 @@
     "Swift/Теория/Архитектурные подходы/Difference between architectural approaches.md",
     "Swift/Теория/Архитектурные подходы/Decorator.md",
     "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Waterfall.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Scrum.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Kanban.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология DevOps.md",
-    "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Agile.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/Dictionary(grouping by).md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
