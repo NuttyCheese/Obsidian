@@ -1,134 +1,629 @@
-**Архитектурный паттерн, являющийся эволюцией классического [[MVC (Model-View-Controller) Architecture]]. Его ключевая цель — разгрузить Massive View Controller путем вынесения всей логики обновления интерфейса в отдельный класс — Presenter.** View становится пассивным и делегирует все действия Presenter'у.
+#architecture #mvp #ios #uikit #design-patterns #presenter #testing
+
+---
+### Определение
+**MVP (Model-View-Presenter)** — это архитектурный паттерн, являющийся эволюцией классического [[MVC (Model-View-Controller) Architecture|MVC]]. Его ключевая цель — решить проблему **"Massive View Controller"** путем вынесения всей логики обновления интерфейса в отдельный класс — **Presenter** . View становится пассивным и делегирует все действия Presenter'у, который управляет состоянием и реагирует на пользовательские события .
+
+В отличие от MVC, где Controller напрямую манипулирует и View, и Model, в MVP:
+- **View** — пассивна, только отображает данные и передает события.
+- **Presenter** — содержит всю логику представления, форматирует данные и управляет View через протокол.
+- **Model** — данные и бизнес-логика (как и в MVC).
+
+### Зачем это знать [[iOS]]-разработчику?
+1.  **Решение проблемы Massive View Controller:** MVP позволяет разгрузить ViewController, вынеся логику в Presenter .
+2.  **Высокая тестируемость:** Presenter — это чистый Swift-класс без зависимости от [[UIKit]], что делает его идеальным для юнит-тестирования .
+3.  **Четкое разделение ответственности:** Каждый компонент знает только свою задачу .
+4.  **Отличная база для рефакторинга:** MVP — хороший первый шаг при переходе от MVC к более сложным архитектурам .
+5.  **Естественная интеграция с UIKit:** В отличие от реактивных подходов, MVP использует императивный стиль, близкий к UIKit .
 
 ---
 
-### **1. Взаимодействие компонентов**
-
-Взаимодействие в MVP строится на строгом соглашении между View и Presenter через протоколы. Поток данных двусторонний, но инициируется всегда View.
-
-```mermaid
-flowchart TD
-    A[View<br>ViewController] -->|1. Пользовательское действие<br>вызывает метод Presenter'a| P[Presenter]
-    P -->|2. Работа с бизнес-логикой<br>Использует Сервисы, Менеджеры| M[Model]
-    M -->|3. Возвращает данные| P
-    P -->|4. Вызывает методы обновления<br>на СЛАБО связанной View| A
-```
-
-**Последовательность шагов:**
-
-1.  **Пользовательское действие (User Action):** Пользователь взаимодействует с элементами UI на View ( которая является ViewController'ом). View **не обрабатывает логику**, а сразу передает событие в Presenter, вызывая его метод.
-    *   *Пример:* `@objc func didTapLoginButton() { presenter.didTapLogin(username: nameTextField.text, password: passTextField.text) }`
-
-2.  **Обработка в Presenter (Business Logic):** Presenter получает событие и содержит всю логику приложения. Он решает, что делать дальше. Он может обратиться к различным **сервисам** (сетевым, базы данных) для выполнения работы.
-    *   *Пример:* `func didTapLogin(username: String?, password: String?) { authService.login(...) { ... } }`
-
-3.  **Подготовка данных (Data Formatting):** Получив сырые данные от сервисов (Model layer), Presenter форматирует их для отображения (конвертирует даты, вычисляет итоги, определяет, что показывать пользователю).
-
-4.  **Инструкция View (Update Command):** Presenter **не обновляет UI напрямую**. Вместо этого он обращается к **протоколу View** (который реализует ViewController) и вызывает заранее определенные методы для обновления состояния.
-    *   *Пример:* `view?.showError(message: "Неверный пароль")` или `view?.showUserProfile(user: formattedUser)`
-
-5.  **Обновление UI (UI Update):** ViewController, реализуя протокол, получает команду от Presenter'а и **тупо** выполняет ее, обновляя элементы интерфейса.
-    *   *Пример (в теле ViewController):* `func showError(message: String) { errorLabel.isHidden = false; errorLabel.text = message }`
-
----
-
-### **2. Схема архитектуры**
+### Компоненты MVP
 
 ```mermaid
 graph TD
     subgraph "View Layer"
-        V[View<br>ViewController]
+        V[View<br/>UIViewController]
         VP[View Protocol]
     end
 
     subgraph "Presenter Layer"
-        P[Presenter]
-        S[Service]
+        P[Presenter<br/>Бизнес-логика]
     end
 
     subgraph "Model Layer"
-        M[Model<br>Data Objects]
-        NS[Network Service]
-        DS[Database Service]
+        M[Model<br/>Данные, Сервисы]
     end
 
-    V -- "implements" --> VP
-    P -- "holds weak reference to" --> VP
+    V -->|"implements"| VP
+    P -->|"weak reference"| VP
 
     V -->|"1: userDidAction()"| P
-    P -->|"2: useService()"| S
-    S -->|"3: fetchData()"| NS
-    S -->|"fetchData()"| DS
-    NS -->|"returns data"| S
-    S -->|"returns data"| P
+    P -->|"2: useService()"| M
+    M -->|"3: returns data"| P
     P -->|"4: view.showData()"| VP
     VP -->|"5: update UI"| V
+    
+    style V fill:#ccccff,stroke:#333
+    style VP fill:#ffcc99,stroke:#333,stroke-dasharray: 5 5
+    style P fill:#ffcccc,stroke:#333
+    style M fill:#ccffcc,stroke:#333
 ```
 
----
+#### 1. **Model (Модель)**
+**Ответственность:** Данные и бизнес-логика низкого уровня.
+- Структуры данных (User, Product).
+- Сервисы для работы с сетью, базой данных, [[Keychain]].
+- **Не знает о существовании View и Presenter.**
 
-### **3. Термины и ключевые моменты**
+```swift
+struct User {
+    let id: Int
+    let name: String
+    let email: String
+}
 
-#### **Ключевые компоненты:**
-*   **Model:** Представляет данные приложения и бизнес-логику низкого уровня (как и в других паттернах). Это структуры данных (User, Product) и сервисы, которые с ними работают (NetworkManager, DatabaseManager).
-*   **View:** Отвечает только за отображение UI и передачу пользовательских событий. **Пассивна и не содержит логики.** В [[iOS]] это практически всегда ViewController, который **реализует специальный протокол** (например, `LoginViewProtocol`). Это слабая ссылка в Presenter.
-*   **Presenter:** "Мозг" экрана. Содержит всю логику представления и обработки событий. Он получает события от View, работает с Model, подготавливает данные и передает команды назад View через протокол. **Никогда не импортирует [[UIKit]]** и поэтому легко тестируется.
-*   **View Protocol:** Ключевой элемент MVP, обеспечивающий слабую связность. Это контракт, в котором объявлены все методы для обновления UI (показать лоадер, отобразить ошибку, показать данные). Presenter работает только с этим протоколом, а не с конкретным ViewController.
+protocol AuthServiceProtocol {
+    func login(username: String, password: String, completion: @escaping (Result<User, Error>) -> Void)
+}
 
-#### **Важные принципы:**
-*   **Слабая связность через протоколы:** Presenter знает только о существовании протокола View, но не о конкретной реализации. Это позволяет легко подменять View для тестов (например, создавать Mock-View) и делает код гибким.
-*   **Пассивная View:** View "глупая". Ее единственная задача — отрисовывать то, что ей велят, и сообщать о событиях.
-*   **100% покрытие логики юнит-тестами:** Поскольку Presenter является чистым Swift-объектом, его можно полностью протестировать без мокков UIKit. View тестируется через тесты UI (Snapshot tests).
-
-#### **Отличие от MVVM:**
-*   **MVP:** Обновление View происходит через **ручной вызов методов** протокола (`view.showData()`). Это императивный подход.
-*   **[[MVVM (Model-View-ViewModel) Architecture]]:** Обновление View происходит через **реактивную привязку (data binding)** к свойствам ViewModel (`viewModel.data`.sink {...}`). Это декларативный подход.
-
-#### **Сильные стороны:**
-*   **Полное избавление от Massive View Controller:** ViewController становится легким и содержит только UI-код.
-*   **Высокая тестируемость:** Логика в Presenter'е тестируется легко и полноценно.
-*   **Четкое разделение ответственности:** Все знают свою зону ответственности.
-*   **Отлично подходит для UIKit:** Более естественно ложится на [[UIKit]], чем MVVM, так как не требует реактивного подхода (хотя его можно добавить).
-
-#### **Слабые стороны:**
-*   **Ручная работа:** Необходимо вручную описывать протоколы View и все методы для обновления UI. Это создает больше бойлерплейта по сравнению с реактивной привязкой в MVVM.
-*   **Риск создания "Massive Presenter":** Если не следить, вся логика переедет из ViewController'а в Presenter, просто сменив прописку. Нужно дробить логику по сервисам и Use Cases.
-
----
-
-### **4. Пример структуры файлов в [[Xcode]]**
-
-```
-LoginModule/
-├── LoginViewController.swift       // View (импортирует UIKit)
-├── LoginPresenter.swift            // Presenter (не импортирует UIKit)
-├── LoginViewProtocol.swift         // View Protocol
-├── LoginModels.swift               // Model (структуры Data)
-└── Services/
-    └── AuthService.swift           // Сервис, используемый Presenter'ом
+class AuthService: AuthServiceProtocol {
+    func login(username: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
+        // Сетевой запрос
+    }
+}
 ```
 
-**Содержание файла `LoginViewProtocol.swift`:**
+#### 2. **View (Представление)**
+**Ответственность:** Отображение UI и передача пользовательских событий.
+- **Пассивна и "глупа"** — не содержит бизнес-логики.
+- Реализует протокол View, определенный Presenter'ом.
+- Держит **слабую ссылку** на Presenter.
+- В iOS это обычно [[UIViewController]].
+
 ```swift
 protocol LoginViewProtocol: AnyObject {
     func showLoading()
     func hideLoading()
     func showError(_ message: String)
-    func navigateToHome()
+    func showSuccess(message: String)
+}
+
+class LoginViewController: UIViewController, LoginViewProtocol {
+    @IBOutlet weak var usernameTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var errorLabel: UILabel!
+    
+    var presenter: LoginPresenterProtocol!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        presenter.viewDidLoad()
+    }
+    
+    @IBAction func loginButtonTapped(_ sender: UIButton) {
+        presenter.loginButtonTapped(
+            username: usernameTextField.text,
+            password: passwordTextField.text
+        )
+    }
+    
+    // MARK: - LoginViewProtocol
+    func showLoading() {
+        activityIndicator.startAnimating()
+        loginButton.isEnabled = false
+    }
+    
+    func hideLoading() {
+        activityIndicator.stopAnimating()
+        loginButton.isEnabled = true
+    }
+    
+    func showError(_ message: String) {
+        errorLabel.text = message
+        errorLabel.isHidden = false
+    }
+    
+    func showSuccess(message: String) {
+        let alert = UIAlertController(title: "Успех", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+}
+```
+
+#### 3. **Presenter (Презентер)**
+**Ответственность:** Вся логика представления.
+- Получает события от View.
+- Работает с Model (сервисами).
+- Форматирует данные для отображения.
+- Управляет View через протокол.
+- **Не импортирует [[UIKit]]** — чистый [[Swift]].
+- Держит **слабую ссылку** на View.
+
+```swift
+protocol LoginPresenterProtocol: AnyObject {
+    func viewDidLoad()
+    func loginButtonTapped(username: String?, password: String?)
+}
+
+class LoginPresenter: LoginPresenterProtocol {
+    weak var view: LoginViewProtocol?
+    private let authService: AuthServiceProtocol
+    
+    init(view: LoginViewProtocol, authService: AuthServiceProtocol) {
+        self.view = view
+        self.authService = authService
+    }
+    
+    func viewDidLoad() {
+        // Инициализация, если нужно
+    }
+    
+    func loginButtonTapped(username: String?, password: String?) {
+        guard let username = username, !username.isEmpty,
+              let password = password, !password.isEmpty else {
+            view?.showError("Заполните все поля")
+            return
+        }
+        
+        view?.showLoading()
+        
+        authService.login(username: username, password: password) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.view?.hideLoading()
+                
+                switch result {
+                case .success(let user):
+                    self?.view?.showSuccess(message: "Добро пожаловать, \(user.name)!")
+                case .failure(let error):
+                    self?.view?.showError(error.localizedDescription)
+                }
+            }
+        }
+    }
+}
+```
+
+#### 4. **View Protocol**
+**Ответственность:** Контракт между Presenter и View.
+- Определяет методы для обновления UI.
+- Обеспечивает слабую связность.
+- Позволяет легко тестировать Presenter с Mock-View.
+
+---
+
+### Пример: Полный модуль логина на MVP
+
+#### LoginViewProtocol.swift
+```swift
+import Foundation
+
+protocol LoginViewProtocol: AnyObject {
+    func showLoading()
+    func hideLoading()
+    func showError(_ message: String)
+    func showSuccess(message: String)
+    func clearForm()
+}
+```
+
+#### LoginPresenter.swift
+```swift
+import Foundation
+
+protocol LoginPresenterProtocol: AnyObject {
+    func viewDidLoad()
+    func loginButtonTapped(username: String?, password: String?)
+    func forgotPasswordTapped()
+    func registerTapped()
+}
+
+class LoginPresenter: LoginPresenterProtocol {
+    weak var view: LoginViewProtocol?
+    private let authService: AuthServiceProtocol
+    private let validator: ValidatorProtocol
+    
+    init(view: LoginViewProtocol, 
+         authService: AuthServiceProtocol,
+         validator: ValidatorProtocol) {
+        self.view = view
+        self.authService = authService
+        self.validator = validator
+    }
+    
+    func viewDidLoad() {
+        // Проверка, был ли пользователь уже залогинен
+        if authService.isUserLoggedIn {
+            view?.showSuccess(message: "Вы уже авторизованы")
+        }
+    }
+    
+    func loginButtonTapped(username: String?, password: String?) {
+        guard let username = username, let password = password else {
+            view?.showError("Заполните все поля")
+            return
+        }
+        
+        // Валидация
+        guard validator.isValidEmail(username) else {
+            view?.showError("Неверный формат email")
+            return
+        }
+        
+        guard validator.isValidPassword(password) else {
+            view?.showError("Пароль должен быть не менее 6 символов")
+            return
+        }
+        
+        view?.showLoading()
+        
+        authService.login(username: username, password: password) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.view?.hideLoading()
+                
+                switch result {
+                case .success(let user):
+                    self?.handleLoginSuccess(user)
+                case .failure(let error):
+                    self?.view?.showError(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    func forgotPasswordTapped() {
+        // Навигация на экран восстановления пароля
+        // (обычно через Router/Coordinator)
+    }
+    
+    func registerTapped() {
+        // Навигация на экран регистрации
+    }
+    
+    private func handleLoginSuccess(_ user: User) {
+        view?.clearForm()
+        view?.showSuccess(message: "Добро пожаловать, \(user.name)!")
+        // Здесь можно вызвать роутер для перехода на главный экран
+    }
+}
+```
+
+#### LoginViewController.swift
+```swift
+import UIKit
+
+class LoginViewController: UIViewController {
+    // MARK: - IBOutlets
+    @IBOutlet weak var usernameTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var errorLabel: UILabel!
+    @IBOutlet weak var forgotPasswordButton: UIButton!
+    @IBOutlet weak var registerButton: UIButton!
+    
+    // MARK: - Properties
+    var presenter: LoginPresenterProtocol!
+    
+    // MARK: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        presenter.viewDidLoad()
+    }
+    
+    private func setupUI() {
+        activityIndicator.isHidden = true
+        errorLabel.isHidden = true
+    }
+    
+    // MARK: - IBActions
+    @IBAction func loginButtonTapped(_ sender: UIButton) {
+        presenter.loginButtonTapped(
+            username: usernameTextField.text,
+            password: passwordTextField.text
+        )
+    }
+    
+    @IBAction func forgotPasswordTapped(_ sender: UIButton) {
+        presenter.forgotPasswordTapped()
+    }
+    
+    @IBAction func registerTapped(_ sender: UIButton) {
+        presenter.registerTapped()
+    }
+}
+
+// MARK: - LoginViewProtocol
+extension LoginViewController: LoginViewProtocol {
+    func showLoading() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        loginButton.isEnabled = false
+        errorLabel.isHidden = true
+    }
+    
+    func hideLoading() {
+        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
+        loginButton.isEnabled = true
+    }
+    
+    func showError(_ message: String) {
+        errorLabel.text = message
+        errorLabel.isHidden = false
+    }
+    
+    func showSuccess(message: String) {
+        let alert = UIAlertController(title: "Успех", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    func clearForm() {
+        usernameTextField.text = ""
+        passwordTextField.text = ""
+    }
+}
+```
+
+#### LoginAssembly.swift
+```swift
+import UIKit
+
+enum LoginAssembly {
+    static func build() -> UIViewController {
+        let viewController = LoginViewController()
+        let authService = AuthService()
+        let validator = Validator()
+        let presenter = LoginPresenter(view: viewController, 
+                                       authService: authService,
+                                       validator: validator)
+        viewController.presenter = presenter
+        return viewController
+    }
+}
+
+// Использование:
+// let loginVC = LoginAssembly.build()
+// navigationController?.pushViewController(loginVC, animated: true)
+```
+
+#### Тестирование Presenter
+```swift
+import XCTest
+@testable import MyApp
+
+class MockLoginView: LoginViewProtocol {
+    var showLoadingCalled = false
+    var hideLoadingCalled = false
+    var showErrorCalled = false
+    var showSuccessCalled = false
+    var lastErrorMessage: String?
+    var lastSuccessMessage: String?
+    
+    func showLoading() { showLoadingCalled = true }
+    func hideLoading() { hideLoadingCalled = true }
+    func showError(_ message: String) { 
+        showErrorCalled = true
+        lastErrorMessage = message
+    }
+    func showSuccess(message: String) { 
+        showSuccessCalled = true
+        lastSuccessMessage = message
+    }
+    func clearForm() { }
+}
+
+class MockAuthService: AuthServiceProtocol {
+    var shouldSucceed = true
+    var loginCalled = false
+    var lastUsername: String?
+    var lastPassword: String?
+    
+    func login(username: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
+        loginCalled = true
+        lastUsername = username
+        lastPassword = password
+        
+        if shouldSucceed {
+            let user = User(id: 1, name: "Test User", email: username)
+            completion(.success(user))
+        } else {
+            let error = NSError(domain: "test", code: -1, userInfo: [NSLocalizedDescriptionKey: "Auth failed"])
+            completion(.failure(error))
+        }
+    }
+}
+
+class LoginPresenterTests: XCTestCase {
+    func testLoginSuccess() {
+        // Given
+        let mockView = MockLoginView()
+        let mockAuth = MockAuthService()
+        let presenter = LoginPresenter(view: mockView, authService: mockAuth, validator: Validator())
+        
+        // When
+        presenter.loginButtonTapped(username: "test@example.com", password: "password123")
+        
+        // Then
+        XCTAssertTrue(mockView.showLoadingCalled)
+        XCTAssertTrue(mockAuth.loginCalled)
+        XCTAssertEqual(mockAuth.lastUsername, "test@example.com")
+        // Проверка асинхронного результата (нужно использовать expectations)
+    }
 }
 ```
 
 ---
 
-### **5. Важное от себя (Практические советы)**
+### MVP с Router/Coordinator для навигации
 
-*   **Всегда держите ссылку на View как `weak`:** Чтобы избежать цикла сильных ссылок ([[retain cycle]]), Presenter должен хранить ссылку на View только как слабую ([[weak]]) ссылку на протокол.
-    *   `class LoginPresenter { weak var view: LoginViewProtocol? }`
-*   **Используйте инъекцию зависимостей:** Передавайте сервисы в Presenter через инициализатор. Это упрощает тестирование.
-    *   `init(authService: AuthServiceProtocol, view: LoginViewProtocol)`
-*   **Не забывайте про главный поток (Main Thread):** Presenter работает с асинхронными сервисами. При возврате результата и вызове методов View обязательно диспатчьтесь на главную очередь, так как обновление UI можно делать только из нее.
-    *   `DispatchQueue.main.async { self.view?.hideLoading() }`
-*   **Композиция с Router/Coordinator:** Для навигации добавьте к MVP Router. Presenter может иметь ссылку на Router и говорить ему: "открой следующий экран", передавая необходимые данные. Сам Presenter при этом не должен знать о том, как именно этот экран создается и показывается.
-*   **MVP — отличный выбор для legacy-проектов:** Если у вас большой старый проект на MVC и вы хотите начать его рефакторить, MVP — идеальный первый шаг. Вы можете экран за экраном выносить логику в Presenter, не ломая всю архитектуру приложения и не добавляя сложные reactive-фреймворки.
+#### LoginRouter.swift
+```swift
+import UIKit
+
+protocol LoginRouterProtocol {
+    func navigateToHome()
+    func navigateToForgotPassword()
+    func navigateToRegister()
+}
+
+class LoginRouter: LoginRouterProtocol {
+    weak var viewController: UIViewController?
+    
+    static func createModule() -> UIViewController {
+        let view = LoginViewController()
+        let router = LoginRouter()
+        let presenter = LoginPresenter(view: view, router: router)
+        
+        view.presenter = presenter
+        router.viewController = view
+        
+        return view
+    }
+    
+    func navigateToHome() {
+        let homeVC = HomeViewController()
+        viewController?.navigationController?.pushViewController(homeVC, animated: true)
+    }
+    
+    func navigateToForgotPassword() {
+        let forgotVC = ForgotPasswordViewController()
+        viewController?.present(forgotVC, animated: true)
+    }
+    
+    func navigateToRegister() {
+        let registerVC = RegisterViewController()
+        viewController?.navigationController?.pushViewController(registerVC, animated: true)
+    }
+}
+
+// Обновленный Presenter
+protocol LoginPresenterProtocol {
+    init(view: LoginViewProtocol, router: LoginRouterProtocol)
+    func loginButtonTapped(username: String?, password: String?)
+    func forgotPasswordTapped()
+    func registerTapped()
+}
+
+class LoginPresenter: LoginPresenterProtocol {
+    weak var view: LoginViewProtocol?
+    let router: LoginRouterProtocol
+    // ... остальные зависимости
+    
+    init(view: LoginViewProtocol, router: LoginRouterProtocol) {
+        self.view = view
+        self.router = router
+    }
+    
+    func forgotPasswordTapped() {
+        router.navigateToForgotPassword()
+    }
+    
+    private func handleLoginSuccess(_ user: User) {
+        view?.showSuccess(message: "Добро пожаловать!")
+        router.navigateToHome()
+    }
+}
+```
 
 ---
+
+### MVP vs MVC vs MVVM
+
+| Характеристика                     | [[MVC (Model-View-Controller) Architecture\|MVC]] | MVP                      | [[MVVM (Model-View-ViewModel) Architecture\|MVVM]] |
+| ---------------------------------- | ------------------------------------------------- | ------------------------ | -------------------------------------------------- |
+| **View**                           | Активна (содержит логику)                         | Пассивна (только UI)     | Пассивна (с binding)                               |
+| **Controller/Presenter/ViewModel** | Controller (связан с UIKit)                       | Presenter (чистый Swift) | ViewModel (чистый Swift)                           |
+| **Связь с View**                   | Прямая (IBOutlets)                                | Через протокол           | Через binding ([[Combine]]/Rx)                     |
+| **Тестируемость**                  | Низкая                                            | Высокая                  | Высокая                                            |
+| **Бойлерплейт**                    | Минимум                                           | Средний (протоколы)      | Средний (binding)                                  |
+| **Сложность**                      | Низкая                                            | Средняя                  | Средняя                                            |
+| **UIKit зависимость**              | Controller зависит                                | Presenter не зависит     | ViewModel не зависит                               |
+| **Реактивность**                   | Нет                                               | Нет                      | Да (опционально)                                   |
+| **Refactoring из MVC**             | -                                                 | Легко                    | Сложнее                                            |
+
+---
+
+### Преимущества MVP
+
+1.  **Решение проблемы Massive View Controller:** ViewController становится тонким и содержит только UI-код .
+2.  **Высокая тестируемость:** Presenter — чистый Swift, легко покрывается юнит-тестами .
+3.  **Четкое разделение ответственности:** Каждый компонент знает свою роль .
+4.  **Слабая связность через протоколы:** Позволяет легко заменять реализации .
+5.  **Отличная база для рефакторинга:** MVP — идеальный первый шаг при переходе от MVC .
+6.  **Естественная интеграция с UIKit:** Не требует реактивных фреймворков .
+
+### Недостатки MVP
+
+1.  **Бойлерплейт:** Нужно создавать протоколы для каждого экрана и реализовывать все методы .
+2.  **Риск создания "Massive Presenter":** Если не следить, вся логика переедет из ViewController в Presenter .
+3.  **Ручное управление обновлениями:** В отличие от MVVM, нет автоматического binding .
+4.  **Сложность навигации:** Требуется дополнительный компонент (Router/Coordinator) .
+5.  **Много кода для простых экранов:** Для статичных экранов MVP может быть избыточен .
+
+---
+
+### Практические советы
+
+#### 1. **Всегда держите ссылку на View как [[weak]]**
+Чтобы избежать циклов сильных ссылок, Presenter должен хранить ссылку на View только как слабую.
+
+```swift
+class Presenter {
+    weak var view: ViewProtocol?
+}
+```
+
+#### 2. **Используйте инъекцию зависимостей**
+Передавайте все зависимости (сервисы, валидаторы, роутеры) через инициализатор. Это упрощает тестирование.
+
+```swift
+init(view: ViewProtocol, 
+     authService: AuthServiceProtocol, 
+     validator: ValidatorProtocol,
+     router: RouterProtocol)
+```
+
+#### 3. **Не забывайте про главный поток**
+Все обновления UI должны происходить на главном потоке. При возврате из асинхронных операций используйте `DispatchQueue.main.async`.
+
+```swift
+authService.login(...) { [weak self] result in
+    DispatchQueue.main.async {
+        self?.view?.hideLoading()
+        // обновление UI
+    }
+}
+```
+
+#### 4. **Дробите большие презентеры**
+Если Presenter становится слишком большим, разбейте его на несколько меньших по функциональности или вынесите часть логики в отдельные сервисы.
+
+#### 5. **Используйте Router для навигации**
+Вынесите логику навигации в отдельный класс (Router/[[Coordinator]]). Это сделает Presenter еще чище и тестируемее.
+
+#### 6. **Создавайте базовые протоколы**
+Для общих методов (showLoading, showError) можно создать базовый протокол и наследовать от него конкретные.
+
+```swift
+protocol BaseViewProtocol: AnyObject {
+    func showLoading()
+    func hideLoading()
+    func showError(_ message: String)
+}
+
+protocol LoginViewProtocol: BaseViewProtocol {
+    func showLoginSuccess(user: User)
+}
+```
+
+#### 7. **Тестируйте презентеры с Mock-объектами**
+Используйте mock-реализации View и сервисов для изолированного тестирования логики.
+
+### Итог
+**MVP** — это надежный и проверенный архитектурный паттерн, который эффективно решает проблему Massive View Controller и делает код тестируемым и поддерживаемым. Он особенно хорош для UIKit-проектов, где не хочется внедрять реактивные фреймворки. MVP служит отличным мостом между простым MVC и более сложными архитектурами (MVVM, VIPER, Clean Swift), позволяя постепенно улучшать структуру проекта .
