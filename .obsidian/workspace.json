@@ -147,7 +147,8 @@
               "title": "generic"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -320,8 +321,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e4448cb442c7e489",
+  "active": "deb4078ddeaf813e",
   "lastOpenFiles": [
+    "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
+    "Swift/Теория/iOS/UIKit/Responder/hitTest.md",
     "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
     "Swift/Теория/Архитектурные подходы/TCA.md",
     "Swift/Теория/Архитектурные подходы/Strategy.md",
@@ -346,8 +349,6 @@
     "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Scrum.md",
     "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Kanban.md",
     "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Agile.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/swapAt.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/split.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
