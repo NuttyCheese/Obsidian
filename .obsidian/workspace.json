@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
+                "file": "Swift/Теория/Архитектурные подходы/Flux.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Client-server architecture"
+              "title": "Flux"
             }
           },
           {
@@ -281,6 +281,12 @@
   },
   "active": "deb4078ddeaf813e",
   "lastOpenFiles": [
+    "Swift/Теория/Архитектурные подходы/Facade.md",
+    "Swift/Теория/Архитектурные подходы/Domain-Driven Design.md",
+    "Swift/Теория/Архитектурные подходы/Difference between architectural approaches.md",
+    "Swift/Теория/Архитектурные подходы/Decorator.md",
+    "Swift/Теория/Архитектурные подходы/Coordinator.md",
+    "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
     "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
     "Swift/Теория/Архитектурные подходы/Adapter.md",
     "Swift/Теория/Архитектурные подходы/Методологии ведения проекта/Методология Waterfall.md",
@@ -301,12 +307,6 @@
     "Swift/Теория/iOS/UIKit/Responder/UIEvent.md",
     "Swift/Теория/iOS/UIKit/Responder/UITouch.md",
     "Swift/Теория/iOS/UIKit/Responder/Responder Chain.md",
-    "Swift/Теория/iOS/UIKit/Responder/rendering blocks.md",
-    "Swift/Теория/iOS/UIKit/Responder/UIGraphicsImageRendererFormat.md",
-    "Swift/Теория/iOS/UIKit/Responder/hitTest vs. Responder Chain.md",
-    "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
-    "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
-    "Swift/Теория/Архитектурные подходы/TCA.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",

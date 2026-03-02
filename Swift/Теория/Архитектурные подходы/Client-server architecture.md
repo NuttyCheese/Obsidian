@@ -362,7 +362,7 @@ extension UsersViewController: UITableViewDataSource {
 }
 ```
 
-#### Уровень 3: Использование async/await (современный подход)
+#### Уровень 3: Использование [[async]]/[[await]] (современный подход)
 
 ```swift
 import Foundation
