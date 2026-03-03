@@ -1,7 +1,14 @@
 #extension #uitableview #uitableviewcell #protocol  
+
+---
+# [[UIKit]] — Расширения для [[UITableView]]
+
+Упрощают регистрацию и переиспользование ячеек, хедеров и футеров в таблицах.  
+Самые популярные идиоматичные методы в [[Swift]]-проектах 2023–2026 годов.
+
 ```swift
 extension UITableView {
-    /// Регистрирует ячейки с использованием имени класса в качестве reuseIdentifier
+    /// Регистрирует несколько типов ячеек одновременно
     func registerCells(_ cells: UITableViewCell.Type...) {
         cells.forEach { cellType in
             let identifier = String(describing: cellType)
@@ -9,135 +16,177 @@ extension UITableView {
         }
     }
     
-    /// Регистрирует header/footer views
-    func registerHeaderFooterViews(_ views: UITableViewHeaderFooterView.Type...) {
-        views.forEach { viewType in
-            let identifier = String(describing: viewType)
-            register(viewType, forHeaderFooterViewReuseIdentifier: identifier)
+    /// Получает переиспользуемую ячейку с приведением к нужному типу
+    func reuseCell<T: UITableViewCell>(_ type: T.Type, for indexPath: IndexPath) -> T {
+        let identifier = String(describing: type)
+        return dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! T
+    }
+    
+    /// Регистрирует несколько типов хедеров
+    func registerHeaders(_ headerTypes: UITableViewHeaderFooterView.Type...) {
+        headerTypes.forEach { headerType in
+            let identifier = String(describing: headerType)
+            register(headerType, forHeaderFooterViewReuseIdentifier: identifier)
         }
     }
     
-    /// Безопасное получение ячейки по типу
-    func dequeueReusableCell<T: UITableViewCell>(_ type: T.Type,
-                                                for indexPath: IndexPath) -> T {
-        let identifier = String(describing: type)
-        return dequeueReusableCell(withIdentifier: identifier, 
-                                  for: indexPath) as! T
+    /// Регистрирует несколько типов футеров
+    func registerFooters(_ footerTypes: UITableViewHeaderFooterView.Type...) {
+        footerTypes.forEach { footerType in
+            let identifier = String(describing: footerType)
+            register(footerType, forHeaderFooterViewReuseIdentifier: identifier)
+        }
     }
     
-    /// Безопасное получение header/footer
-    func dequeueReusableHeaderFooterView<T: UITableViewHeaderFooterView>(_ type: T.Type) -> T? {
+    /// Получает переиспользуемый хедер с приведением к типу
+    func reuseHeader<T: UITableViewHeaderFooterView>(_ type: T.Type) -> T? {
+        let identifier = String(describing: type)
+        return dequeueReusableHeaderFooterView(withIdentifier: identifier) as? T
+    }
+    
+    /// Получает переиспользуемый футер с приведением к типу
+    func reuseFooter<T: UITableViewHeaderFooterView>(_ type: T.Type) -> T? {
         let identifier = String(describing: type)
         return dequeueReusableHeaderFooterView(withIdentifier: identifier) as? T
     }
 }
+```
 
-// 2. Протокол для автоматической регистрации
-protocol ReusableTableViewCell {
-    static var reuseIdentifier: String { get }
+## Зачем нужны эти методы?
+
+1. **Убирают дублирование строк с `String(describing:)`**  
+   Вместо:
+
+   ```swift
+   tableView.register(ProfileCell.self, forCellReuseIdentifier: "ProfileCell")
+   tableView.register(NewsCell.self,   forCellReuseIdentifier: "NewsCell")
+   ```
+
+   Пишем одну строку:
+
+   ```swift
+   tableView.registerCells(ProfileCell.self, NewsCell.self)
+   ```
+
+2. **Безопасное приведение типов без `as!`**  
+   `reuseCell` возвращает уже приведённый тип → нет риска краша из-за неправильного каста.
+
+3. **Симметрия для ячеек / хедеров / футеров**  
+   Один и тот же паттерн для всех частей таблицы.
+
+4. **Меньше опечаток**  
+   Идентификатор всегда генерируется автоматически из имени класса.
+
+## Типичные сценарии использования
+
+### Вариант 1 — регистрация в [[viewDidLoad]] / [[awakeFromNib]]
+
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    tableView.registerCells(
+        UserCell.self,
+        PostCell.self,
+        LoadingCell.self
+    )
+    
+    tableView.registerHeaders(SectionHeaderView.self)
+    tableView.registerFooters(SectionFooterView.self)
 }
+```
 
-extension ReusableTableViewCell {
-    static var reuseIdentifier: String {
-        return String(describing: self)
-    }
-}
+### Вариант 2 — в `cellForRow` и `viewForHeaderInSection`
 
-extension UITableViewCell: ReusableTableViewCell {}
-
-extension UITableView {
-    func register<T: UITableViewCell>(_ type: T.Type) {
-        register(type, forCellReuseIdentifier: T.reuseIdentifier)
-    }
-    
-    func dequeueReusableCell<T: UITableViewCell>(_ type: T.Type,
-                                                for indexPath: IndexPath) -> T {
-        return dequeueReusableCell(withIdentifier: T.reuseIdentifier, 
-                                  for: indexPath) as! T
-    }
-}
-
-// 3. Для Diffable Data Source
-@available(iOS 13.0, *)
-extension UITableView {
-    typealias CellRegistration = UITableView.CellRegistration
-    typealias DataSource = UITableViewDiffableDataSource
-    
-    func registerCellsForDiffableDataSource(_ cells: UITableViewCell.Type...) {
-        cells.forEach { cellType in
-            let identifier = String(describing: cellType)
-            register(cellType, forCellReuseIdentifier: identifier)
-        }
-    }
-    
-    func makeDiffableDataSource<Section: Hashable, Item: Hashable>() -> DataSource<Section, Item> {
-        return DataSource<Section, Item>(tableView: self) { 
-            tableView, indexPath, item in
-            
-            // Определяем тип ячейки на основе item
-            let cellType = item.cellType
-            let identifier = String(describing: cellType)
-            
-            return tableView.dequeueReusableCell(
-                withIdentifier: identifier,
-                for: indexPath
-            )
-        }
-    }
-}
-
-// 4. Анимации для таблицы
-extension UITableView {
-    func reloadDataWithAnimation() {
-        UIView.transition(with: self,
-                         duration: 0.35,
-                         options: .transitionCrossDissolve,
-                         animations: { self.reloadData() })
-    }
-    
-    func reloadRowsWithAnimation(at indexPaths: [IndexPath]) {
-        UIView.animate(withDuration: 0.3) {
-            self.reloadRows(at: indexPaths, with: .automatic)
-        }
-    }
-    
-    func registerCellsWithAnimation(_ cells: UITableViewCell.Type...) {
-        UIView.animate(withDuration: 0.3) {
-            cells.forEach { cell in
-                self.register(cell, 
-                            forCellReuseIdentifier: String(describing: cell))
-            }
-        }
-    }
-}
-
-// 5. Утилиты для работы с индексами
-extension UITableView {
-    /// Возвращает все видимые ячейки определенного типа
-    func visibleCells<T: UITableViewCell>(ofType type: T.Type) -> [T] {
-        return visibleCells.compactMap { $0 as? T }
-    }
-    
-    /// Безопасное обновление ячейки
-    func safeReloadCell(at indexPath: IndexPath) {
-        guard indexPath.section < numberOfSections,
-              indexPath.row < numberOfRows(inSection: indexPath.section) else {
-            return
-        }
+```swift
+func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    switch sectionType {
+    case .user:
+        let cell = tableView.reuseCell(UserCell.self, for: indexPath)
+        cell.configure(with: user)
+        return cell
         
-        reloadRows(at: [indexPath], with: .automatic)
+    case .post:
+        return tableView.reuseCell(PostCell.self, for: indexPath)
+            .configure(with: posts[indexPath.row])
+    }
+}
+
+func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    tableView.reuseHeader(SectionHeaderView.self)?
+        .configure(title: sectionTitles[section])
+}
+```
+
+## Рекомендуемые улучшения (часто добавляют)
+
+```swift
+// Более безопасная версия без force unwrap (если боитесь крашей)
+func dequeue<T: UITableViewCell>(_ type: T.Type, for indexPath: IndexPath) -> T {
+    let id = String(describing: type)
+    guard let cell = dequeueReusableCell(withIdentifier: id, for: indexPath) as? T else {
+        fatalError("Не удалось dequeue \(id). Зарегистрирована ли ячейка?")
+    }
+    return cell
+}
+
+// Или ещё короче (самый популярный вариант 2025+)
+func cell<T: UITableViewCell>(ofType: T.Type, at indexPath: IndexPath) -> T {
+    dequeueReusableCell(withIdentifier: String(describing: ofType), for: indexPath) as! T
+}
+```
+
+## Сравнение старого и нового стиля
+
+| Задача                              | Старый стиль (классика)                                      | Новый стиль (с extension)                          |
+|-------------------------------------|---------------------------------------------------------------|----------------------------------------------------|
+| Регистрация ячеек                   | 3–5 строк register                                        | 1 строка `registerCells(...)`                      |
+| Получение ячейки                    | `as! UserCell` или `as?` + guard                          | `reuseCell(UserCell.self, for: indexPath)`         |
+| Регистрация хедера                  | отдельный `register(..., forHeaderFooterViewReuseIdentifier:)` | `registerHeaders(Header.self)`                     |
+| Получение хедера                    | `dequeueReusableHeaderFooterView` + `as?`                 | `reuseHeader(Header.self)`                         |
+
+## Полный пример ViewController’а
+
+```swift
+class FeedViewController: UIViewController, UITableViewDataSource {
+    
+    @IBOutlet private weak var tableView: UITableView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        tableView.dataSource = self
+        
+        tableView.registerCells(
+            PostCell.self,
+            StoryCell.self,
+            AdCell.self
+        )
+        
+        tableView.registerHeaders(FeedSectionHeader.self)
     }
     
-    /// Прокрутка к ячейке с безопасной проверкой
-    func safeScrollToRow(at indexPath: IndexPath, 
-                        at scrollPosition: UITableView.ScrollPosition,
-                        animated: Bool) {
-        guard indexPath.section < numberOfSections,
-              indexPath.row < numberOfRows(inSection: indexPath.section) else {
-            return
-        }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        posts.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let post = posts[indexPath.row]
         
-        scrollToRow(at: indexPath, at: scrollPosition, animated: animated)
+        if post.isSponsored {
+            return tableView.reuseCell(AdCell.self, for: indexPath)
+                .configure(with: post)
+        } else {
+            return tableView.reuseCell(PostCell.self, for: indexPath)
+                .configure(with: post)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        tableView.reuseHeader(FeedSectionHeader.self)?
+            .setTitle("Сегодня")
     }
 }
 ```
+
+---

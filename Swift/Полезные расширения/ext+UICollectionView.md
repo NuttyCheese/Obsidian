@@ -1,7 +1,15 @@
 #extension #uicollectionview #uicollectionviewcell #uicollectionviewLayout  #protocol
+
+---
+Стиль и подход максимально близки к расширению для [[UITableView]]:  
+- variadic-регистрация нескольких типов сразу  
+- автоматический `reuseIdentifier = String(describing: Type.self)`  
+- generic-методы для безопасного dequeue без `as!` (но с [[force unwrap]], как в твоём примере для таблицы)  
+- поддержка supplementary views (headers/footers/decorations и т.д.)
+
 ```swift
 extension UICollectionView {
-    /// Регистрирует ячейки с использованием имени класса в качестве reuseIdentifier
+    /// Регистрирует несколько типов ячеек одновременно
     func registerCells(_ cells: UICollectionViewCell.Type...) {
         cells.forEach { cellType in
             let identifier = String(describing: cellType)
@@ -9,129 +17,163 @@ extension UICollectionView {
         }
     }
     
-    /// Регистрирует supplementary views
-    func registerSupplementaryViews(_ views: UICollectionReusableView.Type...,
-                                   ofKind kind: String) {
-        views.forEach { viewType in
-            let identifier = String(describing: viewType)
-            register(viewType, 
-                    forSupplementaryViewOfKind: kind,
-                    withReuseIdentifier: identifier)
-        }
-    }
-    
-    /// Безопасное получение ячейки по типу
-    func dequeueReusableCell<T: UICollectionViewCell>(_ type: T.Type,
-                                                     for indexPath: IndexPath) -> T {
+    /// Получает переиспользуемую ячейку с приведением к нужному типу
+    func reuseCell<T: UICollectionViewCell>(_ type: T.Type, for indexPath: IndexPath) -> T {
         let identifier = String(describing: type)
-        return dequeueReusableCell(withReuseIdentifier: identifier, 
-                                  for: indexPath) as! T
-    }
-}
-
-// 2. Протокол для автоматической регистрации
-protocol ReusableView {
-    static var reuseIdentifier: String { get }
-}
-
-extension ReusableView {
-    static var reuseIdentifier: String {
-        return String(describing: self)
-    }
-}
-
-extension UICollectionViewCell: ReusableView {}
-
-extension UICollectionView {
-    func register<T: UICollectionViewCell>(_ type: T.Type) {
-        register(type, forCellWithReuseIdentifier: T.reuseIdentifier)
+        return dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! T
     }
     
-    func dequeueReusableCell<T: UICollectionViewCell>(_ type: T.Type,
-                                                     for indexPath: IndexPath) -> T {
-        return dequeueReusableCell(withReuseIdentifier: T.reuseIdentifier, 
-                                  for: indexPath) as! T
-    }
-}
-
-// 3. Билдер для композиционного layout
-extension UICollectionViewLayout {
-    static func createFormLayout() -> UICollectionViewCompositionalLayout {
-        let layout = UICollectionViewCompositionalLayout { sectionIndex, _ in
-            // Динамическая конфигурация секций
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(50)
-            )
-            
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            
-            let groupSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(50)
-            )
-            
-            let group = NSCollectionLayoutGroup.vertical(
-                layoutSize: groupSize,
-                subitems: [item]
-            )
-            
-            let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(
-                top: 10, leading: 16, bottom: 10, trailing: 16
-            )
-            
-            return section
-        }
-        
-        return layout
-    }
-}
-
-// 4. Для Diffable Data Source
-@available(iOS 13.0, *)
-extension UICollectionView {
-    typealias CellRegistration = UICollectionView.CellRegistration
-    typealias DataSource = UICollectionViewDiffableDataSource
-    
-    func registerCellsForDiffableDataSource(_ cells: UICollectionViewCell.Type...) {
-        cells.forEach { cellType in
-            let identifier = String(describing: cellType)
-            register(cellType, forCellWithReuseIdentifier: identifier)
+    /// Регистрирует несколько типов supplementary views (headers, footers, custom и т.д.)
+    /// kind — например: UICollectionView.elementKindSectionHeader
+    func registerSupplementaryViews(
+        _ types: UICollectionReusableView.Type...,
+        for kind: String
+    ) {
+        types.forEach { viewType in
+            let identifier = String(describing: viewType)
+            register(viewType, forSupplementaryViewOfKind: kind, withReuseIdentifier: identifier)
         }
     }
     
-    func makeDiffableDataSource() -> DataSource<Section, Item> {
-        return DataSource<Section, Item>(collectionView: self) { 
-            collectionView, indexPath, item in
-            
-            let cellType = item.cellType
-            let identifier = String(describing: cellType)
-            
-            return collectionView.dequeueReusableCell(
-                withReuseIdentifier: identifier,
-                for: indexPath
-            )
-        }
-    }
-}
-
-// 5. Кастомные анимации для ячеек
-extension UICollectionView {
-    func reloadDataWithAnimation() {
-        UIView.transition(with: self,
-                         duration: 0.35,
-                         options: .transitionCrossDissolve,
-                         animations: { self.reloadData() })
-    }
-    
-    func registerCellsWithAnimation(_ cells: UICollectionViewCell.Type...) {
-        UIView.animate(withDuration: 0.3) {
-            cells.forEach { cell in
-                self.register(cell, 
-                             forCellWithReuseIdentifier: String(describing: cell))
-            }
-        }
+    /// Получает переиспользуемый supplementary view с приведением к типу
+    func reuseSupplementary<T: UICollectionReusableView>(
+        _ type: T.Type,
+        kind: String,
+        at indexPath: IndexPath
+    ) -> T {
+        let identifier = String(describing: type)
+        return dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: identifier,
+            for: indexPath
+        ) as! T
     }
 }
 ```
+
+### Варианты использования (самые популярные паттерны 2025–2026)
+
+#### 1. Регистрация в `viewDidLoad` / `awakeFromNib`
+
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    collectionView.registerCells(
+        PhotoCell.self,
+        StoryCell.self,
+        AdBannerCell.self,
+        LoadingCell.self
+    )
+    
+    // Для хедеров
+    collectionView.registerSupplementaryViews(
+        SectionHeaderView.self,
+        CategoryHeader.self,
+        for: UICollectionView.elementKindSectionHeader
+    )
+    
+    // Для футеров (если нужны)
+    collectionView.registerSupplementaryViews(
+        LoadMoreFooter.self,
+        for: UICollectionView.elementKindSectionFooter
+    )
+    
+    // Для кастомных decoration views (редко, но бывает)
+    collectionView.registerSupplementaryViews(
+        BackgroundDecorationView.self,
+        for: "background-decoration"
+    )
+}
+```
+
+#### 2. В `cellForItemAt` и `viewForSupplementaryElementOfKind`
+
+```swift
+func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    let item = items[indexPath.item]
+    
+    if item.isAd {
+        let cell = collectionView.reuseCell(AdBannerCell.self, for: indexPath)
+        cell.configure(with: item.adData)
+        return cell
+    } else {
+        return collectionView.reuseCell(PhotoCell.self, for: indexPath)
+            .configure(with: item.photo)
+    }
+}
+
+func collectionView(_ collectionView: UICollectionView,
+                    viewForSupplementaryElementOfKind kind: String,
+                    at indexPath: IndexPath) -> UICollectionReusableView {
+    
+    switch kind {
+    case UICollectionView.elementKindSectionHeader:
+        return collectionView.reuseSupplementary(
+            SectionHeaderView.self,
+            kind: kind,
+            at: indexPath
+        )
+        .setTitle(sectionTitles[indexPath.section])
+        
+    case UICollectionView.elementKindSectionFooter:
+        return collectionView.reuseSupplementary(
+            LoadMoreFooter.self,
+            kind: kind,
+            at: indexPath
+        )
+        
+    default:
+        return UICollectionReusableView()
+    }
+}
+```
+
+### Рекомендуемые улучшения (что часто добавляют в 2025+)
+
+1. Более безопасная версия dequeue (с fatalError вместо краша на nil)
+
+```swift
+func dequeue<T: UICollectionViewCell>(_ type: T.Type, for indexPath: IndexPath) -> T {
+    let id = String(describing: type)
+    guard let cell = dequeueReusableCell(withReuseIdentifier: id, for: indexPath) as? T else {
+        fatalError("Не удалось dequeue \(id). Зарегистрирована ли ячейка?")
+    }
+    return cell
+}
+```
+
+2. Короткий алиас (очень популярен)
+
+```swift
+func cell<T: UICollectionViewCell>(ofType: T.Type, at indexPath: IndexPath) -> T {
+    reuseCell(ofType, for: indexPath)
+}
+```
+
+3. Поддержка nib-based ячеек (если используешь XIB)
+
+```swift
+func registerCellNibs(_ nibNames: String...) {
+    nibNames.forEach { nibName in
+        let nib = UINib(nibName: nibName, bundle: nil)
+        register(nib, forCellWithReuseIdentifier: nibName)
+    }
+}
+```
+
+### Сравнение со старым стилем
+
+| Задача                          | Классический способ                                      | С extension                                      |
+|---------------------------------|----------------------------------------------------------|--------------------------------------------------|
+| Регистрация 4 ячеек             | 4 строки register                                        | 1 строка `registerCells(...)`                    |
+| Получение ячейки                | `as! PhotoCell` или guard + as?                          | `reuseCell(PhotoCell.self, for: indexPath)`      |
+| Регистрация хедеров             | несколько register(forSupplementaryViewOfKind:)          | `registerSupplementaryViews(..., for: kind)`     |
+| Получение supplementary         | dequeue + as! / as?                                      | `reuseSupplementary(..., kind: ..., at:)`        |
+
+Если хочешь — можно добавить ещё вариации:  
+- поддержку compositional layout + CellRegistration (iOS 14+)  
+- автоматическую регистрацию nib/class по протоколу Reusable  
+- методы для reloadSections / performBatchUpdates с анимацией
+
+Кидай следующий кусок кода, если есть — продолжим в том же стиле! 🚀
