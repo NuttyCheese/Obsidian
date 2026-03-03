@@ -309,3 +309,173 @@ private func setupUI() {
 | `addSubviews(label, button)`            | 2–6 элементов прямо в коде, читается очень естественно                        |
 | `addSubviews(array)`                    | элементы уже собраны в массив ([[map]], [[filter]], из другого метода и т.д.) |
 | `addSubviewsAndDisableAutoresizingMask` | самый частый сценарий при программном создании UI                             |
+
+---
+---
+---
+Вот разбор этих трёх методов для закругления углов и добавления границы — это классика UIKit, которую до сих пор активно используют в 2025–2026 годах (хотя в новых проектах часто переходят на SwiftUI или более современные подходы).
+
+```swift
+extension UIView {
+    
+    /// Закругляет указанные углы
+    func roundCorners(_ corners: UIRectCorner, radius: CGFloat) {
+        if bounds == .zero {
+            DispatchQueue.main.asyncAfter(deadline: .now()) { [weak self] in
+                self?.roundCorners(corners, radius: radius)
+            }
+            return
+        }
+        
+        let path = UIBezierPath(
+            roundedRect: bounds,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        mask.frame = bounds
+        layer.mask = mask
+    }
+    
+    /// Закругляет все углы
+    func roundAllCorners(radius: CGFloat) {
+        layer.cornerRadius = radius
+        layer.masksToBounds = true
+    }
+    
+    /// Добавляет границу
+    func addBorder(color: UIColor, width: CGFloat) {
+        layer.borderColor = color.cgColor
+        layer.borderWidth = width
+    }
+}
+```
+
+### 1. `roundAllCorners(radius:)`
+
+**Что делает**  
+Самый простой и быстрый способ закруглить **все четыре** угла.
+
+**Плюсы**  
+- Очень производительный (не вызывает offscreen rendering в большинстве случаев до iOS 13–14)  
+- Поддерживает тени (shadow) без дополнительных костылей, если `masksToBounds = false`  
+- Работает с `clipsToBounds` (но тогда тень обрезается)
+
+**Минусы**  
+- Только все углы одновременно  
+- С iOS 11+ можно выборочно закруглять через `maskedCorners`, но здесь используется старый стиль
+
+**Когда использовать в 2025–2026**  
+- Простые карточки, кнопки, аватарки  
+- Когда нужна тень + закругление
+
+```swift
+cardView.roundAllCorners(radius: 16)
+// или современный вариант (iOS 11+)
+cardView.layer.cornerRadius = 16
+cardView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner] // только верх
+```
+
+### 2. `roundCorners(_:radius:)`
+
+**Что делает**  
+Закругляет **только выбранные** углы через маску (`CAShapeLayer` + `UIBezierPath`).
+
+**Особенности реализации**  
+- Проверяет `bounds == .zero` и откладывает выполнение на следующий runloop (полезно при вызове в `init` или до `layoutSubviews`)  
+- Это **единственный** надёжный способ до iOS 11 выборочно закруглять углы
+
+**Плюсы**  
+- Работает на всех версиях iOS  
+- Можно закруглять любые комбинации углов
+
+**Минусы**  
+- Вызывает **offscreen rendering** → хуже производительность (особенно в скролле / коллекциях)  
+- Сбрасывает тень (если была) — маска обрезает всё, включая shadow  
+- Нужно обновлять маску при изменении размера view (в `layoutSubviews`)
+
+**Типичные улучшения (что часто добавляют)**
+
+```swift
+override func layoutSubviews() {
+    super.layoutSubviews()
+    roundCorners([.topLeft, .topRight], radius: 20)  // перевызываем при ресайзе
+}
+```
+
+Или делают метод с возвратом `Self` + обновление фрейма:
+
+```swift
+@discardableResult
+func roundCorners(_ corners: UIRectCorner, radius: CGFloat) -> Self {
+    // ... тот же код ...
+    return self
+}
+```
+
+**Когда использовать сейчас**  
+- Поддержка iOS < 11 (редко)  
+- Очень специфические формы (например, только один угол)  
+- В старых проектах / legacy-коде
+
+### 3. `addBorder(color:width:)`
+
+**Что делает**  
+Просто устанавливает `borderColor` и `borderWidth` на layer.
+
+**Важные нюансы**  
+- Работает только если **нет маски** (`layer.mask == nil`)  
+- Если вы вызвали `roundCorners(…)` с маской → граница исчезнет (маска обрезает border)  
+- Border рисуется **внутри** bounds, а не снаружи
+
+**Альтернатива для границ + закруглённых углов + тени** (самый популярный паттерн 2024–2026)
+
+```swift
+// Вариант 1 — shadow отдельным слоем
+func applyCardStyle(radius: CGFloat = 16, borderWidth: CGFloat = 1, borderColor: UIColor = .gray) {
+    roundAllCorners(radius: radius)           // или maskedCorners
+    addBorder(color: borderColor, width: borderWidth)
+    
+    layer.shadowColor = UIColor.black.cgColor
+    layer.shadowOpacity = 0.12
+    layer.shadowOffset = CGSize(width: 0, height: 2)
+    layer.shadowRadius = 8
+    
+    // для производительности
+    layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: radius).cgPath
+}
+```
+
+### Сравнительная таблица (2025–2026 реалии)
+
+| Метод                  | Выборочные углы | Тень одновременно | Производительность | Offscreen rendering | Рекомендация сейчас          |
+|------------------------|------------------|---------------------|---------------------|-----------------------|-------------------------------|
+| `roundAllCorners`      | Нет (все или с maskedCorners) | Да (если !masksToBounds) | Отличная           | Обычно нет           | Основной выбор                |
+| `roundCorners` (mask)  | Да               | Нет (обрезает тень) | Средняя / плохая   | Да                   | Только если < iOS 11 или очень нужно |
+| `addBorder`            | —                | —                   | Отличная           | Нет                  | Использовать с `cornerRadius` |
+
+### Пример использования (современный стиль)
+
+```swift
+class ModernCardView: UIView {
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        layer.cornerRadius = 20
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner] // только верх
+        
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.systemGray4.cgColor
+        
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.1
+        layer.shadowRadius = 10
+        layer.shadowOffset = .zero
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: 20).cgPath
+    }
+}
+```
+
