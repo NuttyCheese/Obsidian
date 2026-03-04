@@ -146,7 +146,7 @@ extension ___FILEBASENAMEASIDENTIFIER___: ___VARIABLE_moduleName:identifier___Pr
 **Важно:** `___VARIABLE_moduleName:identifier___` ссылается на переменную `moduleName`, которую мы объявили в `TemplateInfo.plist`. Пользователь введет имя, и оно подставится во все места .
 
 ### Шаг 4: Перезапускаем [[Xcode]]
-Закрой Xcode (`Cmd+Q`) и открой заново. Теперь при создании нового файла (`Cmd+N`) в секции "My Templates" должен появиться наш шаблон "[[MVP]] Module" .
+Закрой Xcode (`Cmd+Q`) и открой заново. Теперь при создании нового файла (`Cmd+N`) в секции "My Templates" должен появиться наш шаблон "[[MVP (Model-View-Presenter) Architecture|MVP]] Module" .
 
 ---
 
@@ -179,12 +179,12 @@ extension ___FILEBASENAMEASIDENTIFIER___: ___VARIABLE_moduleName:identifier___Pr
     - Отличное место, чтобы понять, *куда копать*. Часто можно найти ответы от инженеров Apple или опытных разработчиков. 
 
 3.  **Medium и блоги**
-    - Много статей с пошаговыми гайдами. Особенно полезны те, где разбирают создание шаблонов для конкретных архитектур (VIPER, MVVM). 
+    - Много статей с пошаговыми гайдами. Особенно полезны те, где разбирают создание шаблонов для конкретных архитектур ([[VIPER Architecture|VIPER]], [[MVVM (Model-View-ViewModel) Architecture|MVVM]]). 
 
 4.  **GitHub (главный источник вдохновения!)**
     - **Самый лучший способ изучить сложные вещи** — посмотреть, как это сделали другие. Ищите репозитории по запросу `xcode templates`.
     - Изучайте структуру папок и `TemplateInfo.plist` в чужих шаблонах.
-    - Пример отличного шаблона для **CleanSwift**, который мы обсуждали ранее: [CleanSwift Templates](https://github.com/yonivav/CleanSwiftTemplates). Разберите его `plist` и вы поймете, как делать свои.
+    - Пример отличного шаблона для **[[Clean Swift (VIP) Architecture|CleanSwift]]**, который мы обсуждали ранее: [CleanSwift Templates](https://github.com/yonivav/CleanSwiftTemplates). Разберите его `plist` и вы поймете, как делать свои.
 
 5.  **Технические энциклопедии и блоги (Tencent Cloud, CSDN, Zenn)**
     - Много информации на технических сайтах, где разработчики делятся примерами кода и конфигураций. 
