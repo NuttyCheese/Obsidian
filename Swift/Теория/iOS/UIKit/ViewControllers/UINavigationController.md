@@ -1,130 +1,146 @@
-**`UINavigationController`** — это контейнерный контроллер (container view controller), который управляет **стеком экранов** ([[UIViewController]]) и предоставляет пользователю удобную навигацию между ними.
-
-🔑 Особенности:
-
-- Работает по принципу **стека (LIFO)**: новый экран помещается (`push`) поверх предыдущего, а возврат (`pop`) снимает его со стека.
-    
-- Автоматически добавляет сверху **[[UINavigationBar]]** с заголовком и кнопкой "Назад".
-    
-- Часто используется для иерархической навигации (например: Главная → Детали → Настройки).
-    
+#uinavigationcontroller #uikit #navigation #stack #push-pop #navbar #ios #swift #container-controller #navigationbarappearance #swipe-back #large-title #ios-13
 
 ---
+**(навигационный контроллер / контроллер навигации / нав-контроллер)**
 
-## 2. Как работает стек
+**UINavigationController** — это **контейнерный контроллер** (container view controller) в [[UIKit]], который управляет **стеком экранов** ([[FILO|LIFO]] — Last In, First Out) и предоставляет пользователю **иерархическую навигацию** вперёд-назад.
 
-- `pushViewController(_:animated:)` → открыть новый экран
-    
-- `popViewController(animated:)` → вернуться назад
-    
-- `popToRootViewController(animated:)` → вернуться на главный экран
-    
+Он автоматически:
 
----
+- добавляет сверху **[[UINavigationBar]]** с заголовком, кнопкой «Назад» и возможностью кастомных кнопок
+- поддерживает **swipe-to-go-back** (свайп от левого края экрана)
+- управляет **переходами** (push / pop / popToRoot)
+- позволяет кастомизировать внешний вид бара через **[[UINavigationBarAppearance]]**
 
-## 3. Пример использования
+Это **самый популярный и стандартный** способ организации навигации в [[iOS]]-приложениях 2026 года (почти все приложения с несколькими экранами используют его).
 
-### Инициализация в AppDelegate / SceneDelegate
+### 1. Основные принципы работы (от junior к senior)
+
+**Junior уровень — как это выглядит на практике**
 
 ```swift
-let rootVC = HomeViewController()
-let navigationController = UINavigationController(rootViewController: rootVC)
-window?.rootViewController = navigationController
+// Создаём главный навигатор с первым экраном
+let homeVC = HomeViewController()
+let navController = UINavigationController(rootViewController: homeVC)
+
+// Устанавливаем как root окна
+window?.rootViewController = navController
 window?.makeKeyAndVisible()
 ```
 
-👉 Теперь `HomeViewController` будет **первым экраном** в стеке.
-
----
-
-### Переход на новый экран
+**Переход вперёд (push)**
 
 ```swift
-let detailsVC = DetailsViewController()
-navigationController?.pushViewController(detailsVC, animated: true)
+let detailVC = DetailViewController()
+navigationController?.pushViewController(detailVC, animated: true)
 ```
 
----
-
-### Вернуться назад
+**Возврат назад (pop)**
 
 ```swift
-navigationController?.popViewController(animated: true)
+navigationController?.popViewController(animated: true)         // на один назад
+navigationController?.popToRootViewController(animated: true)   // сразу на главный экран
 ```
 
----
+**Senior уровень — глубокая кастомизация и тонкая настройка**
 
-### Вернуться на главный экран
+1. **UINavigationBarAppearance** — глобальная настройка (iOS 13+)
 
 ```swift
-navigationController?.popToRootViewController(animated: true)
+func setupNavigationBarAppearance() {
+    let appearance = UINavigationBarAppearance()
+    appearance.configureWithOpaqueBackground()
+    appearance.backgroundColor = .systemBackground
+    appearance.titleTextAttributes = [
+        .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
+        .foregroundColor: UIColor.label
+    ]
+    
+    // Большой заголовок (large title)
+    appearance.largeTitleTextAttributes = [
+        .font: UIFont.systemFont(ofSize: 34, weight: .bold),
+        .foregroundColor: UIColor.label
+    ]
+    
+    // Прозрачный бар при скролле (scroll edge)
+    let scrollAppearance = UINavigationBarAppearance()
+    scrollAppearance.configureWithTransparentBackground()
+    scrollAppearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
+    
+    UINavigationBar.appearance().standardAppearance = appearance
+    UINavigationBar.appearance().scrollEdgeAppearance = scrollAppearance
+    UINavigationBar.appearance().compactAppearance = appearance
+}
 ```
 
----
-
-## 4. Навигационная панель (`UINavigationBar`)
-
-Каждый экран в `UINavigationController` имеет свойство `navigationItem`, где можно настроить:
-
-- `title` — заголовок
-    
-- `leftBarButtonItem` / `rightBarButtonItem` — кнопки
-    
-- `backButtonTitle` — текст кнопки "Назад"
-    
-
-Пример:
+2. **Кастомная кнопка «Назад»**
 
 ```swift
 override func viewDidLoad() {
     super.viewDidLoad()
-    navigationItem.title = "Детали"
-    navigationItem.rightBarButtonItem = UIBarButtonItem(
-        barButtonSystemItem: .add,
-        target: self,
-        action: #selector(addItem)
-    )
+    
+    // Скрыть стандартную кнопку "Назад" и поставить свою
+    navigationItem.hidesBackButton = true
+    
+    let backButton = UIBarButtonItem(title: "Назад", style: .plain, target: self, action: #selector(customBack))
+    navigationItem.leftBarButtonItem = backButton
+}
+
+@objc private func customBack() {
+    navigationController?.popViewController(animated: true)
 }
 ```
 
----
-
-## 5. Кастомизация `UINavigationController`
-
-Через `UINavigationBarAppearance` можно настраивать цвет, фон, шрифт и стиль заголовков:
+3. **Обработка swipe-to-go-back (interactive pop)**
 
 ```swift
-let appearance = UINavigationBarAppearance()
-appearance.backgroundColor = .systemBlue
-appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+// Отключить swipe-to-go-back (редко)
+navigationController?.interactivePopGestureRecognizer?.isEnabled = false
 
-let navController = UINavigationController(rootViewController: rootVC)
-navController.navigationBar.standardAppearance = appearance
-navController.navigationBar.scrollEdgeAppearance = appearance
+// Или кастомизировать через UINavigationControllerDelegate
+extension ViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController,
+                              animationControllerFor operation: UINavigationController.Operation,
+                              from fromVC: UIViewController,
+                              to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        // Кастомная анимация push/pop
+        return CustomTransitionAnimator()
+    }
+}
 ```
 
----
+4. **Large Title + Scroll Edge**
 
-## 6. Важные моменты
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad()
+    navigationItem.title = "Профиль"
+    navigationItem.largeTitleDisplayMode = .always  // .automatic / .never / .inline
+}
+```
 
-- В iOS приложения обычно используют **один главный `UINavigationController`**, но при необходимости можно создавать вложенные.
-    
-- `UINavigationController` часто комбинируют с [[UITabBarController]] → каждая вкладка имеет свой стек экранов.
-    
-- Поддерживает **swipe-to-go-back** (жест "свайп назад").
-    
+### 2. Лучшие практики UINavigationController в 2026 году
 
----
+- **Всегда** оборачивайте первый экран в `UINavigationController` как root
+- **Комбинируйте** с [[UITabBarController]] — каждая вкладка получает свой независимый стек
+- **UINavigationBarAppearance** — глобально настраивайте в [[didFinishLaunchingWithOptions]] / `scene(_:willConnectTo:)`
+- **largeTitleDisplayMode** — используйте `.always` для современных приложений
+- **hidesBarsOnSwipe / hidesBarsWhenVerticallyCompact** — для полноэкранного контента
+- **interactivePopGestureRecognizer** — оставляйте включённым (стандартный жест назад)
+- **[[Coordinator]]** — для сложной навигации и создания контроллеров (рекомендуется)
+- **Доступность** — `accessibilityLabel` для кнопок, `accessibilityHint` для навигации
+- **Документируйте** — пишите комментарий:
 
-## 7. Итог
+```swift
+/// Главный навигационный контроллер приложения с кастомным стилем
+let navController = UINavigationController(rootViewController: HomeViewController())
+```
 
-- `UINavigationController` = контейнер для организации переходов по стеку.
-    
-- Управляет **последовательной навигацией** (вперёд/назад).
-    
-- Автоматически создаёт и управляет **`UINavigationBar`**.
-    
-- Позволяет легко кастомизировать стиль и кнопки.
-    
-
----
+**Короткий итог 2026**:
+> **UINavigationController** — **контейнер** для **стека экранов** с автоматической навигационной панелью и поддержкой push/pop.  
+> В 2026 году:  
+> - ключевые методы — `pushViewController`, `popViewController`, `setViewControllers`  
+> - самый популярный паттерн — UINavigationController + UITabBarController + UINavigationBarAppearance  
+> - идеален для иерархической навигации (Главная → Категория → Детали → Корзина)  
+> - в [[SwiftUI]] — заменяется на `NavigationStack`  
+> - это **основа** большинства iOS-приложений на UIKit  

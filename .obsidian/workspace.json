@@ -8,49 +8,35 @@
         "type": "tabs",
         "children": [
           {
-            "id": "11a9b93fa698ef82",
+            "id": "66b2ea4bc9b1a20d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/ViewControllers/UIViewController.md",
+                "file": "Swift/Теория/iOS/UIKit/ViewControllers/UINavigationController.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UIViewController"
+              "title": "UINavigationController"
             }
           },
           {
-            "id": "a8db36b83e35301e",
+            "id": "0b4cfbf7df6accc4",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/ViewControllers/didReceiveMemoryWarning.md",
+                "file": "Swift/Теория/iOS/UIKit/ViewControllers/didFinishLaunchingWithOptions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "didReceiveMemoryWarning"
-            }
-          },
-          {
-            "id": "8dbdff6bebfb1966",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/iOS/updateViewConstraints.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "updateViewConstraints"
+              "title": "didFinishLaunchingWithOptions"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -223,34 +209,34 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "8dbdff6bebfb1966",
+  "active": "0b4cfbf7df6accc4",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/UIKit/ViewControllers/didReceiveMemoryWarning.md",
-    "Swift/Теория/iOS/updateViewConstraints.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UINavigationController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/didFinishLaunchingWithOptions.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UIActivityViewController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UIAlertController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UIColorPickerViewController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UIDocumentPickerViewController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UIFontPickerViewController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UIHostingController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UIImagePickerController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UISplitViewController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UIPageViewController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UISheetPresentationController.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UITabBarController.md",
     "Swift/Теория/iOS/UIKit/ViewControllers/UIViewController.md",
+    "Swift/Теория/iOS/AVFoundation/AVAudioPlayerDelegate.md",
+    "Swift/Теория/iOS/AVFoundation/AVAudioSession.md",
+    "Swift/Теория/iOS/AVFoundation/AVAudioPlayer.md",
+    "Swift/Теория/iOS/UIWebView.md",
+    "Swift/Теория/iOS/updateViewConstraints.md",
+    "Swift/Теория/iOS/didReceiveMemoryWarning.md",
     "Swift/Теория/iOS/UIKit/Views/bounds.md",
     "Swift/Теория/iOS/UIKit/Views/TextEditor.md",
     "Swift/Теория/iOS/UIKit/Views/UIAction.md",
     "Swift/Теория/iOS/UIKit/Views/UIActivityIndicatorView.md",
     "Swift/Теория/iOS/UIKit/Views/UIButton.md",
     "Swift/Теория/iOS/UIKit/Views/UIButton.Configuration.md",
-    "Swift/Теория/iOS/UIKit/Views/UICollectionView and UITableView.md",
-    "Swift/Теория/iOS/UIKit/Views/UIControl.md",
-    "Swift/Теория/iOS/UIKit/Views/UIDatePicker.md",
-    "Swift/Теория/iOS/UIKit/Views/UIImageView.md",
-    "Swift/Теория/iOS/UIKit/Views/UILabel.md",
-    "Swift/Теория/iOS/UIKit/Views/UIPageControl.md",
-    "Swift/Теория/iOS/UIPickerViewDataSource.md",
-    "Swift/Теория/iOS/UIPickerViewDelegate.md",
-    "Swift/Теория/iOS/UIKit/Views/UIRefreshControl.md",
-    "Swift/Теория/iOS/UIKit/Views/UIPickerView.md",
-    "Swift/Теория/iOS/UIKit/Views/UIProgressView.md",
-    "Swift/Теория/iOS/UIKit/Views/UIScrollView.md",
-    "Swift/Теория/iOS/UIKit/Views/UISearchBar.md",
-    "Swift/Теория/iOS/UIKit/Views/UISegmentedControl.md",
-    "Swift/Теория/iOS/UIKit/Views/UISlider.md",
-    "Swift/Теория/iOS/UIKit/Views/UIStackView.md",
-    "Swift/Теория/iOS/UIKit/Views/UIStepper.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",

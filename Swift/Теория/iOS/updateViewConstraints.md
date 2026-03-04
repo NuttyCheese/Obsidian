@@ -18,11 +18,11 @@
 
 Порядок вызовов (примерный жизненный цикл):
 
-1. `traitCollectionDidChange(_:)` — если изменились черты (size class, тема, Dynamic Type)
-2. `viewWillTransition(to:with:)` — при повороте экрана
+1. [[traitCollectionDidChange]]`(_:)` — если изменились черты (size class, тема, Dynamic Type)
+2. [[viewWillTransition]]`(to:with:)` — при повороте экрана
 3. `updateViewConstraints()` — **система вызывает** перед layout
-4. `viewWillLayoutSubviews()`
-5. `viewDidLayoutSubviews()`
+4. [[viewWillLayoutSubviews]]`()`
+5. [[viewDidLayoutSubviews]]`()`
 
 **Важно:**  
 - Метод может вызываться **много раз** за жизнь контроллера  
@@ -119,12 +119,12 @@ class AdaptiveProfileViewController: UIViewController {
 
 ### Почему именно updateViewConstraints(), а не viewDidLayoutSubviews()?
 
-| Метод                              | Когда вызывается                                   | Что можно менять безопасно                          | Рекомендация 2026 |
-|------------------------------------|-----------------------------------------------------|-----------------------------------------------------|-------------------|
-| `updateViewConstraints()`          | Перед layout pass (система вызывает)               | Добавление/удаление/изменение **constraints**       | **Да** — основное место |
-| `viewWillLayoutSubviews()`         | Перед layout (вызывается много раз)                | Редко — только подготовка                           | Почти никогда |
-| `viewDidLayoutSubviews()`          | После layout                                       | Изменение frame вручную (редко)                     | Только если нет constraints |
-| `traitCollectionDidChange(_:)`     | При смене черт                                     | Вызов `setNeedsUpdateConstraints()`                 | Вызывать updateViewConstraints |
+| Метод                          | Когда вызывается                     | Что можно менять безопасно                        | Рекомендация 2026              |
+| ------------------------------ | ------------------------------------ | ------------------------------------------------- | ------------------------------ |
+| `updateViewConstraints()`      | Перед layout pass (система вызывает) | Добавление/удаление/изменение **[[constraint]]s** | **Да** — основное место        |
+| `viewWillLayoutSubviews()`     | Перед layout (вызывается много раз)  | Редко — только подготовка                         | Почти никогда                  |
+| `viewDidLayoutSubviews()`      | После layout                         | Изменение [[frame]] вручную (редко)               | Только если нет constraints    |
+| `traitCollectionDidChange(_:)` | При смене черт                       | Вызов `setNeedsUpdateConstraints()`               | Вызывать updateViewConstraints |
 
 **Правило 2026 года:**  
 Всё, что связано с **динамическими constraints** (size class, тема, Dynamic Type) — пиши в `updateViewConstraints()` и вызывай `setNeedsUpdateConstraints()` при необходимости.
@@ -136,7 +136,7 @@ class AdaptiveProfileViewController: UIViewController {
 - **Храните** изменяемые constraints в свойствах — чтобы их можно было деактивировать
 - **Для Dynamic Type** — обновляйте шрифты через `preferredFont(forTextStyle:)` + `adjustsFontForContentSizeCategory = true`
 - **Для тёмной темы** — используйте системные цвета или проверяйте `traitCollection.userInterfaceStyle`
-- **Для SwiftUI** — аналогов нет (SwiftUI делает это автоматически) — `updateViewConstraints` нужен только в UIKit
+- **Для SwiftUI** — аналогов нет ([[SwiftUI]] делает это автоматически) — `updateViewConstraints` нужен только в UIKit
 - **Документируйте** — пишите комментарий:
 
 ```swift

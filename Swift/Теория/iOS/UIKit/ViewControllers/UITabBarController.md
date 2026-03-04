@@ -1,146 +1,133 @@
-**`UITabBarController`** — это **контейнерный контроллер** (container view controller), который управляет панелью вкладок (**[[UITabBar]]**) и связанными с ней [[UIViewController]].
-
-🔑 Основные моменты:
-
-- На экране всегда видна **панель вкладок** (`UITabBar`) внизу.
-    
-- Каждая вкладка ([[UITabBarItem]]) соответствует одному контроллеру (`UIViewController`).
-    
-- Пользователь может быстро переключаться между разделами приложения.
-    
-
-📱 Примеры из реальных приложений:
-
-- Instagram (Лента, Поиск, Рилсы, Магазин, Профиль)
-    
-- ВКонтакте (Новости, Сервисы, Сообщения, Уведомления, Профиль)
-    
+#uitabbarcontroller #uitabbar #tab-bar #container-controller #navigation #uikit #ios #swift #tabbarappearance #accessibility #darkmode #dynamic-type
 
 ---
+**(контроллер вкладок / таб-бар контроллер)**
 
-## 2. Архитектура
+**UITabBarController** — это **контейнерный контроллер** (container view controller) в [[UIKit]], который управляет **нижней панелью вкладок** ([[UITabBar]]) и набором дочерних контроллеров (`viewControllers`), каждый из которых соответствует одной вкладке.
 
-`UITabBarController` → содержит массив `viewControllers`:
+Это **стандартный** и **самый популярный** способ реализации **нижней навигации** в iOS-приложениях 2026 года (Instagram, ВКонтакте, YouTube, TikTok, Spotify, Telegram и т.д.).
 
-- `tabBarController.viewControllers = [vc1, vc2, vc3]`
-    
-- Каждый `vc` = экран приложения (например, через [[UINavigationController]]).
-    
+### 1. Ключевые моменты и архитектура
 
----
+- **Всегда видна** панель вкладок внизу экрана (кроме редких случаев скрытия).
+- Каждая вкладка — это **[[UITabBarItem]]** + связанный **[[UIViewController]]** (чаще всего обёрнутый в [[UINavigationController]]).
+- Поддерживает до **5 вкладок** без проблем; при >5 появляется вкладка "More" (автоматически).
+- Управляет **переключением** между экранами, **состоянием** (selectedIndex), **внешним видом** ([[UITabBarAppearance]]).
 
-## 3. Пример использования
+**Типичная структура (рекомендуемая в 2026):**
 
-### Самый простой вариант:
-
-```swift
-let homeVC = HomeViewController()
-homeVC.tabBarItem = UITabBarItem(title: "Главная", image: UIImage(systemName: "house"), tag: 0)
-
-let profileVC = ProfileViewController()
-profileVC.tabBarItem = UITabBarItem(title: "Профиль", image: UIImage(systemName: "person"), tag: 1)
-
-let tabBarController = UITabBarController()
-tabBarController.viewControllers = [homeVC, profileVC]
-
-window?.rootViewController = tabBarController
-window?.makeKeyAndVisible()
+```text
+UITabBarController (root)
+├── UINavigationController (вкладка 1: "Главная")
+│   └── HomeViewController
+├── UINavigationController (вкладка 2: "Поиск")
+│   └── SearchViewController
+├── UINavigationController (вкладка 3: "Создать")
+│   └── CreateViewController (часто модальный или без nav bar)
+├── UINavigationController (вкладка 4: "Уведомления")
+│   └── NotificationsViewController
+└── UINavigationController (вкладка 5: "Профиль")
+    └── ProfileViewController
 ```
 
----
-
-### Обычно комбинируют с `UINavigationController`
-
-Чтобы в каждой вкладке была возможность **push-переходов**:
+### 2. Самый популярный и рекомендуемый паттерн 2026 года  
+(UITabBarController + [[UINavigationController]] в каждой вкладке + [[UITabBarAppearance]] + [[Coordinator]])
 
 ```swift
-let homeVC = HomeViewController()
-let homeNav = UINavigationController(rootViewController: homeVC)
-homeNav.tabBarItem = UITabBarItem(title: "Главная", image: UIImage(systemName: "house"), tag: 0)
+import UIKit
 
-let profileVC = ProfileViewController()
-let profileNav = UINavigationController(rootViewController: profileVC)
-profileNav.tabBarItem = UITabBarItem(title: "Профиль", image: UIImage(systemName: "person"), tag: 1)
-
-let tabBarController = UITabBarController()
-tabBarController.viewControllers = [homeNav, profileNav]
-```
-
-👉 Теперь у каждой вкладки есть своя навигация.
-
----
-
-## 4. Кастомизация
-
-С помощью [[UITabBarAppearance]]:
-
-```swift
-let appearance = UITabBarAppearance()
-appearance.configureWithOpaqueBackground()
-appearance.backgroundColor = .systemGray6
-
-// Настройка цвета текста и иконок
-appearance.stackedLayoutAppearance.selected.iconColor = .systemBlue
-appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.systemBlue]
-
-UITabBar.appearance().standardAppearance = appearance
-if #available(iOS 15.0, *) {
-    UITabBar.appearance().scrollEdgeAppearance = appearance
+class AppCoordinator {
+    let window: UIWindow
+    
+    init(window: UIWindow) {
+        self.window = window
+    }
+    
+    func start() {
+        let tabBarController = UITabBarController()
+        
+        // 1. Настраиваем глобальный вид таб-бара
+        setupTabBarAppearance()
+        
+        // 2. Создаём вкладки
+        tabBarController.viewControllers = [
+            createNavController(for: HomeViewController(), title: "Главная", image: "house"),
+            createNavController(for: SearchViewController(), title: "Поиск", image: "magnifyingglass"),
+            createNavController(for: CreateViewController(), title: "Создать", image: "plus.circle"),
+            createNavController(for: NotificationsViewController(), title: "Уведомления", image: "bell"),
+            createNavController(for: ProfileViewController(), title: "Профиль", image: "person")
+        ]
+        
+        // 3. Устанавливаем как root
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+    }
+    
+    private func createNavController(for rootVC: UIViewController, title: String, image: String) -> UIViewController {
+        let nav = UINavigationController(rootViewController: rootVC)
+        rootVC.navigationItem.title = title  // или large title
+        nav.tabBarItem = UITabBarItem(title: title,
+                                      image: UIImage(systemName: image),
+                                      tag: 0)
+        return nav
+    }
+    
+    private func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
+        
+        // Цвет иконок и текста
+        let normalAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.systemGray,
+            .font: UIFont.systemFont(ofSize: 12, weight: .medium)
+        ]
+        
+        let selectedAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.systemBlue,
+            .font: UIFont.systemFont(ofSize: 12, weight: .semibold)
+        ]
+        
+        appearance.stackedLayoutAppearance.normal.iconColor = .systemGray
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = normalAttributes
+        appearance.stackedLayoutAppearance.selected.iconColor = .systemBlue
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = selectedAttributes
+        
+        // Для iOS 15+ — scroll edge
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
+        
+        UITabBar.appearance().standardAppearance = appearance
+    }
 }
 ```
 
----
+### 3. Лучшие практики UITabBarController в 2026 году
 
-## 5. Работа с контроллером
-
-Методы `UITabBarController`:
-
-- `selectedIndex` → текущая активная вкладка
-    
-- `selectedViewController` → активный контроллер
-    
-- Делегат [[UITabBarControllerDelegate]] позволяет реагировать на выбор вкладки.
-    
-
-Пример:
+- **Всегда оборачивайте** каждый экран в `UINavigationController` — это стандарт 2026 (push внутри вкладки)
+- **UITabBarAppearance** — глобально настраивайте через `UITabBar.appearance()` в `didFinishLaunchingWithOptions` или `scene(_:willConnectTo:)`
+- **selectedIndex** / `selectedViewController` — используйте для программного переключения вкладок
+- **tabBar.isHidden = true** — только если нужно временно скрыть (редко, лучше использовать custom tab bar)
+- **Coordinator** — для сложной навигации и создания контроллеров (рекомендуется)
+- **Доступность** — задавайте `accessibilityLabel` и `accessibilityHint` для `UITabBarItem`
+- **Dynamic Type** — используйте `adjustsFontForContentSizeCategory = true` для текста в контроллерах
+- **Тёмная тема** — системные цвета + `UITabBarAppearance` автоматически адаптируется
+- **Документируйте** — пишите комментарий:
 
 ```swift
-tabBarController.selectedIndex = 1 // открыть вторую вкладку
-
-if let currentVC = tabBarController.selectedViewController {
-    print("Активный VC: \(currentVC)")
+/// Настройка глобального вида таб-бара (цвета, шрифты, фон)
+private func setupTabBarAppearance() {
+    let appearance = UITabBarAppearance()
+    // ...
 }
 ```
 
----
-
-## 6. Когда использовать `UITabBarController`
-
-✅ Подходит:
-
-- Приложения с несколькими **независимыми разделами**.
-    
-- Приложения с "постоянной" нижней навигацией.
-    
-
-❌ Не подходит:
-
-- Когда нужен **глубокий вложенный навигатор** (лучше `UINavigationController`).
-    
-- Когда количество разделов > 5 (начинается путаница, появляется "More").
-    
-
----
-
-## 7. Итог
-
-- **`UITabBarController`** = главный контейнер для нижней навигации.
-    
-- Управляет `UITabBar` и массивом контроллеров.
-    
-- Часто комбинируется с `UINavigationController`.
-    
-- Кастомизируется через `UITabBarAppearance`.
-    
-
----
+**Короткий итог 2026**:
+> **UITabBarController** — **контейнер** для **нижней навигации** с постоянной панелью вкладок.  
+> В 2026 году:  
+> - ключевые свойства — `viewControllers`, `selectedIndex`, `tabBarItem`  
+> - самый популярный паттерн — UITabBarController + UINavigationController в каждой вкладке + UITabBarAppearance  
+> - идеален для приложений с 3–5 независимыми разделами (Instagram, Spotify, Telegram)  
+> - в SwiftUI — заменяется на `TabView`  
+> - это **стандарт де-факто** для нижней навигации в UIKit-приложениях  

@@ -1,126 +1,153 @@
-**`UISplitViewController`** — это **контейнерный контроллер**, который управляет **двумя и более контроллерами**:
-
-- **Primary (основной/мастер)** — список, меню, навигация.
-    
-- **Secondary (подчинённый/detail)** — детали выбранного элемента.
-    
-
-> Обычно используется для iPad, но с [[iOS]] 14+ есть адаптивный режим для iPhone.
+#uisplitviewcontroller #split-view #master-detail #uikit #ios #ipad #adaptive-ui #doublecolumn #triplecolumn #ios-14 #ios-16 #traitcollection #collapse #delegate
 
 ---
+**(сплит-вью контроллер / контроллер разделённого экрана)**
 
-## 2. Основные особенности
+**UISplitViewController** — это **контейнерный контроллер** в [[UIKit]], который управляет **разделённым (split) интерфейсом** с несколькими колонками (обычно 2 или 3), автоматически адаптируясь под размер экрана, ориентацию и устройство.
 
-- Автоматическая адаптация интерфейса под размер экрана.
-    
-- Поддерживает **stack-навигацию** внутри колонок.
-    
-- Можно настраивать **колонки**:
-    
-    - `.primary` — левая (или верхняя на iPhone)
-        
-    - `.secondary` — правая (или деталь под основным на iPhone)
-        
-    - `.supplementary` — дополнительная колонка (iOS 14+)
-        
-- Использует **контейнерный паттерн**, поэтому `viewControllers` — массив контроллеров.
-    
+С iOS 14 (2020) он стал **одним из самых мощных и рекомендуемых** инструментов для создания **адаптивного master-detail интерфейса** на iPad, iPhone Pro Max / Plus и в macOS Catalyst / Stage Manager.
 
----
+### 1. Основные режимы и колонки (2026 актуально)
 
-## 3. Пример простого SplitViewController
+| Режим / Стиль                             | Колонки                                      | Когда отображается                                   | Самый частый сценарий 2026 |
+|-------------------------------------------|----------------------------------------------|------------------------------------------------------|-----------------------------|
+| `.doubleColumn` (iOS 14+)                 | primary + secondary                          | iPad в landscape / iPhone в compact → secondary скрывается | Почти все современные приложения |
+| `.tripleColumn` (iOS 14+)                 | primary + supplementary + secondary          | iPad в landscape / Stage Manager / macOS Catalyst    | Почта, Заметки, Файлы |
+| `.compact` (автоматически на iPhone)      | Только primary (secondary collapse в primary) | iPhone portrait / compact width                      | Автоматическая адаптация |
 
-```swift
-let masterVC = MasterViewController() // список
-let detailVC = DetailViewController() // детали
+**Ключевые колонки:**
 
-let splitVC = UISplitViewController(style: .doubleColumn)
-splitVC.setViewController(masterVC, for: .primary)
-splitVC.setViewController(detailVC, for: .secondary)
+- `.primary` — левая колонка (мастер / список / меню / навигация)
+- `.supplementary` (iOS 14+) — средняя колонка (дополнительный контент, часто список подкатегорий)
+- `.secondary` — правая колонка (детали / контент выбранного элемента)
 
-window?.rootViewController = splitVC
-window?.makeKeyAndVisible()
-```
-
----
-
-## 4. Настройка колонок
-
-- `primaryBackgroundStyle` — фон основной колонки
-    
-- `preferredDisplayMode` — как показывать колонки:
-    
+### 2. Самый популярный и рекомендуемый паттерн 2026 года  
+(Triple-column + NavigationController в каждой колонке + Delegate + Appearance)
 
 ```swift
-splitVC.preferredDisplayMode = .oneBesideSecondary // две колонки рядом
-splitVC.preferredSplitBehavior = .tile // iPad: равномерное распределение
-```
+import UIKit
 
-- Можно менять ширину колонок:
+class MainSplitViewController: UISplitViewController, UISplitViewControllerDelegate {
     
-
-```swift
-splitVC.maximumPrimaryColumnWidth = 300
-splitVC.minimumPrimaryColumnWidth = 200
-```
-
----
-
-## 5. Динамическое управление контроллерами
-
-```swift
-let extraVC = ExtraViewController()
-splitVC.setViewController(extraVC, for: .supplementary) // iOS 14+
-```
-
-- Можно обновлять контроллеры во время работы:
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // 1. Устанавливаем стиль (double или triple)
+        preferredDisplayMode = .twoBesideSecondary  // две колонки рядом
+        preferredSplitBehavior = .tile              // равномерное распределение
+        
+        // 2. Создаём контроллеры для колонок
+        let primaryNav = UINavigationController(rootViewController: SidebarViewController())
+        let supplementaryNav = UINavigationController(rootViewController: CategoriesViewController())
+        let secondaryNav = UINavigationController(rootViewController: DetailPlaceholderViewController())
+        
+        // 3. Устанавливаем колонки
+        setViewController(primaryNav, for: .primary)
+        setViewController(supplementaryNav, for: .supplementary)
+        setViewController(secondaryNav, for: .secondary)
+        
+        // 4. Делегат для управления collapse / expand
+        delegate = self
+        
+        // 5. Настройка внешнего вида (опционально)
+        setupAppearance()
+    }
     
-
-```swift
-splitVC.showDetailViewController(newDetailVC, sender: self)
-```
-
----
-
-## 6. Жизненный цикл и делегат
-
-- [[UISplitViewControllerDelegate]] позволяет:
+    private func setupAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
+        
+        UINavigationBar.appearance().standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        }
+    }
     
-    - контролировать поведение колонок,
-        
-    - реагировать на скрытие/показ колонок,
-        
-    - управлять адаптацией под разные размеры экрана.
-        
-
-Пример делегата:
-
-```swift
-extension MainSplitViewController: UISplitViewControllerDelegate {
+    // MARK: - UISplitViewControllerDelegate
+    
     func splitViewController(
         _ svc: UISplitViewController,
         collapseSecondary secondaryViewController: UIViewController,
         onto primaryViewController: UIViewController
     ) -> Bool {
-        // возвращаем true, если хотим полностью контролировать collapse
-        return false
+        // На iPhone / compact width: если нет выбранного элемента → показываем placeholder
+        if let detail = secondaryViewController as? UINavigationController,
+           let topVC = detail.topViewController as? DetailViewController,
+           topVC.item == nil {
+            return true  // мы сами обрабатываем collapse
+        }
+        return false  // система сама справится
+    }
+    
+    func splitViewController(
+        _ svc: UISplitViewController,
+        separateSecondaryFrom primaryViewController: UIViewController
+    ) -> UIViewController? {
+        // При разворачивании возвращаем сохранённый detail
+        let detailNav = UINavigationController(rootViewController: DetailPlaceholderViewController())
+        return detailNav
+    }
+    
+    // Опционально: кастомная анимация разворачивания
+    func splitViewController(
+        _ svc: UISplitViewController,
+        animationControllerForSeparating separatingViewController: UIViewController,
+        from fromViewController: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        return SlideInAnimator()
+    }
+}
+
+// Простой аниматор разворачивания (пример)
+class SlideInAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        0.35
+    }
+    
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard let toVC = transitionContext.viewController(forKey: .to) else { return }
+        let container = transitionContext.containerView
+        
+        toVC.view.frame.origin.x = container.bounds.width
+        container.addSubview(toVC.view)
+        
+        UIView.animate(withDuration: transitionDuration(using: transitionContext),
+                       delay: 0,
+                       options: .curveEaseOut) {
+            toVC.view.frame.origin.x = 0
+        } completion: { _ in
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+        }
     }
 }
 ```
 
----
+### 3. Лучшие практики UISplitViewController в 2026 году
 
-## 7. Итог
+- **Стиль** — `.doubleColumn` для простых master-detail, `.tripleColumn` для сложных (как в Почте / Файлах)
+- **preferredDisplayMode** — `.twoBesideSecondary` (две колонки рядом) — самый частый
+- **preferredSplitBehavior** — `.tile` (равномерное) или `.overlay` (всплывающая supplementary)
+- **Delegate** — обязательно реализуйте `collapseSecondary:onto:` для корректного поведения на iPhone
+- **NavigationController в каждой колонке** — стандарт 2026 (push внутри primary / secondary)
+- **traitCollectionDidChange** — адаптируйте ширину колонок, скрытие/показ элементов
+- **showDetailViewController(_:sender:)** — удобный метод для обновления secondary колонки
+- **Для [[SwiftUI]]** — используйте `NavigationSplitView` — UISplitViewController нужен только в [[UIKit]]
+- **Доступность** — `accessibilityLabel` для колонок и элементов
+- **Документируйте** — пишите комментарий:
 
-- `UISplitViewController` = адаптивный контейнер с колонками.
-    
-- Основные сценарии: Master-Detail интерфейс, особенно на iPad.
-    
-- Поддерживает до 3 колонок (`primary`, `secondary`, `supplementary`).
-    
-- Комбинируется с [[UINavigationController]] внутри каждой колонки.
-    
-- Делегат позволяет гибко контролировать поведение при изменении размера экрана.
-    
+```swift
+/// Адаптивный сплит-вью контроллер с тремя колонками (iPad) и collapse на iPhone
+class MainSplitViewController: UISplitViewController {
+    // ...
+}
+```
 
----
+**Короткий итог 2026**:
+> **UISplitViewController** — **адаптивный контейнер** для **разделённого интерфейса** (master-detail / triple-column).  
+> В 2026 году:  
+> - ключевые свойства — `preferredDisplayMode`, `preferredSplitBehavior`, `setViewController(_:for:)`  
+> - самый популярный паттерн — triple-column + NavigationController в каждой колонке + Delegate для collapse  
+> - идеален для iPad, iPhone Pro Max, Stage Manager, macOS Catalyst  
+> - в SwiftUI — заменяется на `NavigationSplitView`  
+> - это **единственный нативный** способ создать профессиональный адаптивный интерфейс в UIKit  
