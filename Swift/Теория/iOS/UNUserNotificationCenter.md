@@ -128,11 +128,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 ### Лучшие практики UNUserNotificationCenter в 2026
 
 - **Всегда** запрашивайте разрешение **один раз** при первом запуске (или при первой необходимости)  
-- **Используйте** `async/await` версию `requestAuthorization` (iOS 15+) — чище и современнее  
+- **Используйте** [[async]]/[[await]] версию `requestAuthorization` (iOS 15+) — чище и современнее  
 - **Обязательно** реализуйте делегат и оба метода (`willPresent` и `didReceive`)  
 - **Держите делегат** как отдельный объект (чаще всего singleton или сервис-класс)  
 - **Для [[SwiftUI]]** — создавайте `@ObservableObject` обёртку и используйте `.task` / `.onReceive`  
-- **Для фоновой обработки** — используйте `UNNotificationServiceExtension` и `UNNotificationContentExtension`  
+- **Для фоновой обработки** — используйте [[UNNotificationServiceExtension]] и [[UNNotificationContentExtension]]  
 - **Privacy Manifest** (PrivacyInfo.xcprivacy) — обязательно с iOS 17+ для уведомлений  
 - **Документируйте** — пишите комментарий «UNUserNotificationCenterDelegate — обработка локальных и push-уведомлений»
 
