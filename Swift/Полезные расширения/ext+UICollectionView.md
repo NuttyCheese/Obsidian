@@ -1,6 +1,8 @@
 #extension #uicollectionview #uicollectionviewcell #uicollectionviewLayout  #protocol
 
 ---
+# [[UIKit]] — Расширения для [[UICollectionView]]
+
 Стиль и подход максимально близки к расширению для [[UITableView]]:  
 - variadic-регистрация нескольких типов сразу  
 - автоматический `reuseIdentifier = String(describing: Type.self)`  
@@ -53,7 +55,7 @@ extension UICollectionView {
 
 ### Варианты использования (самые популярные паттерны 2025–2026)
 
-#### 1. Регистрация в `viewDidLoad` / `awakeFromNib`
+#### 1. Регистрация в [[viewDidLoad]] / [[awakeFromNib]]
 
 ```swift
 override func viewDidLoad() {
@@ -131,7 +133,7 @@ func collectionView(_ collectionView: UICollectionView,
 
 ### Рекомендуемые улучшения (что часто добавляют в 2025+)
 
-1. Более безопасная версия dequeue (с fatalError вместо краша на nil)
+1. Более безопасная версия dequeue (с fatalError вместо краша на [[nil]])
 
 ```swift
 func dequeue<T: UICollectionViewCell>(_ type: T.Type, for indexPath: IndexPath) -> T {
@@ -151,7 +153,7 @@ func cell<T: UICollectionViewCell>(ofType: T.Type, at indexPath: IndexPath) -> T
 }
 ```
 
-3. Поддержка nib-based ячеек (если используешь XIB)
+3. Поддержка nib-based ячеек (если используешь [[XIB]])
 
 ```swift
 func registerCellNibs(_ nibNames: String...) {
@@ -170,10 +172,3 @@ func registerCellNibs(_ nibNames: String...) {
 | Получение ячейки                | `as! PhotoCell` или guard + as?                          | `reuseCell(PhotoCell.self, for: indexPath)`      |
 | Регистрация хедеров             | несколько register(forSupplementaryViewOfKind:)          | `registerSupplementaryViews(..., for: kind)`     |
 | Получение supplementary         | dequeue + as! / as?                                      | `reuseSupplementary(..., kind: ..., at:)`        |
-
-Если хочешь — можно добавить ещё вариации:  
-- поддержку compositional layout + CellRegistration (iOS 14+)  
-- автоматическую регистрацию nib/class по протоколу Reusable  
-- методы для reloadSections / performBatchUpdates с анимацией
-
-Кидай следующий кусок кода, если есть — продолжим в том же стиле! 🚀

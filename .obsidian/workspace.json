@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Полезные расширения/ext+UICollectionView.md",
+                "file": "Swift/Теория/iOS/UIKit/Views/UIButton.Configuration.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ext+UICollectionView"
+              "title": "UIButton.Configuration"
             }
           },
           {
@@ -281,10 +281,10 @@
   },
   "active": "deb4078ddeaf813e",
   "lastOpenFiles": [
-    "Swift/Полезные расширения/ext+UITableView.md",
-    "Swift/Полезные расширения/ext+UIView.md",
     "Swift/Полезные расширения/ext+UIColor.md",
     "Swift/Полезные расширения/ext+UICollectionView.md",
+    "Swift/Полезные расширения/ext+UITableView.md",
+    "Swift/Полезные расширения/ext+UIView.md",
     "Swift/Полезные расширения/ext+Collection.md",
     "Swift/Полезные расширения/ext+Bool.md",
     "Swift/Полезные расширения/ext+Array.md",
