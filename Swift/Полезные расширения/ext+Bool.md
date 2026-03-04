@@ -118,7 +118,7 @@ extension Bool {
 ## 4. Array<Bool> — полезная статистика и преобразования
 
 ```swift
-	extension Array where Element == Bool {
+extension Array where Element == Bool {
     /// Количество true
     var trueCount: Int { self.filter { $0 }.count }
     
@@ -128,14 +128,14 @@ extension Bool {
     /// Все элементы true?
     var allTrue: Bool { !self.contains(false) }
     
-	    /// Все элементы false?
-	    var allFalse: Bool { !self.contains(true) }
+    /// Все элементы false?
+    var allFalse: Bool { !self.contains(true) }
     
-	    /// Преобразование в [Int] (1 / 0)
-	    func toIntArray() -> [Int] {
-	        self.map { $0.toInt }
-	    }
-	}
+    /// Преобразование в [Int] (1 / 0)
+    func toIntArray() -> [Int] {
+        self.map { $0.toInt }
+    }
+}
 ```
 
 **Типичные сценарии**
@@ -165,7 +165,7 @@ trackEvent("checkboxes", parameters: ["values": analyticsFlags])
 | Свойство / Метод         | Возвращает     | Самый частый сценарий                          |
 |---------------------------|----------------|------------------------------------------------|
 | `toInt`                   | `Int`          | JSON, API, UserDefaults, аналитика             |
-| `numberValue`             | `NSNumber`     | Objective-C bridging, старые фреймворки        |
+| `numberValue`             | `NSNumber`     | [[Objective-C]] bridging, старые фреймворки        |
 | `boolValue` (на Int)      | `Bool`         | Парсинг ответа сервера (1/0 → true/false)      |
 | `localizedYesNo`          | `String`       | Текстовый вывод в UILabel / Text               |
 | `allTrue` / `allFalse`    | `Bool`         | Валидация форм, чек-листов                     |
