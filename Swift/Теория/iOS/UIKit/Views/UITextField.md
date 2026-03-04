@@ -109,7 +109,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
 }
 ```
 
-- Используем делегат для обработки нажатия Return
+- Используем делегат для обработки нажатия [[Return]]
     
 
 ---

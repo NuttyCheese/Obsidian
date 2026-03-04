@@ -141,6 +141,6 @@ private lazy var filterSegmentedControl: UISegmentedControl = {
 > В 2026 году:  
 > - ключевые свойства — `selectedSegmentIndex`, `minimumValue`, `maximumValue`, `stepValue`  
 > - идеален для фильтров, вкладок, выбора единиц измерения, статуса  
-> - в SwiftUI — используйте `Picker(.segmented)`  
-> - в UIKit — синхронизируйте с `@Published` через Combine или target-action  
+> - в [[SwiftUI]] — используйте `Picker(.segmented)`  
+> - в [[UIKit]] — синхронизируйте с `@Published` через [[Combine]] или target-action  
 > - это **надёжный** и **доступный** элемент интерфейса, который до сих пор активно используется  

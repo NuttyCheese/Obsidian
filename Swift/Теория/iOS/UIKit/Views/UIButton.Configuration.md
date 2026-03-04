@@ -90,19 +90,19 @@ favoriteButton.configurationUpdateHandler = { button in
 
 ### 3. Полный список самых полезных свойств конфигурации
 
-| Свойство / Метод                  | Тип / Значение                                 | Что делает / Рекомендация 2026 |
-|-----------------------------------|------------------------------------------------|---------------------------------|
-| `title`                           | `String?`                                      | Основной текст кнопки           |
-| `subtitle`                        | `String?`                                      | Мелкий текст под заголовком     |
-| `image`                           | `UIImage?`                                     | Иконка (SF Symbols или кастом)  |
-| `imagePlacement`                  | `.leading`, `.trailing`, `.top`, `.bottom`     | Где иконка относительно текста  |
-| `imagePadding`                    | `CGFloat`                                      | Отступ между иконкой и текстом  |
-| `baseBackgroundColor`             | `UIColor?`                                     | Цвет фона                       |
-| `baseForegroundColor`             | `UIColor?`                                     | Цвет текста и иконки            |
-| `cornerStyle`                     | `.dynamic`, `.medium`, `.large`, `.capsule`    | `.capsule` — модный скруглённый |
-| `buttonSize`                      | `.mini`, `.small`, `.medium`, `.large`         | `.medium` — самый универсальный |
-| `showsActivityIndicator`          | `Bool`                                         | Показывать спиннер вместо текста |
-| `activityIndicatorPlacement`      | `.leading`, `.trailing`                        | Где спиннер                     |
+| Свойство / Метод             | Тип / Значение                              | Что делает / Рекомендация 2026   |
+| ---------------------------- | ------------------------------------------- | -------------------------------- |
+| `title`                      | [[String]]`?`                               | Основной текст кнопки            |
+| `subtitle`                   | `String?`                                   | Мелкий текст под заголовком      |
+| `image`                      | [[UIImage]]`?`                              | Иконка (SF Symbols или кастом)   |
+| `imagePlacement`             | `.leading`, `.trailing`, `.top`, `.bottom`  | Где иконка относительно текста   |
+| `imagePadding`               | `CGFloat`                                   | Отступ между иконкой и текстом   |
+| `baseBackgroundColor`        | [[UIColor]]`?`                              | Цвет фона                        |
+| `baseForegroundColor`        | `UIColor?`                                  | Цвет текста и иконки             |
+| `cornerStyle`                | `.dynamic`, `.medium`, `.large`, `.capsule` | `.capsule` — модный скруглённый  |
+| `buttonSize`                 | `.mini`, `.small`, `.medium`, `.large`      | `.medium` — самый универсальный  |
+| `showsActivityIndicator`     | `Bool`                                      | Показывать спиннер вместо текста |
+| `activityIndicatorPlacement` | `.leading`, `.trailing`                     | Где спиннер                      |
 
 ### 4. Лучшие практики UIButton.Configuration в Swift 2026
 

@@ -27,7 +27,7 @@
 
 ### 3. Самый современный способ привязки действий (2026 стандарт)
 
-С iOS 14+ используй **UIAction** вместо старого `addTarget:action:`.
+С iOS 14+ используй **[[UIAction]]** вместо старого `addTarget:action:`.
 
 ```swift
 let button = UIButton(configuration: .filled())
@@ -53,16 +53,16 @@ button.addAction(UIAction { _ in
 
 ### 4. Полный список самых полезных свойств и методов UIControl
 
-| Свойство / Метод                  | Тип / Возвращает                                | Что делает / Рекомендация 2026 |
-|-----------------------------------|-------------------------------------------------|---------------------------------|
-| `isEnabled`                       | `Bool`                                          | `false` → кнопка серая и неактивна |
-| `isHighlighted`                   | `Bool` (read-only)                              | Автоматически true при touchDown |
-| `isSelected`                      | `Bool`                                          | Для toggle-кнопок (лайк, избранное) |
-| `addAction(_:for:)`               | `UIAction` + `UIControl.Event`                  | Современный способ (замыкание) |
-| `removeAction(_:for:)`            | Удаление действия                               | Редко нужно |
-| `sendActions(for:)`               | Генерирует событие вручную                      | Для кастомных контроллов |
-| `allControlEvents`                | `UIControl.Event` (битовая маска)               | Отладка: какие события привязаны |
-| `actions(forTarget:forControlEvent:)` | Список селекторов                               | Отладка старого target-action |
+| Свойство / Метод                      | Тип / Возвращает                  | Что делает / Рекомендация 2026      |
+| ------------------------------------- | --------------------------------- | ----------------------------------- |
+| `isEnabled`                           | [[Bool]]                          | `false` → кнопка серая и неактивна  |
+| `isHighlighted`                       | `Bool` (read-only)                | Автоматически true при touchDown    |
+| `isSelected`                          | `Bool`                            | Для toggle-кнопок (лайк, избранное) |
+| `addAction(_:for:)`                   | `UIAction` + `UIControl.Event`    | Современный способ (замыкание)      |
+| `removeAction(_:for:)`                | Удаление действия                 | Редко нужно                         |
+| `sendActions(for:)`                   | Генерирует событие вручную        | Для кастомных контроллов            |
+| `allControlEvents`                    | `UIControl.Event` (битовая маска) | Отладка: какие события привязаны    |
+| `actions(forTarget:forControlEvent:)` | Список селекторов                 | Отладка старого target-action       |
 
 ### 5. Лучшие практики UIControl в Swift 2026
 

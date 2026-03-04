@@ -1,150 +1,224 @@
-**`UIViewController`** — это объект, который управляет **одним экраном или его частью** в [[iOS]]-приложении.
-
-🔑 Основные обязанности:
-
-1. Управление **view** — основной иерархией элементов на экране.
-    
-2. Обработка **жизненного цикла**: загрузка, отображение, исчезновение экрана.
-    
-3. Реакция на события пользователя.
-    
-4. Координация **переходов между экранами**.
-    
-
-> Проще: `UIViewController` = логика + экран.
+#uiviewcontroller #uikit #lifecycle #navigation #view-lifecycle #ios #swift #mvc #mvvm #container-controller #traitcollection #accessibility
 
 ---
+**(контроллер представления / контроллер экрана)**
 
-## 2. Основные свойства
+**UIViewController** — это **центральный класс** в [[UIKit]], который управляет **одним экраном** (или его значимой частью) в [[iOS]]-приложении.
 
-| Свойство                   | Описание                                                   |
-| -------------------------- | ---------------------------------------------------------- |
-| `view`                     | Главная view контроллера (типа [[UIView]])                 |
-| `navigationItem`           | Настройки навигации (заголовок, кнопки)                    |
-| `tabBarItem`               | Элемент таб-бара, если контроллер в [[UITabBarController]] |
-| `parent`                   | Родительский контроллер (если вложен)                      |
-| `children`                 | Дочерние контроллеры (для контейнеров)                     |
-| `presentedViewController`  | Контроллер, который был показан поверх текущего            |
-| `presentingViewController` | Контроллер, который вызвал текущий через `present`         |
+Он отвечает за:
 
----
+- создание и управление иерархией view (основной `view`)
+- **жизненный цикл** экрана (загрузка, появление, исчезновение, поворот, изменение темы и т.д.)
+- реакцию на события пользователя (нажатия, жесты, клавиатура)
+- координацию **навигации** (push, present, pop, dismiss)
+- адаптацию интерфейса под разные устройства и режимы (size class, тёмная/светлая тема, Dynamic Type, RTL)
 
-## 3. Жизненный цикл UIViewController
+Проще говоря:  
+**UIViewController = логика экрана + управление его содержимым.**
 
-Основные методы:
+Без него в UIKit невозможно построить полноценный экранный интерфейс.
 
-| Метод                                    | Когда вызывается                                              |
-| ---------------------------------------- | ------------------------------------------------------------- |
-| `init(nibName:bundle:)` / `init(coder:)` | Инициализация контроллера                                     |
-| `loadView()`                             | Создание view, если не загружено из XIB/Storyboard            |
-| `viewDidLoad()`                          | После загрузки view в память (вызывается один раз)            |
-| `viewWillAppear(_:)`                     | Перед тем, как view появится на экране                        |
-| `updateViewConstraints()`                | Перед layout, если есть кастомные constraints                 |
-| `viewWillLayoutSubviews()`               | Перед раскладкой субвью                                       |
-| `viewDidLayoutSubviews()`                | После раскладки субвью                                        |
-| `viewDidAppear(_:)`                      | После того, как view появилось на экране                      |
-| `viewWillDisappear(_:)`                  | Перед тем, как view исчезнет с экрана                         |
-| `viewDidDisappear(_:)`                   | После того, как view исчезло с экрана                         |
-| `viewWillTransition(to:with:)`           | Перед изменением размера view (например, при повороте экрана) |
-| `traitCollectionDidChange(_:)`           | При изменении size class или темной/светлой темы              |
-| `didReceiveMemoryWarning()`              | Когда система сообщает о нехватке памяти                      |
-| `deinit`                                 | Когда контроллер уничтожается из памяти                       |
-| `viewDidLoad()`                          | После загрузки view в память (один раз)                       |
-| `viewWillAppear(_:)`                     | Перед тем, как view появится на экране                        |
-| `viewDidAppear(_:)`                      | После того, как view появилось                                |
-| `viewWillDisappear(_:)`                  | Перед тем, как view исчезнет                                  |
-| `viewDidDisappear(_:)`                   | После того, как view исчезло                                  |
-| `deinit`                                 | Когда контроллер уничтожается из памяти                       |
+### 1. Основные обязанности UIViewController (от junior к senior)
 
----
-
-## 4. Пример кода
-
-### Простейший `UIViewController`
+**Junior уровень — что делает контроллер на практике**
 
 ```swift
 class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
-        let label = UILabel(frame: CGRect(x: 50, y: 100, width: 200, height: 50))
-        label.text = "Главная"
-        label.textColor = .black
+        let label = UILabel()
+        label.text = "Добро пожаловать!"
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 }
 ```
 
----
+**Middle уровень — жизненный цикл и навигация**
 
-### Переход на другой экран
+Жизненный цикл (в порядке вызова):
+
+1. [[init]]`(nibName:bundle:)` / `init(coder:)` — инициализация
+2. [[loadView]]`()` — создание `view` (если не из [[XIB]]/[[Storyboard]])
+3. [[viewDidLoad]]`()` — **один раз**, после загрузки view (самое частое место для setup)
+4. [[viewWillAppear]]`(_:)` — перед появлением (может вызываться много раз)
+5. [[viewDidAppear]]`(_:)` — после появления
+6. [[viewWillDisappear]]`(_:)` — перед исчезновением
+7. [[viewDidDisappear]]`(_:)` — после исчезновения
+8. [[deinit]] — когда контроллер уничтожается (освобождение ресурсов)
+
+**Навигация (самые частые способы):**
 
 ```swift
-let detailsVC = DetailsViewController()
-navigationController?.pushViewController(detailsVC, animated: true)
+// Push в навигационный стек
+navigationController?.pushViewController(detailVC, animated: true)
 
-// или модально
-present(detailsVC, animated: true)
+// Модальное представление
+present(detailVC, animated: true)
+
+// Pop назад
+navigationController?.popViewController(animated: true)
+
+// Dismiss модального
+dismiss(animated: true)
+
+// Замена root (редко)
+navigationController?.setViewControllers([newRootVC], animated: true)
 ```
 
----
+**Senior уровень — глубокая кастомизация и оптимизация**
 
-### Настройка заголовка и кнопок навигации
+1. **[[traitCollectionDidChange]](_:)** — адаптация под тёмную тему, size class, Dynamic Type
 
 ```swift
-override func viewDidLoad() {
-    super.viewDidLoad()
-    navigationItem.title = "Главная"
-    navigationItem.rightBarButtonItem = UIBarButtonItem(
-        title: "Настройки",
-        style: .plain,
-        target: self,
-        action: #selector(openSettings)
-    )
-}
-
-@objc func openSettings() {
-    print("Настройки открыты")
+override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    super.traitCollectionDidChange(previousTraitCollection)
+    
+    if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+        updateColorsForCurrentStyle()
+    }
+    
+    if traitCollection.preferredContentSizeCategory != previousTraitCollection?.preferredContentSizeCategory {
+        updateFontsForDynamicType()
+    }
 }
 ```
 
----
+2. **[[updateViewConstraints]]()** — кастомные constraints (вызывается перед layout)
 
-### Добавление дочернего контроллера
+```swift
+override func updateViewConstraints() {
+    super.updateViewConstraints()
+    
+    if traitCollection.horizontalSizeClass == .regular {
+        // iPad — две колонки
+        stackView.axis = .horizontal
+    } else {
+        stackView.axis = .vertical
+    }
+}
+```
+
+3. **Дочерние контроллеры** (container view controllers)
 
 ```swift
 let childVC = ChildViewController()
 addChild(childVC)
-childVC.view.frame = CGRect(x: 0, y: 200, width: view.frame.width, height: 200)
-view.addSubview(childVC.view)
+childVC.view.translatesAutoresizingMaskIntoConstraints = false
+containerView.addSubview(childVC.view)
+NSLayoutConstraint.activate([
+    childVC.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+    childVC.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+    childVC.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+    childVC.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+])
 childVC.didMove(toParent: self)
 ```
 
----
+4. **Переопределение loadView()** (редко, но мощно)
 
-## 5. Особенности
+```swift
+override func loadView() {
+    // Полностью кастомная view вместо UIView
+    view = CustomBackgroundView()
+}
+```
 
-1. **Контролирует один экран**, но может содержать дочерние контроллеры.
-    
-2. **Не наследует `UIView`**, но управляет ним через свойство `view`.
-    
-3. Используется вместе с **[[UINavigationController]], [[UITabBarController]], [[UISplitViewController]]** для построения интерфейса.
-    
-4. Поддерживает **жизненный цикл**, который важно знать для инициализации и очистки ресурсов.
-    
+5. **Оптимизация памяти** — [[didReceiveMemoryWarning]]`()`
 
----
+```swift
+override func didReceiveMemoryWarning() {
+    super.didReceiveMemoryWarning()
+    
+    // Очистка кэша изображений, тяжёлых данных
+    imageCache.removeAllObjects()
+}
+```
 
-## 6. Итог
+### 2. Самые частые паттерны 2026 года
 
-- `UIViewController` = **экран + логика**.
-    
-- Обязанности: управление view, обработка событий, навигация.
-    
-- Важная часть [[UIKit]], без него нельзя строить экранные интерфейсы.
-    
-- Хорошо комбинируется с контейнерами: навигация и таб-бары.
-    
+1. **[[MVVM (Model-View-ViewModel) Architecture|MVVM]] + [[Combine]] + [[UIKit]]** (самый популярный сейчас)
 
----
+```swift
+class ProfileViewController: UIViewController {
+    private let viewModel = ProfileViewModel()
+    private var cancellables = Set<AnyCancellable>()
+    
+    private lazy var nameLabel: UILabel = { ... }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        viewModel.$userName
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.text, on: nameLabel)
+            .store(in: &cancellables)
+    }
+}
+```
+
+2. **[[Coordinator]] + UIKit** (для сложной навигации)
+
+```swift
+class ProfileCoordinator: Coordinator {
+    func start() {
+        let vc = ProfileViewController()
+        vc.coordinator = self
+        navigationController.pushViewController(vc, animated: true)
+    }
+    
+    func showEditProfile() {
+        let editVC = EditProfileViewController()
+        navigationController.pushViewController(editVC, animated: true)
+    }
+}
+```
+
+3. **[[SwiftUI]] Hosting в UIKit**
+
+```swift
+let hostingVC = UIHostingController(rootView: ProfileSwiftUIView(viewModel: viewModel))
+addChild(hostingVC)
+hostingVC.view.frame = containerView.bounds
+containerView.addSubview(hostingVC.view)
+hostingVC.didMove(toParent: self)
+```
+
+### 3. Лучшие практики UIViewController в 2026 году
+
+- **viewDidLoad()** — настройка UI, подписки, начальные данные  
+- **viewWillAppear(_:)** — обновление данных, которые могут измениться при возврате  
+- **traitCollectionDidChange(_:)** — адаптация под тему, size class, Dynamic Type  
+- **deinit** — освобождение ресурсов (invalidate таймеры, remove observers)  
+- **weak self** в замыканиях — избегать retain cycle  
+- **[[Combine]] / [[async]]/[[await]]** — для реактивности и сетевых запросов  
+- **Доступность** — `accessibilityLabel`, `accessibilityHint`, `adjustsFontForContentSizeCategory`  
+- **Документируйте** — пишите комментарий:
+
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    // Настройка UI и подписок
+    setupUI()
+    bindViewModel()
+}
+```
+
+**Короткий итог 2026**:
+> **UIViewController** — **центральный объект** UIKit, управляющий одним экраном и его жизненным циклом.  
+> В 2026 году:  
+> - ключевые методы — `viewDidLoad`, `viewWill/DidAppear`, `traitCollectionDidChange`, `deinit`  
+> - самый популярный паттерн — MVVM + Combine + Coordinator  
+> - идеален для сложной навигации, адаптивного UI, контейнеров  
+> - в SwiftUI — частично заменяется на `View`, но UIKit всё ещё доминирует в legacy и смешанных проектах  
+> - это **основа** любого iOS-приложения на UIKit  
