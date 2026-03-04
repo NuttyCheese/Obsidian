@@ -1,6 +1,6 @@
 **`traitCollectionDidChange(_:)`** — это метод жизненного цикла [[UITraitEnvironment]] (реализуется [[UIView]], [[UIViewController]], [[UIPresentationController]] и некоторыми другими классами), который вызывается **каждый раз**, когда меняется **коллекция трейтов** (trait collection) объекта.
 
-С 2017 года (iOS 10+) и особенно после появления **Dynamic Type**, **тёмной темы**, **Split View**, **SceneDelegate** и **multi-window** в iPadOS это один из **самых важных** методов для адаптивного UI.
+С 2017 года (iOS 10+) и особенно после появления **Dynamic Type**, **тёмной темы**, **Split View**, **[[SceneDelegate]]** и **multi-window** в iPadOS это один из **самых важных** методов для адаптивного UI.
 
 ### Когда именно вызывается traitCollectionDidChange
 

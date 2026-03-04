@@ -53,9 +53,9 @@ class TimerViewController: UIViewController {
 }
 ```
 
-Без deinit таймер будет тикать даже после ухода с экрана → retain cycle.
+Без deinit таймер будет тикать даже после ухода с экрана → [[retain cycle]].
 
-#### Паттерн 3: Отписка от уведомлений / KVO
+#### Паттерн 3: Отписка от уведомлений / [[KVO]]
 
 ```swift
 class NotificationObserver {

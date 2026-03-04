@@ -111,7 +111,7 @@ class ProfileViewController: UIViewController {
 - **Не вызывай [[layoutIfNeeded]]() / setNeedsLayout()** внутри viewDidLayoutSubviews — это может привести к бесконечному циклу  
 - **@MainActor** — весь контроллер или метод — на главном акторе  
 - **Проверяй bounds.isEmpty** — иногда вызывается до первой компоновки  
-- **Swift 6 strict concurrency** — все UI-операции — в `@MainActor`  
+- **Swift 6 strict concurrency** — все UI-операции — в [[@MainActor]]  
 - **Документируйте** — пиши комментарий «viewDidLayoutSubviews — обновление градиентов и shadow path после layout»  
 
 **Короткий девиз 2026**:

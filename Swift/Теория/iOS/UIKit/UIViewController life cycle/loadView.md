@@ -13,8 +13,8 @@
 
 **Важные факты 2026 года**:
 - loadView() вызывается **лениво** (lazy) — только в момент первого обращения к `self.view` (если view ещё nil)
-- Если вы **не переопределяете** loadView(), то UIKit автоматически:
-  - Загружает view из Storyboard / nib (если контроллер создан через init(nibName:bundle:) или из Storyboard)
+- Если вы **не переопределяете** loadView(), то [[UIKit]] автоматически:
+  - Загружает view из Storyboard / nib (если контроллер создан через [[init(nibName bundle)]] или из [[Storyboard]])
   - Или создаёт пустой UIView (если контроллер создан чисто через init())
 - Если вы **переопределяете** loadView() → **обязательно** установите `self.view = ...` вручную, иначе будет краш
 
@@ -46,7 +46,7 @@ class ProfileViewController: UIViewController {
 }
 ```
 
-#### 2. Использование кастомного UIView как корневого (очень популярный паттерн)
+#### 2. Использование кастомного [[UIView]] как корневого (очень популярный паттерн)
 
 ```swift
 class ProfileViewController: UIViewController {

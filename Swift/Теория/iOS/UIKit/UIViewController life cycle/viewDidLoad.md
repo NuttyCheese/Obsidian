@@ -23,16 +23,16 @@
 
 ### Что обычно делают в viewDidLoad в 2026 году
 
-| Действие                                      | Почему именно здесь (а не в init или viewDidAppear) | Пример кода (современный стиль) |
-|-----------------------------------------------|-----------------------------------------------------|---------------------------------|
-| **Добавление subviews** (programmatic UI)     | view уже существует → можно добавлять subviews      | `setupSubviews()` |
-| **Настройка Auto Layout constraints**         | view уже в иерархии → можно создавать constraints   | `NSLayoutConstraint.activate([...])` |
-| **Создание и настройка UI-элементов**         | Один раз → не нужно повторять при каждом появлении  | `titleLabel = UILabel()` |
-| **Подписка на уведомления / KVO** (долгосрочные) | Достаточно один раз (отписка в deinit / viewDidDisappear) | `NotificationCenter.default.addObserver(...)` |
-| **Инициализация ViewModel / сервисов**        | Один раз при создании контроллера                   | `viewModel = ProfileViewModel()` |
-| **Загрузка начальных данных** (если не асинхронно) | Экран ещё не виден → можно делать тяжёлую работу    | `loadInitialData()` (но лучше в viewDidAppear) |
-| **Регистрация на делегаты / data sources**    | Один раз (UITableView, UICollectionView и т.д.)     | `tableView.dataSource = self` |
-| **Настройка внешнего вида** (цвета, шрифты, стили) | Один раз → не нужно повторять                      | `view.backgroundColor = .systemBackground` |
+| Действие                                             | Почему именно здесь (а не в init или viewDidAppear)               | Пример кода (современный стиль)                |
+| ---------------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
+| **Добавление subviews** (programmatic UI)            | view уже существует → можно добавлять subviews                    | `setupSubviews()`                              |
+| **Настройка Auto Layout constraints**                | view уже в иерархии → можно создавать [[constraint]]s             | `NSLayoutConstraint.activate([...])`           |
+| **Создание и настройка UI-элементов**                | Один раз → не нужно повторять при каждом появлении                | `titleLabel = UILabel()`                       |
+| **Подписка на уведомления / [[KVO]]** (долгосрочные) | Достаточно один раз (отписка в [[deinit]] / [[viewDidDisappear]]) | `NotificationCenter.default.addObserver(...)`  |
+| **Инициализация ViewModel / сервисов**               | Один раз при создании контроллера                                 | `viewModel = ProfileViewModel()`               |
+| **Загрузка начальных данных** (если не асинхронно)   | Экран ещё не виден → можно делать тяжёлую работу                  | `loadInitialData()` (но лучше в viewDidAppear) |
+| **Регистрация на делегаты / data sources**           | Один раз ([[UITableView]], [[UICollectionView]] и т.д.)           | `tableView.dataSource = self`                  |
+| **Настройка внешнего вида** (цвета, шрифты, стили)   | Один раз → не нужно повторять                                     | `view.backgroundColor = .systemBackground`     |
 
 ### Самый современный паттерн 2026 ([[@MainActor]] + [[async]]/[[await]] + programmatic UI)
 
@@ -130,7 +130,7 @@ class ProfileViewController: UIViewController {
 - **Не делай тяжёлую работу** — сетевые запросы, сложные вычисления → переноси в [[viewDidAppear]] / [[Task]]  
 - **@MainActor** — весь контроллер или метод — на главном акторе  
 - **Отписывайся** в [[deinit]] / [[viewDidDisappear]] ([[KVO]], [[NotificationCenter]], [[Combine]])  
-- **Swift 6 strict concurrency** — все UI-операции — в `@MainActor`  
+- **Swift 6 strict concurrency** — все UI-операции — в [[@MainActor]]  
 - **Документируйте** — пиши комментарий «viewDidLoad — настройка UI и bindings один раз при создании контроллера»
 
 **Короткий девиз 2026**:

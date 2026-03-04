@@ -95,9 +95,9 @@ class SettingsViewController: UIViewController {
   - layout-логики (размеры, позиционирование)
   - добавления/удаления subviews
   - сетевых запросов, тяжёлых вычислений
-- **Вызывайте** `super.awakeFromNib()` — обязательно (особенно в подклассах UIView / UIViewController)
-- **В SwiftUI** — awakeFromNib() **не существует** (UIHostingController и UIViewRepresentable используют другие жизненные циклы)
-- **Для Storyboard** — awakeFromNib() вызывается **один раз** при первой загрузке
+- **Вызывайте** `super.awakeFromNib()` — обязательно (особенно в подклассах [[UIView]] / [[UIViewController]])
+- **В [[SwiftUI]]** — awakeFromNib() **не существует** ([[UIHostingController]] и [[UIViewRepresentable]] используют другие жизненные циклы)
+- **Для [[Storyboard]]** — awakeFromNib() вызывается **один раз** при первой загрузке
 - **Документируйте** — пишите комментарий «awakeFromNib — настройка UI-элементов, загруженных из nib (outlets уже доступны)»
 
 **Короткий итог 2026**:
