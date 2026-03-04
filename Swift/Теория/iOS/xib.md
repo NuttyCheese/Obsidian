@@ -1,7 +1,6 @@
 #xcode #interface-builder #xib #nib #uikit #ios #ui #iboutlet
 
 ---
-
 ## XIB (XML Interface Builder)
 
 ### Определение
