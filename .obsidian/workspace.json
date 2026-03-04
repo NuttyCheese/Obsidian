@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/Views/UIButton.Configuration.md",
+                "file": "Swift/Полезные расширения/ext+Bool.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UIButton.Configuration"
+              "title": "ext+Bool"
             }
           },
           {
@@ -282,6 +282,7 @@
   "active": "deb4078ddeaf813e",
   "lastOpenFiles": [
     "Swift/Полезные расширения/ext+UIColor.md",
+    "Swift/Теория/iOS/UIKit/Views/UIButton.Configuration.md",
     "Swift/Полезные расширения/ext+UICollectionView.md",
     "Swift/Полезные расширения/ext+UITableView.md",
     "Swift/Полезные расширения/ext+UIView.md",
@@ -306,7 +307,6 @@
     "Swift/Теория/Контроль памяти/KVO.md",
     "Swift/Теория/Архитектурные подходы/What patterns are used in iOS.md",
     "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
-    "Swift/Теория/Архитектурные подходы/MVVM (Model-View-ViewModel) Architecture.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
