@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/ViewControllers/UINavigationController.md",
+                "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UINavigationController"
+              "title": "Жизненный цикл ViewController-a"
             }
           },
           {
@@ -27,16 +27,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
+                "file": "Swift/Теория/Метод Dispatch/Какие виды диспетчеризации существуют?.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Жизненный цикл ViewController-a"
+              "title": "Какие виды диспетчеризации существуют?"
+            }
+          },
+          {
+            "id": "dd65128d076eeda7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Теория/iOS/Swift/Collection.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Collection"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -93,7 +107,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 516.5
+    "width": 391.5
   },
   "right": {
     "id": "7238f37c2a03dbfd",
@@ -195,7 +209,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 425.5
+    "width": 337.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -209,8 +223,23 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "0b4cfbf7df6accc4",
+  "active": "dd65128d076eeda7",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/protocol Sequence.md",
+    "Swift/Теория/iOS/Swift/Collection.md",
+    "Swift/Теория/iOS/Swift/Dictionary.md",
+    "Swift/Теория/iOS/Swift/Array.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Последовательность Фибоначчи.md",
+    "Swift/Теория/Контроль памяти/Inline.md",
+    "Swift/Теория/Метод Dispatch/Какие виды диспетчеризации существуют?.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Static Dispatch/Static Dispatch.md",
+    "Swift/Теория/Контроль памяти/Value Type.md",
+    "Swift/Теория/Контроль памяти/value semantic.md",
+    "Swift/Теория/Контроль памяти/reference semantic.md",
+    "Swift/Теория/iOS/XML.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
+    "Swift/Теория/Общие вопросы/Структуры данных.md",
+    "Swift/Теория/iOS/UIKit/ViewControllers/UINavigationController.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/awakeFromNib.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/deinit.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/didMove.md",
@@ -222,21 +251,6 @@
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidDisappear.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidLayoutSubviews.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidLoad.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewIsAppearing.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewWillAppear.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewWillDisappear.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewWillLayoutSubviews.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewWillTransition.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/willMove.md",
-    "Swift/Теория/iOS/didFinishLaunchingWithOptions.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UINavigationController.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UIActivityViewController.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UIAlertController.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UIColorPickerViewController.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UIDocumentPickerViewController.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UIFontPickerViewController.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UIHostingController.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UIImagePickerController.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
