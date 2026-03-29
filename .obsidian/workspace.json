@@ -225,8 +225,9 @@
   },
   "active": "dd65128d076eeda7",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/Swift/Collection.md",
+    "Баг.md",
     "Тестовое задание по Telegram iOS.md",
+    "Swift/Теория/iOS/Swift/Collection.md",
     "Swift/Теория/iOS/Swift/Без названия.md",
     "Swift/Теория/iOS/Swift/protocol Sequence.md",
     "Swift/Теория/iOS/Swift/Dictionary.md",
@@ -250,7 +251,6 @@
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/loadView.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/traitCollectionDidChange.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidAppear.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidDisappear.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
