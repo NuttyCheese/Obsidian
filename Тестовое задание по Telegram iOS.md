@@ -73,11 +73,11 @@
 
 ---
 
-## Что изучали
+## Что изучил
 
-Сначала искали **одну** осмысленную тему среди UX, производительности, синхронизации, offline, уведомлений и навигации/deep link — не чеклист на весь репозиторий, а точку с явным кодом и последствиями.
+Сначала искал **одну** осмысленную тему среди UX, производительности, синхронизации, offline, уведомлений и навигации/deep link — не чеклист на весь репозиторий, а точку с явным кодом и последствиями.
 
-По ходу этого просматривали:
+По ходу этого просматривал:
 
 - **Навигация и ссылки:** `AppDelegate.swift` (биндинги `openUrl` / `openUniversalUrl` / `canOpenUrl`), `OpenUrl.swift` (в т.ч. `handleInternetUrl`, вызов `openUniversalUrl` с fallback на `continueHandling`), упоминания `UrlHandling`, `BrowserUI` (`BrowserWebContent` — политика навигации по `tg://` / t.me), фрагменты `WebUI` (`WebAppController`).
 - **Расширения:** `ShareExtensionContext`, `NotificationContentContext` — урезанные `TelegramApplicationBindings` (в т.ч. заглушки `openUniversalUrl`), чтобы понять, не «ломается» ли сценарий только в extension.
@@ -85,15 +85,15 @@
 - **Поиск маркеров:** по репозиторию по `FIXME`/`TODO` в `.swift` — **почти пусто**, явных «известных багов» в комментариях не оперлись.
 - **Уведомления → чат:** `ApplicationContext` (открытие чата при активном приложении), затем **`AppDelegate.userNotificationCenter(_:didReceive:...)`** — где и нашли разрыв в логике.
 
-## Какие слои / модули затронули
+## Какие слои / модули затронул
 
-| Слой / область | Модуль / путь (в основном) |
-|----------------|----------------------------|
-| UI приложения, lifecycle, push | `submodules/TelegramUI/Sources/` — `AppDelegate.swift`, `OpenUrl.swift`, `ApplicationContext.swift` |
-| Контекст аккаунта / биндинги приложения | `submodules/AccountContext/` (сигнатуры `TelegramApplicationBindings`) |
-| In-app browser / WebView | `submodules/BrowserUI/`, `submodules/WebUI/` |
-| Парсинг / обработка URL (ядро) | `submodules/UrlHandling/` (поиск), `TelegramCore` (точечно) |
-| Расширения | `TelegramUI/Components/ShareExtensionContext/`, `TelegramUI/Sources/NotificationContentContext.swift` |
+| Слой / область                          | Модуль / путь (в основном)                                                                            |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| UI приложения, lifecycle, push          | `submodules/TelegramUI/Sources/` — `AppDelegate.swift`, `OpenUrl.swift`, `ApplicationContext.swift`   |
+| Контекст аккаунта / биндинги приложения | `submodules/AccountContext/` (сигнатуры `TelegramApplicationBindings`)                                |
+| In-app browser / WebView                | `submodules/BrowserUI/`, `submodules/WebUI/`                                                          |
+| Парсинг / обработка URL (ядро)          | `submodules/UrlHandling/` (поиск), `TelegramCore` (точечно)                                           |
+| Расширения                              | `TelegramUI/Components/ShareExtensionContext/`, `TelegramUI/Sources/NotificationContentContext.swift` |
 
 Глубоко разобран один узкий участок: **обработка тапа по push в основном приложении** в `AppDelegate`.
 

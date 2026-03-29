@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Тестовое задание по Telegram iOS.md",
+                "file": "Баг.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Тестовое задание по Telegram iOS"
+              "title": "Баг"
             }
           }
         ],
@@ -225,8 +225,8 @@
   },
   "active": "dd65128d076eeda7",
   "lastOpenFiles": [
-    "Баг.md",
     "Тестовое задание по Telegram iOS.md",
+    "Баг.md",
     "Swift/Теория/iOS/Swift/Collection.md",
     "Swift/Теория/iOS/Swift/Без названия.md",
     "Swift/Теория/iOS/Swift/protocol Sequence.md",
