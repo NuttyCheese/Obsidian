@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "2b341a4ec279dee6",
+        "id": "483efca5d940f3cc",
         "type": "tabs",
         "children": [
           {
-            "id": "1aa8d405bc2995e3",
+            "id": "479e6b62845de0c7",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/Properties/get set.md",
+                "file": "Swift/Теория/Общие вопросы/Таблица размеров типов данных.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "get set"
+              "title": "Таблица размеров типов данных"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 391.5
+    "width": 431.5
   },
   "right": {
     "id": "7238f37c2a03dbfd",
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/Properties/get set.md",
+                "file": "Swift/Теория/Общие вопросы/Таблица размеров типов данных.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура get set"
+              "title": "Структура Таблица размеров типов данных"
             }
           },
           {
@@ -194,35 +194,35 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "1aa8d405bc2995e3",
+  "active": "479e6b62845de0c7",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/Swift/Collections/Set Collection.md",
+    "Swift/Теория/Общие вопросы/Какие данные и где предпочтительно хранить.md",
+    "Swift/Теория/Общие вопросы/Как делать сборку.md",
+    "Swift/Теория/Общие вопросы/Виды пагинации.md",
+    "Swift/Теория/iOS/Swift/Collections/Collection.md",
+    "Swift/Теория/iOS/Swift/Data Types/String.md",
+    "Swift/Теория/iOS/Swift/Properties/wrapper.md",
+    "Swift/Теория/iOS/Swift/Properties/willSet.md",
+    "Swift/Теория/iOS/Swift/Properties/var.md",
+    "Swift/Теория/iOS/Swift/Properties/setter.md",
+    "Swift/Теория/iOS/Swift/Properties/mutating method.md",
+    "Swift/Теория/iOS/Swift/Properties/mutable.md",
+    "Swift/Теория/iOS/Swift/Properties/let.md",
+    "Swift/Теория/iOS/Swift/Properties/lazy.md",
+    "Swift/Теория/iOS/Swift/Properties/inout.md",
+    "Swift/Теория/iOS/Swift/Properties/immutable.md",
+    "Swift/Теория/iOS/Swift/Properties/getter.md",
     "Swift/Теория/iOS/Swift/Properties/get set.md",
+    "Swift/Теория/iOS/Swift/Properties/didSet.md",
+    "Swift/Теория/iOS/Swift/Protocols/Protocol.md",
+    "Swift/Теория/Контроль памяти/Stack and Heap.md",
+    "Swift/Теория/iOS/Swift/Collections/Set Collection.md",
     "Swift/Теория/iOS/Swift/Protocols/protocol Sequence.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/Strideable.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/Hashable.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/Decodable.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/Comparable.md",
-    "Swift/Теория/iOS/Swift/Protocols Conformance/Codable.md",
-    "Swift/Теория/iOS/Swift/Data Types/AnyObject.md",
-    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Table Dispatch.md",
-    "Swift/Теория/iOS/Swift/Data Types/NSCache.md",
-    "Swift/Теория/iOS/Swift/Basics/compile-time.md",
-    "Swift/Теория/iOS/Swift/Basics/required init.md",
-    "Swift/Теория/Метод Dispatch/Dynamic Dispatch.md",
-    "Swift/Теория/iOS/Swift/protocol type.md",
-    "Swift/Теория/iOS/Swift/Misc/required init.md",
-    "Swift/Теория/iOS/Swift/Misc/compile-time.md",
-    "Swift/Теория/iOS/Swift/Misc/NSCache.md",
     "Swift/Теория/iOS/Swift/Misc",
-    "Swift/Теория/iOS/Swift/Protocols/Protocol.md",
-    "Swift/Теория/iOS/Swift/Data Types/Range.md",
-    "Swift/Теория/iOS/Swift/Basics/generic.md",
-    "Swift/Теория/iOS/Swift/Protocols/some Protocol.md",
-    "Swift/Теория/iOS/Swift/Data Types/Float.md",
-    "Swift/Теория/iOS/Swift/Protocols/AssociatedType.md",
-    "Swift/Теория/iOS/Swift/Data Types/MemoryLayout.md",
-    "Swift/Теория/iOS/Swift/Data Types/Bool.md",
     "Swift/Теория/iOS/Swift/Other",
     "Swift/Теория/iOS/Swift/Keywords",
     "Swift/Теория/iOS/Swift/Objective-C Interop",

@@ -98,7 +98,7 @@ Swift **гарантирует**, что `lazy` инициализируется
   - свойств, которые почти всегда нужны
   - свойств, которые должны быть `let` (константы)
 
-- **В SwiftUI** — часто комбинируй `lazy var` с `@StateObject` / `@ObservedObject`:
+- **В [[SwiftUI]]** — часто комбинируй `lazy var` с `@StateObject` / `@ObservedObject`:
 
 ```swift
 class ViewModel: ObservableObject {

@@ -29,7 +29,7 @@ func drawShape(_ shape: any Drawable) {
 | Термин / Конструкция           | Описание                                                             | Пример использования                             |
 | ------------------------------ | -------------------------------------------------------------------- | ------------------------------------------------ |
 | **Conformance**                | Соответствие типа протоколу                                          | `struct Circle: Drawable`                        |
-| **Property Requirement**       | Требование свойства ([[get]] / [[get set]])                          | `var area: Double { get }`                       |
+| **Property Requirement**       | Требование свойства ([[getter]] / [[get set]])                          | `var area: Double { get }`                       |
 | **Method Requirement**         | Требование метода с сигнатурой                                       | `func draw()`                                    |
 | **Initializer Requirement**    | Требование инициализатора                                            | `init(radius: Double)`                           |
 | **[[AssociatedType]]**         | Замещаемый тип ([[generic]] в протоколе)                             | `associatedtype Element`                         |
