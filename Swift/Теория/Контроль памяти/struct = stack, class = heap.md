@@ -23,7 +23,7 @@ print(a.obj.value)    // 100 — изменилось!
 Это **не** reference semantics структуры,  
 а **reference semantics** вложенного `class`.
 
-### 2. [[Copy-On-Write]] коллекции ([[Array]], [[Dictionary]], [[String]], [[Set]])
+### 2. [[Copy-On-Write]] коллекции ([[Array]], [[Dictionary]], [[String]], [[Set Collection]])
 
 ```swift
 var a = [1, 2, 3]

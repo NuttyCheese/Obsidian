@@ -23,7 +23,7 @@ func compactMap<ElementOfResult>(
 - `compactMap` на [[protocol Sequence]] → возвращает `[ElementOfResult]`
 - `compactMap` на [[Collection]] → возвращает `[ElementOfResult]`
 - `compactMap` на [[Dictionary]] → возвращает `[ElementOfResult]`
-- `compactMap` на [[Set]] → возвращает `[ElementOfResult]`
+- `compactMap` на [[Set Collection]] → возвращает `[ElementOfResult]`
 
 ## Примеры использования
 

@@ -42,7 +42,7 @@
 - **Перечисления (enum)** — [[Optional]], [[Result]]
 - **Кортежи (tuple)** — ([[Int]], [[String]])
 - **Все примитивы** — [[Int]], [[Double]], [[Bool]], [[String]]
-- **Коллекции** — [[Array]], [[Dictionary]], [[Set]]
+- **Коллекции** — [[Array]], [[Dictionary]], [[Set Collection]]
 
 #### Примеры
 

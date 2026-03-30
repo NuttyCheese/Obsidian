@@ -75,7 +75,7 @@ Monoid — это тип, который умеет **комбинировать
 | [[String]]             | `""`                          | `+`                                 |
 | `[String]`             | `[]`                          | `+`                                 |
 | [[Int]] (сумма)        | `0`                           | `+`                                 |
-| [[Set]]`<Element>`     | `[]`                          | `union`                             |
+| [[Set Collection]]`<Element>`     | `[]`                          | `union`                             |
 | [[Dictionary]]`<K, V>` | `[:]`                         | `merging`                           |
 
 Пример реализации Monoid для [[String]] и [[Array]]:
@@ -204,7 +204,7 @@ func asyncFetchUser() async -> AsyncWriter<[String], User> {
 
 ### 7. Лучшие практики 2026
 
-- Используйте Writer с **Monoid**-логом ([[String]], [String], Sum, [[Set]] и т.д.)  
+- Используйте Writer с **Monoid**-логом ([[String]], [String], Sum, [[Set Collection]] и т.д.)  
 - Для асинхронных операций — **AsyncWriter** с `async throws`  
 - **Не выполняйте** `run()` внутри чистых функций — только в оболочке  
 - Для тестов — проверяйте как `value`, так и `log`  

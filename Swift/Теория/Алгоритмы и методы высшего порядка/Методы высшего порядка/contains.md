@@ -19,7 +19,7 @@
 
 4. Специфичные для `String`: `contains(_ substring: String)`, `contains<Character>`, `contains(where:)`
 
-5. Для [[Set]] и [[Dictionary]]: `contains(_:)` работает в **O(1)** благодаря хэшированию
+5. Для [[Set Collection]] и [[Dictionary]]: `contains(_:)` работает в **O(1)** благодаря хэшированию
 
 ## Сигнатуры (основные)
 
@@ -73,7 +73,7 @@ print(statuses.contains(.active))                           // Ошибка ко
 print(statuses.contains { $0 == .active })                  // true
 ```
 
-### 3. contains в [[Set]] и [[Dictionary]] — O(1)
+### 3. contains в [[Set Collection]] и [[Dictionary]] — O(1)
 
 ```swift
 let ids: Set<Int> = [1001, 1005, 1012, 1020]
@@ -132,7 +132,7 @@ let hasValidEmail = emails.contains { $0.contains("@") && $0.contains(".") }  //
 | Коллекция             | `contains(_:)` (Equatable) | `contains(where:)` | Примечание                     |
 | --------------------- | -------------------------- | ------------------ | ------------------------------ |
 | [[Array]]             | O(n)                       | O(n)               | Линейный поиск                 |
-| [[Set]]               | O(1)                       | O(n)               | Хэш-поиск для точного элемента |
+| [[Set Collection]]               | O(1)                       | O(n)               | Хэш-поиск для точного элемента |
 | Dictionary.keys       | O(1)                       | O(n)               | Хэш-поиск по ключу             |
 | [[Dictionary]].values | O(n)                       | O(n)               | Нет хэширования по значению    |
 | [[String]]            | O(n)                       | O(n)               | Поиск подстроки или символа    |

@@ -225,7 +225,7 @@ class Child {
 
 ### ARC и коллекции
 
-Коллекции ([[Array]], [[Dictionary]], [[Set]]) хранят **сильные ссылки** на свои элементы:
+Коллекции ([[Array]], [[Dictionary]], [[Set Collection]]) хранят **сильные ссылки** на свои элементы:
 
 ```swift
 class Person {

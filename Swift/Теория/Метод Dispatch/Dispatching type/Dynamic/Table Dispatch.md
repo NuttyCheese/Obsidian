@@ -119,7 +119,7 @@ class Service {
 }
 ```
 
-#### 3. **Свойства классов ([[get]]/[[set]])**
+#### 3. **Свойства классов ([[get]]/[[Set Collection]])**
 
 ```swift
 class Person {
