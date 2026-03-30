@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Witness Table.md",
+                "file": "Swift/Теория/iOS/Swift/Array.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Witness Table"
+              "title": "Array"
             }
           }
         ],
@@ -211,13 +211,17 @@
   },
   "active": "0b4cfbf7df6accc4",
   "lastOpenFiles": [
-    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Message Dispatch.md",
-    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Witness Table.md",
-    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic",
-    "Swift/Теория/Метод Dispatch/Dispatching type/Без названия.md",
-    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Table Dispatch.md",
+    "Swift/Теория/iOS/Swift/Collection.md",
+    "Swift/Теория/iOS/Swift/Dictionary.md",
+    "Swift/Теория/iOS/Swift/existential type.md",
+    "Swift/Теория/iOS/Swift/Уровни доступа в Swift.md",
     "Swift/Теория/Метод Dispatch/Какие виды диспетчеризации существуют?.md",
     "Swift/Теория/Метод Dispatch/Dispatching type/Static/Direct Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Witness Table.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Table Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Message Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Без названия.md",
     "Swift/Теория/Метод Dispatch/Dispatching type/Static/Static Dispatch.md",
     "Swift/Теория/iOS/Swift/internal.md",
     "Swift/Теория/Метод Dispatch/Dispatching type/Static",
@@ -232,13 +236,10 @@
     "Баг.md",
     "README.md",
     "Архив.zip",
-    "Swift/Теория/iOS/Swift/Collection.md",
     "Swift/Теория/iOS/Swift/Без названия.md",
     "Swift/Теория/iOS/Swift/protocol Sequence.md",
-    "Swift/Теория/iOS/Swift/Dictionary.md",
     "Swift/Теория/iOS/Swift/Array.md",
     "Swift/Теория/Контроль памяти/Inline.md",
-    "Swift/Теория/Контроль памяти/Value Type.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",

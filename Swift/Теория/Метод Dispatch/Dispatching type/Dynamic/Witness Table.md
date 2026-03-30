@@ -36,30 +36,46 @@ Witness Table обеспечивает полиморфное поведение
 
 ```mermaid
 flowchart TD
-    subgraph "Existential Container"
-        A[valueBuffer: 24 байта]
-        B[vwt: Value Witness Table]
-        C[pwt: Protocol Witness Table]
+    subgraph Stack[Стек]
+        Container[Existential Container<br/>any Drawable]
     end
     
-    subgraph "Protocol Witness Table (для Circle)"
-        D[draw: 0x1000]
-        E[area: 0x2000]
+    subgraph ContainerLayout[Структура контейнера]
+        direction LR
+        Buffer["valueBuffer<br/>(3 слова = 24 байта)<br/>хранит значение inlined<br/>или указатель на кучу"]
+        VWTPtr["vwt_ptr<br/>(управление памятью)"]
+        PWTPtr["pwt_ptr<br/>(методы протокола)"]
     end
     
-    subgraph "Protocol Witness Table (для Square)"
-        F[draw: 0x3000]
-        G[area: 0x4000]
+    subgraph ValueWitnessTables[Value Witness Tables]
+        VWT_Circle["VWT для Circle<br/>• allocate<br/>• copy<br/>• destroy<br/>• deallocate<br/>• size/alignment"]
+        VWT_Square["VWT для Square<br/>• allocate<br/>• copy<br/>• destroy<br/>• deallocate<br/>• size/alignment"]
     end
     
-    H[let shape: any Drawable = Circle()] -->|хранит| A
-    H -->|ссылку на| C
-    C -->|указывает на| D
+    subgraph ProtocolWitnessTables[Protocol Witness Tables]
+        PWT_Circle["PWT для Circle<br/>draw → Circle.draw<br/>area → Circle.area"]
+        PWT_Square["PWT для Square<br/>draw → Square.draw<br/>area → Square.area"]
+    end
     
-    I[shape.draw()] --> J[Чтение pwt из existential container]
-    J --> K[Поиск адреса draw]
-    K --> L[Косвенный jump]
-    L --> M[Выполнение]
+    Container -->|содержит| Buffer
+    Container -->|указатель| VWTPtr
+    Container -->|указатель| PWTPtr
+    
+    VWTPtr -->|если Circle| VWT_Circle
+    VWTPtr -->|если Square| VWT_Square
+    
+    PWTPtr -->|если Circle| PWT_Circle
+    PWTPtr -->|если Square| PWT_Square
+    
+    Call["shape.draw()"] -->|1. взять pwt_ptr| PWTPtr
+    PWTPtr -->|2. взять слот draw| DrawSlot["draw → адрес реализации"]
+    DrawSlot -->|3. косвенный вызов| Execute[Выполнение]
+    
+    style Container fill:#e1f5fe,stroke:#333,stroke-width:2px
+    style ContainerLayout fill:#e1f5fe
+    style ValueWitnessTables fill:#ffefd0
+    style ProtocolWitnessTables fill:#fff3e0
+    style Execute fill:#ccffcc
 ```
 
 **Ключевые компоненты:**
@@ -179,14 +195,14 @@ drawGeneric(circle)      // static dispatch
 
 ### Witness Table vs vtable: сравнение
 
-| Характеристика | Witness Table | vtable (Table Dispatch) |
-|----------------|---------------|-------------------------|
-| **Используется для** | Протоколы | Классы |
-| **Где хранится** | В existential container | В классе |
-| **Создание** | При соответствии протоколу | При создании класса |
-| **Overhead памяти** | ~40–48 байт на existential | ~8 байт на объект (isa) |
-| **Скорость** | ~3–5 нс | ~3–5 нс |
-| **Пример** | `any Drawable` | `class Animal { func sound() }` |
+| Характеристика          | Witness Table              | vtable (Table Dispatch)         |
+| ----------------------- | -------------------------- | ------------------------------- |
+| **Используется для**    | Протоколы                  | Классы                          |
+| **Где хранится**        | В existential container    | В классе                        |
+| **Создание**            | При соответствии протоколу | При создании класса             |
+| **[[Overhead]] памяти** | ~40–48 байт на existential | ~8 байт на объект (isa)         |
+| **Скорость**            | ~3–5 нс                    | ~3–5 нс                         |
+| **Пример**              | `any Drawable`             | `class Animal { func sound() }` |
 
 ---
 
