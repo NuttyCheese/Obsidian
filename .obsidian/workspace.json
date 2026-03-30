@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Метод Dispatch/Dispatching type/Static Dispatch/Static Dispatch.md",
+                "file": "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Witness Table.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Static Dispatch"
+              "title": "Witness Table"
             }
           }
         ],
@@ -211,12 +211,20 @@
   },
   "active": "0b4cfbf7df6accc4",
   "lastOpenFiles": [
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Message Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Witness Table.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Без названия.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Table Dispatch.md",
     "Swift/Теория/Метод Dispatch/Какие виды диспетчеризации существуют?.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Static/Direct Dispatch.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Static/Static Dispatch.md",
+    "Swift/Теория/iOS/Swift/internal.md",
+    "Swift/Теория/Метод Dispatch/Dispatching type/Static",
     "Swift/Теория/Метод Dispatch/Dispatching type/Static Dispatch/Static Dispatch.md",
     "Swift/Теория/Метод Dispatch/Overhead.md",
     "Swift/Теория/iOS/static.md",
     "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic Dispatch/vtable.md",
-    "Swift/Теория/Метод Dispatch/Dispatching type/Static Dispatch/Static Dispatch.md",
     "Swift/Теория/Метод Dispatch/Witness Table Dispatch.md",
     "Тестовое задание по Telegram iOS.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Последовательность Фибоначчи.md",
@@ -231,21 +239,12 @@
     "Swift/Теория/iOS/Swift/Array.md",
     "Swift/Теория/Контроль памяти/Inline.md",
     "Swift/Теория/Контроль памяти/Value Type.md",
-    "Swift/Теория/Контроль памяти/value semantic.md",
-    "Swift/Теория/Контроль памяти/reference semantic.md",
-    "Swift/Теория/iOS/XML.md",
-    "Swift/Теория/Общие вопросы/Структуры данных.md",
-    "Swift/Теория/iOS/UIKit/ViewControllers/UINavigationController.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/awakeFromNib.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/deinit.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
     "Swift/Теория/iOS/UIKit/Control Events",
     "Swift/Теория/iOS/UIKit/Traits",
     "Swift/Теория/iOS/UIKit/Responder",
-    "Swift/Теория/iOS/UIKit/Graphics",
-    "Swift/Теория/iOS/UIKit/Interactions",
-    "Swift/Теория/iOS/UIKit/Menus"
+    "Swift/Теория/iOS/UIKit/Graphics"
   ]
 }
