@@ -226,7 +226,9 @@
   "active": "dd65128d076eeda7",
   "lastOpenFiles": [
     "Баг.md",
+    "README.md",
     "Тестовое задание по Telegram iOS.md",
+    "Архив.zip",
     "Swift/Теория/iOS/Swift/Collection.md",
     "Swift/Теория/iOS/Swift/Без названия.md",
     "Swift/Теория/iOS/Swift/protocol Sequence.md",
@@ -250,7 +252,6 @@
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/init(nibName bundle).md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/loadView.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/traitCollectionDidChange.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidAppear.md",
     "Swift/Теория/iOS/UIKit/Concepts",
     "Swift/Теория/iOS/UIKit/Document",
     "Swift/Теория/iOS/UIKit/Interface Builder",
@@ -259,7 +260,6 @@
     "Swift/Теория/iOS/UIKit/Responder",
     "Swift/Теория/iOS/UIKit/Graphics",
     "Swift/Теория/iOS/UIKit/Interactions",
-    "Swift/Теория/iOS/UIKit/Menus",
-    "Swift/Теория/iOS/UIKit/Delegates"
+    "Swift/Теория/iOS/UIKit/Menus"
   ]
 }
