@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Общие вопросы/Таблица размеров типов данных.md",
+                "file": "Swift/Теория/Общие вопросы/Self-documenting code.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Таблица размеров типов данных"
+              "title": "Self-documenting code"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Swift/Теория/Общие вопросы/Таблица размеров типов данных.md",
+                "file": "Swift/Теория/Общие вопросы/Self-documenting code.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Структура Таблица размеров типов данных"
+              "title": "Структура Self-documenting code"
             }
           },
           {
@@ -196,6 +196,11 @@
   },
   "active": "479e6b62845de0c7",
   "lastOpenFiles": [
+    "Swift/Теория/Общие вопросы/View Hierarchy Debugger.md",
+    "Swift/Теория/Общие вопросы/Additional Tools for Xcode.md",
+    "Swift/Теория/Общие вопросы/Чтение и запись в iOS.md",
+    "Swift/Теория/Общие вопросы/Темплейты в Xcode.md",
+    "Swift/Теория/Общие вопросы/Таблица размеров типов данных.md",
     "Swift/Теория/Общие вопросы/Какие данные и где предпочтительно хранить.md",
     "Swift/Теория/Общие вопросы/Как делать сборку.md",
     "Swift/Теория/Общие вопросы/Виды пагинации.md",
@@ -217,11 +222,6 @@
     "Swift/Теория/iOS/Swift/Protocols/Protocol.md",
     "Swift/Теория/Контроль памяти/Stack and Heap.md",
     "Swift/Теория/iOS/Swift/Collections/Set Collection.md",
-    "Swift/Теория/iOS/Swift/Protocols/protocol Sequence.md",
-    "Swift/Теория/iOS/Swift/Protocols Conformance/Strideable.md",
-    "Swift/Теория/iOS/Swift/Protocols Conformance/Hashable.md",
-    "Swift/Теория/iOS/Swift/Protocols Conformance/Decodable.md",
-    "Swift/Теория/iOS/Swift/Protocols Conformance/Comparable.md",
     "Swift/Теория/iOS/Swift/Misc",
     "Swift/Теория/iOS/Swift/Other",
     "Swift/Теория/iOS/Swift/Keywords",
