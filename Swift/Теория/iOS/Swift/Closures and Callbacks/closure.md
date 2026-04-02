@@ -1,18 +1,18 @@
 **Closure** в [[Swift]] — это **самостоятельный блок кода**, который можно передавать как значение, присваивать переменной, возвращать из функции или использовать как аргумент.  
-По сути, это **анонимная функция**, которая может **захватывать** (capture) переменные и константы из окружающего контекста.
+По сути, это **анонимная функция**, которая может **захватывать** ([[capture]]) переменные и константы из окружающего контекста.
 
 В 2026 году closure — один из самых часто используемых инструментов Swift: они лежат в основе **[[async]]/[[await]]**, **[[Combine]]**, **[[SwiftUI]]**, **higher-order functions** ([[map]], [[filter]], [[reduce]]), **completion handlers** и многого другого.
 
 ### 1. Зачем нужны closure (реальные сценарии 2026)
 
-| Сценарий                            | Почему closure идеален                              | Пример использования                                        |
-| ----------------------------------- | --------------------------------------------------- | ----------------------------------------------------------- |
-| [[Completion handler]] (callback)   | Асинхронная операция сообщает о завершении          | [[URLSession]], [[UIView]]`.animate`, [[CLLocationManager]] |
-| Higher-order functions              | Передача логики обработки коллекций                 | `array.map { $0 * 2 }`, `filter { $0 > 0 }`                 |
-| [[SwiftUI]] / [[Combine]]           | `@State`, `@Binding`, `Publisher.sink`, `onReceive` | `Button(action: { ... }) { Text("Tap") }`                   |
-| [[Async]]/[[await]] обёртки         | Преобразование старого callback [[API]] в async     | `withCheckedContinuation`, `withTaskGroup`                  |
-| Захват состояния (stateful closure) | Замыкание хранит переменные между вызовами          | `makeCounter()`, `lazy var expensive`                       |
-| Event handling                      | Обработка жестов, уведомлений, [[KVO]]              | `addAction(UIAction { ... })`, `NotificationCenter`         |
+| Сценарий                              | Почему closure идеален                              | Пример использования                                        |
+| ------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------- |
+| [[Completion handler]] ([[callback]]) | Асинхронная операция сообщает о завершении          | [[URLSession]], [[UIView]]`.animate`, [[CLLocationManager]] |
+| Higher-order functions                | Передача логики обработки коллекций                 | `array.map { $0 * 2 }`, `filter { $0 > 0 }`                 |
+| [[SwiftUI]] / [[Combine]]             | `@State`, `@Binding`, `Publisher.sink`, `onReceive` | `Button(action: { ... }) { Text("Tap") }`                   |
+| [[Async]]/[[await]] обёртки           | Преобразование старого callback [[API]] в async     | `withCheckedContinuation`, `withTaskGroup`                  |
+| Захват состояния (stateful closure)   | Замыкание хранит переменные между вызовами          | `makeCounter()`, `lazy var expensive`                       |
+| Event handling                        | Обработка жестов, уведомлений, [[KVO]]              | `addAction(UIAction { ... })`, `NotificationCenter`         |
 
 ### 2. Полный синтаксис closure (все варианты)
 
