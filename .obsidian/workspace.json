@@ -64,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -237,7 +237,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "fe221d630077622c",
+  "active": "fbf8180d304f4eaf",
   "lastOpenFiles": [
     "Swift/Теория/iOS/Swift/Protocols/CaseIterable.md",
     "Swift/Теория/iOS/Swift/Basics/enum.md",
