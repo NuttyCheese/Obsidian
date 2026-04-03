@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/Properties/get set.md",
+                "file": "Swift/Теория/iOS/Swift/Properties/willSet.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "get set"
+              "title": "willSet"
             }
           }
         ],
@@ -239,6 +239,8 @@
   },
   "active": "fe221d630077622c",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/Properties/didSet.md",
+    "Swift/Теория/iOS/Swift/Properties/get set.md",
     "Swift/Теория/iOS/Swift/Properties/getter.md",
     "Swift/Теория/iOS/Swift/Protocols/AssociatedType.md",
     "Swift/Теория/iOS/Swift/Protocols/Identifiable.md",
@@ -263,8 +265,6 @@
     "Swift/Теория/iOS/Swift/Collections/Collection.md",
     "Swift/Теория/iOS/Swift/Data Types/String.md",
     "Swift/Теория/iOS/Swift/Properties/wrapper.md",
-    "Swift/Теория/iOS/Swift/Properties/willSet.md",
-    "Swift/Теория/iOS/Swift/Properties/var.md",
     "Swift/Теория/iOS/Swift/Misc",
     "Swift/Теория/iOS/Swift/Other",
     "Swift/Теория/iOS/Swift/Keywords",
