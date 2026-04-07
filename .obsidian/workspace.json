@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/Collections/Array.md",
+                "file": "Swift/Теория/Общие вопросы/OOP.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Array"
+              "title": "OOP"
             }
           }
         ],
@@ -225,8 +225,19 @@
   },
   "active": "fbf8180d304f4eaf",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/Swift/Collections/Set Collection.md",
+    "Swift/Теория/Общие вопросы/AppKit.md",
+    "Swift/Теория/Общие вопросы/App Store Connect.md",
+    "Swift/Теория/Общие вопросы/API.md",
+    "Swift/Теория/Общие вопросы/Additional Tools for Xcode.md",
+    "Swift/Теория/Общие вопросы/Чтение и запись в iOS.md",
+    "Swift/Теория/Общие вопросы/Таблица размеров типов данных.md",
+    "Swift/Теория/Общие вопросы/Структуры данных.md",
+    "Swift/Теория/iOS/Swift/Collections/Linked List.md",
     "Swift/Теория/iOS/Swift/Collections/Dictionary.md",
+    "Swift/Теория/iOS/Swift/Collections/open addressing.md",
+    "Swift/Теория/iOS/Swift/Collections/Set Collection.md",
+    "Swift/Теория/iOS/Swift/Collections/tombstone.md",
+    "Swift/Теория/iOS/Swift/Collections/Array.md",
     "Swift/Теория/Testing/Unit-test.md",
     "Swift/Теория/iOS/Swift/Basics/enum.md",
     "Swift/Теория/iOS/UISearchController.md",
@@ -240,17 +251,6 @@
     "Swift/Теория/iOS/static.md",
     "Swift/Теория/iOS/PHPickerViewController.md",
     "Swift/Теория/iOS/os_unfair_lock.md",
-    "Swift/Теория/iOS/NSMicrophoneUsageDescription.md",
-    "Swift/Теория/iOS/NSDirectionalEdgeInsets.md",
-    "Swift/Теория/iOS/NSCameraUsageDescription.md",
-    "Swift/Теория/iOS/Nib.md",
-    "Swift/Теория/iOS/Interface Builder.md",
-    "Swift/Теория/iOS/didReceiveMemoryWarning.md",
-    "Swift/Теория/iOS/didFinishLaunchingWithOptions.md",
-    "Swift/Теория/iOS/Application Life Cycle.md",
-    "Swift/Теория/iOS/APNs.md",
-    "Swift/Теория/iOS/Swift/Protocols Conformance/Strideable.md",
-    "Swift/Теория/iOS/Swift/Subscript.md",
     "Swift/Теория/iOS/Swift/Misc",
     "Swift/Теория/iOS/Swift/Other",
     "Swift/Теория/iOS/Swift/Keywords",
