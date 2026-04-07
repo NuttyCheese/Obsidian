@@ -1,419 +1,413 @@
-**`Dictionary`** — это **коллекция, которая хранит данные в виде пар «ключ → значение»**.
+#swift #dictionary #collection #hashable #key-value #data-structures
 
-- Каждый **ключ уникален** в словаре
-    
-- Значения можно извлекать через ключ
-    
-- Можно изменять, добавлять и удалять элементы
-    
-- Swift словарь является **[[Value Type]]** (копируется при присваивании)
-    
+---
+### Определение
+**Dictionary** — это коллекция, которая хранит данные в виде неупорядоченных пар «ключ — значение». Каждый ключ в словаре уникален, а значение может быть любого типа. Словари обеспечивают быстрый доступ к значениям по ключу (в среднем за O(1)) и широко используются для хранения конфигураций, данных из JSON, кэшей и других ассоциативных структур.
 
-> Проще говоря: `Dictionary` = «карта, где каждому ключу соответствует значение».
+### Зачем это знать iOS-разработчику?
+1.  **Быстрый доступ по ключу:** O(1) в среднем — идеально для поиска, кэшей, словарей.
+2.  **Уникальность ключей:** Автоматически гарантирует, что каждый ключ встречается только один раз.
+3.  **Сериализация:** Основа для работы с [[JSON]], [[UserDefaults]], Property Lists.
+4.  **[[Value type]]:** Безопасность и предсказуемость при копировании.
+5.  **Гибкость:** Может хранить значения любых типов, включая вложенные словари и массивы.
 
 ---
 
-## 2. Основные термины
+### Основные характеристики
 
-| Термин                  | Описание                                                                               |
-| ----------------------- | -------------------------------------------------------------------------------------- |
-| **Key**                 | Тип значения, который используется для идентификации элемента (должен быть `Hashable`) |
-| **Value**               | Тип значения, связанного с ключом                                                      |
-| **[[Hashable]]**        | Протокол, который позволяет объекту быть ключом словаря                                |
-| **Subscript**           | Доступ к элементам словаря через `dict[key]`                                           |
-| **Mutable / Immutable** | `var` можно менять, `let` нельзя                                                       |
-| **Optional Value**      | При извлечении через ключ возвращается `Value?`                                        |
+| Характеристика          | Dictionary        | [[Array]] | [[Set Collection\|Set]] |
+| ----------------------- | ----------------- | --------- | ----------------------- |
+| **Упорядоченность**     | Нет               | Да        | Нет                     |
+| **Уникальность ключей** | Да                | Нет       | Да (элементы)           |
+| **Доступ по индексу**   | Нет (по ключу)    | Да        | Нет                     |
+| **Поиск элемента**      | O(1) (по ключу)   | O(n)      | O(1)                    |
+| **Требования к типу**   | Key: [[Hashable]] | Нет       | Element: `Hashable`     |
 
 ---
 
-## 3. Основной синтаксис
+### Создание Dictionary
+
+#### 1. **Пустой словарь**
 
 ```swift
-var ages: [String: Int] = ["Alice": 25, "Bob": 30]
-let capitals: [String: String] = ["France": "Paris", "Japan": "Tokyo"]
+var emptyDict = [String: Int]()
+var anotherEmpty: [Int: String] = [:]
 ```
 
-- `[Key: Value]` → словарь с ключами и значениями
-    
-- [[Swift]] может **выводить тип автоматически** `var dict = ["x": 1, "y": 2]`
-    
-
----
-
-## 4. Примеры от простого к сложному
-
-### Пример 1. Создание и доступ к элементам
+#### 2. **С литералом**
 
 ```swift
-var fruits = ["Apple": 2, "Banana": 3]
-print(fruits["Apple"]!) // 2
-
-fruits["Orange"] = 5 // добавляем новый элемент
-print(fruits) // ["Apple": 2, "Banana": 3, "Orange": 5]
+let capitals: [String: String] = [
+    "France": "Paris",
+    "Japan": "Tokyo",
+    "Germany": "Berlin"
+]
 ```
 
-- Доступ через `dict[key]` → возвращает `Optional`
-    
-
----
-
-### Пример 2. Обновление и удаление
+#### 3. **Из последовательности**
 
 ```swift
-var scores = ["Alice": 10, "Bob": 15]
-scores["Alice"] = 20 // обновление
-scores["Bob"] = nil   // удаление элемента
-print(scores) // ["Alice": 20]
+let pairs = [("a", 1), ("b", 2), ("c", 3)]
+let dict = Dictionary(uniqueKeysWithValues: pairs)
+print(dict)  // ["a": 1, "b": 2, "c": 3]
 ```
 
-- Присвоение [[nil]] удаляет ключ
-    
+#### 4. **С значениями по умолчанию**
+
+```swift
+let keys = ["a", "b", "c"]
+let dict = Dictionary(uniqueKeysWithValues: zip(keys, repeatElement(0, count: keys.count)))
+print(dict)  // ["a": 0, "b": 0, "c": 0]
+```
 
 ---
 
-### Пример 3. Итерация по словарю
+### Основные операции
+
+#### Доступ и изменение
 
 ```swift
-let capitals = ["France": "Paris", "Japan": "Tokyo"]
+var scores = ["Alice": 10, "Bob": 20]
 
-for (country, city) in capitals {
-    print("\(country): \(city)")
+// Чтение (возвращает Optional)
+let aliceScore = scores["Alice"]  // Optional(10)
+let unknown = scores["Eve"]       // nil
+
+// Добавление / обновление
+scores["Charlie"] = 30   // добавляет
+scores["Alice"] = 15     // обновляет
+
+// Удаление
+scores["Bob"] = nil      // удаляет ключ
+scores.removeValue(forKey: "Charlie")  // возвращает Optional(30)
+
+// Проверка наличия ключа
+if scores.keys.contains("Alice") {
+    print("Alice exists")
+}
+```
+
+#### Количество элементов
+
+```swift
+let dict = ["a": 1, "b": 2, "c": 3]
+print(dict.count)     // 3
+print(dict.isEmpty)   // false
+```
+
+#### Итерация
+
+```swift
+let capitals = ["France": "Paris", "Japan": "Tokyo", "Germany": "Berlin"]
+
+// По парам (ключ, значение)
+for (country, capital) in capitals {
+    print("\(country): \(capital)")
 }
 
-// Output:
-// France: Paris
-// Japan: Tokyo
-```
+// Только ключи
+for country in capitals.keys {
+    print(country)
+}
 
-- Можно использовать [[for-in]] с **кортежами (ключ, значение)**
-    
+// Только значения
+for capital in capitals.values {
+    print(capital)
+}
+
+// Сортировка
+for (country, capital) in capitals.sorted(by: { $0.key < $1.key }) {
+    print("\(country): \(capital)")
+}
+```
 
 ---
 
-### Пример 4. Keys и Values
+### Полезные методы
+
+#### `merge`
 
 ```swift
-let ages = ["Alice": 25, "Bob": 30]
-
-let names = Array(ages.keys)   // ["Alice", "Bob"]
-let numbers = Array(ages.values) // [25, 30]
-
-print(names)
-print(numbers)
+var dict = ["a": 1, "b": 2]
+dict.merge(["b": 3, "c": 4]) { (current, new) in new }
+print(dict)  // ["a": 1, "b": 3, "c": 4]
 ```
 
-- `keys` и `values` возвращают **коллекции**, которые можно преобразовать в массив
-    
-
----
-
-### Пример 5. Dictionary с [[any]] / [[AnyObject]]
+#### `mapValues`
 
 ```swift
-var mixed: [String: Any] = ["age": 25, "name": "Alice", "isStudent": true]
-mixed["score"] = 95
-
-var objects: [String: AnyObject] = ["person": Person(name: "Bob")]
-```
-
-- `[String: Any]` → можно хранить значения любых типов
-    
-- `[String: AnyObject]` → только объекты классов
-    
-
----
-
-### Пример 6. [[map]], [[filter]], [[reduce]] для словаря
-
-```swift
-let scores = ["Alice": 10, "Bob": 15, "Eve": 20]
-
+let scores = ["Alice": 10, "Bob": 20]
 let doubled = scores.mapValues { $0 * 2 }
-let highScores = scores.filter { $0.value >= 15 }
-
-print(doubled)    // ["Alice": 20, "Bob": 30, "Eve": 40]
-print(highScores) // ["Bob": 15, "Eve": 20]
+print(doubled)  // ["Alice": 20, "Bob": 40]
 ```
 
-- `mapValues` → преобразует значения
-    
-- `filter` → фильтрует пары ключ-значение
-    
+#### `filter`
+
+```swift
+let filtered = scores.filter { $0.value >= 15 }
+print(filtered)  // ["Bob": 20]
+```
+
+#### `compactMapValues`
+
+```swift
+let strings = ["a": "1", "b": "abc", "c": "3"]
+let ints = strings.compactMapValues { Int($0) }
+print(ints)  // ["a": 1, "c": 3]
+```
+
+#### `grouping`
+
+```swift
+let words = ["apple", "banana", "apricot", "blueberry"]
+let grouped = Dictionary(grouping: words, by: { $0.first! })
+print(grouped)  // ["a": ["apple", "apricot"], "b": ["banana", "blueberry"]]
+```
 
 ---
 
-## 5. Особенности Dictionary
+### Значения по умолчанию и подписки
 
-1. **Value type** → копируется при присваивании
-    
-2. Ключи должны быть **Hashable**
-    
-3. Доступ по ключу возвращает **Optional**, потому что ключ может отсутствовать
-    
-4. Можно изменять, добавлять, удалять элементы
-    
-5. Поддерживает **итерацию, map, filter, reduce, keys, values**
-    
+#### `default` параметр
 
----
+```swift
+let dict = ["a": 1, "b": 2]
+let value = dict["c", default: 0]
+print(value)  // 0
+```
 
-## 6. Итог
+#### `updateValue` метод
 
-- **Dictionary** = коллекция пар «ключ → значение»
-    
-- Используется для хранения и быстрого доступа к данным по ключу
-    
-- Подходит для: словарей, конфигураций, [[JSON]]-подобных структур, моделей данных
-    
+```swift
+var dict = ["a": 1, "b": 2]
+let old = dict.updateValue(3, forKey: "a")
+print(old)  // Optional(1)
+print(dict) // ["a": 3, "b": 2]
+```
 
 ---
 
-# под капотом
+### Вложенные словари
 
-## 1. Основная идея
+```swift
+var userData: [String: [String: Any]] = [
+    "Alice": [
+        "age": 25,
+        "city": "New York"
+    ],
+    "Bob": [
+        "age": 30,
+        "city": "London"
+    ]
+]
 
-В Swift **`Dictionary`** — это не просто массив кортежей `(Key, Value)`.  
-На самом деле это **хеш-таблица** с **[[open addressing]]** (открытая адресация) и оптимизациями под современный CPU.
-
-Цель:
-
-- Быстрый доступ по ключу → `O(1)` в среднем
-    
-- Разрешение коллизий → open addressing + tombstones
-    
-- Минимизация лишних аллокаций → встроенные буферы и inline storage
-    
+userData["Alice"]?["age"] = 26
+print(userData["Alice"]?["age"] ?? 0)  // 26
+```
 
 ---
 
-## 2. Как хранится Dictionary в памяти
+### Dictionary и JSON
 
-В Swift `Dictionary` состоит из двух основных компонентов:
+```swift
+import Foundation
 
-1. **Бакеты (Buckets)** — массив, где хранятся элементы
-    
-2. **Hash + Metadata** — данные для быстрого поиска и разрешения коллизий
-    
+let jsonString = """
+{
+    "name": "Alice",
+    "age": 25,
+    "city": "New York"
+}
+"""
 
-### 2.1 Bucket
+// JSON → Dictionary
+if let data = jsonString.data(using: .utf8),
+   let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+    print(dict["name"] ?? "")
+}
 
-Каждый **bucket** содержит:
+// Dictionary → JSON
+let dict: [String: Any] = ["name": "Alice", "age": 25]
+if let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted),
+   let json = String(data: data, encoding: .utf8) {
+    print(json)
+}
+```
 
-- **hash** ключа (часть hashValue, чтобы ускорить проверку)
-    
-- **ключ** (Key)
-    
-- **значение** (Value)
-    
-- Флаги состояния (empty / occupied / tombstone)
-    
+---
 
-### Пример структуры бакета (упрощённо):
+### Dictionary и UserDefaults
+
+```swift
+let defaults = UserDefaults.standard
+let settings = ["theme": "dark", "notifications": true] as [String: Any]
+
+defaults.set(settings, forKey: "userSettings")
+
+if let loaded = defaults.dictionary(forKey: "userSettings") {
+    print(loaded["theme"] as? String ?? "")
+}
+```
+
+---
+
+### Производительность
+
+| Операция | Средняя сложность | Худшая сложность |
+|----------|------------------|------------------|
+| Доступ по ключу | O(1) | O(n) |
+| Вставка | O(1) | O(n) |
+| Удаление | O(1) | O(n) |
+| Итерация | O(n) | O(n) |
+
+**Примечание:** Худший случай (O(n)) возникает при сильных коллизиях хешей.
+
+---
+
+### Под капотом: устройство Dictionary
+
+Swift Dictionary — это **хеш-таблица с открытой адресацией (open addressing)**. Она состоит из:
+
+1.  **Бакеты (buckets)** — массив, где хранятся элементы.
+2.  **Hash + Metadata** — для быстрого поиска и разрешения коллизий.
+
+#### Структура бакета (упрощённо)
 
 ```text
 struct Bucket {
-    var hash: UInt
+    var hash: UInt       // часть hashValue для ускорения проверки
     var key: Key
     var value: Value
-    var state: UInt8 // empty / occupied / tombstone
+    var state: UInt8     // empty / occupied / tombstone
 }
 ```
 
+#### Принцип работы
+
+1.  **Вставка:**
+    - Вычисляется `hash(key)`
+    - Индекс = `hash % capacity`
+    - Если бакет пустой → вставляем
+    - Если занят → **linear probing** (идём к следующему бакету)
+
+2.  **Поиск:**
+    - Вычисляется `hash(key)`
+    - Линейный поиск до пустого бакета или нахождения ключа (сравнение через `==`)
+
+3.  **Удаление:**
+    - Находится элемент
+    - Ставится **tombstone**, чтобы не нарушать цепочку поиска при коллизиях
+
+#### Small Dictionary Optimization
+
+- Для маленьких словарей (до 3–5 элементов) Swift хранит данные **inline** прямо внутри структуры Dictionary.
+- Это позволяет избежать лишних heap-аллокаций и ускоряет копирование.
+
+#### Rehashing (ресайз)
+
+- Когда **load factor** превышает ~0.75:
+    1.  Выделяется новый массив бакетов большего размера
+    2.  Все элементы перехешируются
+    3.  Старый массив освобождается
+
 ---
 
-### 2.2 Inline storage и small buffer optimization
+### Хеширование и Hashable
 
-- Для маленьких словарей Swift может хранить элементы **inline в структуре Dictionary**, чтобы **не выделять отдельный heap**.
-    
-- Для больших словарей элементы хранятся **в heap**, а структура `Dictionary` остаётся value-type (копирование только при изменении).
-    
+Ключи в Dictionary должны соответствовать протоколу `Hashable`. Встроенные типы ([[Int]], [[String]], [[Double]], [[Bool]]) уже реализуют его.
 
-**Пример:**
+#### Кастомный тип как ключ
 
 ```swift
-var smallDict = ["a": 1, "b": 2]
-// элементы могут быть прямо внутри структуры
-```
-
-- При расширении словаря → выделяется **heap**, элементы перехешируются.
-    
-
----
-
-## 3. Как работает вставка и поиск
-
-1. **Вставка:**
-    
-
-- Вычисляем `hash(key)`
-    
-- Находим индекс: `hash % capacity`
-    
-- Если бакет пустой → вставляем
-    
-- Если занят → **open addressing** (linear probing) ищем следующий свободный бакет
-    
-
-2. **Поиск:**
-    
-
-- Вычисляем `hash(key)`
-    
-- Идём по бакетам (probes) пока не найдём ключ или пустой бакет
-    
-
-3. **Удаление:**
-    
-
-- Ставим **tombstone**, чтобы не ломать поиск коллизий
-    
-
----
-
-## 4. Разрешение коллизий
-
-Swift Dictionary использует:
-
-- **Open Addressing**
-    
-- **Linear probing** + tombstones
-    
-- Проверка `==` ключей для окончательного сравнения
-    
-
-Пример коллизии:
-
-```swift
-struct BadHash: Hashable {
+struct UserID: Hashable {
     let value: Int
+    
     func hash(into hasher: inout Hasher) {
-        hasher.combine(0)
+        hasher.combine(value)
+    }
+    
+    static func == (lhs: UserID, rhs: UserID) -> Bool {
+        return lhs.value == rhs.value
     }
 }
 
-var dict = [BadHash: String]()
-dict[BadHash(value: 1)] = "One"
-dict[BadHash(value: 2)] = "Two"
-// оба ключа попали в один бакет → линейный probing
+var users: [UserID: String] = [:]
+users[UserID(value: 1)] = "Alice"
 ```
-
-- Lookup корректно находит каждый ключ через `==`
-    
 
 ---
 
-## 5. Размер в памяти (байтовый вес)
+### Сравнение Dictionary и других коллекций
 
-Размер словаря зависит от:
+| Характеристика | Dictionary | Array | Set |
+|----------------|------------|-------|-----|
+| **Тип доступа** | По ключу | По индексу | По значению |
+| **Упорядоченность** | Нет | Да | Нет |
+| **Дубликаты** | Ключи уникальны | Да | Элементы уникальны |
+| **Требование Hashable** | Ключи | Нет | Элементы |
+| **Когда использовать** | Поиск по ключу | Последовательный доступ | Уникальность + поиск |
 
-- Кол-ва элементов
-    
-- Размеров Key и Value
-    
-- Внутренней capacity (обычно больше, чем count для минимизации коллизий)
-    
+---
 
-### Упрощённый расчёт
+### Best Practices
 
-```text
-Memory = sizeof(Bucket) * capacity
-sizeof(Bucket) ≈ sizeof(Key) + sizeof(Value) + sizeof(UInt) + 1 байт флага
-```
-
-Пример:
+#### 1. **Используйте default для безопасного доступа**
 
 ```swift
-let dict = ["a": 1, "b": 2] // Key = String, Value = Int
+// ❌ Плохо
+let value = dict[key] ?? 0
+
+// ✅ Хорошо
+let value = dict[key, default: 0]
 ```
 
-- `String` (маленький, inline) ~ 16 байт
-    
-- `Int` = 8 байт
-    
-- Hash = 8 байт
-    
-- Flag = 1 байт
-    
-
-**Итого один бакет ~ 33 байта** → округляется до 40 байт из-за выравнивания CPU.
-
-**Для 2 элементов** → массив бакетов может иметь capacity = 4 → 160 байт.
-
----
-
-### Примечание:
-
-- Swift **не выделяет каждый Key/Value отдельно** в heap, если это возможно (inline storage)
-    
-- Для больших объектов Key/Value → heap аллокации, ARC retain/release
-    
-
----
-
-## 6. Small Dictionary Optimization
-
-- Для маленьких словарей Swift хранит **до 3–5 элементов прямо внутри структуры**
-    
-- Позволяет:
-    
-    - Не выделять heap
-        
-    - Быстро копировать словарь (value-type semantics)
-        
-
-Пример:
+#### 2. **Предпочитайте compactMapValues для преобразования**
 
 ```swift
-var small = ["x": 1, "y": 2]
-// inline buffer внутри Dictionary struct
+let strings = ["a": "1", "b": "abc"]
+let ints = strings.compactMapValues { Int($0) }  // ["a": 1]
 ```
 
-- При добавлении элементов → **heap аллокация** с capacity ≥ count * 2
-    
+#### 3. **Используйте Dictionary(grouping:) для группировки**
 
----
-
-## 7. Rehashing (ресайз таблицы)
-
-Когда **load factor** превышает ~0.7–0.75:
-
-1. Выделяется новый массив бакетов большего размера
-    
-2. Все элементы перехешируются
-    
-3. Старый массив освобождается
-    
-
-- Это дорогая операция → поэтому лучше заранее подбирать capacity
-    
-
----
-
-## 8. Схема работы Dictionary
-
+```swift
+let grouped = Dictionary(grouping: items, by: { $0.category })
 ```
-Key → hash(key) → index = hash % capacity → bucket[index]
-  │
-  └─> если коллизия → probing → следующий бакет
-  │
-  └─> сравнение key через == → Value найден
+
+#### 4. **Для больших словарей задавайте начальную емкость**
+
+```swift
+var dict = [Int: String](minimumCapacity: 1000)
+```
+
+#### 5. **Не полагайтесь на порядок**
+
+```swift
+// ❌ Плохо — порядок не гарантирован
+let firstKey = dict.keys.first
+
+// ✅ Хорошо — явная сортировка
+let sortedKeys = dict.keys.sorted()
 ```
 
 ---
 
-## 9. Итог
+### Короткое правило
 
-- Swift Dictionary = **Value type + hash table с open addressing**
-    
-- [[Коллизии]] → **разрешаются через linear probing**
-    
-- Memory-efficient: **inline storage + heap для больших таблиц**
-    
-- Memory footprint зависит от **capacity, Key/Value size и load factor**
-    
-- Производительность Lookup/Insert/Delete ~ O(1) среднее, O(n) в худшем случае
-    
+> **Dictionary** — коллекция для хранения пар «ключ — значение» с быстрым доступом по ключу.  
+> Используйте для конфигураций, кэшей, JSON-данных, поисковых таблиц.  
+> Ключи должны быть `Hashable`, порядок не гарантирован, поиск O(1).
 
-> Понимание внутренностей словаря полезно для: оптимизации, оценки памяти и производительности при работе с большими словарями или кастомными типами Key/Value.
+### Итог
 
----
+**Dictionary** в Swift:
+
+1.  **Value type** — копируется при присваивании.
+2.  **Ключи уникальны** — дубликаты невозможны.
+3.  **Доступ по ключу возвращает Optional** — ключ может отсутствовать.
+4.  **Поддерживает** `mapValues`, `compactMapValues`, `merge`, `filter`, `grouping`.
+5.  **Основа для JSON и UserDefaults.**
+6.  **Под капотом — хеш-таблица с открытой адресацией** (open addressing).
+7.  **Маленькие словари оптимизированы** (inline storage).
+
+Понимание устройства и особенностей Dictionary помогает эффективно использовать его в проектах и избегать подводных камней с производительностью и памятью.

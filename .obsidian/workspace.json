@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/Collections/Dictionary.md",
+                "file": "Swift/Теория/iOS/Swift/Collections/Array.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Dictionary"
+              "title": "Array"
             }
           }
         ],
@@ -226,6 +226,7 @@
   "active": "fbf8180d304f4eaf",
   "lastOpenFiles": [
     "Swift/Теория/iOS/Swift/Collections/Set Collection.md",
+    "Swift/Теория/iOS/Swift/Collections/Dictionary.md",
     "Swift/Теория/Testing/Unit-test.md",
     "Swift/Теория/iOS/Swift/Basics/enum.md",
     "Swift/Теория/iOS/UISearchController.md",
@@ -250,7 +251,6 @@
     "Swift/Теория/iOS/APNs.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/Strideable.md",
     "Swift/Теория/iOS/Swift/Subscript.md",
-    "Swift/Теория/iOS/Swift/Properties/willSet.md",
     "Swift/Теория/iOS/Swift/Misc",
     "Swift/Теория/iOS/Swift/Other",
     "Swift/Теория/iOS/Swift/Keywords",
