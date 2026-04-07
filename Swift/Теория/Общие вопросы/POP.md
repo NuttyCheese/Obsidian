@@ -1,167 +1,409 @@
-**POP (Protocol-Oriented Programming)** — это парадигма программирования, где **основной строительный блок — протоколы**, а не классы.
-
-Особенности:
-
-- В [[Swift]] протоколы могут определять **требования к свойствам и методам**, а также предоставлять **дефолтные реализации через extensions**.
-    
-- Позволяет **композицию поведения**, а не наследование.
-    
-- Часто используется вместе с **[[Value Type]]** (структуры и перечисления), но работает и с классами.
-    
-- Цель: **повторное использование кода без жесткой иерархии наследования**, что делает код более безопасным и модульным.
-    
+#swift #pop #protocol-oriented #protocols #generics #extensions #composition-over-inheritance
 
 ---
 
-## 🔹 Примеры кода
+## POP (Protocol-Oriented Programming) в Swift
 
-### 1. Простейший протокол и его реализация
+### Определение
+**Protocol-Oriented Programming (POP)** — это парадигма программирования, продвигаемая Apple как альтернатива классическому наследованию классов. В основе POP лежат **протоколы**, **расширения протоколов** и **композиция**. Вместо создания глубоких иерархий классов, POP предлагает описывать поведение через протоколы и предоставлять реализации по умолчанию через расширения.
 
-```swift
-protocol Greetable {
-    func greet()
-}
+POP не заменяет полностью [[OOP|ООП]], но предлагает более гибкий и безопасный способ переиспользования кода, особенно в сочетании с value types (структурами и перечислениями). [[Swift]] с самого начала проектировался с поддержкой POP.
 
-struct Person: Greetable {
-    var name: String
-    func greet() {
-        print("Hello, my name is \(name)")
-    }
-}
+### Зачем это знать [[iOS]]-разработчику?
+1.  **Гибкость:** Композиция протоколов гибче жёсткого наследования классов.
+2.  **Value types:** Протоколы могут быть реализованы структурами и enum, не только классами.
+3.  **Расширяемость:** Можно добавлять функциональность существующим типам через расширения протоколов.
+4.  **Тестируемость:** Легче создавать моки и тестовые двойники.
+5.  **Стандартная библиотека Swift:** Построена на протоколах ([[Collection]], [[protocol Sequence|Sequence]], [[Equatable]], [[Hashable]]).
 
-let alice = Person(name: "Alice")
-alice.greet() // Hello, my name is Alice
+---
+
+### POP vs Наследование классов
+
+```mermaid
+graph TD
+    subgraph "ООП (наследование классов)"
+        A[Animal] --> B[Dog]
+        A --> C[Cat]
+        B --> D[Poodle]
+        B --> E[Bulldog]
+    end
+    
+    subgraph "POP (композиция протоколов)"
+        F[Swimmable]
+        G[Flyable]
+        H[Barkable]
+        I[Meowable]
+    end
+    
+    J[Duck] --> F
+    J --> G
+    K[Dog] --> F
+    K --> H
+    L[Cat] --> I
 ```
 
+| Характеристика                 | Наследование классов | Протоколы + расширения          |
+| ------------------------------ | -------------------- | ------------------------------- |
+| **Отношение**                  | "is-a" (является)    | "can do" (может делать)         |
+| **Типы**                       | Только классы        | [[class]], [[struct]], [[enum]] |
+| **Множественное наследование** | Нет                  | Да (несколько протоколов)       |
+| **Реализация по умолчанию**    | В базовом классе     | В расширении протокола          |
+| **Связанность**                | Высокая              | Низкая                          |
+| **Гибкость**                   | Низкая               | Высокая                         |
+
 ---
 
-### 2. Протокол с дефолтной реализацией через extension
+### Ключевые компоненты POP
 
 ```swift
+// 1. Протокол — описывает требования
 protocol Drawable {
-    func draw()
+    func draw() -> String
 }
 
+// 2. Расширение протокола — реализация по умолчанию
 extension Drawable {
-    func draw() {
-        print("Default drawing")
+    func draw() -> String {
+        return "Drawing a shape"
+    }
+    
+    func drawMultiple(times: Int) -> [String] {
+        return Array(repeating: draw(), count: times)
     }
 }
 
-struct Circle: Drawable {}
-struct Rectangle: Drawable {
-    func draw() {
-        print("Custom rectangle drawing")
+// 3. Соответствие протоколу (структура, класс, enum)
+struct Circle: Drawable {
+    func draw() -> String {
+        return "○"
     }
 }
 
-Circle().draw()      // Default drawing
-Rectangle().draw()   // Custom rectangle drawing
+struct Square: Drawable {
+    // использует реализацию по умолчанию
+}
+
+let circle = Circle()
+print(circle.draw())  // ○
+print(circle.drawMultiple(times: 3))  // ["○", "○", "○"]
+
+let square = Square()
+print(square.draw())  // Drawing a shape
 ```
 
 ---
 
-### 3. Композиция нескольких протоколов
+### Примеры POP
+
+#### 1. **Композиция протоколов вместо глубокого наследования**
 
 ```swift
+// ❌ ООП подход (жёсткая иерархия)
+class Animal {
+    func eat() { print("Eating") }
+}
+
+class Mammal: Animal {
+    func giveBirth() { print("Giving birth") }
+}
+
+class Bird: Animal {
+    func fly() { print("Flying") }
+}
+
+class Bat: Mammal {  // Что делать с Bat? Он и млекопитающее, и летает
+    override func fly() { print("Flying") }  // Дублирование
+}
+
+// ✅ POP подход (композиция)
+protocol Eatible {
+    func eat()
+}
+
 protocol Flyable {
     func fly()
 }
-protocol Swimmable {
-    func swim()
+
+protocol Mammal {
+    func giveBirth()
 }
 
-struct Duck: Flyable, Swimmable {
-    func fly() { print("Duck is flying") }
-    func swim() { print("Duck is swimming") }
+extension Eatible {
+    func eat() { print("Eating") }
 }
 
-let duck = Duck()
-duck.fly()   // Duck is flying
-duck.swim()  // Duck is swimming
+extension Flyable {
+    func fly() { print("Flying") }
+}
+
+extension Mammal {
+    func giveBirth() { print("Giving birth") }
+}
+
+struct Bat: Eatible, Flyable, Mammal { }
+struct Bird: Eatible, Flyable { }
+struct Dog: Eatible, Mammal { }
+
+let bat = Bat()
+bat.eat()        // Eating
+bat.fly()        // Flying
+bat.giveBirth()  // Giving birth
 ```
 
----
-
-### 4. POP vs [[OOP]] (структура + протоколы вместо наследования)
+#### 2. **Реализация по умолчанию через расширения**
 
 ```swift
-protocol Vehicle {
-    var speed: Int { get }
-    func drive()
+protocol Loggable {
+    var logIdentifier: String { get }
+    func log(message: String)
 }
 
-extension Vehicle {
-    func drive() {
-        print("Driving at \(speed) km/h")
+extension Loggable {
+    func log(message: String) {
+        print("[\(logIdentifier)]: \(message)")
+    }
+    
+    func logError(_ error: Error) {
+        log(message: "ERROR: \(error.localizedDescription)")
     }
 }
 
-struct Car: Vehicle {
-    var speed: Int
+struct User: Loggable {
+    let id: Int
+    let name: String
+    
+    var logIdentifier: String {
+        return "User[\(id)]"
+    }
 }
 
-struct Bike: Vehicle {
-    var speed: Int
+struct Product: Loggable {
+    let sku: String
+    
+    var logIdentifier: String {
+        return "Product[\(sku)]"
+    }
 }
 
-let car = Car(speed: 120)
-let bike = Bike(speed: 30)
+let user = User(id: 42, name: "Alice")
+user.log(message: "Login successful")
+// [User[42]]: Login successful
 
-car.drive()  // Driving at 120 km/h
-bike.drive() // Driving at 30 km/h
+let product = Product(sku: "ABC-123")
+product.logError(NSError(domain: "Inventory", code: -1))
+// [Product[ABC-123]]: ERROR: The operation couldn’t be completed
 ```
 
----
-
-### 5. Использование POP с [[generic]] / [[AssociatedType]]
+#### 3. **Ограничения протоколов (where clauses)**
 
 ```swift
 protocol Container {
     associatedtype Item
-    var items: [Item] { get set }
     mutating func add(_ item: Item)
+    var count: Int { get }
 }
 
-extension Container {
-    mutating func add(_ item: Item) {
-        items.append(item)
+extension Container where Item: Equatable {
+    func contains(_ item: Item) -> Bool {
+        // Реализация только для Equatable элементов
+        return false  // упрощённо
     }
 }
 
-struct IntBox: Container {
-    var items: [Int] = []
+extension Container where Item == String {
+    func joined(separator: String = "") -> String {
+        // Специальная реализация для String
+        return ""
+    }
+}
+```
+
+#### 4. **Протоколы с ассоциированными типами**
+
+```swift
+protocol Stack {
+    associatedtype Element
+    mutating func push(_ element: Element)
+    mutating func pop() -> Element?
+    var isEmpty: Bool { get }
 }
 
-var box = IntBox()
-box.add(5)
-box.add(10)
-print(box.items) // [5, 10]
+struct IntStack: Stack {
+    typealias Element = Int
+    private var items: [Int] = []
+    
+    mutating func push(_ element: Int) {
+        items.append(element)
+    }
+    
+    mutating func pop() -> Int? {
+        return items.popLast()
+    }
+    
+    var isEmpty: Bool {
+        return items.isEmpty
+    }
+}
+
+// Generic реализация
+struct GenericStack<T>: Stack {
+    private var items: [T] = []
+    
+    mutating func push(_ element: T) {
+        items.append(element)
+    }
+    
+    mutating func pop() -> T? {
+        return items.popLast()
+    }
+    
+    var isEmpty: Bool {
+        return items.isEmpty
+    }
+}
+```
+
+#### 5. **POP в реальном iOS-приложении**
+
+```swift
+// MARK: - Протоколы для сервисов
+protocol NetworkServiceProtocol {
+    func fetch<T: Decodable>(_ endpoint: String) async throws -> T
+}
+
+protocol CacheServiceProtocol {
+    func get<T: Codable>(for key: String) -> T?
+    func set<T: Codable>(_ value: T, for key: String)
+}
+
+protocol AnalyticsServiceProtocol {
+    func track(event: String, parameters: [String: Any])
+}
+
+// MARK: - ViewModel с композицией протоколов
+protocol ViewModelProtocol {
+    associatedtype State
+    associatedtype Action
+    
+    var state: State { get }
+    func handle(_ action: Action)
+}
+
+class UserViewModel: ViewModelProtocol {
+    typealias State = [User]
+    typealias Action = UserAction
+    
+    @Published private(set) var state: [User] = []
+    
+    private let network: NetworkServiceProtocol
+    private let cache: CacheServiceProtocol
+    private let analytics: AnalyticsServiceProtocol
+    
+    init(network: NetworkServiceProtocol,
+         cache: CacheServiceProtocol,
+         analytics: AnalyticsServiceProtocol) {
+        self.network = network
+        self.cache = cache
+        self.analytics = analytics
+    }
+    
+    func handle(_ action: UserAction) {
+        switch action {
+        case .loadUsers:
+            loadUsers()
+        case .selectUser(let user):
+            analytics.track(event: "user_selected", parameters: ["id": user.id])
+        }
+    }
+    
+    private func loadUsers() {
+        Task {
+            if let cached: [User] = cache.get(for: "users") {
+                state = cached
+                return
+            }
+            
+            let users: [User] = try await network.fetch("/users")
+            cache.set(users, for: "users")
+            state = users
+        }
+    }
+}
+
+enum UserAction {
+    case loadUsers
+    case selectUser(User)
+}
 ```
 
 ---
 
-## 🖼 Схема работы POP
+### Протоколы vs Классы: производительность
 
-```mermaid
-flowchart TD
-    A[Протоколы] --> B[Расширения с дефолтной реализацией]
-    B --> C[Структуры / классы / enum]
-    C --> D[Объекты, которые используют поведение протоколов]
+| Аспект       | Протокол (через [[generic]]s) | Протокол (через [[any]])         | Класс                 |
+| ------------ | ----------------------------- | -------------------------------- | --------------------- |
+| **Dispatch** | Статический (Direct)          | Динамический ([[Witness Table]]) | Динамический (vtable) |
+| **Скорость** | ★★★★★ (~1-2 нс)               | ★★★★☆ (~3-5 нс)                  | ★★★★☆ (~3-5 нс)       |
+| **Гибкость** | Ограниченная                  | Высокая                          | Средняя               |
+| **Память**   | На стеке ([[struct]])         | Existential container            | Куча ([[heap]])       |
+
+```swift
+// Быстро (статическая диспетчеризация)
+func drawGeneric<T: Drawable>(_ shape: T) {
+    shape.draw()
+}
+
+// Медленнее (динамическая через witness table)
+func drawExistential(_ shape: any Drawable) {
+    shape.draw()
+}
 ```
 
 ---
 
-## 💡 Замечания
+### Преимущества POP
 
-- POP позволяет избегать **жёстких иерархий наследования**, уменьшая проблемы с масштабированием.
-    
-- Особенно удобно с **структурами и enum**, так как Swift использует value semantics.
-    
-- Комбинируя протоколы, можно создавать **модульные и переиспользуемые компоненты**.
-    
-- POP и OOP часто используются **совместно**: классы могут реализовывать протоколы.
-    
+| Преимущество                | Описание                                              |
+| --------------------------- | ----------------------------------------------------- |
+| **Композиция**              | Множественные протоколы вместо одного родителя        |
+| **[[Value type]]s**         | Протоколы могут быть реализованы структурами и enum   |
+| **Реализация по умолчанию** | Расширения протоколов дают код reuse без наследования |
+| **Слабая связанность**      | Зависимости через протоколы легко подменять           |
+| **Тестируемость**           | Легко создавать моки для протоколов                   |
+| **Стандартная библиотека**  | Swift Collections построены на протоколах             |
+
+### Недостатки POP
+
+| Недостаток | Описание |
+|------------|----------|
+| **Сложность** | Может привести к избыточному количеству протоколов |
+| **Ассоциированные типы** | Усложняют использование экзистенциальных типов (`any`) |
+| **Отладка** | Сложнее отлаживать цепочки расширений |
+| **Кривая обучения** | Требует переосмысления подходов от ООП |
+
+---
+
+### Короткое правило
+
+> **POP** — предпочитай протоколы наследованию классов.  
+> Используй **расширения протоколов** для реализации по умолчанию.  
+> Комбинируй **несколько протоколов** вместо глубоких иерархий.  
+> Для производительности используй **generics** вместо `any Protocol`.
+
+---
+
+### Итог
+
+**Protocol-Oriented Programming** в Swift:
+
+1.  **Основные принципы:** композиция протоколов, расширения протоколов, value types
+2.  **Ключевые отличия от ООП:** нет жёсткой иерархии, множественное "наследование" поведения
+3.  **Инструменты:** [[protocol]], [[extension]], [[associatedtype]], [[where]], [[some]], [[any]]
+4.  **Применение:** стандартная библиотека [[Swift]], [[Combine]], [[SwiftUI]] (косвенно)
+5.  **Преимущества:** гибкость, value types, тестируемость, слабая связанность
+
+POP — это не замена ООП, а дополнительный инструмент. Лучшие Swift-приложения сочетают ООП (где нужна ссылочная семантика и иерархии) и POP (где нужна композиция и value types).
 
 ---
 
