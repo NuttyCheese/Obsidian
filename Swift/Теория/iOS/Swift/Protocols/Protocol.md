@@ -2,9 +2,9 @@
 
 ---
 ### Определение
-**Протокол** — это **контракт** (blueprint), который определяет минимальный набор требований: свойства, методы, инициализаторы или ассоциированные типы. Тип (struct, class, перечисление) считается **соответствующим протоколу** (conforming), если он реализует все эти требования.
+**Протокол** — это **контракт** (blueprint), который определяет минимальный набор требований: свойства, методы, инициализаторы или ассоциированные типы. Тип ([[struct]], [[class]], [[enum]]) считается **соответствующим протоколу** (conforming), если он реализует все эти требования.
 
-В отличие от классов, протоколы **не хранят состояние** и **не имеют реализации** (кроме реализации по умолчанию в расширениях). Протоколы — краеугольный камень **Protocol-Oriented Programming (POP)**, который Apple продвигает как альтернативу глубокому наследованию классов.
+В отличие от классов, протоколы **не хранят состояние** и **не имеют реализации** (кроме реализации по умолчанию в расширениях). Протоколы — краеугольный камень **Protocol-Oriented Programming ([[POP]])**, который Apple продвигает как альтернативу глубокому наследованию классов.
 
 ### Зачем нужны протоколы (мотивация)
 Без протоколов код был бы привязан к конкретным типам, что ведёт к дублированию и жёсткости.
@@ -22,20 +22,20 @@ func draw(_ shape: Drawable) { shape.draw() }
 
 ### Основные термины и возможности
 
-| Термин / Конструкция | Описание | Пример использования |
-|----------------------|----------|----------------------|
-| **Conformance** | Соответствие типа требованиям протокола | `struct Circle: Drawable` |
-| **Property Requirement** | Требование свойства (геттер или геттер+сеттер) | `var area: Double { get }` |
-| **Method Requirement** | Требование метода с сигнатурой | `func draw()` |
-| **Initializer Requirement** | Требование инициализатора | `init(radius: Double)` |
-| **AssociatedType** | Дженерик-заполнитель в протоколе | `associatedtype Element` |
-| **Protocol Extension** | Реализация по умолчанию через `extension` | `extension Drawable { func log() {} }` |
-| **Optional Requirement** | Необязательные методы (только `@objc` протоколы) | `@objc optional func optionalMethod()` |
-| **Class-only Protocol** | Протокол только для классов (`AnyObject`) | `protocol Delegate: AnyObject` |
-| **Composition** | Комбинирование протоколов | `typealias View = Drawable & Loggable` |
-| **Existential Type (`any`)** | Хранение разных типов, реализующих протокол | `let shapes: [any Drawable]` |
-| **Opaque Type (`some`)** | Конкретный, но скрытый тип (статическая диспетчеризация) | `func make() -> some Drawable` |
-| **Primary Associated Types** | Явное именование ассоциированных типов (Swift 6) | `protocol Collection<Element>` |
+| Термин / Конструкция           | Описание                                                 | Пример использования                   |
+| ------------------------------ | -------------------------------------------------------- | -------------------------------------- |
+| **Conformance**                | Соответствие типа требованиям протокола                  | `struct Circle: Drawable`              |
+| **Property Requirement**       | Требование свойства (геттер или геттер+сеттер)           | `var area: Double { get }`             |
+| **Method Requirement**         | Требование метода с сигнатурой                           | `func draw()`                          |
+| **Initializer Requirement**    | Требование инициализатора                                | `init(radius: Double)`                 |
+| **[[AssociatedType]]**         | Дженерик-заполнитель в протоколе                         | `associatedtype Element`               |
+| **Protocol Extension**         | Реализация по умолчанию через `extension`                | `extension Drawable { func log() {} }` |
+| **Optional Requirement**       | Необязательные методы (только `@objc` протоколы)         | `@objc optional func optionalMethod()` |
+| **Class-only Protocol**        | Протокол только для классов (`AnyObject`)                | `protocol Delegate: AnyObject`         |
+| **Composition**                | Комбинирование протоколов                                | `typealias View = Drawable & Loggable` |
+| **Existential Type ([[any]])** | Хранение разных типов, реализующих протокол              | `let shapes: [any Drawable]`           |
+| **Opaque Type ([[some]])**     | Конкретный, но скрытый тип (статическая диспетчеризация) | `func make() -> some Drawable`         |
+| **Primary Associated Types**   | Явное именование ассоциированных типов (Swift 6)         | `protocol Collection<Element>`         |
 
 ---
 
@@ -92,7 +92,7 @@ class Animal: Creatable {
 
 ---
 
-## 2. Реализация по умолчанию (Protocol Extensions)
+## 2. Реализация по умолчанию (Protocol [[Extension]]s)
 
 Расширения позволяют добавлять реализацию методов и вычисляемых свойств, что даёт **множественное наследование поведения** (в отличие от классов).
 
@@ -111,7 +111,7 @@ let phone = Product(name: "iPhone")
 phone.log() // "Log: Product(name: \"iPhone\")"
 ```
 
-### Условная реализация (where)
+### Условная реализация ([[where]])
 
 ```swift
 extension Array: Loggable where Element: CustomStringConvertible {
@@ -158,7 +158,7 @@ protocol Collection<Element> {
 
 ---
 
-## 4. Self и ограничения (where)
+## 4. [[Self]] и ограничения (where)
 
 `Self` ссылается на конкретный тип, реализующий протокол.
 
@@ -213,7 +213,7 @@ func makeDrawable() -> some Drawable {
 
 ---
 
-## 6. Протоколы и классы (Class-Only, Weak, Delegate)
+## 6. Протоколы и классы (Class-Only, [[Weak]], [[Delegate]])
 
 ```swift
 protocol Delegate: AnyObject {
@@ -273,7 +273,7 @@ protocol Router {
 }
 ```
 
-### ViewModel для SwiftUI
+### ViewModel для [[SwiftUI]]
 
 ```swift
 protocol ViewModel: ObservableObject {
@@ -287,13 +287,13 @@ protocol ViewModel: ObservableObject {
 
 ## 10. Типичные ошибки и ловушки
 
-| Ошибка | Причина | Решение |
-|--------|---------|---------|
-| Забыли `@objc dynamic` | KVO не работает | Добавить `@objc dynamic` |
-| `any` вместо `some` | Потеря производительности | Использовать `some` где тип фиксирован |
-| Слишком много `associatedtype` | Сложность | Декомпозиция протоколов |
-| `init` без `required` в классе | Наследники не смогут соответствовать | Добавить `required` |
-| Optional requirement без `@objc` | Ошибка компиляции | Добавить `@objc` |
+| Ошибка                           | Причина                              | Решение                                |
+| -------------------------------- | ------------------------------------ | -------------------------------------- |
+| Забыли `@objc dynamic`           | [[KVO]] не работает                  | Добавить `@objc dynamic`               |
+| `any` вместо `some`              | Потеря производительности            | Использовать `some` где тип фиксирован |
+| Слишком много `associatedtype`   | Сложность                            | Декомпозиция протоколов                |
+| `init` без `required` в классе   | Наследники не смогут соответствовать | Добавить `required`                    |
+| Optional requirement без `@objc` | Ошибка компиляции                    | Добавить `@objc`                       |
 
 ---
 
