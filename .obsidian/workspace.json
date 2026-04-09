@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "84bce9534710ad8e",
+        "id": "df5857dad19bfd2f",
         "type": "tabs",
         "children": [
           {
-            "id": "a7c913350049f650",
+            "id": "43adce4c4c6b7332",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/iOS/Swift/Protocols/Protocol.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "Protocol"
+              "title": "Новая вкладка"
             }
           }
         ]
@@ -194,8 +190,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a7c913350049f650",
+  "active": "c2edb47d47520656",
   "lastOpenFiles": [
+    "Баг.md",
+    "Swift/Теория/iOS/Swift/Protocols/Protocol.md",
     "Swift/Теория/Контроль памяти/existential container.md",
     "Swift/Теория/Метод Dispatch/Method Dispatch.md",
     "Swift/Теория/Контроль памяти/reference semantic.md",
@@ -222,8 +220,6 @@
     "Swift/Теория/Общие вопросы/API.md",
     "Swift/Теория/Общие вопросы/Additional Tools for Xcode.md",
     "Swift/Теория/Общие вопросы/Чтение и запись в iOS.md",
-    "Swift/Теория/Общие вопросы/Таблица размеров типов данных.md",
-    "Swift/Теория/Общие вопросы/Структуры данных.md",
     "Swift/Теория/iOS/Swift/Misc",
     "Swift/Теория/iOS/Swift/Other",
     "Swift/Теория/iOS/Swift/Keywords",
