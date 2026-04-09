@@ -1,9 +1,6 @@
 #memory #value-types #reference-types #struct #class #enum #swift #stack #heap
 
 ---
-
-## Value Types vs Reference Types в Swift
-
 ### Определение
 В Swift все типы делятся на две большие группы по способу хранения и передачи: **[[Value Type]]s (типы-значения)** и **[[Reference Type]]s (ссылочные типы)** . Это фундаментальное различие определяет, как данные копируются, передаются в функции и управляются в памяти .
 
