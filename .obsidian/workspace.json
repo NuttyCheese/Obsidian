@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
+                "file": "Swift/System Design/10. Будущее мобильного System Design/SuperApps архитектура — отдельные \"мини-приложения\" внутри одного приложения.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Что такое - value type and reference type"
+              "title": "SuperApps архитектура — отдельные \"мини-приложения\" внутри одного приложения"
             }
           }
         ]
@@ -196,6 +196,7 @@
   },
   "active": "43adce4c4c6b7332",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
     "Без названия.md",
     "Баг.md",
     "Swift/Теория/iOS/Swift/Protocols/Protocol.md",
@@ -223,7 +224,6 @@
     "Swift/Теория/Общие вопросы/AppKit.md",
     "Swift/Теория/Общие вопросы/App Store Connect.md",
     "Swift/Теория/Общие вопросы/API.md",
-    "Swift/Теория/Общие вопросы/Additional Tools for Xcode.md",
     "Swift/Теория/iOS/Swift/Misc",
     "Swift/Теория/iOS/Swift/Other",
     "Swift/Теория/iOS/Swift/Keywords",
