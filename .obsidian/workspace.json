@@ -190,8 +190,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e407b43c27bfa155",
+  "active": "c2edb47d47520656",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/UIKit/CAGradientLayer.md",
     "Swift/Теория/iOS/UIKit/Layout/NSDirectionalEdgeInsets.md",
     "Swift/Теория/iOS/UIKit/Graphics/UIFont.md",
     "Swift/Теория/iOS/UIKit/ViewControllers/UISearchController.md",
@@ -217,7 +218,6 @@
     "Swift/Теория/iOS/WebKit/UIWebView.md",
     "Swift/Теория/iOS/WebKit/WKNavigationDelegate.md",
     "Swift/Теория/iOS/WebKit/WKWebView.md",
-    "Swift/Теория/iOS/Info.plist/NSCameraUsageDescription.md",
     "Swift/Теория/iOS/Info.plist",
     "Swift/Теория/iOS/PhotosUI",
     "Swift/Теория/iOS/UserNotifications",
