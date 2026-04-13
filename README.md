@@ -9,18 +9,41 @@
 ## 📦 О чём это хранилище
 
 Это **персональная база знаний** (Zettelkasten-подход), полностью построенная на локальных Markdown-файлах и синхронизируемая через GitHub.  
-Никакого SwiftUI — только классический, проверенный стек Apple-разработки.
+Основной упор на **UIKit** и сопутствующие фреймворки; отдельно ведутся разделы **Swift** и **SwiftUI** (в т.ч. интеграция с UIKit).
 
 ### 🧩 Основные темы
 
 | Раздел | Содержание |
 |--------|-----------|
-| **📱 UIKit** | Все компоненты: `UITableView`, `UICollectionView`, `UIStackView`, `UIViewController` lifecycle, кастомные переходы, `UICollectionViewCompositionalLayout`, `UIMenu`, `UIAction` и работа с `Auto Layout` (включая `NSLayoutConstraint` программно). |
+| **📱 UIKit** | Компоненты: таблицы и коллекции, стеки, жизненный цикл `UIViewController`, переходы, `UICollectionViewCompositionalLayout`, меню, жесты, Auto Layout. Тематические подпапки: **Core Animation**, **Core Graphics**, **Dynamics**, **Foundation** (типы вроде `IndexPath`, интервалы времени), плюс классические разделы App, Views, Delegates, Navigation и др. |
+| **📂 Теория iOS** | Фреймворки и темы в `Swift/Теория/iOS`: см. раздел [«Структура Swift/Теория/iOS»](#ios-theory-structure) ниже. |
 | **🧰 Расширения кода** | Готовая коллекция Swift-расширений: `UIColor+Hex`, `UIImage+Blur`, `UIView+Constraints`, `String+Validation`, `Date+Formatters`, `Array+Safe subscript`, `Optional+Unwrap`. Всё, чтобы писать чище и быстрее. |
 | **🏗 Архитектура и паттерны** | Разбор `MVC`, `MVP`, `MVVM`, `Coordinator`, `VIPER`. Реализация без SwiftUI и Combine — классические подходы с делегатами, замыканиями и NotificationCenter. |
 | **⚙️ Git и работа с репозиториями** | Практические сценарии: `rebase`, `merge`, `cherry-pick`, работа с `git flow`, разрешение конфликтов, стратегии ветвления. |
 | **🕊 Функциональное программирование** | Монады, функторы, аппликативные функторы в Swift: `Optional`, `Result`, кастомные `Either`, `Reader`, `Writer`. Понимание `map`/`flatMap` без FRP-магии. |
 | **📚 Теория разработки** | SOLID, KISS, YAGNI, инкапсуляция, полиморфизм, DI/DI-контейнеры, многопоточность (GCD, `OperationQueue`), управление памятью (ARC, weak/unowned). |
+
+<a id="ios-theory-structure"></a>
+
+### Структура Swift/Теория/iOS
+
+Каталог **`Swift/Теория/iOS`** разбит по фреймворкам и темам; заметки из корня перенесены в соответствующие папки.
+
+**Фреймворки и крупные темы (верхний уровень):**
+
+| Папка | Назначение |
+|--------|------------|
+| **UIKit** | Интерфейс: см. также внутренние подпапки **Core Animation**, **Core Graphics**, **Dynamics**, **Foundation** и остальные (App, Views, Delegates, Layout, Navigation …). |
+| **Swift** | Язык Swift: типы, протоколы, многопоточность, интеграция с UIKit. |
+| **SwiftUI** | Декларативный UI и связка с UIKit (`UIViewRepresentable` и др.). |
+| **WebKit** | `WKWebView`, делегаты навигации, см. также устаревший `UIWebView`. |
+| **UserNotifications** | Локальные и push-уведомления: `UNUserNotificationCenter`, триггеры, расширения, APNs. |
+| **PhotosUI** | Выбор медиа, в т.ч. `PHPickerViewController`. |
+| **Info.plist** | Ключи приватности и описаний использования (`NSCameraUsageDescription`, `NSMicrophoneUsageDescription` и аналоги). |
+| **AVFoundation**, **Core Animation**, **Core Graphics**, **Core Location** | Соответствующие API (часть дублирует тематику с UIKit — смотрите оба дерева, если ищете слой или контекст). |
+| **MapKit**, **MessageUI**, **LocalAuthentication**, **SceneKit** | Карты, почта/SMS, биометрия, 3D-сцены. |
+
+Файлы в корне **`Swift/Теория/iOS`** не держатся: каждая заметка лежит в тематической папке (кроме служебных файлов вроде `.DS_Store`).
 
 ---
 
@@ -47,7 +70,7 @@ git clone https://github.com/NuttyCheese/Obsidian.git
 
 ## 🎯 Для кого это хранилище
 
-- iOS-разработчикам, которые **не используют SwiftUI** и работают в UIKit
+- iOS-разработчикам с упором на **UIKit**, которым нужны и заметки по **Swift** и точечной связке со **SwiftUI**
 - Тем, кто ценит **чистый код** и коллекции проверенных расширений
 - Разработчикам, углубляющимся в **архитектуру и функциональные подходы**
 - Всем, кто устал держать знания в голове или искать одно и то же в Google
@@ -65,6 +88,7 @@ git clone https://github.com/NuttyCheese/Obsidian.git
 
 ## ✨ Ближайшие планы по наполнению
 
+- [x] Тематическая раскладка заметок: `Swift/Теория/iOS` (в т.ч. `UserNotifications`, `PhotosUI`, `Info.plist`, `WebKit`) и вложенные разделы `UIKit` (**Core Animation**, **Core Graphics**, **Dynamics**, **Foundation**)
 - [x] Расширения для `Core Graphics` и работы с анимациями
 - [x] Разбор `URLSession`, кэширование, работа с API без внешних библиотек
 - [ ] Примеры кастомных `UICollectionViewLayout`
