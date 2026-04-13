@@ -11,10 +11,14 @@
             "id": "9410a2d577a19aa2",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Теория/iOS/UIKit/UIDynamicItem.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Новая вкладка"
+              "title": "UIDynamicItem"
             }
           }
         ]
@@ -192,6 +196,17 @@
   },
   "active": "9410a2d577a19aa2",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/UIKit/UICollisionBehaviorMode.md",
+    "Swift/Теория/iOS/UIKit/UICollisionBehaviorDelegate.md",
+    "Swift/Теория/iOS/UIKit/UIDynamicBehavior.md",
+    "Swift/Теория/iOS/UIKit/UICollisionBehavior.md",
+    "Swift/Теория/iOS/UIKit/UIAttachmentBehavior.md",
+    "Swift/Теория/iOS/UIKit/UIDynamicAnimator.md",
+    "Swift/Теория/iOS/UIKit/UISnapBehavior.md",
+    "Swift/Теория/iOS/UIKit/UIDynamicItemBehavior.md",
+    "Swift/Теория/iOS/UIKit/UIPushBehavior.md",
+    "Swift/Теория/iOS/UIKit/UIGravityBehavior.md",
+    "Swift/Теория/iOS/UIKit/UIDynamicItem.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/AdditiveArithmetic.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/SignedNumeric.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/FloatingPoint.md",
@@ -207,17 +222,6 @@
     "Swift/Теория/iOS/Swift/Protocols/Protocol.md",
     "Swift/Теория/Контроль памяти/existential container.md",
     "Swift/Теория/Метод Dispatch/Method Dispatch.md",
-    "Swift/Теория/Контроль памяти/reference semantic.md",
-    "Swift/Теория/Контроль памяти/ARC.md",
-    "Swift/Теория/Контроль памяти/value type and reference type.md",
-    "Swift/Теория/Контроль памяти/retain cycle.md",
-    "Swift/Теория/Общие вопросы/OOP.md",
-    "Swift/Теория/iOS/Swift/where.md",
-    "Swift/Теория/Общие вопросы/POP.md",
-    "Swift/Теория/Общие вопросы/FP.md",
-    "Swift/Теория/Паттерны/Command.md",
-    "Swift/Теория/Паттерны/Принципы/YAGNI.md",
-    "Swift/Теория/Паттерны/Принципы/KISS.md",
     "Swift/Теория/Общие вопросы/OOP",
     "Без названия",
     "Swift/Теория/iOS/Swift/Misc",
