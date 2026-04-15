@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
+                "file": "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SwiftUI"
+              "title": "AppDelegate"
             }
           }
         ]
@@ -196,8 +196,13 @@
   },
   "active": "556dee018ca31ff3",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/SwiftUI/Руководство по SwiftUI.md",
+    "Swift/Полезные расширения/ext+UICollectionView.md",
+    "Swift/Полезные расширения/ext+Bool.md",
+    "Swift/Полезные расширения/ext+UIColor.md",
+    "SwiftIU/Руководство по SwiftUI.md",
     "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
+    "SwiftIU",
+    "Swift/Теория/iOS/SwiftUI/Руководство по SwiftUI.md",
     "Swift/Теория/Паттерны/Factory Method.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
     "Swift/Теория/Паттерны/Принципы/DRY.md",
@@ -218,10 +223,6 @@
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/didReceiveMemoryWarning.md",
     "Swift/Теория/iOS/UIKit/App/didFinishLaunchingWithOptions.md",
     "Swift/Теория/iOS/UIKit/App/Application Life Cycle.md",
-    "Swift/Теория/iOS/UIKit/Interface Builder/xib.md",
-    "Swift/Теория/iOS/UIKit/Interface Builder/Nib.md",
-    "Swift/Теория/iOS/UIKit/Interface Builder/Interface Builder.md",
-    "Swift/Теория/iOS/UIKit/Interface Builder/Storyboard.md",
     "Swift/Теория/iOS/Info.plist",
     "Swift/Теория/iOS/PhotosUI",
     "Swift/Теория/iOS/UserNotifications",
@@ -230,7 +231,6 @@
     "Swift/Теория/iOS/UIKit/Core Graphics",
     "Swift/Теория/iOS/UIKit/Core Animation",
     "Swift/Теория/Общие вопросы/OOP",
-    "Без названия",
     "Swift/Теория/iOS/Swift/Misc"
   ]
 }
