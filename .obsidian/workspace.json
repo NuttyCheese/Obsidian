@@ -11,10 +11,14 @@
             "id": "f2b4707676758927",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Теория/iOS/Swift/Data Types/Optional.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Новая вкладка"
+              "title": "Optional"
             }
           }
         ]
@@ -49,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "optional",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -70,7 +74,8 @@
               "title": "Закладки"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -192,6 +197,7 @@
   },
   "active": "f2b4707676758927",
   "lastOpenFiles": [
+    "Swift/Теория/Общие вопросы/Отличия Auto Layout vs NSLayoutAnchor.md",
     "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
     "Swift/Полезные расширения/ext+UICollectionView.md",
     "Swift/Полезные расширения/ext+Bool.md",
@@ -218,7 +224,6 @@
     "Swift/Теория/iOS/UIKit/Delegates/UIPickerViewDataSource.md",
     "Swift/Теория/iOS/UIKit/Layout/updateViewConstraints.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/didReceiveMemoryWarning.md",
-    "Swift/Теория/iOS/UIKit/App/didFinishLaunchingWithOptions.md",
     "Swift/Теория/iOS/Info.plist",
     "Swift/Теория/iOS/PhotosUI",
     "Swift/Теория/iOS/UserNotifications",
