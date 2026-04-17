@@ -69,12 +69,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Задачи алгоритмические.md",
+                "file": "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Задачи алгоритмические"
+              "title": "DispatchWorkItem"
             }
           }
         ],
@@ -110,7 +110,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "DispatchWorkItem",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -131,7 +131,8 @@
               "title": "Закладки"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -253,11 +254,13 @@
   },
   "active": "f24dae689c7856b1",
   "lastOpenFiles": [
+    "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
+    "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
+    "Swift/Задачи алгоритмические.md",
     "Swift/Задачи System Design.md",
     "Swift/Задачи на управление памятью.md",
     "Swift/Задачи многопоточности.md",
     "Swift/Задачи диспетчерезации.md",
-    "Swift/Задачи алгоритмические.md",
     "Swift/Теория/Метод Dispatch/Method Dispatch.md",
     "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Witness Table.md",
     "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Table Dispatch.md",
@@ -278,8 +281,6 @@
     "Swift/Теория/iOS/Swift/Data Types/Optional.md",
     "Swift/Теория/Общие вопросы/Отличия Auto Layout vs NSLayoutAnchor.md",
     "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
-    "Swift/Полезные расширения/ext+UICollectionView.md",
-    "Swift/Полезные расширения/ext+Bool.md",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
     "Swift/Теория/iOS/PhotosUI",
