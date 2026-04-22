@@ -83,12 +83,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/alloc.md",
+                "file": "Swift/Теория/Контроль памяти/ARC.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "alloc"
+              "title": "ARC"
             }
           }
         ],
@@ -267,6 +267,7 @@
   },
   "active": "f24dae689c7856b1",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/alloc.md",
     "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
     "Swift/Теория/Контроль памяти/existential container.md",
     "Swift/Теория/Общие вопросы/Рекурсивная функция.md",
@@ -293,7 +294,6 @@
     "Swift/Теория/iOS/Swift/Protocols Conformance/Cacheable.md",
     "Swift/Теория/iOS/NSMutableArray.md",
     "Swift/Теория/iOS/NSPointerArray.md",
-    "Swift/Теория/iOS/NSHashTable.md",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
     "Swift/Теория/iOS/PhotosUI",
