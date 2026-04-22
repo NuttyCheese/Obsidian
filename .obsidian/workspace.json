@@ -64,21 +64,35 @@
             }
           },
           {
+            "id": "b8e26e7c59e28e04",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Задачи System Design.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Задачи System Design"
+            }
+          },
+          {
             "id": "f24dae689c7856b1",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Общие вопросы/Рекурсивная функция.md",
+                "file": "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Рекурсивная функция"
+              "title": "Что такое - value type and reference type"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -237,8 +251,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 337.5,
-    "collapsed": true
+    "width": 337.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -252,17 +265,18 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "56142e8d3476db56",
+  "active": "f24dae689c7856b1",
   "lastOpenFiles": [
-    "Swift/Задачи алгоритмические.md",
+    "Swift/Теория/Контроль памяти/existential container.md",
     "Swift/Теория/Общие вопросы/Рекурсивная функция.md",
+    "Swift/Задачи System Design.md",
+    "Swift/Задачи диспетчерезации.md",
+    "Swift/Задачи алгоритмические.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Бинарный поиск.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
     "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
-    "Swift/Задачи System Design.md",
     "Swift/Задачи на управление памятью.md",
     "Swift/Задачи многопоточности.md",
-    "Swift/Задачи диспетчерезации.md",
     "Swift/Теория/Метод Dispatch/Method Dispatch.md",
     "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Witness Table.md",
     "Swift/Теория/Метод Dispatch/Dispatching type/Dynamic/Table Dispatch.md",
@@ -280,7 +294,6 @@
     "Swift/Теория/iOS/NSMutableArray.md",
     "Swift/Теория/iOS/NSPointerArray.md",
     "Swift/Теория/iOS/NSHashTable.md",
-    "Swift/Теория/iOS/Swift/Data Types/Optional.md",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
     "Swift/Теория/iOS/PhotosUI",
