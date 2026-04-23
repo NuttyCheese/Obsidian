@@ -83,12 +83,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/ARC.md",
+                "file": "Swift/Задачи алгоритмические.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ARC"
+              "title": "Задачи алгоритмические"
             }
           }
         ],
@@ -267,13 +267,14 @@
   },
   "active": "f24dae689c7856b1",
   "lastOpenFiles": [
+    "Swift/Задачи System Design.md",
+    "Swift/Задачи алгоритмические.md",
+    "Swift/Теория/Контроль памяти/ARC.md",
     "Swift/Теория/Контроль памяти/alloc.md",
     "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
     "Swift/Теория/Контроль памяти/existential container.md",
     "Swift/Теория/Общие вопросы/Рекурсивная функция.md",
-    "Swift/Задачи System Design.md",
     "Swift/Задачи диспетчерезации.md",
-    "Swift/Задачи алгоритмические.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Бинарный поиск.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
     "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
@@ -293,7 +294,6 @@
     "Swift/Теория/Общие вопросы/Pure Function.md",
     "Swift/Теория/iOS/Swift/Protocols Conformance/Cacheable.md",
     "Swift/Теория/iOS/NSMutableArray.md",
-    "Swift/Теория/iOS/NSPointerArray.md",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
     "Swift/Теория/iOS/PhotosUI",
