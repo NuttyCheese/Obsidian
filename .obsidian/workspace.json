@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/Memory Leak.md",
+                "file": "Swift/Теория/Контроль памяти/retain count.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Memory Leak"
+              "title": "retain count"
             }
           }
         ]
@@ -196,8 +196,10 @@
   },
   "active": "bf9b367e58618d2f",
   "lastOpenFiles": [
-    "Swift/Теория/Контроль памяти/NSKeyValueObservation.md",
+    "Swift/Теория/Контроль памяти/retain cycle.md",
+    "Swift/Теория/Контроль памяти/Reference Counting.md",
     "Swift/Теория/Контроль памяти/Memory Leak.md",
+    "Swift/Теория/Контроль памяти/NSKeyValueObservation.md",
     "Swift/Теория/Контроль памяти/KVO.md",
     "Swift/Теория/Контроль памяти/KVC.md",
     "Swift/Теория/Контроль памяти/Inline.md",
@@ -220,8 +222,6 @@
     "Swift/Задачи алгоритмические.md",
     "Swift/Задачи System Design.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Hash-поиск.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/swapAt.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/compactMap.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
