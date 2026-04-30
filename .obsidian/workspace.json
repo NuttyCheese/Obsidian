@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
+                "file": "Swift/Теория/Контроль памяти/Copy-On-Write.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Что такое - value type and reference type"
+              "title": "Copy-On-Write"
             }
           }
         ]
@@ -196,11 +196,13 @@
   },
   "active": "bf9b367e58618d2f",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/autoreleasepool.md",
+    "Swift/Теория/Контроль памяти/existential container.md",
+    "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
     "Swift/Теория/Контроль памяти/ARC.md",
     "Swift/Теория/Контроль памяти/Copy-On-Shadow.md",
     "Swift/Теория/Контроль памяти/CFGetRetainCount.md",
     "Swift/Теория/Контроль памяти/isKnownUniquelyReferenced.md",
-    "Swift/Теория/Контроль памяти/autoreleasepool.md",
     "Swift/Задачи алгоритмические.md",
     "Swift/Задачи System Design.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Hash-поиск.md",
@@ -220,8 +222,6 @@
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/sequence func.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/sort.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/split.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchWorkItemFlags.md",
-    "Swift/Теория/Многопоточность/GCD/thread.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
