@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/autoreleasepool.md",
+                "file": "Swift/Задачи алгоритмические.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "autoreleasepool"
+              "title": "Задачи алгоритмические"
             }
           }
         ]
@@ -180,8 +180,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 337.5,
-    "collapsed": true
+    "width": 337.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -197,6 +196,7 @@
   },
   "active": "bf9b367e58618d2f",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/autoreleasepool.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Hash-поиск.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/swapAt.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/compactMap.md",
@@ -222,7 +222,6 @@
     "Swift/Теория/Контроль памяти/ARC.md",
     "Swift/Теория/Контроль памяти/alloc.md",
     "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
-    "Swift/Теория/Контроль памяти/existential container.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
