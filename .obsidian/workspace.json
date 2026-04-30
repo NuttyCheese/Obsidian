@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/Stack.md",
+                "file": "Swift/Теория/Контроль памяти/Memory Leak.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Stack"
+              "title": "Memory Leak"
             }
           }
         ]
@@ -196,17 +196,25 @@
   },
   "active": "bf9b367e58618d2f",
   "lastOpenFiles": [
-    "Swift/Теория/Контроль памяти/Heap.md",
-    "Swift/Теория/Контроль памяти/Stack.md",
+    "Swift/Теория/Контроль памяти/NSKeyValueObservation.md",
+    "Swift/Теория/Контроль памяти/Memory Leak.md",
+    "Swift/Теория/Контроль памяти/KVO.md",
+    "Swift/Теория/Контроль памяти/KVC.md",
+    "Swift/Теория/Контроль памяти/Inline.md",
     "Swift/Теория/Контроль памяти/Garbage collector.md",
-    "Swift/Теория/Контроль памяти/FIFO.md",
     "Swift/Теория/Контроль памяти/FILO.md",
-    "Swift/Теория/Контроль памяти/Copy-On-Write.md",
-    "Swift/Теория/Контроль памяти/autoreleasepool.md",
+    "Swift/Теория/Контроль памяти/FIFO.md",
     "Swift/Теория/Контроль памяти/existential container.md",
-    "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
-    "Swift/Теория/Контроль памяти/ARC.md",
+    "Swift/Теория/Контроль памяти/dealloc.md",
+    "Swift/Теория/Контроль памяти/Copy-On-Write.md",
     "Swift/Теория/Контроль памяти/Copy-On-Shadow.md",
+    "Swift/Теория/Контроль памяти/autoreleasepool.md",
+    "Swift/Теория/Контроль памяти/autorelease.md",
+    "Swift/Теория/Контроль памяти/ARC.md",
+    "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
+    "Swift/Теория/Контроль памяти/alloc.md",
+    "Swift/Теория/Контроль памяти/Stack.md",
+    "Swift/Теория/Контроль памяти/Heap.md",
     "Swift/Теория/Контроль памяти/CFGetRetainCount.md",
     "Swift/Теория/Контроль памяти/isKnownUniquelyReferenced.md",
     "Swift/Задачи алгоритмические.md",
@@ -214,14 +222,6 @@
     "Swift/Теория/Алгоритмы и методы высшего порядка/Поиски/Hash-поиск.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/swapAt.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/compactMap.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/contains.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/Dictionary(grouping by).md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/filter.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/first.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/firstIndex.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/flatMap.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/forEach.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/functional programming.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
