@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/Heap.md",
+                "file": "Swift/Теория/Контроль памяти/Stack.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Heap"
+              "title": "Stack"
             }
           }
         ]
@@ -196,6 +196,8 @@
   },
   "active": "bf9b367e58618d2f",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/Heap.md",
+    "Swift/Теория/Контроль памяти/Stack.md",
     "Swift/Теория/Контроль памяти/Garbage collector.md",
     "Swift/Теория/Контроль памяти/FIFO.md",
     "Swift/Теория/Контроль памяти/FILO.md",
@@ -220,8 +222,6 @@
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/flatMap.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/forEach.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/functional programming.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/IteratorProtocol.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Методы высшего порядка/map.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
