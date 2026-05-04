@@ -8,18 +8,29 @@
 Это противоположность **[[reference semantic]]s** (семантика ссылок), где присваивание копирует только **ссылку** (указатель), а само значение остаётся общим.
 
 ```mermaid
-graph LR
-    subgraph "Value Semantics"
-        A[var a = 1] -->|копия| B[var b = a]
-        A --> C[значение: 1]
-        B --> D[значение: 1]
-        C -.->|независимы| D
+graph TD
+    subgraph ValueSemantics["Value Semantics (Структуры, Enum, Int, String)"]
+        direction LR
+        A["var a = 1<br/>(значение в стеке)"] -->|"копирование значения"| B["var b = a<br/>(новая копия в стеке)"]
+        A --> C["a = 1"]
+        B --> D["b = 1"]
+        C -.->|"независимые копии<br/>изменение a не влияет на b"| D
     end
     
-    subgraph "Reference Semantics"
-        E[var a = Person()] -->|ссылка| F[Person объект]
-        G[var b = a] -->|ссылка| F
+    subgraph ReferenceSemantics["Reference Semantics (Классы, замыкания)"]
+        direction LR
+        E["var a = Person()<br/>(ссылка в стеке)"] -->|"копирование ссылки"| G["var b = a<br/>(ссылка в стеке)"]
+        E -->|указывает| F[Person объект в куче]
+        G -->|указывает| F
+        H["a.name = 'John'"] -.->|изменение через любую ссылку| F
+        I["both see the change"] -.->|"a и b видят одинаковые изменения"| F
     end
+    
+    style ValueSemantics fill:#ccffcc,stroke:#333,stroke-width:2px
+    style ReferenceSemantics fill:#fff3e0,stroke:#333,stroke-width:2px
+    style F fill:#ffcccc,stroke:#333
+    style D fill:#ccffcc
+    style C fill:#ccffcc
 ```
 
 ---
