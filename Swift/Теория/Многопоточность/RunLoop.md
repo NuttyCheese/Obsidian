@@ -202,12 +202,12 @@ class ViewController: UIViewController {
 
 ### RunLoop и GCD
 
-| Механизм | Взаимодействие с RunLoop |
-|---|---|
-| **DispatchQueue.main.async** | Добавляет задачу в RunLoop главного потока |
-| **DispatchQueue.global().async** | Не использует RunLoop (работает через GCD) |
-| **DispatchSource.timer** | Не требует RunLoop (работает через GCD) |
-| **Timer** | Требует RunLoop для работы |
+| Механизм                         | Взаимодействие с RunLoop                       |
+| -------------------------------- | ---------------------------------------------- |
+| **DispatchQueue.main.async**     | Добавляет задачу в RunLoop главного потока     |
+| **DispatchQueue.global().async** | Не использует RunLoop (работает через [[GCD]]) |
+| **DispatchSource.timer**         | Не требует RunLoop (работает через GCD)        |
+| **[[Timer]]**                    | Требует RunLoop для работы                     |
 
 ```swift
 // GCD Timer (не требует RunLoop)
@@ -228,15 +228,15 @@ let foundationTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true)
 
 ### Лучшие практики работы с RunLoop в 2026 году
 
-| Практика | Почему |
-|---|---|
-| **Никогда не блокируйте главный RunLoop** | Долгие вычисления → DispatchQueue.global() |
-| **Добавляйте таймеры в `.common`** | Это стандарт для UI-таймеров |
-| **Не создавайте бесконечные циклы в главном потоке** | `while true { runLoop.run() }` — это уже сделано системой |
-| **Для фоновых потоков — явно запускайте `RunLoop.current.run()`** | И добавляйте хотя бы один источник (таймер, порт, observer) |
-| **Для Swift Concurrency (async/await, actor) — RunLoop почти не нужен** | Используйте Task и MainActor |
-| **Для SwiftUI — RunLoop скрыт под капотом** | Используйте `.onReceive`, `.task`, `.onAppear` |
-| **Документируйте** | Пишите комментарий «RunLoop.current.add(timer, forMode: .common) — таймер продолжает работать во время скролла» |
+| Практика                                                                            | Почему                                                                                                          |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Никогда не блокируйте главный RunLoop**                                           | Долгие вычисления → DispatchQueue.global()                                                                      |
+| **Добавляйте таймеры в `.common`**                                                  | Это стандарт для UI-таймеров                                                                                    |
+| **Не создавайте бесконечные циклы в главном потоке**                                | `while true { runLoop.run() }` — это уже сделано системой                                                       |
+| **Для фоновых потоков — явно запускайте `RunLoop.current.run()`**                   | И добавляйте хотя бы один источник (таймер, порт, observer)                                                     |
+| **Для Swift Concurrency ([[async]]/[[await]], [[actor]]) — RunLoop почти не нужен** | Используйте Task и MainActor                                                                                    |
+| **Для [[SwiftUI]] — RunLoop скрыт под капотом**                                     | Используйте `.onReceive`, `.task`, `.onAppear`                                                                  |
+| **Документируйте**                                                                  | Пишите комментарий «RunLoop.current.add(timer, forMode: .common) — таймер продолжает работать во время скролла» |
 
 ---
 

@@ -103,7 +103,7 @@ animal.makeSound()  // Table Dispatch → "Woof!"
 **Преимущества:**
 - Полиморфизм (можно переопределять)
 - Хорошая скорость (~3–5 нс)
-- Не требует [[Objective-C]] [[runtime]]
+- Не требует [[Objective-C]] [[Runtime]]
 
 **Недостатки:**
 - Медленнее Direct Dispatch

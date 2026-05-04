@@ -91,7 +91,7 @@ isAuthorized == false
 
 - ловли [[Auto Layout]] ошибок
     
-- поиска [[runtime]] exception
+- поиска [[Runtime]] exception
     
 - диагностики [[force unwrap]] crash
     

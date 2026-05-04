@@ -14,7 +14,7 @@ NSPredicate позволяет описывать сложные запросы 
 | Core Data fetch request                       | Самый надёжный и безопасный способ фильтрации | SwiftData / @Query (если используешь SwiftData) |
 | Фильтрация [[NSArray]] / NSMutableArray       | Работает нативно, поддерживает [[KVC]]        | `filter` с замыканием                           |
 | Сложные условия (AND/OR/IN/BEGINSWITH и т.д.) | Очень выразительный синтаксис                 | `filter` + цепочка условий                      |
-| Динамическая фильтрация (поиск по тексту)     | Легко строить предикаты в [[runtime]]         | Combine / @Query                                |
+| Динамическая фильтрация (поиск по тексту)     | Легко строить предикаты в [[Runtime]]         | Combine / @Query                                |
 | Legacy-код / Objective-C interop              | NSPredicate — стандарт Foundation             | —                                               |
 
 ### 2. Самые важные форматы NSPredicate (шпаргалка 2026)
