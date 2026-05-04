@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/reference semantic.md",
+                "file": "Swift/Теория/Контроль памяти/Reference Type.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "reference semantic"
+              "title": "Reference Type"
             }
           }
         ]
@@ -196,7 +196,11 @@
   },
   "active": "bf9b367e58618d2f",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/reference semantic.md",
+    "Swift/Теория/Контроль памяти/Reference Type.md",
+    "Swift/Теория/Контроль памяти/Memory Leak.md",
     "Swift/Теория/Контроль памяти/Reference Counting.md",
+    "Swift/Теория/Контроль памяти/NSKeyValueObservation.md",
     "Swift/Теория/Контроль памяти/retain cycle.md",
     "Swift/Теория/Контроль памяти/Reference Cycle.md",
     "Swift/Теория/Контроль памяти/Heap.md",
@@ -214,14 +218,10 @@
     "Swift/Теория/Контроль памяти/alloc.md",
     "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
     "Swift/Теория/Контроль памяти/retain count.md",
-    "Swift/Теория/Контроль памяти/Memory Leak.md",
-    "Swift/Теория/Контроль памяти/NSKeyValueObservation.md",
     "Swift/Теория/Контроль памяти/KVO.md",
     "Swift/Теория/Контроль памяти/KVC.md",
     "Swift/Теория/Контроль памяти/Inline.md",
     "Swift/Теория/Контроль памяти/Stack.md",
-    "Swift/Теория/Контроль памяти/isKnownUniquelyReferenced.md",
-    "Swift/Задачи алгоритмические.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
