@@ -17,7 +17,7 @@
 | Сущность                           | Что это                                                             | Как dispatch связан                                  | Самый частый метод dispatch      |
 | ---------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------- |
 | [[DispatchQueue]]                  | Очередь задач ([[serial]] / [[concurrent]] / [[main]] / [[global]]) | Основной объект, куда отправляют (dispatch) задачи   | `async`, `sync`, `asyncAfter`    |
-| DispatchQueue.[[main]]             | Главная очередь ([[main thread]])                                   | dispatch → UI-обновления                             | `main.async { ... }`             |
+| DispatchQueue.[[main]]             | Главная очередь ([[main\|main thread]])                             | dispatch → UI-обновления                             | `main.async { ... }`             |
 | DispatchQueue.[[global]]([[QoS]]:) | Системные конкурентные очереди                                      | dispatch → фоновая работа                            | `global(qos:).async { ... }`     |
 | [[DispatchWorkItem]]               | Объект-задача с возможностью отмены                                 | dispatch → управляемая, отменяемая задача            | `queue.async(execute: workItem)` |
 | [[DispatchGroup]]                  | Группа задач для ожидания завершения                                | dispatch → отслеживание нескольких задач             | `group.enter()`, `group.leave()` |
