@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "72a24972eac70bb1",
+        "id": "9db2e4257c55153e",
         "type": "tabs",
         "children": [
           {
-            "id": "4040bd0fecfdc2f3",
+            "id": "d0d40f7ef8e48ed7",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchGroup.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "DispatchGroup"
+              "title": "Новая вкладка"
             }
           }
         ]
@@ -194,8 +190,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "4040bd0fecfdc2f3",
+  "active": "e407b43c27bfa155",
   "lastOpenFiles": [
+    "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchGroup.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchBarrier.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/Dispatch Tasks.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
@@ -221,7 +218,6 @@
     "Swift/Теория/Архитектурные подходы/Decorator.md",
     "Swift/Теория/Архитектурные подходы/Coordinator.md",
     "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
-    "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
