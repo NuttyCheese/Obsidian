@@ -11,10 +11,14 @@
             "id": "d0d40f7ef8e48ed7",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Теория/iOS/Swift/Concurrency/os_unfair_lock.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Новая вкладка"
+              "title": "os_unfair_lock"
             }
           }
         ]
@@ -190,8 +194,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e407b43c27bfa155",
+  "active": "d0d40f7ef8e48ed7",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/Concurrency/NSLock.md",
+    "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
+    "Swift/Теория/iOS/PhotosUI/PHPickerViewController.md",
+    "Swift/Теория/iOS/UIKit/Views/UIActivityIndicatorView.md",
+    "Swift/Теория/iOS/UIKit/Views/UIButton.Configuration.md",
+    "Swift/Теория/iOS/UIKit/Views/UIButton.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchGroup.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchBarrier.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/Dispatch Tasks.md",
@@ -212,12 +222,6 @@
     "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Быстрая сортировка.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Сортировка слиянием.md",
     "Swift/Теория/Архитектурные подходы/TCA.md",
-    "Swift/Теория/Архитектурные подходы/VIPER Architecture.md",
-    "Swift/Теория/Архитектурные подходы/MVC (Model-View-Controller) Architecture.md",
-    "Swift/Теория/Архитектурные подходы/Adapter.md",
-    "Swift/Теория/Архитектурные подходы/Decorator.md",
-    "Swift/Теория/Архитектурные подходы/Coordinator.md",
-    "Swift/Теория/Архитектурные подходы/Client-server architecture.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
