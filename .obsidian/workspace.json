@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/Concurrency/os_unfair_lock.md",
+                "file": "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "os_unfair_lock"
+              "title": "asyncAfter"
             }
           }
         ]
@@ -196,6 +196,8 @@
   },
   "active": "d0d40f7ef8e48ed7",
   "lastOpenFiles": [
+    "Swift/Теория/Многопоточность/GCD/GCD.md",
+    "Swift/Теория/iOS/Swift/Concurrency/os_unfair_lock.md",
     "Swift/Теория/iOS/Swift/Concurrency/NSLock.md",
     "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
     "Swift/Теория/iOS/PhotosUI/PHPickerViewController.md",
@@ -215,13 +217,11 @@
     "Swift/Теория/Многопоточность/GCD/Dispatch/Queue.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/sync.md",
     "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
-    "Swift/Теория/Многопоточность/GCD/GCD.md",
     "Swift/Теория/Многопоточность/GCD/QoS.md",
     "Swift/Теория/Многопоточность/GCD/thread.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Пирамидальная сортировка.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Быстрая сортировка.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Сортировка слиянием.md",
-    "Swift/Теория/Архитектурные подходы/TCA.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
