@@ -11,14 +11,10 @@
             "id": "d0d40f7ef8e48ed7",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "asyncAfter"
+              "title": "Новая вкладка"
             }
           }
         ]
@@ -180,7 +176,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 337.5
+    "width": 337.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -194,8 +191,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "d0d40f7ef8e48ed7",
+  "active": "e407b43c27bfa155",
   "lastOpenFiles": [
+    "README 1.md",
+    "CONTEXT.md",
+    "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
     "Swift/Теория/Многопоточность/GCD/GCD.md",
     "Swift/Теория/iOS/Swift/Concurrency/os_unfair_lock.md",
     "Swift/Теория/iOS/Swift/Concurrency/NSLock.md",
@@ -216,12 +216,9 @@
     "Swift/Теория/Многопоточность/GCD/Dispatch/main.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/Queue.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/sync.md",
-    "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
     "Swift/Теория/Многопоточность/GCD/QoS.md",
     "Swift/Теория/Многопоточность/GCD/thread.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Пирамидальная сортировка.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Быстрая сортировка.md",
-    "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Сортировка слиянием.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
