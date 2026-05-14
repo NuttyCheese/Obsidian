@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/ARC.md",
+                "file": "Swift/Теория/Контроль памяти/autoreleasepool.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ARC"
+              "title": "autoreleasepool"
             }
           }
         ]
@@ -197,6 +197,9 @@
   },
   "active": "d0d40f7ef8e48ed7",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/autorelease.md",
+    "Swift/Теория/Контроль памяти/autoreleasepool.md",
+    "Swift/Теория/Контроль памяти/ARC.md",
     "Swift/Теория/Контроль памяти/alloc.md",
     "README.md",
     "README 1.md",
@@ -220,9 +223,6 @@
     "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/global.md",
     "Swift/Теория/Многопоточность/GCD/Dispatch/main.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Queue.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/sync.md",
-    "Swift/Теория/Многопоточность/GCD/QoS.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
