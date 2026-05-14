@@ -300,7 +300,7 @@ po model
 
 Можно ограничить:
 
-- [[main thread]]
+- [[main|main thread]]
     
 - background queue
     

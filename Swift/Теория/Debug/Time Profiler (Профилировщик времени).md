@@ -141,7 +141,7 @@ JSONDecoder.decode → 35%
 
 Проверяем:
 
-- [[Main Thread]]
+- [[main|Main Thread]]
     
 - Heavy synchronous операции
     

@@ -135,7 +135,7 @@ for await progress in downloader.observeProgress() {
 ### Лучшие практики URLSessionDownloadDelegate в Swift 2026
 
 - **Держи delegate в [[actor]]** — безопасно для concurrency  
-- **nonisolated** — методы delegate должны быть `nonisolated`, т.к. вызываются не на [[main thread]]  
+- **nonisolated** — методы delegate должны быть `nonisolated`, т.к. вызываются не на [[main|main thread]]  
 - **continuation** — используй `withCheckedThrowingContinuation` для async/await  
 - **didFinishDownloadingTo** — здесь получаешь временный [[URL]] файла (перемещай его сразу!)  
 - **didWriteData** — обновляй прогресс UI через `@MainActor`  

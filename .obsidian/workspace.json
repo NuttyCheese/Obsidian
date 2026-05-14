@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "be480ec3ef207001",
+        "id": "be6c0f0772550f9c",
         "type": "tabs",
         "children": [
           {
-            "id": "a0a18433a747c22a",
+            "id": "bd86fc8cc4ed2b1f",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -176,8 +176,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 337.5,
-    "collapsed": true
+    "width": 337.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -191,10 +190,24 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a0a18433a747c22a",
+  "active": "bd86fc8cc4ed2b1f",
   "lastOpenFiles": [
-    "Swift/Теория/Многопоточность/Swift Concurrency/Executor.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewCell.md",
+    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewCell.md",
+    "Swift/Теория/iOS/Swift/Basics/final.md",
+    "Swift/Теория/Сетевое взаимодействие/URLSession/URLSessionDataDelegate.md",
+    "Swift/Теория/Многопоточность/Swift Concurrency/nonisolated.md",
+    "Swift/Теория/Многопоточность/Swift Concurrency/isolation (concept).md",
+    "Swift/Теория/Debug/Debug Navigator (Отладочный навигатор).md",
     "Swift/Теория/Debug/Time Profiler (Профилировщик времени).md",
+    "Swift/Теория/Контроль памяти/FIFO.md",
+    "Swift/Теория/Многопоточность/Swift Concurrency/async.md",
+    "Swift/Теория/Debug/Breakpoints (Точки останова).md",
+    "Swift/Теория/Сетевое взаимодействие/URLSession/URLSessionDownloadDelegate.md",
+    "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
+    "Swift/Теория/Многопоточность/Swift Concurrency/@MainActor.md",
+    "Swift/Теория/Сетевое взаимодействие/URLSession/URLSessionWebSocketDelegate.md",
+    "Swift/Теория/Многопоточность/Swift Concurrency/Executor.md",
     "Swift/Теория/Контроль памяти/CFGetRetainCount.md",
     "Swift/Теория/Контроль памяти/autoreleasepool.md",
     "Swift/Теория/Контроль памяти/autorelease.md",
@@ -205,20 +218,6 @@
     "CONTEXT.md",
     "Swift/Теория/Многопоточность/GCD/asyncAfter.md",
     "Swift/Теория/Многопоточность/GCD/GCD.md",
-    "Swift/Теория/iOS/Swift/Concurrency/os_unfair_lock.md",
-    "Swift/Теория/iOS/Swift/Concurrency/NSLock.md",
-    "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
-    "Swift/Теория/iOS/PhotosUI/PHPickerViewController.md",
-    "Swift/Теория/iOS/UIKit/Views/UIActivityIndicatorView.md",
-    "Swift/Теория/iOS/UIKit/Views/UIButton.Configuration.md",
-    "Swift/Теория/iOS/UIKit/Views/UIButton.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchGroup.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchBarrier.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/Dispatch Tasks.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchWorkItem.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Dispatch methods/DispatchWorkItemFlags.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Serial and Concurrent/concurrent.md",
-    "Swift/Теория/Многопоточность/GCD/Dispatch/Serial and Concurrent/serial.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",

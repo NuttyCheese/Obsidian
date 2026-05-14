@@ -117,7 +117,7 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
 
 ### Лучшие практики UITableViewCell в Swift 2026
 
-- **[[final]] [[class]]** — экономия [[vtable]], меньше overhead  
+- **[[final]] [[class]]** — экономия [[Sidetable|vtable]], меньше overhead  
 - **[[lazy]] [[var]]** — UI создаётся только при первом обращении  
 - **contentView** — **всегда** добавляй subviews именно туда  
 - **configure(with:)** — отдельный метод для заполнения данными  

@@ -113,7 +113,7 @@ Task {
 ### Лучшие практики URLSessionDataDelegate в Swift 2026
 
 - **Держи delegate в actor** — безопасно для concurrency  
-- **nonisolated** — методы delegate должны быть `nonisolated`, т.к. вызываются не на [[main thread]]  
+- **nonisolated** — методы delegate должны быть `nonisolated`, т.к. вызываются не на [[main|main thread]]  
 - **continuation** — используй `withCheckedThrowingContinuation` для [[async]]/[[await]]  
 - **receivedData.append** — собирай данные по частям в `didReceive data:`  
 - **didCompleteWithError** — всегда завершай continuation здесь  

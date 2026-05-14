@@ -206,7 +206,7 @@ Thread 1
 
 Можно увидеть:
 
-- [[Main Thread]]
+- [[main|Main Thread]]
     
 - Background Queue
     

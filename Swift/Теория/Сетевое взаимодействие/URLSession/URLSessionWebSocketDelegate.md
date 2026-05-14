@@ -156,7 +156,7 @@ Task {
 ### Лучшие практики URLSessionWebSocketDelegate в Swift 2026
 
 - **Держи delegate в actor** — безопасно для concurrency  
-- **nonisolated** — методы delegate должны быть `nonisolated` (вызываются не на [[main thread]])  
+- **nonisolated** — методы delegate должны быть `nonisolated` (вызываются не на [[main|main thread]])  
 - **AsyncStream** — идеально для приёма сообщений (`didReceive`)  
 - **didOpenWithProtocol** — проверяй протокол (например, "chat")  
 - **didCloseWith** — обрабатывай коды закрытия (1000 — нормальное, 1006 — ошибка соединения)  

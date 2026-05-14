@@ -97,7 +97,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 
 ### Лучшие практики UICollectionViewCell в Swift 2026
 
-- **Всегда [[final]] [[class]]** — экономия [[vtable]], меньше overhead  
+- **Всегда [[final]] [[class]]** — экономия [[Sidetable|vtable]], меньше overhead  
 - **[[lazy]] [[var]]** для UI-элементов — создаются только при первом обращении  
 - **translatesAutoresizingMaskIntoConstraints = false** — обязательно  
 - **contentView** — добавляй все subviews именно туда (не в [[self]])  
