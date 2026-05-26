@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "Swift/Теория/iOS/Swift/Collections/Linked List.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "Linked List"
             }
           }
         ]
@@ -194,8 +194,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "eac0e13cb33addb6",
+  "active": "e407b43c27bfa155",
   "lastOpenFiles": [
+    "README.md",
     "Swift/Теория/iOS/Swift/UIKit Integration/constraint.md",
     "Swift/Теория/iOS/Swift/UIKit Integration/NSLayoutDimension.md",
     "Swift/Теория/iOS/Swift/UIKit Integration/NSLayoutXAxisAnchor.md",
@@ -221,7 +222,6 @@
     "Swift/Теория/Многопоточность/Swift Concurrency/@MainActor.md",
     "Swift/Теория/Сетевое взаимодействие/URLSession/URLSessionWebSocketDelegate.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/Executor.md",
-    "Swift/Теория/Контроль памяти/CFGetRetainCount.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
