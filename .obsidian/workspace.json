@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/Collections/Linked List.md",
+                "file": "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Linked List"
+              "title": "actor"
             }
           }
         ]
@@ -194,8 +194,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e407b43c27bfa155",
+  "active": "eac0e13cb33addb6",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/Swift/Basics/func.md",
+    "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
+    "Swift/Теория/iOS/Swift/Collections/Linked List.md",
     "README.md",
     "Swift/Теория/iOS/Swift/UIKit Integration/constraint.md",
     "Swift/Теория/iOS/Swift/UIKit Integration/NSLayoutDimension.md",
@@ -218,10 +221,7 @@
     "Swift/Теория/Многопоточность/Swift Concurrency/async.md",
     "Swift/Теория/Debug/Breakpoints (Точки останова).md",
     "Swift/Теория/Сетевое взаимодействие/URLSession/URLSessionDownloadDelegate.md",
-    "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/@MainActor.md",
-    "Swift/Теория/Сетевое взаимодействие/URLSession/URLSessionWebSocketDelegate.md",
-    "Swift/Теория/Многопоточность/Swift Concurrency/Executor.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
