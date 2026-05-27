@@ -211,6 +211,8 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
+    "Swift/Теория/Контроль памяти/Heap.md",
+    "Swift/Теория/Контроль памяти/isKnownUniquelyReferenced.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
     "Swift/Теория/iOS/Swift/Basics/func.md",
     "Swift/Теория/iOS/Swift/Collections/Linked List.md",
@@ -235,8 +237,6 @@
     "Swift/Теория/Контроль памяти/FIFO.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/async.md",
     "Swift/Теория/Debug/Breakpoints (Точки останова).md",
-    "Swift/Теория/Сетевое взаимодействие/URLSession/URLSessionDownloadDelegate.md",
-    "Swift/Теория/Многопоточность/Swift Concurrency/@MainActor.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
