@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
+                "file": "Swift/Теория/iOS/UIKit/App/applicationWillTerminate.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Жизненный цикл UIViewController"
+              "title": "applicationWillTerminate"
             }
           }
         ],
@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "жизненный",
+                "query": "life",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -211,8 +211,16 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/UIKit/Views/bounds.md",
+    "Swift/Теория/iOS/UIKit/App/applicationWillResignActive.md",
+    "Swift/Теория/iOS/UIKit/App/applicationWillEnterForeground.md",
+    "Swift/Теория/iOS/UIKit/App/applicationDidEnterBackground.md",
+    "Swift/Теория/iOS/UIKit/App/applicationDidBecomeActive.md",
+    "Swift/Теория/iOS/UIKit/App/application(didFinishLaunchingWithOptions).md",
+    "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
+    "Swift/Теория/iOS/UIKit/App/applicationWillTerminate.md",
+    "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
+    "Swift/Теория/iOS/UIKit/Views/bounds.md",
     "Swift/Теория/iOS/UIKit/Layout/updateConstraints.md",
     "Swift/Теория/iOS/UIKit/Layout/UIEdgeInsets.md",
     "Swift/Теория/iOS/UIKit/Layout/setNeedsUpdateConstraints.md",
@@ -229,14 +237,6 @@
     "Swift/Теория/iOS/Swift/UIKit Integration/NSLayoutDimension.md",
     "Swift/Теория/iOS/Swift/UIKit Integration/NSLayoutXAxisAnchor.md",
     "Swift/Теория/iOS/UIKit/Layout/Auto Layout.md",
-    "Swift/Теория/iOS/UIKit/Layout/UIOffset.md",
-    "Swift/Теория/iOS/UIKit/Layout/layoutIfNeeded.md",
-    "Swift/Теория/iOS/Swift/UIKit Integration/NSLayoutAnchor.md",
-    "Swift/Теория/iOS/Swift/Protocols/Sendable.md",
-    "Swift/Теория/Контроль памяти/Copy-On-Shadow.md",
-    "Swift/Теория/iOS/UIKit/TableView/UITableViewCell.md",
-    "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewCell.md",
-    "Swift/Теория/iOS/Swift/Basics/final.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
