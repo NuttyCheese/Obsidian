@@ -313,7 +313,7 @@ po model
 
 Работает для:
 
-- [[UIViewController]] [[Жизненный цикл ViewController-a|lifecycle]]
+- [[UIViewController]] [[Жизненный цикл UIViewController|lifecycle]]
     
 - [[delegate]] методов
     

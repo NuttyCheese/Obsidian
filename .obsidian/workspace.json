@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/Layout/updateConstraints.md",
+                "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "updateConstraints"
+              "title": "Жизненный цикл UIViewController"
             }
           }
         ],
@@ -211,13 +211,13 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/UIKit/Layout/updateConstraints.md",
     "Swift/Теория/iOS/UIKit/Layout/UIEdgeInsets.md",
     "Swift/Теория/iOS/UIKit/Layout/setNeedsUpdateConstraints.md",
-    "Swift/Теория/iOS/UIKit/Layout/updateConstraints.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
     "Swift/Теория/iOS/Swift/UIKit Integration/setNeedsLayout.md",
     "Swift/Теория/iOS/UIKit/Layout/layoutIfNeeded(), setNeedsLayout() and layoutSubviews().md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
     "Swift/Теория/Контроль памяти/isKnownUniquelyReferenced.md",
     "Swift/Теория/Контроль памяти/Heap.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
