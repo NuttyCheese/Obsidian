@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
+                "file": "Swift/Теория/iOS/UIKit/Layout/updateConstraints.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Жизненный цикл UIView"
+              "title": "updateConstraints"
             }
           }
         ],
@@ -211,8 +211,13 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
+    "Swift/Теория/iOS/UIKit/Layout/UIEdgeInsets.md",
+    "Swift/Теория/iOS/UIKit/Layout/setNeedsUpdateConstraints.md",
+    "Swift/Теория/iOS/UIKit/Layout/updateConstraints.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
+    "Swift/Теория/iOS/Swift/UIKit Integration/setNeedsLayout.md",
+    "Swift/Теория/iOS/UIKit/Layout/layoutIfNeeded(), setNeedsLayout() and layoutSubviews().md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
     "Swift/Теория/Контроль памяти/isKnownUniquelyReferenced.md",
     "Swift/Теория/Контроль памяти/Heap.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
@@ -232,11 +237,6 @@
     "Swift/Теория/iOS/UIKit/CollectionView/UICollectionViewCell.md",
     "Swift/Теория/iOS/Swift/Basics/final.md",
     "Swift/Теория/Сетевое взаимодействие/URLSession/URLSessionDataDelegate.md",
-    "Swift/Теория/Многопоточность/Swift Concurrency/nonisolated.md",
-    "Swift/Теория/Многопоточность/Swift Concurrency/isolation (concept).md",
-    "Swift/Теория/Debug/Debug Navigator (Отладочный навигатор).md",
-    "Swift/Теория/Debug/Time Profiler (Профилировщик времени).md",
-    "Swift/Теория/Контроль памяти/FIFO.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
