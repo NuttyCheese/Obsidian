@@ -198,10 +198,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 graph TD
     A[Приложение] --> B{Как завершается?}
     
-    B -->|Закрыл пользователь| C[✅ applicationWillTerminate]
-    B -->|Система убила| D[❌ Нет вызова]
+    B -->|Закрыл пользователь| C["✅ applicationWillTerminate"]
+    B -->|Система убила| D["❌ Нет вызова"]
     B -->|Краш| D
-    B -->|exit(0)| C
+    B -->|"exit(0)"| C
     
     style C fill:#ccffcc,stroke:#333
     style D fill:#ffcccc,stroke:#333
