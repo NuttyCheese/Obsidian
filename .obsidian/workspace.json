@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/App/UIWindow.md",
+                "file": "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UIWindow"
+              "title": "Жизненный цикл приложения"
             }
           }
         ],
@@ -211,6 +211,7 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/UIKit/App/UIWindow.md",
     "Swift/Теория/iOS/UIKit/App/UIScreen.md",
     "Swift/Теория/iOS/UIKit/App/UISceneDelegate.md",
     "Swift/Теория/iOS/UIKit/App/UIScene.md",
@@ -236,7 +237,6 @@
     "Swift/Теория/iOS/UIKit/App/applicationDidEnterBackground.md",
     "Swift/Теория/iOS/UIKit/App/applicationDidBecomeActive.md",
     "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
