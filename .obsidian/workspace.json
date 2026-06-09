@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Контроль памяти/isKnownUniquelyReferenced.md",
+                "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "isKnownUniquelyReferenced"
+              "title": "Жизненный цикл ViewController-a"
             }
           }
         ],
@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "жизненный",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -211,8 +211,10 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
-    "Swift/Теория/Контроль памяти/Heap.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл ViewController-a.md",
     "Swift/Теория/Контроль памяти/isKnownUniquelyReferenced.md",
+    "Swift/Теория/Контроль памяти/Heap.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
     "Swift/Теория/iOS/Swift/Basics/func.md",
     "Swift/Теория/iOS/Swift/Collections/Linked List.md",
@@ -235,8 +237,6 @@
     "Swift/Теория/Debug/Debug Navigator (Отладочный навигатор).md",
     "Swift/Теория/Debug/Time Profiler (Профилировщик времени).md",
     "Swift/Теория/Контроль памяти/FIFO.md",
-    "Swift/Теория/Многопоточность/Swift Concurrency/async.md",
-    "Swift/Теория/Debug/Breakpoints (Точки останова).md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
