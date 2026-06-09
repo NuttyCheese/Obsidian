@@ -425,7 +425,7 @@ class GradientViewController: UIViewController {
 
 ## 6. Container и Parent (willMove / didMove)
 
-Эти методы вызываются при добавлении/удалении контроллера в контейнер (UINavigationController, UITabBarController).
+Эти методы вызываются при добавлении/удалении контроллера в контейнер ([[UINavigationController]], [[UITabBarController]]).
 
 ```swift
 class ChildViewController: UIViewController {
