@@ -211,6 +211,8 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
+    "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
+    "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
     "Swift/Теория/iOS/UIKit/App/UIWindow.md",
     "Swift/Теория/iOS/UIKit/App/UIScreen.md",
     "Swift/Теория/iOS/UIKit/App/UISceneDelegate.md",
@@ -235,8 +237,6 @@
     "Swift/Теория/iOS/UIKit/App/applicationWillResignActive.md",
     "Swift/Теория/iOS/UIKit/App/applicationWillEnterForeground.md",
     "Swift/Теория/iOS/UIKit/App/applicationDidEnterBackground.md",
-    "Swift/Теория/iOS/UIKit/App/applicationDidBecomeActive.md",
-    "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
