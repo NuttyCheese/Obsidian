@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
+                "file": "Swift/Теория/Алгоритмы и методы высшего порядка/Последовательность Фибоначчи.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Жизненный цикл UIView"
+              "title": "Последовательность Фибоначчи"
             }
           }
         ],
@@ -211,8 +211,18 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
-    "README.md",
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Нотация сложности алгоритмов.md",
     "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
+    "Swift/Теория/iOS/UIKit/Menus/UIColorPicker.md",
+    "Swift/Теория/iOS/UIKit/Menus/UICommand.md",
+    "Swift/Теория/iOS/UIKit/Menus/UIDeferredMenuElement.md",
+    "Swift/Теория/iOS/UIKit/Menus/UIMenu.md",
+    "Swift/Теория/iOS/UIKit/Menus/UIMenuBuilder.md",
+    "Swift/Теория/iOS/UIKit/Menus/UIMenuController.md",
+    "Swift/Теория/iOS/UIKit/Menus/UIMenuElement.md",
+    "Swift/Теория/iOS/UIKit/Menus/UIMenuItem.md",
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
+    "README.md",
     "Swift/Теория/Многопоточность/Swift Concurrency/actor.md",
     "Swift/Теория/iOS/UIKit/App/UIWindow.md",
     "Swift/Теория/iOS/UIKit/App/UIScreen.md",
@@ -227,16 +237,6 @@
     "Swift/Теория/iOS/UIKit/App/sceneWillEnterForeground.md",
     "Swift/Теория/iOS/UIKit/App/sceneDidEnterBackground.md",
     "Swift/Теория/iOS/UIKit/App/sceneDidDisconnect.md",
-    "Swift/Теория/iOS/UIKit/App/sceneDidBecomeActive.md",
-    "Swift/Теория/iOS/UIKit/App/scene(willConnectTo options).md",
-    "Swift/Теория/iOS/UIKit/App/scene(continue).md",
-    "Swift/Теория/iOS/UIKit/App/scene(openURLContexts).md",
-    "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
-    "Swift/Теория/iOS/UIKit/App/application(didFinishLaunchingWithOptions).md",
-    "Swift/Теория/iOS/UIKit/App/applicationWillTerminate.md",
-    "Swift/Теория/iOS/UIKit/App/didFinishLaunchingWithOptions.md",
-    "Swift/Теория/iOS/UIKit/App/applicationWillResignActive.md",
-    "Swift/Теория/iOS/UIKit/App/applicationWillEnterForeground.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
