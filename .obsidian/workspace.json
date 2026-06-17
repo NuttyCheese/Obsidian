@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/Алгоритмы и методы высшего порядка/Последовательность Фибоначчи.md",
+                "file": "Swift/Теория/Алгоритмы и методы высшего порядка/Сортировки/Быстрая сортировка.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Последовательность Фибоначчи"
+              "title": "Быстрая сортировка"
             }
           }
         ],
@@ -211,6 +211,7 @@
   },
   "active": "c3c441cc8b1fea4b",
   "lastOpenFiles": [
+    "Swift/Теория/Алгоритмы и методы высшего порядка/Последовательность Фибоначчи.md",
     "Swift/Теория/Алгоритмы и методы высшего порядка/Нотация сложности алгоритмов.md",
     "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
     "Swift/Теория/iOS/UIKit/Menus/UIColorPicker.md",
@@ -236,7 +237,6 @@
     "Swift/Теория/iOS/UIKit/App/sceneWillResignActive.md",
     "Swift/Теория/iOS/UIKit/App/sceneWillEnterForeground.md",
     "Swift/Теория/iOS/UIKit/App/sceneDidEnterBackground.md",
-    "Swift/Теория/iOS/UIKit/App/sceneDidDisconnect.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
