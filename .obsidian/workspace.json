@@ -56,7 +56,7 @@
               "type": "markdown",
               "state": {
                 "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -120,7 +120,7 @@
             }
           }
         ],
-        "currentTab": 7
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -177,7 +177,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 431.5
+    "width": 318.5
   },
   "right": {
     "id": "7238f37c2a03dbfd",
@@ -294,12 +294,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "929153c18f296430",
+  "active": "cfe517a2f48eb96a",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/Swift/Basics/enum.md",
-    "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
+    "Swift/Теория/Паттерны/SOLID/SOLID.md",
+    "Swift/Теория/iOS/Swift/Basics/enum.md",
+    "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
     "Swift/Теория/iOS/UIKit/App/UIWindow.md",
     "Swift/Теория/iOS/UIKit/App/UIApplication.md",
     "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
@@ -321,7 +322,6 @@
     "Swift/Теория/iOS/UIKit/Menus/UIMenuBuilder.md",
     "Swift/Теория/iOS/UIKit/Menus/UIMenuController.md",
     "Swift/Теория/iOS/UIKit/Menus/UIMenuElement.md",
-    "Swift/Теория/iOS/UIKit/Menus/UIMenuItem.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
