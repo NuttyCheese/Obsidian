@@ -147,8 +147,7 @@
               "title": "SOLID"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -322,7 +321,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "cfe517a2f48eb96a",
+  "active": "12a0a5ee6cb3d2c7",
   "lastOpenFiles": [
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
