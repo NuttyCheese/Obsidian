@@ -1,7 +1,7 @@
 #foundation #nsmutablearray #array #collection #objective-c #ios #swift
 
 ---
-## NSMutableArray — Мутабельный массив из Foundation
+## NSMutableArray — Мутабельный массив из [[Foundation]]
 
 ### Определение
 
@@ -61,7 +61,7 @@ let swiftArray = ["A", "B", "C"]
 let nsMutableArray = NSMutableArray(array: swiftArray)
 ```
 
-#### 4. **С литералом (только для NSArray, требуется приведение)**
+#### 4. **С литералом (только для [[NSArray]], требуется приведение)**
 
 ```swift
 // NSMutableArray не поддерживает литералы напрямую
@@ -259,7 +259,7 @@ NSLog(@"%@", array);  // ("Banana")
 ### Лучшие практики
 
 1.  **В Swift предпочитай нативный `Array`** — он типобезопаснее и производительнее.
-2.  **При получении `NSMutableArray` из API сразу преобразуй в Swift Array.**
+2.  **При получении `NSMutableArray` из [[API]] сразу преобразуй в Swift Array.**
 3.  **Не смешивай `NSMutableArray` и Swift Array без необходимости** — постоянное мостовое преобразование дорого.
 4.  **Для многопоточного доступа используй синхронизацию** — `NSMutableArray` не потокобезопасен.
 5.  **При передаче в Objective-C методы используй `[NSMutableArray arrayWithArray:]` или `mutableCopy`.**

@@ -234,7 +234,7 @@ class SettingsManager {
 
 ---
 
-### NSHashTable vs Set (производительность)
+### NSHashTable vs [[Set Collection|Set]] (производительность)
 
 ```swift
 import Foundation
@@ -263,7 +263,7 @@ for i in 0..<10000 {
 
 ### NSHashTable vs NSPointerArray
 
-| Характеристика             | NSHashTable                      | NSPointerArray                          |
+| Характеристика             | NSHashTable                      | [[NSPointerArray]]                      |
 | -------------------------- | -------------------------------- | --------------------------------------- |
 | **Уникальность элементов** | Да (как [[Set Collection\|Set]]) | Нет (как [[Array]])                     |
 | **Порядок элементов**      | Не гарантирован                  | Гарантирован                            |
