@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/WebKit/WKHTTPCookieStore.md",
+                "file": "Swift/Теория/iOS/WebKit/WKScriptMessage.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "WKHTTPCookieStore"
+              "title": "WKScriptMessage"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 304.5
+    "width": 351.5
   },
   "right": {
     "id": "7238f37c2a03dbfd",
@@ -196,13 +196,22 @@
   },
   "active": "a39dfbbbf55ab654",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/WebKit/UIWebView.md",
-    "Swift/Теория/iOS/WebKit/WebKit.md",
-    "Swift/Теория/iOS/WebKit/WKHTTPCookieStore.md",
-    "Swift/Теория/iOS/WebKit/WKNavigationDelegate.md",
+    "Swift/Теория/iOS/WebKit/JSONSerialization.md",
+    "Swift/Теория/iOS/WebKit/WKScriptMessage.md",
+    "Swift/Теория/iOS/WebKit/WKFrameInfo.md",
+    "Swift/Теория/iOS/WebKit/WKUserContentController.md",
     "Swift/Теория/iOS/WebKit/WKProcessPool.md",
-    "Swift/Теория/iOS/WebKit/WKScriptMessageHandler.md",
+    "Swift/Теория/iOS/WebKit/WKPreferences.md",
+    "Swift/Теория/iOS/WebKit/WKNavigationDelegate.md",
+    "Swift/Теория/iOS/WebKit/WKHTTPCookieStore.md",
     "Swift/Теория/iOS/WebKit/WKUIDelegate.md",
+    "Swift/Теория/iOS/WebKit/WKScriptMessageHandlerWithReply.md",
+    "Swift/Теория/iOS/WebKit/WKScriptMessageHandler.md",
+    "Swift/Теория/iOS/WebKit/WebKit.md",
+    "Swift/Теория/iOS/WebKit/UIWebView.md",
+    "Swift/Теория/iOS/WebKit/HTTPCookie.md",
+    "Swift/Теория/iOS/WebKit/WKWebpagePreferences.md",
+    "Swift/Теория/iOS/WebKit/WKUserScript.md",
     "Swift/Теория/iOS/WebKit/WKWebsiteDataStore.md",
     "Swift/Теория/iOS/WebKit/WKWebView.md",
     "Swift/Теория/iOS/WebKit/WKWebViewConfiguration.md",
@@ -213,15 +222,6 @@
     "Swift/Теория/Паттерны/SOLID/SOLID.md",
     "Swift/Теория/iOS/Swift/Basics/enum.md",
     "Swift/Теория/Контроль памяти/Sidetable.md",
-    "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
-    "Swift/Теория/iOS/UIKit/App/UIWindow.md",
-    "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
-    "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
-    "Swift/Теория/iOS/UIKit/App/UIApplication.md",
-    "Swift/Теория/iOS/Swift/Basics/generic.md",
-    "Swift/Теория/iOS/Swift/Basics/extension.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
