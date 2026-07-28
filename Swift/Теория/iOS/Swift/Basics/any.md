@@ -15,7 +15,7 @@ protocol Drawable {
 let shape: Drawable = Circle()  // OK в Swift 5.6 и раньше
 ```
 
-Это создавало **неявный existential type** — коробку, в которой может лежать любой Drawable.
+Это создавало **неявный [[existential type]]** — коробку, в которой может лежать любой Drawable.
 
 Но у такого подхода были проблемы:
 - **Производительность** — всегда [[Dynamic Dispatch]] (медленнее)

@@ -177,7 +177,7 @@ class MusicPlayerViewController: UIViewController, AVAudioPlayerDelegate {
 - **prepareToPlay()** — вызывайте перед первым `play()`  
 - **Фон** — настройте `.playback` категорию + `UIBackgroundModes` → `audio` в Info.plist  
 - **Для нескольких треков** — используйте `AVQueuePlayer` или `AVAudioEngine`  
-- **Для [[SwiftUI]]** — оборачивайте в `UIViewControllerRepresentable`  
+- **Для [[SwiftUI]]** — оборачивайте в [[UIViewControllerRepresentable]]  
 - **Документируйте** — пишите комментарий:
 
 ```swift

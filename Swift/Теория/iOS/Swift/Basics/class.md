@@ -92,7 +92,7 @@ final class UserProfileViewModel {
 | [[final]] (запрет наследования/переопределения) | `final class`, `final func`, `final var` | Оптимизация + защита от нежелательного наследования |
 | required init                                   | `required init(coder: NSCoder)`          | Обязательные инициализаторы (NSCoding, Storyboard)  |
 | convenience init                                | `convenience init(name: String)`         | Удобные конструкторы                                |
-| deinit                                          | `deinit { cleanup() }`                   | Освобождение ресурсов (KVO, observers, files)       |
+| deinit                                          | `deinit { cleanup() }`                   | Освобождение ресурсов ([[KVO]], observers, files)   |
 | Сравнение по идентичности                       | `object1 === object2`                    | Проверка, один ли объект                            |
 | [[Weak]] / [[unowned]] ссылки                   | `weak var delegate: Delegate?`           | Предотвращение [[retain cycle]]                     |
 | [[Lazy]] свойства                               | `lazy var expensiveObject = Expensive()` | Отложенная инициализация                            |

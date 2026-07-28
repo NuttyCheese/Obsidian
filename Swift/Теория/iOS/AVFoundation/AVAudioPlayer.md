@@ -42,7 +42,7 @@
 | `enableRate`                                           | `Bool` (false)                 | Включает изменение скорости                 | Обязательно для rate ≠ 1.0    |
 | `meteringEnabled`                                      | `Bool` (false)                 | Включает измерение уровня громкости         | Визуализация громкости        |
 | `updateMeters()`                                       | `Void`                         | Обновляет значения metering                 | Вызывать каждые 0.1 сек       |
-| `peakPower(forChannel:)` / `averagePower(forChannel:)` | `Float` (-160…0 dB)            | Уровень громкости в канале                  | Анимация громкости            |
+| `peakPower(forChannel:)` / `averagePower(forChannel:)` | [[Float]] (-160…0 dB)          | Уровень громкости в канале                  | Анимация громкости            |
 | `delegate`                                             | [[AVAudioPlayerDelegate]]`?`   | Обработка завершения, ошибок                | `audioPlayerDidFinishPlaying` |
 | `prepareToPlay()`                                      | `Bool`                         | Подготавливает буфер (ускоряет первый play) | Перед первым воспроизведением |
 
