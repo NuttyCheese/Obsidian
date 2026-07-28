@@ -98,7 +98,7 @@ final class CustomNavigationViewController: UIViewController {
 - **velocity(in:)** — используй для определения, достаточно ли быстро пользователь свайпнул (threshold ~400–600)  
 - **translation(in: view)** — считай прогресс как translation.x / view.bounds.width  
 - **@objc** — обязательно для метода-обработчика  
-- **@MainActor** — все обработчики жестов — на главном акторе  
+- **[[@MainActor]]** — все обработчики жестов — на главном акторе  
 - **Swift 6 strict concurrency** — UIGestureRecognizer полностью безопасен  
 - **Документируйте** — пиши комментарий «UIScreenEdgePanGestureRecognizer — кастомный жест назад с левого края»
 

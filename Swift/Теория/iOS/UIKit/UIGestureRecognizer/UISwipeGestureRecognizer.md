@@ -106,7 +106,7 @@ final class ChatViewController: UIViewController {
 - **velocity(in:)** — если нужно проверить скорость свайпа (например, > 500 для "быстрого")  
 - **@objc** — обязательно для метода-обработчика  
 - **[[@MainActor]]** — все обработчики жестов — на главном акторе  
-- **Swift 6 strict concurrency** — UIGestureRecognizer полностью безопасен  
+- **Swift 6 strict concurrency** — [[UIGestureRecognizer]] полностью безопасен  
 - **Документируйте** — пиши комментарий «UISwipeGestureRecognizer — свайп влево для удаления сообщения»
 
 **Короткий девиз 2026**:

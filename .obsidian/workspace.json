@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UserNotifications/APNs.md",
+                "file": "Swift/Теория/iOS/UIKit/Responder/UITouch.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "APNs"
+              "title": "UITouch"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 351.5
+    "width": 425.5
   },
   "right": {
     "id": "7238f37c2a03dbfd",
@@ -196,32 +196,32 @@
   },
   "active": "a39dfbbbf55ab654",
   "lastOpenFiles": [
-    "Swift/Теория/iOS/UserNotifications/UNNotificationContent.md",
-    "Swift/Теория/iOS/UserNotifications/UNNotificationContentExtension.md",
-    "Swift/Теория/iOS/UserNotifications/UNNotificationRequest.md",
-    "Swift/Теория/iOS/UserNotifications/UNNotificationResponse.md",
-    "Swift/Теория/iOS/UserNotifications/UNNotificationServiceExtension.md",
-    "Swift/Теория/iOS/UserNotifications/UNNotificationTrigger.md",
-    "Swift/Теория/iOS/UserNotifications/UNUserNotificationCenter.md",
-    "Swift/Теория/iOS/UserNotifications/UNUserNotificationCenterDelegate.md",
-    "Swift/Теория/iOS/UserNotifications/UserNotifications.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/awakeFromNib.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/deinit.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/didMove.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/didReceiveMemoryWarning.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/init(coder).md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/init(nibName bundle).md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/loadView.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/traitCollectionDidChange.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidAppear.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidDisappear.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidLayoutSubviews.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewDidLoad.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewIsAppearing.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewWillAppear.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/viewWillDisappear.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableView.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewCell.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewController.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewDataSource.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewDelegate.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewDiffableDataSource.md",
+    "Swift/Теория/iOS/UIKit/TableView/UITableViewFlowLayout.md",
+    "Swift/Теория/iOS/UIKit/Traits/UITraitCollection.md",
+    "Swift/Теория/iOS/UIKit/Traits/UITraitEnvironment.md",
+    "Swift/Теория/iOS/UIKit/Transitions/Сustom animation between two screens.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIModalPresentationStyle.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIPercentDrivenInteractiveTransition.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIPresentationController.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIPreviewParameters.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIPreviewTarget.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UITargetedPreview.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIViewController.Transition.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIViewControllerAnimatedTransitioning.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIViewControllerInteractiveTransitioning.md",
+    "Swift/Теория/iOS/UIKit/Transitions/UIViewControllerTransitioningDelegate.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UILongPressGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIPanGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIPinchGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIRotationGestureRecognizer.md",
+    "Swift/Теория/iOS/UIKit/UIGestureRecognizer/UIScreenEdgePanGestureRecognizer.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",

@@ -7,14 +7,14 @@
 
 ### 1. Самые часто используемые способы перехода (2026)
 
-| Тип перехода                              | Как вызвать                                   | Уровень кастомизации | Поддержка interactive | Рекомендуется в 2026 | Примечание |
-|-------------------------------------------|-----------------------------------------------|-----------------------|------------------------|-----------------------|------------|
-| **Стандартный модальный (present)**       | `present(vc, animated: true)`                 | Низкий                | Нет                    | ★★★☆☆                 | crossDissolve / coverVertical |
-| **UINavigationController push / pop**     | `navigationController?.pushViewController`    | Низкий                | Нет                    | ★★★★☆                 | Стандартный стек навигации |
-| **UISheetPresentationController**         | `vc.modalPresentationStyle = .pageSheet`      | Средний               | Да (swipe down)        | ★★★★★                 | iOS 15+ — современный bottom sheet |
-| **UIViewControllerTransitioningDelegate** | `vc.transitioningDelegate = customDelegate`   | Высокий               | Да                     | ★★★★★                 | Полная кастомизация анимации |
-| **UINavigationControllerDelegate**        | `navigationController?.delegate = custom`     | Высокий               | Да                     | ★★★★☆                 | Кастомный push/pop |
-| **Custom presentation controller**        | `UIPresentationController` subclass           | Очень высокий         | Да                     | ★★★☆☆                 | Редко, только если нужен нестандартный layout |
+| Тип перехода                              | Как вызвать                                 | Уровень кастомизации | Поддержка interactive | Рекомендуется в 2026 | Примечание                                    |
+| ----------------------------------------- | ------------------------------------------- | -------------------- | --------------------- | -------------------- | --------------------------------------------- |
+| **Стандартный модальный (present)**       | `present(vc, animated: true)`               | Низкий               | Нет                   | ★★★☆☆                | crossDissolve / coverVertical                 |
+| **[[UINavigationController]] push / pop** | `navigationController?.pushViewController`  | Низкий               | Нет                   | ★★★★☆                | Стандартный стек навигации                    |
+| **[[UISheetPresentationController]]**     | `vc.modalPresentationStyle = .pageSheet`    | Средний              | Да (swipe down)       | ★★★★★                | iOS 15+ — современный bottom sheet            |
+| **UIViewControllerTransitioningDelegate** | `vc.transitioningDelegate = customDelegate` | Высокий              | Да                    | ★★★★★                | Полная кастомизация анимации                  |
+| **UINavigationControllerDelegate**        | `navigationController?.delegate = custom`   | Высокий              | Да                    | ★★★★☆                | Кастомный push/pop                            |
+| **Custom presentation controller**        | `UIPresentationController` subclass         | Очень высокий        | Да                    | ★★★☆☆                | Редко, только если нужен нестандартный layout |
 
 ### 2. Самые актуальные и рекомендуемые варианты в 2026 году
 
