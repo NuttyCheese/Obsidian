@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/Swift/Basics/extension.md",
+                "file": "Swift/Теория/iOS/Swift/Basics/generic.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "extension"
+              "title": "generic"
             }
           },
           {
@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Swift/Теория/iOS/UIKit/App/UIApplication.md",
+                "file": "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UIApplication"
+              "title": "Жизненный цикл приложения"
             }
           },
           {
@@ -56,7 +56,7 @@
               "type": "markdown",
               "state": {
                 "file": "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
@@ -147,7 +147,8 @@
               "title": "SOLID"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -306,8 +307,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 337.5,
-    "collapsed": true
+    "width": 337.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -321,8 +321,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "12a0a5ee6cb3d2c7",
+  "active": "813527464db0e459",
   "lastOpenFiles": [
+    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
+    "Swift/Теория/iOS/UIKit/App/UIWindow.md",
+    "Swift/Теория/iOS/UIKit/App/Жизненный цикл приложения.md",
+    "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
+    "Swift/Теория/iOS/UIKit/App/UIApplication.md",
+    "Swift/Теория/iOS/Swift/Basics/generic.md",
+    "Swift/Теория/iOS/Swift/Basics/extension.md",
     "Swift/Теория/iOS/Swift/Basics/existential type.md",
     "Swift/Теория/iOS/Swift/Basics/enum.md",
     "Swift/Теория/iOS/Swift/Basics/dynamic.md",
@@ -335,20 +342,13 @@
     "Swift/Теория/iOS/SwiftUI/UIViewControllerRepresentable.md",
     "Swift/Теория/iOS/AVFoundation/AVAudioPlayer.md",
     "Swift/Теория/iOS/AVFoundation/AVAssetWriter.md",
-    "Swift/Теория/iOS/Swift/Basics/extension.md",
-    "Swift/Теория/iOS/UIKit/App/AppDelegate.md",
-    "Swift/Теория/iOS/UIKit/App/UIWindow.md",
-    "Swift/Теория/iOS/UIKit/App/UIApplication.md",
     "Swift/Теория/Архитектурные подходы/Clean Swift (VIP) Architecture.md",
     "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIView.md",
-    "Swift/Теория/iOS/UIKit/UIViewController life cycle/Жизненный цикл UIViewController.md",
     "Swift/Теория/Паттерны/SOLID/SOLID.md",
     "Swift/Теория/iOS/Swift/Properties/var.md",
     "Swift/Теория/iOS/Swift/Properties/let.md",
-    "Swift/Теория/iOS/Swift/Basics/generic.md",
     "Swift/Теория/Контроль памяти/Что такое - value type and reference type.md",
     "Swift/Теория/Контроль памяти/Sidetable.md",
-    "Swift/Теория/iOS/Swift/UIKit Integration/SceneDelegate.md",
     "Задачи алгоритмические",
     "SwiftIU",
     "Swift/Теория/iOS/Info.plist",
