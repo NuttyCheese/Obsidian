@@ -11,10 +11,14 @@
             "id": "d256b91c0b13632a",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Swift/Теория/Многопоточность/GCD/QoS.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Новая вкладка"
+              "title": "QoS"
             }
           }
         ]
@@ -190,7 +194,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "c2edb47d47520656",
+  "active": "d256b91c0b13632a",
   "lastOpenFiles": [
     "Swift/Теория/iOS/Swift/where.md",
     "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
