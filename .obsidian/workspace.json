@@ -20,8 +20,21 @@
               "icon": "lucide-file",
               "title": "QoS"
             }
+          },
+          {
+            "id": "818b79610542658c",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.13.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "примечания к выпуску 1.13.4"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -41,7 +54,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Файловый менеджер"
@@ -194,7 +209,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "d256b91c0b13632a",
+  "active": "818b79610542658c",
   "lastOpenFiles": [
     "Swift/Теория/iOS/Swift/where.md",
     "Swift/Теория/iOS/SwiftUI/SwiftUI.md",
